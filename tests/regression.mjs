@@ -152,11 +152,12 @@ const { startLocalSpeech } = load('local-speech', {
       },
     },
   },
-  fetch: async () => ({
-    ok: true,
-    json: async () => ({ bytes: 0, parts: [] }),
-  }),
-  URL: { createObjectURL: () => '', revokeObjectURL() {} },
+  fetch: async (url) => {
+    assert.equal(url, 'https://example.github.io/reading-app/speech/model.json');
+    return { ok: true, json: async () => ({ bytes: 0, parts: [] }) };
+  },
+  document: { baseURI: 'https://example.github.io/reading-app/' },
+  URL: class extends URL { static createObjectURL() { return ''; } static revokeObjectURL() {} },
   Blob,
   performance: { now: () => 100 },
   requestAnimationFrame: () => 1,

@@ -10,7 +10,7 @@ export default function LessonHeader({
   return (
     <>
       <header>
-        <a className="brand" href="/" aria-label="Читаем по шагам">
+        <a className="brand" href="./" aria-label="Читаем по шагам">
           <BookOpen />
           <b>
             Читаем <span>по шагам</span>

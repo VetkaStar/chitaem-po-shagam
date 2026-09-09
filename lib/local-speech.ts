@@ -11,7 +11,7 @@ function loadScript() {
   if (!scriptPromise)
     scriptPromise = new Promise<void>((resolve, reject) => {
       const s = document.createElement('script');
-      s.src = '/speech/vosk.js';
+      s.src = new URL('speech/vosk.js', document.baseURI).href;
       s.onload = () => resolve();
       s.onerror = () => {
         scriptPromise = undefined;
@@ -28,7 +28,7 @@ export function loadLocalModel(progress: (text: string) => void = () => {}) {
   if (cachedModel) return cachedModel;
   cachedModel = (async () => {
     await loadScript();
-    const response = await fetch('/speech/model.json');
+    const response = await fetch(new URL('speech/model.json', document.baseURI).href);
     if (!response.ok) throw Error('Не удалось загрузить описание модели.');
     const manifest = (await response.json()) as {
       bytes: number;
@@ -37,7 +37,7 @@ export function loadLocalModel(progress: (text: string) => void = () => {}) {
     const chunks: Uint8Array[] = [];
     let bytes = 0;
     for (const part of manifest.parts) {
-      const r = await fetch('/speech/' + part.file);
+      const r = await fetch(new URL('speech/' + part.file, document.baseURI).href);
       if (!r.ok)
         throw Error(
           'Не удалось скачать русскую модель. Проверь интернет и повтори.',

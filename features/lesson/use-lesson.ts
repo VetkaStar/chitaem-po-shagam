@@ -140,6 +140,15 @@ export function useLesson() {
     setMistakes(0);
     setFeedback({ kind: 'neutral', text: 'Не спеши. У тебя получится.' });
   }
+  function changeTopic(s: Stage, unit: number) {
+    if (!Number.isInteger(unit) || unit < 0 || unit >= levels.length) return;
+    if (s === stage && unit === settings.unit) return;
+    const keepMic = lessonMic && mode === 'read' && s !== 'pictures';
+    setSettings((value) => ({ ...value, unit }));
+    navigate(s, stage === 'pictures' && s !== 'pictures' ? 'read' : mode);
+    setDeck([]);
+    setLessonMic(keepMic);
+  }
   function navigate(s: Stage, m: Mode = mode) {
     setSession((n) => n + 1);
     setFlyInputStatus('');
@@ -821,6 +830,7 @@ export function useLesson() {
   const currentStage = stages.find((s) => s.id === stage)!;
 
   return {
+    changeTopic,
     settings,
     stage,
     currentStage,

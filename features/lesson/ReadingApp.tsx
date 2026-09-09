@@ -1,5 +1,5 @@
 'use client';
-import { ArrowRight, Leaf, Star } from 'lucide-react';
+import { Leaf, Star } from 'lucide-react';
 import { levels } from '@/lib/learning';
 import { stages } from './config';
 import { useLesson } from './use-lesson';
@@ -10,9 +10,10 @@ import LessonHeader from './LessonHeader';
 import LessonSidebar from './LessonSidebar';
 import LessonToolbar from './LessonToolbar';
 import ExerciseCard from './ExerciseCard';
+import TopicNavigation from './TopicNavigation';
 export default function ReadingApp() {
   const model = useLesson();
-  const { settings, stage, currentStage, stars, stop, setParent } = model;
+  const { settings, stage, currentStage, stars, done } = model;
   return (
     <main data-version="lab" className={settings.motion ? 'motion' : 'calm'}>
       <LessonHeader model={model} />
@@ -36,25 +37,16 @@ export default function ReadingApp() {
               {stars} <span className="desktop-word">звёзд</span>
             </span>
           </div>
+          {!done && <TopicNavigation model={model} />}
           <LessonToolbar model={model} />
           <ExerciseCard model={model} />
+          {done && <TopicNavigation model={model} />}
           <div className="foot">
             <Leaf size={16} />{' '}
             {settings.motion
               ? 'Движение включено · можно остановиться в любой момент'
               : 'Без спешки и таймера'}{' '}
             <span>·</span> Отдых через каждые 3 задания
-          </div>
-          <div className="lesson-meta">
-            <button
-              className="text-button"
-              onClick={() => {
-                stop();
-                setParent(true);
-              }}
-            >
-              Выбрать материал <ArrowRight size={14} />
-            </button>
           </div>
         </section>
       </div>

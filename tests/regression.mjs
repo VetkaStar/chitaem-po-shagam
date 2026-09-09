@@ -225,3 +225,10 @@ assert.equal(matchFragment('ха му', 'МУХА'), null);
 console.log(
   'PASS slow reading: stretched vowels, 11-second pause, order, reset, unrelated speech and confidence.',
 );
+const {nextTopic,topicNames}=load('topics');
+assert.equal(topicNames.length,6);
+assert.equal(nextTopic('syllables',0).unit,1);
+assert.equal(nextTopic('syllables',5).stage,'words');
+assert.equal(nextTopic('words',5).stage,'pictures');
+assert.equal(nextTopic('pictures',0).stage,'letters');
+console.log('PASS: next topics and section boundaries.');

@@ -1,28 +1,41 @@
 'use client';
-import { Leaf } from 'lucide-react';
+import { Leaf, Info } from 'lucide-react';
+import { textLabels } from '@/content/reading-library';
 import { stages } from './config';
 import type { LessonModel } from './use-lesson';
 export default function LessonSidebar({
   model,
+  active,
+  onSelect,
+  onAbout,
+  disabled = false,
 }: {
   model: Pick<LessonModel, 'stage' | 'navigate' | 'stop' | 'setRest'>;
+  active: string;
+  onSelect: (id: string) => void;
+  onAbout: () => void;
+  disabled?: boolean;
 }) {
-  const { stage, navigate, stop, setRest } = model;
+  const { stop, setRest } = model;
   return (
     <>
       <aside>
         <p>МОЯ ТРОПИНКА</p>
         <nav aria-label="Разделы">
-          {stages.map((s, i) => (
+          {[
+            ...stages,
+            ...Object.entries(textLabels).map(([id, name]) => ({ id, name })),
+          ].map((s, i) => (
             <button
               key={s.id}
-              className={stage === s.id ? 'selected' : ''}
-              aria-current={stage === s.id ? 'step' : undefined}
-              onClick={() => navigate(s.id)}
+              className={active === s.id ? 'selected' : ''}
+              aria-current={active === s.id ? 'step' : undefined}
+              disabled={disabled}
+              onClick={() => onSelect(s.id)}
             >
               <b>0{i + 1}</b>
               <span>{s.name}</span>
-              {stage === s.id && <span className="stage-dot">●</span>}
+              {active === s.id && <span className="stage-dot">●</span>}
             </button>
           ))}
         </nav>
@@ -43,6 +56,9 @@ export default function LessonSidebar({
           }}
         >
           <Leaf size={18} /> Разминка
+        </button>
+        <button className="break-link about-link" onClick={onAbout}>
+          <Info size={18} /> О проекте
         </button>
       </aside>
     </>

@@ -178,3 +178,115 @@
     height: 95px;
   }
 }
+
+/* One shared frame for lessons, longer texts and profile pages. */
+.header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.app-content {
+  min-width: 0;
+}
+.app-content > .portal-panel {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 30px;
+}
+.app-content > .lesson {
+  width: 100%;
+  min-width: 0;
+}
+.app-content .portal-footer {
+  margin: 20px 0 0;
+  padding: 12px 0;
+}
+.about-link {
+  margin-top: 10px;
+}
+.app-shell aside nav button {
+  min-height: 52px;
+}
+.app-content .library .portal-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.app-shell {
+  align-items: start;
+}
+@media (max-width: 700px) {
+  .header-actions {
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .header-actions button {
+    padding: 8px;
+    font-size: 12px;
+  }
+  .brand .lab-label {
+    display: none;
+  }
+  .app-content > .portal-panel {
+    padding: 20px;
+  }
+  .app-content .library .portal-grid {
+    grid-template-columns: 1fr;
+  }
+  .app-shell aside nav {
+    flex-wrap: wrap;
+  }
+  .app-shell aside .about-link {
+    display: inline-flex;
+  }
+  .app-shell aside .break-link {
+    margin-top: 10px;
+  }
+}
+
+.app-content .library h1 {
+  font-size: 32px;
+  margin: 10px 0 26px;
+}
+.app-shell aside nav button {
+  padding: 14px 16px;
+}
+.app-shell .aside-note {
+  margin-top: 26px;
+}
+@media (max-width: 800px) {
+  .shell.app-shell aside nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+  }
+  .shell.app-shell aside nav button {
+    margin: 0;
+    justify-content: flex-start;
+    min-height: 44px;
+    padding: 10px 12px;
+  }
+  .shell.app-shell aside > .break-link {
+    display: inline-flex;
+    width: auto;
+    margin: 10px 8px 0 0;
+  }
+  .app-content .library h1 {
+    font-size: 27px;
+  }
+}
+@media (max-width: 600px) {
+  header {
+    height: auto;
+    min-height: 80px;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+  .header-actions {
+    margin-left: auto;
+  }
+  .brand .lab-label {
+    display: none;
+  }
+}

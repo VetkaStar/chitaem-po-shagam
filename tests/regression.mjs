@@ -361,3 +361,79 @@ for (const n of [2, 3, 4, 6, 8]) {
 console.log(
   'PASS new content and rest games: complete word parts, synonyms, color groups/sequences and all pair difficulties',
 );
+
+// Render the shared navigation independently of browser/microphone state.
+const React = require('react'),
+  { renderToStaticMarkup } = require('react-dom/server');
+const jsxCache = {};
+function loadView(relative) {
+  if (jsxCache[relative]) return jsxCache[relative];
+  const module = { exports: {} };
+  vm.runInNewContext(
+    ts.transpile(fs.readFileSync(root + '/' + relative, 'utf8'), {
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2022,
+      jsx: ts.JsxEmit.ReactJSX,
+    }),
+    {
+      module,
+      exports: module.exports,
+      require(p) {
+        if (!p.startsWith('.') && !p.startsWith('@/')) return require(p);
+        const base = p.startsWith('@/')
+          ? p.slice(2)
+          : path.posix.join(path.posix.dirname(relative), p);
+        return loadView(
+          base + (fs.existsSync(root + '/' + base + '.tsx') ? '.tsx' : '.ts'),
+        );
+      },
+    },
+  );
+  return (jsxCache[relative] = module.exports);
+}
+const Header = loadView('features/lesson/LessonHeader.tsx').default,
+  Sidebar = loadView('features/lesson/LessonSidebar.tsx').default;
+const noop = () => {},
+  navModel = {
+    stage: 'syllables',
+    navigate: noop,
+    stop: noop,
+    setParent: noop,
+    setRest: noop,
+  };
+const headerHtml = renderToStaticMarkup(
+  React.createElement(Header, {
+    model: navModel,
+    onHome: noop,
+    onCabinet: noop,
+  }),
+);
+assert(headerHtml.includes('Мой кабинет'));
+assert(headerHtml.indexOf('Мой кабинет') < headerHtml.indexOf('Для взрослого'));
+assert(headerHtml.includes('Читаем по шагам — главная'));
+assert(!headerHtml.includes('>Главная<'));
+for (const section of ['syllables', 'sentences', 'stories', 'poems']) {
+  const html = renderToStaticMarkup(
+    React.createElement(Sidebar, {
+      model: navModel,
+      active: section,
+      onSelect: noop,
+      onAbout: noop,
+    }),
+  );
+  for (const label of [
+    'Буквы',
+    'Слоги',
+    'Слова',
+    'Картинки',
+    'Предложения',
+    'Рассказы',
+    'Стихи',
+  ])
+    assert(html.includes(label));
+  assert.equal((html.match(/aria-current="step"/g) || []).length, 1);
+  assert(html.indexOf('Разминка') < html.indexOf('О проекте'));
+}
+console.log(
+  'PASS shared navigation: all seven sections, one current selection, cabinet next to settings, about below rest',
+);

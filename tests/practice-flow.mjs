@@ -14,6 +14,7 @@ let slots = [],
   dirty = false,
   model,
   now = 0;
+const events = new Map();
 const intervals = new Map(),
   storage = new Map(),
   cleanups = [];
@@ -75,7 +76,15 @@ const globals = {
     getItem: (k) => storage.get(k) || null,
     setItem: (k, v) => storage.set(k, v),
   },
-  document: { hidden: false, addEventListener() {}, removeEventListener() {} },
+  document: {
+    hidden: false,
+    addEventListener(name, fn) {
+      events.set(name, fn);
+    },
+    removeEventListener(name) {
+      events.delete(name);
+    },
+  },
   navigator: {
     mediaDevices: {
       getUserMedia() {},
@@ -216,23 +225,40 @@ act((m) => {
   m.update('breakEvery', 0);
   m.setLessonActive(true);
 });
-function seconds(n) {
+function seconds(n, engaged = false) {
   for (let i = 0; i < n; i++) {
     now += 1000;
+    if (engaged && i % 20 === 0) model.schedule.touch();
     [...intervals.values()].forEach((f) => f());
     render();
   }
 }
-seconds(90);
+seconds(600);
+assert(!model.schedule.due, 'Idle open tab must not start rest timer');
+seconds(90, true);
 assert(!model.schedule.due);
 act((m) => m.setLessonActive(false));
 seconds(240);
 assert(!model.schedule.due);
 act((m) => m.setLessonActive(true));
-seconds(90);
+seconds(90, true);
 assert(model.schedule.due);
 assert(model.schedule.shouldRest(1, 8));
 assert(!model.schedule.shouldRest(8, 8));
+
+// Hiding and reopening the tab must not open the rest dialog.
+act((m) => {
+  m.setRest(false);
+  m.setPaused(false);
+});
+globals.document.hidden = true;
+act(() => events.get('visibilitychange')());
+assert(!model.paused);
+assert(!model.rest);
+globals.document.hidden = false;
+act(() => events.get('visibilitychange')());
+assert(!model.paused);
+assert(!model.rest);
 
 // The alphabet accepts a letter name; sound mode explains rather than accepting it.
 act((m) => {

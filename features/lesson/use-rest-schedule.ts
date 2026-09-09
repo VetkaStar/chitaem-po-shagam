@@ -6,6 +6,7 @@ export function useRestSchedule(
   every: number,
   minutes: number,
 ) {
+  const lastActivity = useRef<number | null>(null);
   const elapsed = useRef(0),
     [due, setDue] = useState(false),
     [until, setUntil] = useState(0),
@@ -15,11 +16,17 @@ export function useRestSchedule(
     setDue(false);
   }, [every, minutes]);
   useEffect(() => {
+    if (!active) lastActivity.current = null;
     if (!active || !minutes) return;
     let last = Date.now();
     const id = setInterval(() => {
       const now = Date.now();
-      if (!document.hidden && now >= until)
+      if (
+        !document.hidden &&
+        now >= until &&
+        lastActivity.current !== null &&
+        now - lastActivity.current <= 30000
+      )
         elapsed.current += Math.min(now - last, 2000);
       last = now;
       if (elapsed.current >= minutes * 60000) setDue(true);
@@ -44,5 +51,11 @@ export function useRestSchedule(
     setDue(false);
     setSkips(0);
   }
-  return { due, until, skips, shouldRest, returned, snooze };
+  function touch() {
+    lastActivity.current = Date.now();
+  }
+  function suspend() {
+    lastActivity.current = null;
+  }
+  return { due, until, skips, shouldRest, returned, snooze, touch, suspend };
 }

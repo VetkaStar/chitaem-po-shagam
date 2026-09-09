@@ -295,8 +295,9 @@ export function useLesson() {
   useEffect(() => {
     function hide() {
       if (document.hidden) {
+        schedule.suspend();
         stop();
-        setPaused(true);
+        setLessonMic(false);
       }
     }
     document.addEventListener('visibilitychange', hide);
@@ -510,8 +511,10 @@ export function useLesson() {
       loadingSpeech
     )
       return;
-    if (phase === 'sound') setAttemptStatus('Слышу звук. Читай в своём темпе.');
-    else {
+    if (phase === 'sound') {
+      schedule.touch();
+      setAttemptStatus('Слышу звук. Читай в своём темпе.');
+    } else {
       if (
         stage === 'words' &&
         !slowAttempt.current.progress &&
@@ -821,6 +824,7 @@ export function useLesson() {
     }
     if (awarded.current) return;
     if (!answer.trim()) return;
+    schedule.touch();
     if (!/[а-яё]/i.test(answer)) {
       setFeedback({
         kind: 'uncertain',
@@ -1047,7 +1051,10 @@ export function useLesson() {
     typo,
     setTypo,
     setFeedback,
-    setAnswer,
+    setAnswer: (value: string) => {
+      if (value.trim()) schedule.touch();
+      setAnswer(value);
+    },
     lessonMic,
     cooldown,
     spectrum,

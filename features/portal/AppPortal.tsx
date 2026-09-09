@@ -1,6 +1,10 @@
 'use client';
 import { useEffect, useState, type ReactNode } from 'react';
-import { Home, UserRound, Info, BookOpen } from 'lucide-react';
+import LessonHeader from '../lesson/LessonHeader';
+import LessonSidebar from '../lesson/LessonSidebar';
+import ParentSettings from '../lesson/ParentSettings';
+import RestDialog from '../lesson/RestDialog';
+import MicrophoneConsent from '../lesson/MicrophoneConsent';
 import type { LessonModel } from '../lesson/use-lesson';
 import { stages, type Stage } from '../lesson/config';
 import { textLabels, type TextKind } from '@/content/reading-library';
@@ -30,7 +34,9 @@ export default function AppPortal({
     model.setLessonActive(v === 'lesson');
     model.stop();
     model.setLessonMic(false);
-    model.setPaused(v !== 'lesson');
+    model.setPaused(false);
+    model.setRest(false);
+    model.setParent(false);
     setView(v);
     window.scrollTo({ top: 0, behavior: 'instant' });
   }
@@ -60,108 +66,105 @@ export default function AppPortal({
     );
   return (
     <div className={model.settings.motion ? 'motion' : 'calm'}>
-      <nav className="portal-nav" aria-label="Главное меню">
-        <button onClick={() => go('home')}>
-          <Home size={19} /> Главная
-        </button>
-        <button onClick={() => go('lesson')} disabled={!profile}>
-          <BookOpen size={19} /> Занятие
-        </button>
-        <button onClick={() => go('cabinet')} disabled={!profile}>
-          <UserRound size={19} /> Мой кабинет
-        </button>
-        <button onClick={() => go('about')}>
-          <Info size={19} /> О проекте
-        </button>
-      </nav>
-      {warning && (
-        <p role="alert" className="storage-note">
-          {warning}
-        </p>
-      )}
-      {view === 'about' ? (
-        <About />
-      ) : !profile || view === 'edit' ? (
-        <Welcome
-          profile={profile}
-          onSave={save}
-          onCancel={profile ? () => go('cabinet') : undefined}
+      <LessonHeader
+        model={model}
+        onHome={() => go('home')}
+        onCabinet={() => go('cabinet')}
+        hasProfile={!!profile}
+      />
+      <main data-version="v3" className="shell app-shell">
+        <LessonSidebar
+          model={model}
+          active={view === 'lesson' ? model.stage : view}
+          onSelect={start}
+          onAbout={() => go('about')}
+          disabled={!profile}
         />
-      ) : view === 'lesson' ? (
-        <>
-          <div className="extra-sections" aria-label="Продолжаем читать">
-            {Object.entries(textLabels).map(([id, label]) => (
-              <button key={id} onClick={() => start(id)}>
-                {label} →
+        <div className="app-content">
+          {warning && (
+            <p role="alert" className="storage-note">
+              {warning}
+            </p>
+          )}
+          {view === 'about' ? (
+            <About />
+          ) : !profile || view === 'edit' ? (
+            <Welcome
+              profile={profile}
+              onSave={save}
+              onCancel={profile ? () => go('cabinet') : undefined}
+            />
+          ) : view === 'lesson' ? (
+            children
+          ) : view === 'cabinet' ? (
+            <Cabinet
+              profile={profile}
+              stars={model.stars}
+              onEdit={() => go('edit')}
+            />
+          ) : view in textLabels ? (
+            <TextLibrary key={view} kind={view as TextKind} model={model} />
+          ) : (
+            <section className="portal-panel">
+              <p className="eyebrow">ЧИТАЕМ ПО ШАГАМ · by Vetka_Star</p>
+              <h1>Привет, {profile.name}!</h1>
+              <p className="welcome-note">
+                Для всех детей. Создаём с особым вниманием к детям с аутизмом,
+                СДВГ и ЗПР. Здесь вам рады.
+              </p>
+              <p>
+                Сегодня можно сделать один маленький шаг. Выбери, что тебе
+                интересно.
+              </p>
+              <button className="primary" onClick={() => start(profile.start)}>
+                Начать занятие →
               </button>
-            ))}
-          </div>
-          {children}
-        </>
-      ) : view === 'cabinet' ? (
-        <Cabinet
-          profile={profile}
-          stars={model.stars}
-          onEdit={() => go('edit')}
-        />
-      ) : view in textLabels ? (
-        <TextLibrary key={view} kind={view as TextKind} model={model} />
-      ) : (
-        <section className="portal-panel">
-          <p className="eyebrow">ЧИТАЕМ ПО ШАГАМ · by Vetka_Star</p>
-          <h1>Привет, {profile.name}!</h1>
-          <p className="welcome-note">
-            Для всех детей. Создаём с особым вниманием к детям с аутизмом, СДВГ
-            и ЗПР. Здесь вам рады.
-          </p>
-          <p>
-            Сегодня можно сделать один маленький шаг. Выбери, что тебе
-            интересно.
-          </p>
-          <button className="primary" onClick={() => start(profile.start)}>
-            Начать занятие →
-          </button>
-          <h2>Твоя тропинка чтения</h2>
-          <div className="portal-grid">
-            {[
-              ...stages.map((s) => ({ id: s.id, name: s.name })),
-              ...Object.entries(textLabels).map(([id, name]) => ({ id, name })),
-            ].map((s, i) => (
-              <button
-                className="portal-card"
-                key={s.id}
-                onClick={() => start(s.id)}
-              >
-                <small>ШАГ {i + 1}</small>
-                <b>{s.name}</b>
-                <span>
-                  {
-                    [
-                      'Узнаём буквы',
-                      'Соединяем звуки и собираем слова',
-                      'Читаем целое слово',
-                      'Называем то, что видим',
-                      'Слова дружат друг с другом',
-                      'Читаем и понимаем',
-                      'Слушаем ритм и читаем',
-                    ][i]
-                  }
-                </span>
-              </button>
-            ))}
-          </div>
-          <p className="storage-note">
-            Прогресс сохраняется в этом браузере. Перенос на другие устройства
-            добавим позже.
-          </p>
-        </section>
-      )}
-      <footer className="portal-footer">
-        <span>by Vetka_Star</span>
-        <button className="text-button" onClick={() => go('about')}>
-          О проекте и поддержка
-        </button>
-      </footer>
+              <h2>Твоя тропинка чтения</h2>
+              <div className="portal-grid">
+                {[
+                  ...stages.map((s) => ({ id: s.id, name: s.name })),
+                  ...Object.entries(textLabels).map(([id, name]) => ({
+                    id,
+                    name,
+                  })),
+                ].map((s, i) => (
+                  <button
+                    className="portal-card"
+                    key={s.id}
+                    onClick={() => start(s.id)}
+                  >
+                    <small>ШАГ {i + 1}</small>
+                    <b>{s.name}</b>
+                    <span>
+                      {
+                        [
+                          'Узнаём буквы',
+                          'Соединяем звуки и собираем слова',
+                          'Читаем целое слово',
+                          'Называем то, что видим',
+                          'Слова дружат друг с другом',
+                          'Читаем и понимаем',
+                          'Слушаем ритм и читаем',
+                        ][i]
+                      }
+                    </span>
+                  </button>
+                ))}
+              </div>
+              <p className="storage-note">
+                Прогресс сохраняется в этом браузере. Перенос на другие
+                устройства добавим позже.
+              </p>
+            </section>
+          )}
+          <footer className="portal-footer">
+            <span>by Vetka_Star</span>
+          </footer>
+        </div>
+      </main>
+      <ParentSettings model={model} />
+      <RestDialog model={model} />
+      <MicrophoneConsent model={model} />
     </div>
   );
 }

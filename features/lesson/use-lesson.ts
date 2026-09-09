@@ -1,4 +1,5 @@
 'use client';
+import { parseVision } from '@/lib/vision';
 import { useRestSchedule } from './use-rest-schedule';
 import { freshWordDeck, wordParts } from '@/content/word-bank';
 import { useEffect, useRef, useState } from 'react';
@@ -235,6 +236,7 @@ export function useLesson() {
                     ? 10
                     : s.unit
               : 0,
+          colorVision: parseVision(s.colorVision),
           pictureMode: s.pictureMode === 'letters' ? 'letters' : 'free',
           wordMode: s.wordMode === 'parts' ? 'parts' : 'whole',
           letterMode: s.letterMode === 'sounds' ? 'sounds' : 'alphabet',

@@ -1,4 +1,6 @@
 'use client';
+import VisionSettings from './VisionSettings';
+import { visionStyle } from '@/lib/vision';
 import { Mic, MicOff, ArrowRight, Download } from 'lucide-react';
 import {
   Dialog,
@@ -64,7 +66,11 @@ export default function ParentSettings({
           setParent(v);
         }}
       >
-        <DialogContent className="parent-dialog">
+        <DialogContent
+          className="parent-dialog"
+          data-vision={settings.colorVision}
+          style={visionStyle(settings.colorVision)}
+        >
           <DialogTitle className="dialog-heading">Настроим занятие</DialogTitle>
           <DialogDescription>
             Настройки и результаты сохраняются только в этом браузере на этом
@@ -144,6 +150,10 @@ export default function ParentSettings({
               ))}
             </select>
           </div>
+          <VisionSettings
+            value={settings.colorVision}
+            onChange={(v) => update('colorVision', v)}
+          />
           {(
             [
               [
@@ -164,7 +174,9 @@ export default function ParentSettings({
               [
                 'color',
                 'Цветные буквы',
-                'Гласные — терракотовые, согласные — зелёные.',
+                settings.colorVision === 'off'
+                  ? 'Гласные — терракотовые, согласные — зелёные.'
+                  : 'Гласные — двойная линия, согласные — одна линия.',
               ],
             ] as const
           ).map(([k, title, sub]) => (

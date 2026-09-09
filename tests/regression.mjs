@@ -437,3 +437,63 @@ for (const section of ['syllables', 'sentences', 'stories', 'poems']) {
 console.log(
   'PASS shared navigation: all seven sections, one current selection, cabinet next to settings, about below rest',
 );
+
+const { visionProfiles, parseVision, bubbleSymbols } = load('vision');
+assert.equal(parseVision('unknown'), 'off');
+assert.equal(parseVision('__proto__'), 'off');
+assert.equal(parseVision(null), 'off');
+assert.equal(new Set(bubbleSymbols.map((s) => s.symbol)).size, 5);
+function luminance(hex) {
+  const rgb = hex
+    .match(/[0-9a-f]{2}/gi)
+    .map((v) => parseInt(v, 16) / 255)
+    .map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+}
+function contrast(a, b) {
+  const x = luminance(a),
+    y = luminance(b);
+  return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+}
+const VisionSettings = loadView('features/lesson/VisionSettings.tsx').default,
+  Slots = loadView('features/lesson/LetterSlots.tsx').default,
+  Bubbles = loadView('components/color-bubbles.tsx').default;
+for (const mode of ['protan', 'deutan', 'tritan', 'mono']) {
+  assert.equal(parseVision(mode), mode);
+  for (const ink of [visionProfiles[mode].first, visionProfiles[mode].second])
+    for (const bg of ['#ffffff', '#fffefb', '#f7f8f2'])
+      assert(contrast(ink, bg) >= 4.5, `${mode} ${ink} contrast on ${bg}`);
+  const preview = renderToStaticMarkup(
+    React.createElement(VisionSettings, { value: mode, onChange: noop }),
+  );
+  assert(preview.includes('двойная линия'));
+  const slots = renderToStaticMarkup(
+    React.createElement(Slots, {
+      target: 'СЫР',
+      value: '',
+      onChange: noop,
+      onSubmit: noop,
+      attempts: 1,
+      disabled: false,
+      vision: mode,
+    }),
+  );
+  assert(slots.includes('Двойная линия'));
+  assert(!slots.includes('Красные окошки'));
+  const bubbles = renderToStaticMarkup(
+    React.createElement(Bubbles, {
+      motion: false,
+      sound: false,
+      autoSpeech: false,
+      onSpeak: noop,
+      onTone: noop,
+      vision: mode,
+    }),
+  );
+  assert(bubbles.includes('со звездой'));
+  assert(bubbles.includes('плюс, ромб, квадрат'));
+  assert(!bubbles.includes('По очереди: красный'));
+}
+console.log(
+  'PASS vision: validated profiles, 4.5:1 palette contrast, distinct symbols, non-color slot and bubble instructions',
+);

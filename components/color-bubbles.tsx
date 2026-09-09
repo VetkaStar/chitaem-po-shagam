@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { bubbleSymbols, type VisionMode } from '@/lib/vision';
 import { bubbleRound, bubbleChoice } from '@/lib/rest-games';
 const colors = [
   { name: 'розовые', single: 'розовый', fill: '#ee92bb' },
@@ -14,7 +15,9 @@ export default function ColorBubbles({
   autoSpeech,
   onSpeak,
   onTone,
+  vision = 'off',
 }: {
+  vision?: VisionMode;
   motion: boolean;
   sound: boolean;
   autoSpeech: boolean;
@@ -52,18 +55,28 @@ export default function ColorBubbles({
   }, [mode, density, round]);
   const done = order.length > 0 && step >= order.length,
     color = colors[order[Math.min(step, order.length - 1)] ?? 0];
+  const symbols = vision !== 'off',
+    mark = bubbleSymbols[order[Math.min(step, order.length - 1)] ?? 0];
   const task = done
     ? 'Все пузыри по заданию найдены! Молодец!'
-    : mode === 'sequence'
-      ? `Теперь лопни один ${color.single} пузырь.`
-      : `Лопни все ${color.name} пузыри.`;
+    : symbols
+      ? mode === 'sequence'
+        ? `Лопни один пузырь ${mark.with}.`
+        : `Лопни все пузыри ${mark.with}.`
+      : mode === 'sequence'
+        ? `Теперь лопни один ${color.single} пузырь.`
+        : `Лопни все ${color.name} пузыри.`;
   useEffect(() => {
     if (sound && autoSpeech && order.length) speaker.current(task);
   }, [task, sound, autoSpeech, order.length, round]);
   function pop(i: number) {
     if (done || locked.current || caught.current.has(i)) return;
     if (board[i] !== order[step]) {
-      setMessage(`Сейчас нужен ${color.single}. Посмотри на образец.`);
+      setMessage(
+        symbols
+          ? `Нужен пузырь ${mark.with}. Посмотри на образец.`
+          : `Сейчас нужен ${color.single}. Посмотри на образец.`,
+      );
       return;
     }
     const result = bubbleChoice(
@@ -91,7 +104,12 @@ export default function ColorBubbles({
         },
         mode === 'sequence' ? 650 : 1200,
       );
-    } else setMessage('Верно! Найди остальные такого же цвета.');
+    } else
+      setMessage(
+        symbols
+          ? 'Верно! Найди остальные с таким же знаком.'
+          : 'Верно! Найди остальные такого же цвета.',
+      );
   }
   return (
     <div className="color-bubbles">
@@ -99,8 +117,14 @@ export default function ColorBubbles({
         <label>
           Игра{' '}
           <select value={mode} onChange={(e) => setMode(e.target.value)}>
-            <option value="colors">Собери один цвет</option>
-            <option value="sequence">По очереди: красный, жёлтый, синий</option>
+            <option value="colors">
+              {symbols ? 'Собери одинаковые знаки' : 'Собери один цвет'}
+            </option>
+            <option value="sequence">
+              {symbols
+                ? 'По очереди: плюс, ромб, квадрат'
+                : 'По очереди: красный, жёлтый, синий'}
+            </option>
           </select>
         </label>
         <label>
@@ -134,11 +158,17 @@ export default function ColorBubbles({
         </button>
       </div>
       <div className="bubble-goal">
-        <span
-          className="color-swatch"
-          style={{ background: color.fill }}
-          aria-hidden
-        />
+        {symbols ? (
+          <span className="vision-symbol" aria-hidden>
+            {mark.symbol}
+          </span>
+        ) : (
+          <span
+            className="color-swatch"
+            style={{ background: color.fill }}
+            aria-hidden
+          />
+        )}
         <p>{task}</p>
         {sound && (
           <button
@@ -157,13 +187,19 @@ export default function ColorBubbles({
               className={i === step ? 'current' : i < step ? 'finished' : ''}
               style={{ background: colors[c].fill }}
             >
-              {i + 1}. {colors[c].single}
+              {i + 1}.{' '}
+              {symbols
+                ? `${bubbleSymbols[c].symbol} ${bubbleSymbols[c].name}`
+                : colors[c].single}
             </span>
           ))}
         </div>
       )}
       <p role="status" className="bubble-response">
-        {message || 'Выбирай нужный цвет. Можно не торопиться.'}
+        {message ||
+          (symbols
+            ? 'Ищи такой же знак, как на образце. Цвет можно не различать.'
+            : 'Выбирай нужный цвет. Можно не торопиться.')}
       </p>
       <div
         className={
@@ -182,11 +218,23 @@ export default function ColorBubbles({
                 animationDelay: `-${i * 1.7}s`,
                 animationDuration: `${(9 + (i % 3) * 2) / speed}s`,
               }}
-              aria-label={`${colors[c].single} пузырь ${i + 1}`}
+              aria-label={
+                symbols
+                  ? `Пузырь ${bubbleSymbols[c].with} ${i + 1}`
+                  : `${colors[c].single} пузырь ${i + 1}`
+              }
               disabled={done || popped.includes(i)}
               onClick={() => pop(i)}
             >
-              {popped.includes(i) ? '✓' : ''}
+              {popped.includes(i) ? (
+                '✓'
+              ) : symbols ? (
+                <span className="vision-symbol" aria-hidden>
+                  {bubbleSymbols[c].symbol}
+                </span>
+              ) : (
+                ''
+              )}
             </button>
           </div>
         ))}

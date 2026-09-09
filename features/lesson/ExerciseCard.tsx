@@ -278,6 +278,14 @@ export default function ExerciseCard({
                 ))}
               </div>
             )}
+            {settings.colorVision !== 'off' &&
+              settings.color &&
+              mode === 'read' && (
+                <p className="vision-legend">
+                  <span className="vowel">Гласные — двойная линия</span> ·{' '}
+                  <span className="consonant">Согласные — одна линия</span>
+                </p>
+              )}
             {stage === 'words' && mode === 'read' && (
               <>
                 {entry?.icon && (
@@ -368,6 +376,7 @@ export default function ExerciseCard({
               </button>
             ) : picture && settings.pictureMode === 'letters' ? (
               <LetterSlots
+                vision={settings.colorVision}
                 key={target + '-' + index}
                 target={target}
                 value={answer}

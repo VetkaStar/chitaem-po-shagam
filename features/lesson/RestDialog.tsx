@@ -6,6 +6,7 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { useRef, useEffect } from 'react';
+import { visionStyle } from '@/lib/vision';
 import RestHub from '@/components/rest-hub';
 import type { LessonModel } from './use-lesson';
 export default function RestDialog({
@@ -51,7 +52,11 @@ export default function RestDialog({
           }
         }}
       >
-        <DialogContent className="rest-dialog hub-dialog">
+        <DialogContent
+          className="rest-dialog hub-dialog"
+          data-vision={settings.colorVision}
+          style={visionStyle(settings.colorVision)}
+        >
           <DialogTitle className="dialog-heading">Время отдохнуть</DialogTitle>
           <DialogDescription>
             Можно выбрать игру, размяться или просто побыть в тишине.
@@ -60,6 +65,7 @@ export default function RestDialog({
             onEngage={() => {
               engaged.current = true;
             }}
+            vision={settings.colorVision}
             motion={settings.motion}
             autoSpeech={settings.autoSpeech}
             sound={settings.sound}

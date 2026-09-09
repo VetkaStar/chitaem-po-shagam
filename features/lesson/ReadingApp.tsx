@@ -1,5 +1,6 @@
 'use client';
 import './practice.css';
+import './vision.css';
 import AppPortal from '../portal/AppPortal';
 import { Leaf, Star } from 'lucide-react';
 import { levels } from '@/lib/learning';

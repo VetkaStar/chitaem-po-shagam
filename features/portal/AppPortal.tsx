@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState, type ReactNode } from 'react';
+import { visionStyle } from '@/lib/vision';
 import LessonHeader from '../lesson/LessonHeader';
 import LessonSidebar from '../lesson/LessonSidebar';
 import ParentSettings from '../lesson/ParentSettings';
@@ -65,7 +66,11 @@ export default function AppPortal({
       </main>
     );
   return (
-    <div className={model.settings.motion ? 'motion' : 'calm'}>
+    <div
+      data-vision={model.settings.colorVision}
+      style={visionStyle(model.settings.colorVision)}
+      className={model.settings.motion ? 'motion' : 'calm'}
+    >
       <LessonHeader
         model={model}
         onHome={() => go('home')}

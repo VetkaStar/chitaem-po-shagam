@@ -1,4 +1,5 @@
 'use client';
+import type { VisionMode } from '@/lib/vision';
 import { useEffect, useRef } from 'react';
 export default function LetterSlots({
   target,
@@ -7,6 +8,7 @@ export default function LetterSlots({
   onSubmit,
   attempts,
   disabled,
+  vision = 'off',
 }: {
   target: string;
   value: string;
@@ -14,6 +16,7 @@ export default function LetterSlots({
   onSubmit: () => void;
   attempts: number;
   disabled: boolean;
+  vision?: VisionMode;
 }) {
   const refs = useRef<(HTMLInputElement | null)[]>([]);
   useEffect(() => {
@@ -85,8 +88,10 @@ export default function LetterSlots({
       </div>
       {attempts >= 1 && (
         <p className="muted">
-          Красные окошки — гласные, зелёные — согласные. Это подсказка о буквах,
-          не оценка ответа.
+          {vision === 'off'
+            ? 'Красные окошки — гласные, зелёные — согласные.'
+            : 'Двойная линия под окошком — гласная, одна линия — согласная.'}{' '}
+          Это подсказка о буквах, не оценка ответа.
         </p>
       )}
       {attempts >= 2 && (

@@ -1,3 +1,4 @@
+import type { VisionMode } from '@/lib/vision';
 export type Stage = 'letters' | 'syllables' | 'words' | 'pictures';
 export type Mode = 'read' | 'fly' | 'type';
 export type Feedback = {
@@ -19,6 +20,7 @@ export type Settings = {
   autoSpeech: boolean;
   slow: boolean;
   color: boolean;
+  colorVision: VisionMode;
   micConsent: boolean;
   micDevice: string;
 };
@@ -45,6 +47,7 @@ export const defaults: Settings = {
   autoSpeech: false,
   slow: true,
   color: true,
+  colorVision: 'off',
   micConsent: false,
   micDevice: '',
 };

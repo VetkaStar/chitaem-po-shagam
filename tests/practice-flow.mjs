@@ -292,6 +292,16 @@ assert.equal(model.stars, soundStars);
 assert.match(model.feedback.text, /назвал букву/);
 act(() => speechOptions.onResult({ text: 'м', result: [{ conf: 1 }] }));
 assert.equal(model.stars, soundStars + 1);
+const visionStars = model.stars;
+for (const mode of ['protan', 'deutan', 'tritan', 'mono', 'off']) {
+  act((m) => m.update('colorVision', mode));
+  assert.equal(model.settings.colorVision, mode);
+  assert.equal(
+    JSON.parse(storage.get('reading-steps-v3')).settings.colorVision,
+    mode,
+  );
+  assert.equal(model.stars, visionStars);
+}
 for (const slot of slots) slot?.cleanup?.();
 console.log(
   'PASS practice flow: synonyms, progressive letter help, fresh words, parts→whole, stars, timed rests, pause and snooze',

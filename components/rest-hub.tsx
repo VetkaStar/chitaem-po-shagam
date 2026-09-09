@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { breaks } from '@/lib/learning';
 import MatchPairs from './match-pairs';
+import type { VisionMode } from '@/lib/vision';
 import ColorBubbles from '@/components/color-bubbles';
 
 type Game = 'menu' | 'move' | 'bubbles' | 'pairs' | 'music';
@@ -11,6 +12,7 @@ export default function RestHub({
   sound,
   motion,
   autoSpeech,
+  vision = 'off',
   onSpeak,
   onReturn,
   onEngage,
@@ -18,6 +20,7 @@ export default function RestHub({
   sound: boolean;
   motion: boolean;
   autoSpeech: boolean;
+  vision?: VisionMode;
   onSpeak: (s: string) => void;
   onReturn: () => void;
   onEngage: () => void;
@@ -145,6 +148,7 @@ export default function RestHub({
               sound={sound}
               motion={motion}
               autoSpeech={autoSpeech}
+              vision={vision}
               onSpeak={onSpeak}
               onTone={() => tone(2, 0.14)}
             />

@@ -111,13 +111,31 @@ export default function ParentSettings({
             </Select>
           </div>
           <div className="setting">
-            <label><b>Как часто предлагать отдых</b><small>Считаем задания, а не минуты. Кнопка «Пауза» доступна всегда.</small></label>
-            <Select value={String(settings.breakEvery)} onValueChange={(v) => {
-              if (v !== null) update('breakEvery', Number(v));
-            }}>
-              <SelectTrigger aria-label="Частота разминок"><SelectValue>{settings.breakEvery ? `Через ${settings.breakEvery} заданий` : 'Только по кнопке'}</SelectValue></SelectTrigger>
+            <label>
+              <b>Как часто предлагать отдых</b>
+              <small>
+                Считаем задания, а не минуты. Кнопка «Пауза» доступна всегда.
+              </small>
+            </label>
+            <Select
+              value={String(settings.breakEvery)}
+              onValueChange={(v) => {
+                if (v !== null) update('breakEvery', Number(v));
+              }}
+            >
+              <SelectTrigger aria-label="Частота разминок">
+                <SelectValue>
+                  {settings.breakEvery
+                    ? `Через ${settings.breakEvery} заданий`
+                    : 'Только по кнопке'}
+                </SelectValue>
+              </SelectTrigger>
               <SelectContent>
-                {[3, 5, 8, 10, 0].map((n) => <SelectItem key={n} value={String(n)}>{n ? `Через ${n} заданий` : 'Только по кнопке'}</SelectItem>)}
+                {[3, 5, 8, 10, 0].map((n) => (
+                  <SelectItem key={n} value={String(n)}>
+                    {n ? `Через ${n} заданий` : 'Только по кнопке'}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -240,8 +258,8 @@ export default function ParentSettings({
             <p>
               Начните с 3–5 заданий. Один экран — одно действие. Можно отвечать
               голосом, с клавиатуры или вместе со взрослым. Остановитесь раньше,
-              если ребёнок устал. Усложнение выбирает взрослый; все разделы
-              доступны.
+              если ребёнок устал. Следующий шаг можно выбрать вместе; все
+              разделы доступны.
             </p>
             <p>
               На кнопке «Послушать название» звучит название буквы. Для слияния
@@ -288,9 +306,10 @@ export default function ParentSettings({
               <summary>Учебник и источники</summary>
               <p>
                 Аксёнова А. К., Комарова С. В., Шишкова М. И. «Букварь», часть
-                1. Проверены страницы 40–53: М → обратные слоги → прямые слоги →
-                О → Х → С. Последующие наборы и игры — авторское дополнение, не
-                полный цифровой учебник. Иллюстрации книги не переиздаются.
+                1. Проверены страницы 40–53, а также 54, 58, 61 и 62: М →
+                обратные слоги → прямые слоги → О → Х → С → Н → Ы → Л.
+                Последующие наборы и игры — авторское дополнение, не полный
+                цифровой учебник. Иллюстрации книги не переиздаются.
               </p>
               <a
                 href="http://i.internat5vlg.ru/u/ea/abe0f684c111ea83f3b5f3c7fe5d55/-/Букварь%201%20класс%20часть%201%20АОП%20%28Аксенова%29.pdf"

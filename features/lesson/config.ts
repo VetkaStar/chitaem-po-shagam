@@ -6,6 +6,7 @@ export type Feedback = {
 };
 export type Settings = {
   unit: number;
+  curriculumVersion: number;
   length: number;
   breakEvery: number;
   motion: boolean;
@@ -26,6 +27,7 @@ export type Entry = {
 };
 export const defaults: Settings = {
   unit: 0,
+  curriculumVersion: 2,
   length: 5,
   breakEvery: 5,
   motion: true,

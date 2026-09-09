@@ -153,11 +153,19 @@ const { startLocalSpeech } = load('local-speech', {
     },
   },
   fetch: async (url) => {
-    assert.equal(url, 'https://example.github.io/reading-app/speech/model.json');
+    assert.equal(
+      url,
+      'https://example.github.io/reading-app/speech/model.json',
+    );
     return { ok: true, json: async () => ({ bytes: 0, parts: [] }) };
   },
   document: { baseURI: 'https://example.github.io/reading-app/' },
-  URL: class extends URL { static createObjectURL() { return ''; } static revokeObjectURL() {} },
+  URL: class extends URL {
+    static createObjectURL() {
+      return '';
+    }
+    static revokeObjectURL() {}
+  },
   Blob,
   performance: { now: () => 100 },
   requestAnimationFrame: () => 1,
@@ -225,12 +233,12 @@ assert.equal(matchFragment('ха му', 'МУХА'), null);
 console.log(
   'PASS slow reading: stretched vowels, 11-second pause, order, reset, unrelated speech and confidence.',
 );
-const {nextTopic,topicNames}=load('topics');
-assert.equal(topicNames.length,6);
-assert.equal(nextTopic('syllables',0).unit,1);
-assert.equal(nextTopic('syllables',5).stage,'words');
-assert.equal(nextTopic('words',5).stage,'pictures');
-assert.equal(nextTopic('pictures',0).stage,'letters');
+const { nextTopic, topicNames } = load('topics');
+assert.equal(topicNames.length, 13);
+assert.equal(nextTopic('syllables', 0).unit, 1);
+assert.equal(nextTopic('syllables', 12).stage, 'words');
+assert.equal(nextTopic('words', 12).stage, 'pictures');
+assert.equal(nextTopic('pictures', 0).stage, 'letters');
 console.log('PASS: next topics and section boundaries.');
 
 const { breakDue } = load('breaks');
@@ -241,3 +249,38 @@ assert.equal(breakDue(3, 3, 8), true);
 assert.equal(breakDue(6, 3, 8), true);
 assert.equal(breakDue(5, 0, 8), false);
 console.log('Break frequency and lesson-end priority passed');
+
+const curriculum = load('learning').levels;
+assert.equal(curriculum.length, 13);
+for (const level of curriculum.slice(0, -1)) {
+  assert(level.syllables.length > 0);
+  for (const text of [...level.syllables, ...level.words])
+    assert(
+      Array.from(text).every((l) => level.letters.includes(l)),
+      'Unknown letter in ' + text,
+    );
+}
+const { availableBridges } = load('../content/word-bridges');
+for (const level of curriculum)
+  for (const b of availableBridges(level.letters))
+    assert.equal(b.parts.join(''), b.word);
+assert.equal(availableBridges(curriculum[0].letters)[0].word, 'МАМА');
+const { parseProfile } = load('../features/portal/profile');
+assert.equal(parseProfile('{bad'), null);
+assert.equal(
+  parseProfile(JSON.stringify({ name: '', age: '6', start: 'words' })),
+  null,
+);
+assert.equal(
+  parseProfile(JSON.stringify({ name: 'Тест', age: '6', start: 'words' })).name,
+  'Тест',
+);
+const texts = load('../content/reading-library').readingTexts;
+assert.equal(new Set(texts.map((t) => t.id)).size, texts.length);
+for (const t of texts) {
+  assert(t.lines.length);
+  assert.equal(t.options.filter((o) => o === t.answer).length, 1);
+}
+console.log(
+  'PASS: curriculum, word bridges, profile validation and comprehension content',
+);

@@ -1,0 +1,73 @@
+'use client';
+import { useMemo, useState } from 'react';
+import { Volume2 } from 'lucide-react';
+import { availableBridges } from '@/content/word-bridges';
+import { levels } from '@/lib/learning';
+import { shuffled } from '@/lib/session';
+export default function WordBridge({
+  unit,
+  target,
+  speak,
+  sound,
+}: {
+  unit: number;
+  target: string;
+  speak: (s: string) => void;
+  sound: boolean;
+}) {
+  const item = useMemo(() => {
+    const all = availableBridges(levels[unit].letters);
+    return (
+      all.find((b) => b.parts.includes(target)) ||
+      all[Math.floor(Math.random() * all.length)]
+    );
+  }, [unit, target]);
+  const cards = useMemo(
+    () => (item ? shuffled(item.parts.map((text, id) => ({ text, id }))) : []),
+    [item],
+  );
+  const [chosen, setChosen] = useState<number[]>([]),
+    [message, setMessage] = useState('');
+  if (!item) return null;
+  const done = chosen.length === item.parts.length;
+  return (
+    <section className="word-bridge" aria-label="Из слогов в слово">
+      <h3>Смотри, слоги умеют дружить!</h3>
+      <p>
+        Собери слово по порядку: <b>{item.parts.join(' · ')}</b>
+      </p>
+      <div className="bridge-slots" aria-label="Собранные слоги">
+        {item.parts.map((p, i) => (
+          <span key={i}>{i < chosen.length ? p : '…'}</span>
+        ))}
+      </div>
+      <div className="portal-actions">
+        {cards.map((c) => (
+          <button
+            key={c.id}
+            disabled={chosen.includes(c.id) || done}
+            onClick={() => {
+              if (c.text === item.parts[chosen.length]) {
+                setChosen((v) => [...v, c.id]);
+                setMessage('Получается!');
+              } else
+                setMessage(
+                  'Найди слог ' +
+                    item.parts[chosen.length] +
+                    '. Он идёт следующим.',
+                );
+            }}
+          >
+            {c.text}
+          </button>
+        ))}
+      </div>
+      <p role="status">{done ? `${item.word}! ${item.meaning}` : message}</p>
+      {done && sound && (
+        <button className="text-button" onClick={() => speak(item.word)}>
+          <Volume2 size={18} /> Послушать слово
+        </button>
+      )}
+    </section>
+  );
+}

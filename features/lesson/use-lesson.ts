@@ -1,5 +1,5 @@
-import { breakDue } from '@/lib/breaks';
 'use client';
+import { breakDue } from '@/lib/breaks';
 import { useEffect, useRef, useState } from 'react';
 import { levels, pictures, breaks, checkTyped } from '@/lib/learning';
 import { wordPool, makeDeck, pictureAnswer } from '@/lib/session';
@@ -193,10 +193,19 @@ export function useLesson() {
           ),
           unit:
             Number.isInteger(s.unit) && s.unit >= 0 && s.unit < levels.length
-              ? s.unit
+              ? s.curriculumVersion === 2
+                ? s.unit
+                : s.unit === 5
+                  ? levels.length - 1
+                  : s.unit === 4
+                    ? 10
+                    : s.unit
               : 0,
+          curriculumVersion: 2,
           length: [3, 5, 8].includes(s.length) ? s.length : 5,
-          breakEvery: [0, 3, 5, 8, 10].includes(s.breakEvery) ? s.breakEvery : defaults.breakEvery,
+          breakEvery: [0, 3, 5, 8, 10].includes(s.breakEvery)
+            ? s.breakEvery
+            : defaults.breakEvery,
         });
         if (Number.isInteger(raw.stars) && raw.stars >= 0) setStars(raw.stars);
         if (Array.isArray(raw.history))
@@ -356,7 +365,7 @@ export function useLesson() {
         : 0;
     const candidates =
       stage === 'words'
-        ? wordPool(5)
+        ? wordPool(levels.length - 1)
         : levels.flatMap((l) => l[stage === 'pictures' ? 'words' : stage]);
     const verdict = classifyUtterance(
       text,
@@ -456,7 +465,7 @@ export function useLesson() {
     recognition.current = startLocalSpeech({
       deviceId: settings.micDevice,
       vocabulary: [
-        ...wordPool(5),
+        ...wordPool(levels.length - 1),
         ...levels.flatMap((l) => [
           ...(stage === 'letters' ? l.letters.map((x) => names[x] || x) : []),
           ...l.syllables,
@@ -692,7 +701,11 @@ export function useLesson() {
     }
   }
   function showTypo() {
-    const correction = findTypo(answer, target, picture ? wordPool(5) : []);
+    const correction = findTypo(
+      answer,
+      target,
+      picture ? wordPool(levels.length - 1) : [],
+    );
     if (!correction) return false;
     setTypo(correction);
     setHint(false);
@@ -831,7 +844,24 @@ export function useLesson() {
   }, [stage, mode, target, count, settings.length, paused, rest, parent, done]);
   const currentStage = stages.find((s) => s.id === stage)!;
 
+  function awardReadingText(id: string, title: string) {
+    setStars((n) => n + 1);
+    setHistory((h) =>
+      [
+        ...h,
+        {
+          at: new Date().toISOString(),
+          target: title,
+          stage: 'words' as Stage,
+          mode: 'read' as Mode,
+          result: 'comprehension',
+          via: id,
+        },
+      ].slice(-300),
+    );
+  }
   return {
+    awardReadingText,
     changeTopic,
     settings,
     stage,

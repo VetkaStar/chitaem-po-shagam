@@ -1,3 +1,4 @@
+@import "../features/portal/portal.css";
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @theme inline{--color-background:#fffefb;--color-foreground:#203c31;--color-primary:#34785b;--color-primary-foreground:#fff;--color-muted:#eef0e7;--color-muted-foreground:#66746b;--color-input:#d5ddd2;--color-ring:#377c60;--color-popover:#fffefb;--color-popover-foreground:#203c31;--font-sans:Arial,sans-serif}

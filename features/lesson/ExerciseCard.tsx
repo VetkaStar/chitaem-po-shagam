@@ -1,4 +1,5 @@
 'use client';
+import WordBridge from './WordBridge';
 import { useEffect, useRef } from 'react';
 import {
   Volume2,
@@ -280,7 +281,11 @@ export default function ExerciseCard({
               <form
                 className="answer-form"
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' && (e.repeat || e.nativeEvent.isComposing)) e.preventDefault();
+                  if (
+                    e.key === 'Enter' &&
+                    (e.repeat || e.nativeEvent.isComposing)
+                  )
+                    e.preventDefault();
                 }}
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -554,10 +559,26 @@ export default function ExerciseCard({
                 )}
               </div>
             )}
+            {stage === 'syllables' &&
+              feedback.kind === 'success' &&
+              (count + 1) % 2 === 0 && (
+                <WordBridge
+                  key={index}
+                  unit={settings.unit}
+                  target={target}
+                  speak={speak}
+                  sound={settings.sound}
+                />
+              )}
             {feedback.kind === 'success' ? (
-              <button ref={nextButton} className="primary" onClick={() => next()}
-                onKeyDown={(e) => { if (e.key === 'Enter' && e.repeat) e.preventDefault(); }}>
-
+              <button
+                ref={nextButton}
+                className="primary"
+                onClick={() => next()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && e.repeat) e.preventDefault();
+                }}
+              >
                 Дальше · Enter <ArrowRight />
               </button>
             ) : mode === 'read' ? (

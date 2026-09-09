@@ -114,30 +114,35 @@ export default function ParentSettings({
             <label>
               <b>Как часто предлагать отдых</b>
               <small>
-                Считаем задания, а не минуты. Кнопка «Пауза» доступна всегда.
+                Можно выбрать задания или минуты. По времени — после текущего
+                задания. Отдых и главное меню не считаются.
               </small>
             </label>
-            <Select
-              value={String(settings.breakEvery)}
-              onValueChange={(v) => {
-                if (v !== null) update('breakEvery', Number(v));
+            <select
+              aria-label="Частота разминок"
+              value={
+                settings.breakMinutes
+                  ? 'm' + settings.breakMinutes
+                  : 't' + settings.breakEvery
+              }
+              onChange={(e) => {
+                const v = e.target.value;
+                update('breakMinutes', v[0] === 'm' ? Number(v.slice(1)) : 0);
+                update('breakEvery', v[0] === 't' ? Number(v.slice(1)) : 0);
               }}
             >
-              <SelectTrigger aria-label="Частота разминок">
-                <SelectValue>
-                  {settings.breakEvery
-                    ? `Через ${settings.breakEvery} заданий`
-                    : 'Только по кнопке'}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {[3, 5, 8, 10, 0].map((n) => (
-                  <SelectItem key={n} value={String(n)}>
-                    {n ? `Через ${n} заданий` : 'Только по кнопке'}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              <option value="t0">Только по кнопке</option>
+              {[3, 5, 8, 10].map((n) => (
+                <option key={'t' + n} value={'t' + n}>
+                  Через {n} заданий
+                </option>
+              ))}
+              {[3, 5, 10, 15].map((n) => (
+                <option key={'m' + n} value={'m' + n}>
+                  Через {n} минут занятия
+                </option>
+              ))}
+            </select>
           </div>
           {(
             [

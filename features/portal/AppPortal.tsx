@@ -27,6 +27,7 @@ export default function AppPortal({
     setLoaded(true);
   }, []);
   function go(v: string) {
+    model.setLessonActive(v === 'lesson');
     model.stop();
     model.setLessonMic(false);
     model.setPaused(v !== 'lesson');

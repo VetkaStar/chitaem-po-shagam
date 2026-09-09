@@ -1,0 +1,180 @@
+.practice-controls,
+.game-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin: 12px 0 20px;
+}
+.practice-controls label,
+.game-controls label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+}
+.practice-controls select,
+.game-controls select {
+  padding: 8px;
+  border: 1px solid #ccd9c8;
+  border-radius: 12px;
+  background: #fff;
+  max-width: 100%;
+}
+.practice-controls button {
+  padding: 9px 14px;
+  border: 1px solid #ccd9c8;
+  border-radius: 12px;
+}
+.letter-slots {
+  text-align: center;
+  margin: 24px auto;
+}
+.slots-row {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+.slots-row input {
+  width: 46px;
+  height: 58px;
+  text-align: center;
+  border: 2px solid #cddbc6;
+  border-radius: 12px;
+  font-size: 28px;
+  background: #fff;
+}
+.slots-row input.slot-vowel {
+  border-color: #b95742;
+  background: #fff0ed;
+}
+.slots-row input.slot-consonant {
+  border-color: #397454;
+  background: #ecf6ed;
+}
+.slots-row input:focus {
+  outline: 3px solid #d9aa46;
+  outline-offset: 3px;
+}
+.slots-row input::placeholder {
+  opacity: 1;
+  color: #52634e;
+}
+.word-picture {
+  font-size: 96px;
+  text-align: center;
+  margin: 8px auto;
+}
+.word-help {
+  text-align: center;
+  background: #f0f5e9;
+  padding: 14px;
+  border-radius: 18px;
+  margin: 12px 0;
+}
+.word-help button {
+  margin: 6px;
+}
+.reading .syllable-gap {
+  display: inline-block;
+  width: 0.22em;
+}
+.rest-snooze {
+  border: 1px solid #d4ddc9;
+  border-radius: 14px;
+  padding: 12px;
+  margin: 14px 0;
+  background: #f8f7eb;
+}
+.rest-snooze button {
+  margin: 6px;
+  padding: 8px 12px;
+  border: 1px solid #bcccb8;
+  border-radius: 10px;
+}
+.bubble-sequence {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.bubble-sequence span {
+  padding: 5px 9px;
+  border-radius: 9px;
+  border: 2px solid transparent;
+}
+.bubble-sequence .current {
+  border-color: #254e40;
+  font-weight: bold;
+}
+.bubble-sequence .finished {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+.pair-grid.pair-expanded {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.pair-grid.pair-expanded button {
+  min-width: 0;
+  font-size: 36px;
+  aspect-ratio: 1;
+  height: auto;
+}
+.color-bubble-field.dense .color-bubble-slot {
+  min-width: 0;
+  height: 95px;
+}
+.color-bubble-field.dense .color-bubble {
+  width: 76px;
+  height: 76px;
+}
+.sound-note {
+  max-width: 500px;
+  margin: 12px auto;
+  text-align: center;
+  font-size: 15px;
+}
+@media (max-width: 500px) {
+  .slots-row {
+    gap: 5px;
+  }
+  .slots-row input {
+    width: 36px;
+    height: 48px;
+    font-size: 24px;
+  }
+  .practice-controls label {
+    flex-wrap: wrap;
+  }
+  .color-bubble-field.dense .color-bubble {
+    width: 58px;
+    height: 58px;
+  }
+  .color-bubble-field.dense .color-bubble-slot {
+    height: 74px;
+  }
+}
+
+.color-bubble-field.dense {
+  grid-template-rows: none;
+  grid-auto-rows: 125px;
+}
+.color-bubble-field.dense .color-bubble-slot {
+  height: 125px;
+}
+.color-bubble-field.dense .color-bubble {
+  width: 70%;
+  max-width: 76px;
+  height: auto;
+  aspect-ratio: 1;
+}
+@media (max-width: 500px) {
+  .color-bubble-field.dense {
+    grid-auto-rows: 95px;
+  }
+  .color-bubble-field.dense .color-bubble-slot {
+    height: 95px;
+  }
+}

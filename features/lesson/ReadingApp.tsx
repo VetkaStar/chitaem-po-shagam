@@ -1,4 +1,5 @@
 'use client';
+import './practice.css';
 import AppPortal from '../portal/AppPortal';
 import { Leaf, Star } from 'lucide-react';
 import { levels } from '@/lib/learning';
@@ -11,6 +12,7 @@ import LessonHeader from './LessonHeader';
 import LessonSidebar from './LessonSidebar';
 import LessonToolbar from './LessonToolbar';
 import ExerciseCard from './ExerciseCard';
+import PracticeControls from './PracticeControls';
 import TopicNavigation from './TopicNavigation';
 export default function ReadingApp() {
   const model = useLesson();
@@ -41,6 +43,26 @@ export default function ReadingApp() {
             </div>
             {!done && <TopicNavigation model={model} />}
             <LessonToolbar model={model} />
+            <PracticeControls model={model} />
+            {model.schedule.skips >= 2 && (
+              <div className="rest-snooze" role="status">
+                Разминку несколько раз пропустили. Сделать перерыв в
+                напоминаниях?
+                {[5, 10, 15].map((n) => (
+                  <button key={n} onClick={() => model.schedule.snooze(n)}>
+                    На {n} минут
+                  </button>
+                ))}
+              </div>
+            )}
+            {model.schedule.until > Date.now() && (
+              <p className="muted">
+                Напоминания об отдыхе временно выключены. «Пауза» доступна.
+              </p>
+            )}
+            {model.schedule.due && (
+              <p className="muted">После этого задания предложим отдохнуть.</p>
+            )}
             <ExerciseCard model={model} />
             {done && <TopicNavigation model={model} />}
             <div className="foot">
@@ -49,9 +71,11 @@ export default function ReadingApp() {
                 ? 'Движение включено · можно остановиться в любой момент'
                 : 'Без спешки и таймера'}{' '}
               <span>·</span>{' '}
-              {settings.breakEvery
-                ? `Отдых через ${settings.breakEvery} заданий`
-                : 'Отдых по кнопке «Пауза»'}
+              {settings.breakMinutes
+                ? `Отдых через ${settings.breakMinutes} минут занятия`
+                : settings.breakEvery
+                  ? `Отдых через ${settings.breakEvery} заданий`
+                  : 'Отдых по кнопке «Пауза»'}
             </div>
           </section>
         </div>

@@ -5,6 +5,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import { useRef, useEffect } from 'react';
 import RestHub from '@/components/rest-hub';
 import type { LessonModel } from './use-lesson';
 export default function RestDialog({
@@ -12,10 +13,33 @@ export default function RestDialog({
 }: {
   model: Pick<
     LessonModel,
-    'paused' | 'rest' | 'stop' | 'setPaused' | 'setRest' | 'settings' | 'speak'
+    | 'schedule'
+    | 'paused'
+    | 'rest'
+    | 'stop'
+    | 'setPaused'
+    | 'setRest'
+    | 'settings'
+    | 'speak'
   >;
 }) {
   const { paused, rest, stop, setPaused, setRest, settings, speak } = model;
+  const engaged = useRef(false),
+    opened = useRef(0);
+  useEffect(() => {
+    if (rest || paused) {
+      engaged.current = false;
+      opened.current = Date.now();
+    }
+  }, [rest, paused]);
+  function close() {
+    stop();
+    model.schedule.returned(
+      rest && !engaged.current && Date.now() - opened.current < 15000,
+    );
+    setPaused(false);
+    setRest(false);
+  }
   return (
     <>
       <Dialog
@@ -23,8 +47,7 @@ export default function RestDialog({
         onOpenChange={(v) => {
           stop();
           if (!v) {
-            setPaused(false);
-            setRest(false);
+            close();
           }
         }}
       >
@@ -34,14 +57,15 @@ export default function RestDialog({
             Можно выбрать игру, размяться или просто побыть в тишине.
           </DialogDescription>
           <RestHub
+            onEngage={() => {
+              engaged.current = true;
+            }}
             motion={settings.motion}
             autoSpeech={settings.autoSpeech}
             sound={settings.sound}
             onSpeak={speak}
             onReturn={() => {
-              stop();
-              setPaused(false);
-              setRest(false);
+              close();
             }}
           />
         </DialogContent>

@@ -1,4 +1,7 @@
 'use client';
+import LetterSlots from './LetterSlots';
+import { wordEntry, wordParts } from '@/content/word-bank';
+import { useState } from 'react';
 import WordBridge from './WordBridge';
 import { useEffect, useRef } from 'react';
 import {
@@ -21,6 +24,9 @@ export default function ExerciseCard({
 }: {
   model: Pick<
     LessonModel,
+    | 'showParts'
+    | 'wholeAgain'
+    | 'setPartsHelp'
     | 'feedback'
     | 'count'
     | 'settings'
@@ -129,6 +135,11 @@ export default function ExerciseCard({
     pool,
     setFlyInputStatus,
   } = model;
+  const [showWordPicture, setShowWordPicture] = useState(false);
+  useEffect(() => setShowWordPicture(false), [target, index]);
+  const entry = wordEntry(target);
+  const parts = wordParts(target);
+  const displayWord = model.showParts ? parts.join('·') : target;
   const nextButton = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (feedback.kind === 'success' && !done && !paused && !parent && !rest)
@@ -198,7 +209,7 @@ export default function ExerciseCard({
                       className={'catch-token ' + (card.caught ? 'caught' : '')}
                       data-token={card.text}
                       style={{
-                        animationDuration: `${22 + lane * 5}s`,
+                        animationDuration: `${(22 + lane * 5) / settings.flySpeed}s`,
                         animationDelay: `-${lane * 5}s`,
                         animationPlayState:
                           paused || parent || rest || done
@@ -248,35 +259,125 @@ export default function ExerciseCard({
                 }}
                 aria-label={target}
               >
-                {Array.from(target).map((char, i) => (
+                {Array.from(displayWord).map((char, i) => (
                   <span
                     key={i}
                     className={
-                      (settings.color
-                        ? /[АЕЁИОУЫЭЮЯ]/.test(char)
-                          ? 'vowel'
-                          : 'consonant'
-                        : '') + (mistakes > 0 && i === 0 ? ' first-focus' : '')
+                      (char === '·'
+                        ? 'syllable-gap'
+                        : settings.color
+                          ? /[АЕЁИОУЫЭЮЯ]/.test(char)
+                            ? 'vowel'
+                            : 'consonant'
+                          : '') +
+                      (mistakes > 0 && i === 0 ? ' first-focus' : '')
                     }
                   >
-                    {char}
+                    {char === '·' ? ' ' : char}
                   </span>
                 ))}
               </div>
+            )}
+            {stage === 'words' && mode === 'read' && (
+              <>
+                {entry?.icon && (
+                  <>
+                    <button
+                      className="text-button scene-toggle"
+                      onClick={() => setShowWordPicture((v) => !v)}
+                    >
+                      {showWordPicture
+                        ? 'Скрыть картинку'
+                        : 'Показать картинку'}
+                    </button>
+                    {showWordPicture && (
+                      <div
+                        className="word-picture"
+                        role="img"
+                        aria-label={target}
+                      >
+                        {entry.icon}
+                      </div>
+                    )}
+                  </>
+                )}
+                {model.showParts && (
+                  <div className="word-help">
+                    <p>Читай по слогам. Потом соединим их в слово.</p>
+                    {parts.map((part, i) => (
+                      <button
+                        key={i}
+                        onClick={() => speak(part)}
+                        disabled={speaking}
+                      >
+                        🔊 {part}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {!model.showParts &&
+                  !model.wholeAgain &&
+                  feedback.kind !== 'success' &&
+                  parts.length > 1 && (
+                    <button
+                      className="text-button scene-toggle"
+                      onClick={() => model.setPartsHelp(true)}
+                    >
+                      Помоги прочитать по слогам
+                    </button>
+                  )}
+              </>
+            )}
+            {stage === 'letters' && settings.letterMode === 'sounds' && (
+              <p className="sound-note">
+                {/[ЪЬ]/.test(target)
+                  ? 'У этой буквы нет собственного звука.'
+                  : /[ЕЁЮЯ]/.test(target)
+                    ? 'Звуки этой буквы зависят от её места в слове. Разберите пример со взрослым.'
+                    : 'Произнеси звук коротко, без названия буквы. Например: [б], а не «бэ».'}
+              </p>
             )}
             {mode === 'read' ? (
               <button
                 className="sample"
                 onClick={() =>
-                  speak(stage === 'letters' ? names[target] || target : target)
+                  stage === 'letters' &&
+                  settings.letterMode === 'sounds' &&
+                  !/[АОУЫИЭ]/.test(target)
+                    ? setFeedback({
+                        kind: 'neutral',
+                        text: 'Попроси взрослого показать звук. Образцы согласных ещё готовятся.',
+                      })
+                    : speak(
+                        stage === 'letters' &&
+                          settings.letterMode === 'alphabet'
+                          ? names[target] || target
+                          : target,
+                      )
                 }
                 disabled={speaking}
               >
                 <Volume2 size={16} />
                 {stage === 'letters'
-                  ? 'Послушать название'
+                  ? settings.letterMode === 'sounds'
+                    ? /[АОУЫИЭ]/.test(target)
+                      ? 'Послушать звук'
+                      : 'Как произнести звук'
+                    : 'Послушать название'
                   : 'Послушать образец'}
               </button>
+            ) : picture && settings.pictureMode === 'letters' ? (
+              <LetterSlots
+                key={target + '-' + index}
+                target={target}
+                value={answer}
+                onChange={setAnswer}
+                onSubmit={submit}
+                attempts={mistakes}
+                disabled={
+                  feedback.kind === 'success' || paused || parent || rest
+                }
+              />
             ) : (
               <form
                 className="answer-form"
@@ -606,7 +707,6 @@ export default function ExerciseCard({
                   <div className="adult-actions">
                     <button
                       onClick={() => {
-                        stop();
                         success('adult');
                       }}
                     >

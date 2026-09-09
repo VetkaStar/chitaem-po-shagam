@@ -1,8 +1,9 @@
 'use client';
-import { breakDue } from '@/lib/breaks';
+import { useRestSchedule } from './use-rest-schedule';
+import { freshWordDeck, wordParts } from '@/content/word-bank';
 import { useEffect, useRef, useState } from 'react';
 import { levels, pictures, breaks, checkTyped } from '@/lib/learning';
-import { wordPool, makeDeck, pictureAnswer } from '@/lib/session';
+import { wordPool, makeDeck, pictureAnswer, synonyms } from '@/lib/session';
 import { SlowReadingAttempt } from '@/lib/slow-reading';
 import { findTypo, type TypoHint } from '@/lib/typo';
 import { classifyUtterance } from '@/lib/feedback';
@@ -23,6 +24,10 @@ export function useLesson() {
     [settings, setSettings] = useState(defaults),
     [ready, setReady] = useState(false),
     [storageWarning, setStorageWarning] = useState('');
+  const [lessonActive, setLessonActive] = useState(false);
+  const [recentWords, setRecentWords] = useState<string[]>([]);
+  const [partsHelp, setPartsHelp] = useState(false),
+    [wholeAgain, setWholeAgain] = useState(false);
   const [index, setIndex] = useState(0),
     [count, setCount] = useState(0),
     [stars, setStars] = useState(0),
@@ -69,6 +74,7 @@ export function useLesson() {
     awarded = useRef(false),
     timer = useRef<ReturnType<typeof setTimeout> | null>(null),
     mounted = useRef(true);
+  const unclearAttempts = useRef(0);
   const slowAttempt = useRef(new SlowReadingAttempt());
   const [speechProgress, setSpeechProgress] = useState(0),
     [attemptStatus, setAttemptStatus] = useState('');
@@ -77,6 +83,16 @@ export function useLesson() {
   const [deck, setDeck] = useState<string[]>([]),
     [session, setSession] = useState(0),
     [scene, setScene] = useState(false);
+  const schedule = useRestSchedule(
+    lessonActive && !parent && !paused && !rest && !done,
+    settings.breakEvery,
+    settings.breakMinutes,
+  );
+  const wantsParts =
+    stage === 'words' &&
+    mode === 'read' &&
+    !wholeAgain &&
+    (settings.wordMode === 'parts' || partsHelp);
   const pool =
     stage === 'pictures'
       ? pictures.map((x) => x.word)
@@ -88,16 +104,31 @@ export function useLesson() {
       stage === 'pictures'
         ? (pictures.find((p) => p.word === target) ?? null)
         : null;
+  const showParts = wantsParts && wordParts(target).length > 1;
   useEffect(() => {
     if (ready)
-      setDeck((old) => makeDeck(pool, Math.max(24, settings.length), old));
+      setDeck((old) =>
+        stage === 'words'
+          ? freshWordDeck(pool, Math.max(24, settings.length), recentWords)
+          : makeDeck(pool, Math.max(24, settings.length), old),
+      );
   }, [ready, stage, mode, settings.unit, session]);
+  useEffect(() => {
+    if (ready && lessonActive && !done && stage === 'words' && target)
+      setRecentWords((h) =>
+        h.at(-1) === target
+          ? h
+          : [...h.filter((w) => w !== target), target].slice(-200),
+      );
+  }, [ready, lessonActive, done, stage, target, index]);
   const task =
     stage === 'pictures'
       ? 'Напиши, что на картинке'
       : mode === 'read'
         ? stage === 'letters'
-          ? 'Прочитай букву вслух'
+          ? settings.letterMode === 'sounds'
+            ? 'Произнеси звук'
+            : 'Назови букву'
           : stage === 'syllables'
             ? 'Прочитай слог вслух'
             : 'Прочитай слово вслух'
@@ -131,6 +162,9 @@ export function useLesson() {
     setSpeaking(false);
   }
   function resetCard() {
+    unclearAttempts.current = 0;
+    setPartsHelp(false);
+    setWholeAgain(false);
     setTypo(null);
     setScene(false);
     stop();
@@ -201,12 +235,25 @@ export function useLesson() {
                     ? 10
                     : s.unit
               : 0,
+          pictureMode: s.pictureMode === 'letters' ? 'letters' : 'free',
+          wordMode: s.wordMode === 'parts' ? 'parts' : 'whole',
+          letterMode: s.letterMode === 'sounds' ? 'sounds' : 'alphabet',
+          flySpeed: [0.5, 1, 1.5, 2].includes(s.flySpeed) ? s.flySpeed : 1,
+          breakMinutes: [0, 3, 5, 10, 15].includes(s.breakMinutes)
+            ? s.breakMinutes
+            : 0,
           curriculumVersion: 2,
           length: [3, 5, 8].includes(s.length) ? s.length : 5,
           breakEvery: [0, 3, 5, 8, 10].includes(s.breakEvery)
             ? s.breakEvery
             : defaults.breakEvery,
         });
+        if (Array.isArray(raw.recentWords))
+          setRecentWords(
+            raw.recentWords
+              .filter((x: unknown) => typeof x === 'string')
+              .slice(-200),
+          );
         if (Number.isInteger(raw.stars) && raw.stars >= 0) setStars(raw.stars);
         if (Array.isArray(raw.history))
           setHistory(
@@ -239,12 +286,12 @@ export function useLesson() {
     try {
       localStorage.setItem(
         'reading-steps-v3',
-        JSON.stringify({ settings, stars, history }),
+        JSON.stringify({ settings, stars, history, recentWords }),
       );
     } catch {
       setStorageWarning('Не удалось сохранить результаты на этом устройстве.');
     }
-  }, [settings, stars, history, ready]);
+  }, [settings, stars, history, recentWords, ready]);
   useEffect(() => {
     function hide() {
       if (document.hidden) {
@@ -270,6 +317,23 @@ export function useLesson() {
   function success(via: string) {
     setTypo(null);
     if (awarded.current) return;
+    if (showParts) {
+      setWholeAgain(true);
+      setPartsHelp(false);
+      slowAttempt.current.reset();
+      setSpeechProgress(0);
+      setHeard('');
+      setMistakes(0);
+      setHint(false);
+      setFeedback({
+        kind: 'neutral',
+        text: 'Молодец, слоги получились! А теперь прочитай слово целиком.',
+      });
+      record('parts-complete', via);
+      if (settings.autoSpeech)
+        speak('Молодец! А теперь прочитай слово целиком.');
+      return;
+    }
     awarded.current = true;
     recognition.current?.setEnabled?.(false);
     setFeedback({ kind: 'success', text: `Верно! ${target}. Получилось!` });
@@ -328,6 +392,7 @@ export function useLesson() {
     setCooldown(true);
     const attempt = mistakes + 1;
     setMistakes(attempt);
+    if (stage === 'words' && attempt >= 2 && !wholeAgain) setPartsHelp(true);
     setHeard(value);
     setHint(true);
     record('retry', via);
@@ -363,6 +428,19 @@ export function useLesson() {
       confidence = r.result?.length
         ? Math.min(...r.result.map((x: any) => x.conf))
         : 0;
+    if (
+      stage === 'letters' &&
+      settings.letterMode === 'sounds' &&
+      names[target] &&
+      text.trim().toUpperCase() === names[target] &&
+      confidence >= 0.8
+    ) {
+      setFeedback({
+        kind: 'neutral',
+        text: `Ты назвал букву: ${names[target]}. А сейчас попробуй произнести её звук, без названия.`,
+      });
+      return;
+    }
     const candidates =
       stage === 'words'
         ? wordPool(levels.length - 1)
@@ -370,9 +448,15 @@ export function useLesson() {
     const verdict = classifyUtterance(
       text,
       confidence,
-      target,
-      candidates,
-      stage === 'letters' && names[target] ? [names[target]] : [],
+      stage === 'letters' && settings.letterMode === 'alphabet'
+        ? names[target] || target
+        : target,
+      stage === 'letters' && settings.letterMode === 'alphabet'
+        ? candidates.map((x) => names[x] || x)
+        : candidates,
+      stage === 'letters' && settings.letterMode === 'alphabet' && names[target]
+        ? [names[target]]
+        : [],
     );
     if (verdict.kind === 'rest') {
       stop();
@@ -427,12 +511,20 @@ export function useLesson() {
     )
       return;
     if (phase === 'sound') setAttemptStatus('Слышу звук. Читай в своём темпе.');
-    else
+    else {
+      if (
+        stage === 'words' &&
+        !slowAttempt.current.progress &&
+        !wholeAgain &&
+        ++unclearAttempts.current >= 2
+      )
+        setPartsHelp(true);
       setAttemptStatus(
         slowAttempt.current.progress
           ? 'Начало услышано. Продолжай, я жду.'
           : 'Попытка услышана, но слово пока не распознано. Попробуй ещё раз или послушай образец.',
       );
+    }
   };
   resultSink.current = handleSpeech;
   function listen() {
@@ -467,7 +559,11 @@ export function useLesson() {
       vocabulary: [
         ...wordPool(levels.length - 1),
         ...levels.flatMap((l) => [
-          ...(stage === 'letters' ? l.letters.map((x) => names[x] || x) : []),
+          ...(stage === 'letters'
+            ? l.letters.map((x) =>
+                settings.letterMode === 'alphabet' ? names[x] || x : x,
+              )
+            : []),
           ...l.syllables,
           ...l.words,
         ]),
@@ -538,6 +634,8 @@ export function useLesson() {
     done,
     settings.unit,
     settings.micDevice,
+    settings.letterMode,
+    settings.wordMode,
   ]);
   useEffect(() => {
     recognition.current?.setEnabled?.(
@@ -695,7 +793,7 @@ export function useLesson() {
     const completed = count + 1;
     setCount(completed);
     if (completed >= settings.length) setDone(true);
-    else if (breakDue(completed, settings.breakEvery, settings.length)) {
+    else if (schedule.shouldRest(completed, settings.length)) {
       setRestIndex((i) => (i + 1) % breaks.length);
       setRest(true);
     }
@@ -731,9 +829,41 @@ export function useLesson() {
       return;
     }
     if (picture) {
-      const verdict = pictureAnswer(answer, target);
-      if (verdict.kind === 'exact') success('typed');
-      else if (verdict.kind === 'part') {
+      const verdict = pictureAnswer(
+        answer,
+        target,
+        settings.pictureMode === 'free',
+      );
+      if (settings.pictureMode === 'letters' && verdict.kind !== 'exact') {
+        const attempt = mistakes + 1;
+        setMistakes(attempt);
+        setHint(attempt >= 3);
+        setFeedback({
+          kind: 'neutral',
+          text:
+            verdict.kind === 'part' || verdict.kind === 'related'
+              ? verdict.message
+              : attempt === 1
+                ? 'Почти! Посмотри на цвета окошек и проверь буквы.'
+                : attempt === 2
+                  ? `Начни с буквы ${target[0]}. Попробуй ещё раз.`
+                  : `Давай вместе: ${target}. Напиши по одной букве.`,
+        });
+        record('spelling-help', 'slots');
+        return;
+      }
+      if (verdict.kind === 'exact') {
+        success('typed');
+        const variants = [target, ...(synonyms[target] || [])]
+          .slice(0, 4)
+          .map((x) => x.toLowerCase());
+        setFeedback({
+          kind: 'success',
+          text:
+            verdict.message ||
+            `Верно! Можно назвать так: ${variants.join(', ')}.`,
+        });
+      } else if (verdict.kind === 'part') {
         setHint(false);
         setHeard('');
         setFeedback({ kind: 'neutral', text: verdict.message });
@@ -768,7 +898,7 @@ export function useLesson() {
     setIndex((i) => i + 1);
     setCount(nextCount);
     if (nextCount >= settings.length) setDone(true);
-    else if (breakDue(nextCount, settings.breakEvery, settings.length)) {
+    else if (schedule.shouldRest(nextCount, settings.length)) {
       setRest(true);
       setRestIndex((i) => (i + 1) % breaks.length);
     }
@@ -777,6 +907,9 @@ export function useLesson() {
     if (key === 'micConsent' && !value) {
       setLessonMic(false);
       stop();
+    }
+    if (key === 'pictureMode' || key === 'wordMode' || key === 'letterMode') {
+      if (!awarded.current) resetCard();
     }
     if (key === 'unit' || key === 'length') {
       setSession((n) => n + 1);
@@ -861,6 +994,12 @@ export function useLesson() {
     );
   }
   return {
+    lessonActive,
+    setLessonActive,
+    schedule,
+    showParts,
+    wholeAgain,
+    setPartsHelp,
     awardReadingText,
     changeTopic,
     settings,

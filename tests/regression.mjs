@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
+import path from 'node:path';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const root = new URL('../', import.meta.url).pathname.replace(
@@ -21,7 +22,10 @@ function load(name, globals = {}) {
     {
       exports: module.exports,
       module,
-      require: (p) => load(p.replace('./', '')),
+      require: (p) =>
+        load(
+          path.posix.normalize(path.posix.join(path.posix.dirname(name), p)),
+        ),
       console,
       setTimeout,
       clearTimeout,
@@ -283,4 +287,77 @@ for (const t of texts) {
 }
 console.log(
   'PASS: curriculum, word bridges, profile validation and comprehension content',
+);
+
+const { wordBank, freshWordDeck } = load('../content/word-bank');
+assert(wordBank.length >= 80);
+assert.equal(new Set(wordBank.map((x) => x.word)).size, wordBank.length);
+for (const entry of wordBank) assert.equal(entry.parts.join(''), entry.word);
+const fresh = freshWordDeck(['А', 'Б', 'В', 'Г'], 4, ['Б', 'А']);
+assert.deepEqual(new Set(fresh.slice(0, 2)), new Set(['В', 'Г']));
+assert.equal(fresh[3], 'А');
+for (const [answer, target] of [
+  ['пёс', 'СОБАКА'],
+  ['деревце', 'ДЕРЕВО'],
+  ['котик', 'КОТ'],
+])
+  assert.equal(pictureAnswer(answer, target, true).kind, 'exact');
+assert.equal(pictureAnswer('кожура', 'БАНАН', true).kind, 'part');
+assert.equal(pictureAnswer('сыр', 'ЛУНА', true).kind, 'similar');
+const { bubbleRound, bubbleChoice, pairDeck } = load('rest-games');
+for (const n of [1, 2, 3]) {
+  const r = bubbleRound('sequence', n);
+  assert.equal(r.order.length, n * 3);
+  assert.equal(r.order.join(','), Array(n).fill('4,3,2').join(','));
+  const popped = [];
+  for (let step = 0; step < r.order.length; step++) {
+    const i = r.board.findIndex(
+      (c, j) => c === r.order[step] && !popped.includes(j),
+    );
+    assert.equal(
+      bubbleChoice(r.board, r.order, step, popped, i, 'sequence', n),
+      'advance',
+    );
+    popped.push(i);
+  }
+  assert.equal(new Set(popped).size, n * 3);
+}
+const group = bubbleRound('colors', 2),
+  indices = group.board.flatMap((c, i) => (c === group.order[0] ? [i] : []));
+assert.equal(
+  bubbleChoice(group.board, group.order, 0, [], indices[0], 'colors', 2),
+  'more',
+);
+assert.equal(
+  bubbleChoice(
+    group.board,
+    group.order,
+    0,
+    [indices[0]],
+    indices[1],
+    'colors',
+    2,
+  ),
+  'advance',
+);
+assert.equal(
+  bubbleChoice(
+    group.board,
+    group.order,
+    0,
+    [indices[0]],
+    indices[0],
+    'colors',
+    2,
+  ),
+  'wait',
+);
+for (const n of [2, 3, 4, 6, 8]) {
+  const deck = pairDeck(n);
+  assert.equal(deck.length, n * 2);
+  for (const c of new Set(deck))
+    assert.equal(deck.filter((x) => x === c).length, 2);
+}
+console.log(
+  'PASS new content and rest games: complete word parts, synonyms, color groups/sequences and all pair difficulties',
 );

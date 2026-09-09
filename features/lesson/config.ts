@@ -9,6 +9,11 @@ export type Settings = {
   curriculumVersion: number;
   length: number;
   breakEvery: number;
+  breakMinutes: number;
+  pictureMode: 'free' | 'letters';
+  wordMode: 'whole' | 'parts';
+  letterMode: 'sounds' | 'alphabet';
+  flySpeed: number;
   motion: boolean;
   sound: boolean;
   autoSpeech: boolean;
@@ -30,6 +35,11 @@ export const defaults: Settings = {
   curriculumVersion: 2,
   length: 5,
   breakEvery: 5,
+  breakMinutes: 0,
+  pictureMode: 'free',
+  wordMode: 'whole',
+  letterMode: 'alphabet',
+  flySpeed: 1,
   motion: true,
   sound: true,
   autoSpeech: false,

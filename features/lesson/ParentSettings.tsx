@@ -110,6 +110,17 @@ export default function ParentSettings({
               </SelectContent>
             </Select>
           </div>
+          <div className="setting">
+            <label><b>Как часто предлагать отдых</b><small>Считаем задания, а не минуты. Кнопка «Пауза» доступна всегда.</small></label>
+            <Select value={String(settings.breakEvery)} onValueChange={(v) => {
+              if (v !== null) update('breakEvery', Number(v));
+            }}>
+              <SelectTrigger aria-label="Частота разминок"><SelectValue>{settings.breakEvery ? `Через ${settings.breakEvery} заданий` : 'Только по кнопке'}</SelectValue></SelectTrigger>
+              <SelectContent>
+                {[3, 5, 8, 10, 0].map((n) => <SelectItem key={n} value={String(n)}>{n ? `Через ${n} заданий` : 'Только по кнопке'}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
           {(
             [
               [

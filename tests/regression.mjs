@@ -232,3 +232,12 @@ assert.equal(nextTopic('syllables',5).stage,'words');
 assert.equal(nextTopic('words',5).stage,'pictures');
 assert.equal(nextTopic('pictures',0).stage,'letters');
 console.log('PASS: next topics and section boundaries.');
+
+const { breakDue } = load('breaks');
+assert.equal(breakDue(3, 5, 8), false);
+assert.equal(breakDue(5, 5, 8), true);
+assert.equal(breakDue(5, 5, 5), false);
+assert.equal(breakDue(3, 3, 8), true);
+assert.equal(breakDue(6, 3, 8), true);
+assert.equal(breakDue(5, 0, 8), false);
+console.log('Break frequency and lesson-end priority passed');

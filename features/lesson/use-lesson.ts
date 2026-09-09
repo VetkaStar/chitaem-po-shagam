@@ -1,3 +1,4 @@
+import { breakDue } from '@/lib/breaks';
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { levels, pictures, breaks, checkTyped } from '@/lib/learning';
@@ -195,6 +196,7 @@ export function useLesson() {
               ? s.unit
               : 0,
           length: [3, 5, 8].includes(s.length) ? s.length : 5,
+          breakEvery: [0, 3, 5, 8, 10].includes(s.breakEvery) ? s.breakEvery : defaults.breakEvery,
         });
         if (Number.isInteger(raw.stars) && raw.stars >= 0) setStars(raw.stars);
         if (Array.isArray(raw.history))
@@ -684,7 +686,7 @@ export function useLesson() {
     const completed = count + 1;
     setCount(completed);
     if (completed >= settings.length) setDone(true);
-    else if (completed % 3 === 0) {
+    else if (breakDue(completed, settings.breakEvery, settings.length)) {
       setRestIndex((i) => (i + 1) % breaks.length);
       setRest(true);
     }
@@ -753,7 +755,7 @@ export function useLesson() {
     setIndex((i) => i + 1);
     setCount(nextCount);
     if (nextCount >= settings.length) setDone(true);
-    else if (nextCount % 3 === 0) {
+    else if (breakDue(nextCount, settings.breakEvery, settings.length)) {
       setRest(true);
       setRestIndex((i) => (i + 1) % breaks.length);
     }

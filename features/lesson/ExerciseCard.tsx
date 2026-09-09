@@ -1,4 +1,5 @@
 'use client';
+import { useEffect, useRef } from 'react';
 import {
   Volume2,
   Mic,
@@ -127,6 +128,11 @@ export default function ExerciseCard({
     pool,
     setFlyInputStatus,
   } = model;
+  const nextButton = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (feedback.kind === 'success' && !done && !paused && !parent && !rest)
+      nextButton.current?.focus();
+  }, [feedback.kind, done, paused, parent, rest]);
   return (
     <>
       <div className={'exercise ' + feedback.kind}>
@@ -273,6 +279,9 @@ export default function ExerciseCard({
             ) : (
               <form
                 className="answer-form"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && (e.repeat || e.nativeEvent.isComposing)) e.preventDefault();
+                }}
                 onSubmit={(e) => {
                   e.preventDefault();
                   submit();
@@ -546,8 +555,10 @@ export default function ExerciseCard({
               </div>
             )}
             {feedback.kind === 'success' ? (
-              <button className="primary" onClick={() => next()}>
-                Дальше <ArrowRight />
+              <button ref={nextButton} className="primary" onClick={() => next()}
+                onKeyDown={(e) => { if (e.key === 'Enter' && e.repeat) e.preventDefault(); }}>
+
+                Дальше · Enter <ArrowRight />
               </button>
             ) : mode === 'read' ? (
               <>

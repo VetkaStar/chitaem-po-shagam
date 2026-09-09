@@ -7,6 +7,7 @@ export type Feedback = {
 export type Settings = {
   unit: number;
   length: number;
+  breakEvery: number;
   motion: boolean;
   sound: boolean;
   autoSpeech: boolean;
@@ -26,6 +27,7 @@ export type Entry = {
 export const defaults: Settings = {
   unit: 0,
   length: 5,
+  breakEvery: 5,
   motion: true,
   sound: true,
   autoSpeech: false,

@@ -46,7 +46,7 @@ export default function ReadingApp() {
             {settings.motion
               ? 'Движение включено · можно остановиться в любой момент'
               : 'Без спешки и таймера'}{' '}
-            <span>·</span> Отдых через каждые 3 задания
+            <span>·</span> {settings.breakEvery ? `Отдых через ${settings.breakEvery} заданий` : 'Отдых по кнопке «Пауза»'}
           </div>
         </section>
       </div>

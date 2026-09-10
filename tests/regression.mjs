@@ -321,6 +321,11 @@ for (const n of [1, 2, 3]) {
     popped.push(i);
   }
   assert.equal(new Set(popped).size, n * 3);
+  assert.equal(
+    popped.length,
+    r.board.length,
+    'Completed sequence must leave no bubbles',
+  );
 }
 const group = bubbleRound('colors', 2),
   indices = group.board.flatMap((c, i) => (c === group.order[0] ? [i] : []));

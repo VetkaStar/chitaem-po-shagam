@@ -2,7 +2,7 @@ import { shuffled } from './session';
 export function bubbleRound(mode: string, density: number) {
   if (mode === 'sequence') {
     const order = Array.from({ length: density }, () => [4, 3, 2]).flat();
-    return { order, board: shuffled([...order, 0, 1]) };
+    return { order, board: shuffled(order) };
   }
   return {
     order: shuffled([0, 1, 2, 3, 4]),

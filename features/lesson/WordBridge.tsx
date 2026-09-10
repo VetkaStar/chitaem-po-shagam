@@ -9,11 +9,13 @@ export default function WordBridge({
   target,
   speak,
   sound,
+  onInteract,
 }: {
   unit: number;
   target: string;
   speak: (s: string) => void;
   sound: boolean;
+  onInteract?: () => void;
 }) {
   const item = useMemo(() => {
     const all = availableBridges(levels[unit].letters);
@@ -31,7 +33,7 @@ export default function WordBridge({
   if (!item) return null;
   const done = chosen.length === item.parts.length;
   return (
-    <section className="word-bridge" aria-label="Из слогов в слово">
+    <section className="word-bridge" aria-label="Из слогов в слово" onClickCapture={onInteract}>
       <h3>Смотри, слоги умеют дружить!</h3>
       <p>
         Собери слово по порядку: <b>{item.parts.join(' · ')}</b>

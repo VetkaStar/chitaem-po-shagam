@@ -6,6 +6,7 @@ import type { ReactNode, RefObject } from 'react';
 
 export default function ExerciseActions({
   countdown,
+  autoAdvanceStop,
   feedback,
   nextButton,
   next,
@@ -25,6 +26,7 @@ export default function ExerciseActions({
   target,
 }: {
   countdown?: ReactNode;
+  autoAdvanceStop?: ReactNode;
   feedback: ExerciseModel['feedback'];
   nextButton: RefObject<HTMLButtonElement | null>;
   next: ExerciseModel['next'];
@@ -46,6 +48,7 @@ export default function ExerciseActions({
   return (
     <>
       {feedback.kind === 'success' ? (
+        <>
         <button
           ref={nextButton}
           className="primary"
@@ -56,6 +59,8 @@ export default function ExerciseActions({
         >
           Дальше · Enter <ArrowRight />{countdown}
         </button>
+        {autoAdvanceStop}
+        </>
       ) : mode === 'read' ? (
         <>
           <button

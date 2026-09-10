@@ -161,3 +161,30 @@ assert.equal(calls, 3);
 console.log(
   'PASS auto advance: 3-second delay, single callback, modal pause, hidden tab, cancellation, disabled setting',
 );
+
+// Extra reading time does not expire at the normal 3-second boundary.
+const beforeExtra = calls;
+mount({ inline: true, seconds: 15 });
+for (let i = 0; i < 14; i++) tick();
+assert.equal(calls, beforeExtra);
+tick();
+assert.equal(calls, beforeExtra + 1);
+// A deliberate stop survives focus changes and temporary modal pauses.
+mount({ inline: true, seconds: 15 });
+for (let i = 0; i < 3; i++) tick();
+props.stopped = true;
+render();
+assert.equal(tree.props['aria-label'], 'Автопереход остановлен');
+listeners.blur?.();
+listeners.focus?.();
+props.blocked = true;
+render();
+props.blocked = false;
+render();
+for (let i = 0; i < 30; i++) tick();
+assert.equal(calls, beforeExtra + 1);
+mount({ inline: true, seconds: 3 });
+for (let i = 0; i < 3; i++) tick();
+assert.equal(calls, beforeExtra + 2, 'the next task gets its own timer');
+console.log('PASS extra reading time and persistent per-task timer stop');
+

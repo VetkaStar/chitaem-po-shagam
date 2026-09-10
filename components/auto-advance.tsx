@@ -4,6 +4,7 @@ import './auto-advance.css';
 export default function AutoAdvance({
   enabled,
   inline = false,
+  stopped = false,
   blocked,
   seconds,
   onNext,
@@ -11,6 +12,7 @@ export default function AutoAdvance({
 }: {
   enabled: boolean;
   inline?: boolean;
+  stopped?: boolean;
   blocked: boolean;
   seconds: number;
   onNext: () => void;
@@ -22,7 +24,7 @@ export default function AutoAdvance({
   callback.current = onNext;
   useEffect(() => {
     setRemaining(seconds);
-    if (!enabled || blocked || cancelled) return;
+    if (!enabled || blocked || cancelled || stopped) return;
     let timer: ReturnType<typeof setInterval> | undefined,
       left = seconds,
       fired = false;
@@ -60,25 +62,25 @@ export default function AutoAdvance({
       window.removeEventListener('blur', suspend);
       window.removeEventListener('focus', resume);
     };
-  }, [enabled, blocked, seconds, cancelled]);
+  }, [enabled, blocked, seconds, cancelled, stopped]);
   if (!enabled) return null;
   if (inline) return (
-    <span className="countdown" role="timer" aria-label={blocked ? 'Отсчёт на паузе' : `Переход через ${remaining} с`}>
+    <span className="countdown" role="timer" aria-label={stopped ? 'Автопереход остановлен' : blocked ? 'Отсчёт на паузе' : `Переход через ${remaining} с`}>
       <svg viewBox="0 0 36 36" aria-hidden="true">
         <circle className="countdown-track" cx="18" cy="18" r="15" />
         <circle className="countdown-progress" cx="18" cy="18" r="15" pathLength="100" strokeDasharray="100" strokeDashoffset={100 * (1 - remaining / seconds)} />
       </svg>
-      <span>{blocked ? 'Ⅱ' : remaining}</span>
+      <span>{stopped || blocked ? 'Ⅱ' : remaining}</span>
     </span>
   );
   return (
     <div className="auto-advance" role="status">
-      {cancelled
+      {cancelled || stopped
         ? 'Автопереход остановлен. Можно продолжить кнопкой.'
         : blocked
           ? 'Автопереход на паузе.'
           : `${label} через ${remaining} с`}{' '}
-      {!cancelled && (
+      {!cancelled && !stopped && (
         <button className="text-button" onClick={() => setCancelled(true)}>
           Подожди
         </button>

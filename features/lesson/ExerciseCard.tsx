@@ -20,6 +20,8 @@ import ReadingGuideControls from './ReadingGuideControls';
 import { wordEntry, wordParts } from '@/content/word-bank';
 import { useState } from 'react';
 import WordBridge from './WordBridge';
+import { availableBridges } from '@/content/word-bridges';
+import { levels } from '@/lib/learning';
 import { useEffect, useRef } from 'react';
 import { Volume2, ArrowRight, Leaf, HelpCircle } from 'lucide-react';
 import ExerciseHeader from '@/components/exercise-header';
@@ -86,6 +88,20 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
   const parts = wordParts(target);
   const displayWord = model.showParts ? parts.join('·') : target;
   const nextButton = useRef<HTMLButtonElement>(null);
+  const showBridge = stage === 'syllables' && feedback.kind === 'success' &&
+    (count + 1) % 2 === 0 && availableBridges(levels[settings.unit].letters).length > 0;
+  const advanceSeconds = showBridge ? Math.max(15, settings.autoAdvanceSeconds) : settings.autoAdvanceSeconds;
+  const activityKey = `${stage}-${mode}-${target}-${index}-${model.repeatEpoch}-${done}`;
+  const [stoppedActivity, setStoppedActivity] = useState<string | null>(null);
+  const autoStopped = stoppedActivity === activityKey;
+  const stopAdvance = () => setStoppedActivity(activityKey);
+  const advanceStopButton = settings.autoAdvance ? (
+    <div className="auto-stop">
+      <button className="text-button" onClick={stopAdvance} disabled={autoStopped}>
+        {autoStopped ? 'Автопереход остановлен' : 'Не переходить'}
+      </button>
+    </div>
+  ) : null;
   useEffect(() => {
     if (feedback.kind === 'success' && !done && !paused && !parent && !rest)
       nextButton.current?.focus({ preventScroll: true });
@@ -131,8 +147,9 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
               }}
             >
               Следующее занятие <ArrowRight size={17} />
-              <AutoAdvance inline enabled={settings.autoAdvance} seconds={settings.autoAdvanceSeconds} blocked={parent || paused || rest || speaking} onNext={model.continueLesson} />
+              <AutoAdvance inline stopped={autoStopped} enabled={settings.autoAdvance} seconds={advanceSeconds} blocked={parent || paused || rest || speaking} onNext={model.continueLesson} />
             </button>
+            {advanceStopButton}
             {!settings.autoAdvance && <div className="auto-offer"><p>Продолжать автоматически после задания и занятия?</p><AutoAdvanceSettings model={model} /></div>}
           </div>
         ) : (
@@ -301,11 +318,10 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
               stop={stop}
               setRest={setRest}
             />
-            {stage === 'syllables' &&
-              feedback.kind === 'success' &&
-              (count + 1) % 2 === 0 && (
+            {showBridge && (
                 <WordBridge
                   key={index}
+                  onInteract={stopAdvance}
                   unit={settings.unit}
                   target={target}
                   speak={speak}
@@ -313,7 +329,8 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
                 />
               )}
             <ExerciseActions
-              countdown={<AutoAdvance key={`${index}-${model.repeatEpoch}`} inline enabled={settings.autoAdvance} seconds={settings.autoAdvanceSeconds} blocked={parent || paused || rest || speaking} onNext={() => next()} />}
+              autoAdvanceStop={advanceStopButton}
+              countdown={<AutoAdvance key={`${index}-${model.repeatEpoch}`} inline stopped={autoStopped} enabled={settings.autoAdvance} seconds={advanceSeconds} blocked={parent || paused || rest || speaking} onNext={() => next()} />}
               feedback={feedback}
               nextButton={nextButton}
               next={next}

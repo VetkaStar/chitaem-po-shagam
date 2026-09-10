@@ -1,5 +1,6 @@
 'use client';
 import { useIllustrationPreload } from '@/components/use-illustration-preload';
+import ExerciseHeader from '@/components/exercise-header';
 import AutoAdvance from '@/components/auto-advance';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -30,12 +31,18 @@ export default function TextExercise({
   onBack,
   onNext,
   onComplete,
+  taskNumber = 1,
+  taskTotal = 1,
+  completedTasks = 0,
 }: {
   item: ReadingText;
   model: LessonModel;
   onBack: () => void;
   onNext?: () => void;
   onComplete?: () => void;
+  taskNumber?: number;
+  taskTotal?: number;
+  completedTasks?: number;
 }) {
   useIllustrationPreload(textIllustrations[item.id]);
   const [mode, setMode] = useState<Mode>('read'),
@@ -329,6 +336,22 @@ export default function TextExercise({
         />
       )}
       <div className="exercise text-exercise">
+        <ExerciseHeader
+          number={taskNumber}
+          total={taskTotal}
+          completed={completedTasks}
+          sound={model.settings.sound}
+          speaking={model.speaking}
+          onSpeak={() =>
+            model.speak(
+              showQuestion
+                ? 'Прочитай текст и ответь на вопрос.'
+                : mode === 'write'
+                  ? 'Перепиши текущую строку.'
+                  : 'Прочитай текст вслух.',
+            )
+          }
+        />
         <h2>{item.title}</h2>
         <TaskInstruction
           text={

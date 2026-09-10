@@ -109,9 +109,6 @@ function TopicTextSession({
         done={completed.length === deck.length && deck.length > 0}
         motion={model.settings.motion}
       />
-      <p className="text-session-count">
-        Текст {index + 1} из {deck.length} · {topicNames[model.settings.unit]}
-      </p>
       <details className="text-session-picker">
         <summary>Выбрать текст этой темы</summary>
         <div className="portal-grid">
@@ -131,6 +128,9 @@ function TopicTextSession({
       <TextExercise
         key={item.id + ':' + round}
         item={item}
+        taskNumber={index + 1}
+        taskTotal={deck.length}
+        completedTasks={completed.length}
         model={model}
         onComplete={() =>
           setCompleted((ids) =>

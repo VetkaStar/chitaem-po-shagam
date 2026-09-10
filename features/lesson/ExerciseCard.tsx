@@ -21,7 +21,7 @@ import { useState } from 'react';
 import WordBridge from './WordBridge';
 import { useEffect, useRef } from 'react';
 import { Volume2, ArrowRight, Leaf, HelpCircle } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
+import ExerciseHeader from '@/components/exercise-header';
 
 export default function ExerciseCard({ model }: { model: ExerciseModel }) {
   const {
@@ -103,24 +103,13 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
       )}
       <CompletionCelebration done={done} motion={settings.motion} />
       <div className={'exercise ' + feedback.kind}>
-        <div className="exercise-top">
-          <span>
-            Задание {Math.min(count + 1, model.lessonLength)} из{' '}
-            {model.lessonLength}
-          </span>
-          <button
-            className="quiet"
-            onClick={() => speak(task)}
-            disabled={speaking}
-            aria-label="Озвучить задание"
-          >
-            <Volume2 size={21} />
-          </button>
-        </div>
-        <Progress
-          value={(count / model.lessonLength) * 100}
-          aria-label="Прогресс занятия"
-          className="lesson-progress"
+        <ExerciseHeader
+          number={Math.min(count + 1, model.lessonLength)}
+          total={model.lessonLength}
+          completed={count}
+          sound={settings.sound}
+          speaking={speaking}
+          onSpeak={() => speak(task)}
         />
         {done ? (
           <div className="completion">

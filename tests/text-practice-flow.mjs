@@ -88,6 +88,7 @@ function load(file) {
           };
         if (p.endsWith('.css')) return {};
         if (p === 'lucide-react') return {};
+        if (p === '@/components/ui/progress') return { Progress: () => null };
         if (p.includes('completion-celebration'))
           return { default: () => null };
         if (p === './use-text-microphone')

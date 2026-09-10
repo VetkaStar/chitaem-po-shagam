@@ -1,9 +1,12 @@
 'use client';
+import type { ReactNode } from 'react';
 import { useId, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check, List, Volume2 } from 'lucide-react';
 import { topicNames } from '@/lib/topics';
 import './topic-bar.css';
 export default function TopicBar({
+  autoControl,
+  nextTitle = 'Следующая тема',
   unit,
   current,
   nextLabel,
@@ -14,6 +17,8 @@ export default function TopicBar({
   speaking = false,
   done = false,
 }: {
+  autoControl?: ReactNode;
+  nextTitle?: string;
   unit: number;
   current: string;
   nextLabel: string;
@@ -74,11 +79,13 @@ export default function TopicBar({
           }}
         >
           <span>
-            Следующая тема<small>{nextLabel}</small>
+            {nextTitle}
+            <small>{nextLabel}</small>
           </span>
           <ArrowRight size={23} />
         </button>
       </div>
+      {autoControl && <div className="topic-auto">{autoControl}</div>}
       {open && onSelect && (
         <div className="topic-grid topic-options" id={id}>
           {topicNames.map((name, i) => (

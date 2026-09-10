@@ -1,31 +1,14 @@
 'use client';
-import AutoAdvanceSettings from '@/components/auto-advance-settings';
+import PracticeMenu from '@/components/practice-menu';
+import ReadingGuideControls from './ReadingGuideControls';
 import type { LessonModel } from './use-lesson';
 export default function PracticeControls({ model: m }: { model: LessonModel }) {
+  if (m.stage === 'pictures') return null;
   return (
-    <>
-      <AutoAdvanceSettings model={m} />
+    <PracticeMenu>
       <div className="practice-controls" aria-label="Настройки упражнения">
-        <button
-          aria-pressed={m.settings.color}
-          onClick={() => m.update('color', !m.settings.color)}
-        >
-          Цветные буквы: {m.settings.color ? 'вкл' : 'выкл'}
-        </button>
-        {m.stage === 'pictures' && (
-          <label>
-            Ответ{' '}
-            <select
-              aria-label="Режим картинок"
-              value={m.settings.pictureMode}
-              onChange={(e) =>
-                m.update('pictureMode', e.target.value as 'free' | 'letters')
-              }
-            >
-              <option value="free">Свободный ответ</option>
-              <option value="letters">Окошки для букв</option>
-            </select>
-          </label>
+        {m.stage === 'words' && m.mode === 'read' && (
+          <ReadingGuideControls model={m} wordOnly />
         )}
         {m.stage === 'words' && m.mode === 'read' && (
           <label>
@@ -102,6 +85,6 @@ export default function PracticeControls({ model: m }: { model: LessonModel }) {
           </label>
         )}
       </div>
-    </>
+    </PracticeMenu>
   );
 }

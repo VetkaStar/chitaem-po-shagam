@@ -8,6 +8,8 @@ export const topicNames = levels.map((l, i) =>
       : l.name,
 );
 export function nextTopic(stage: string, unit: number) {
+  if (stage === 'pictures')
+    return { stage: 'pictures', unit, label: 'Новые картинки' };
   if (stage !== 'pictures' && unit < levels.length - 1) {
     return { stage, unit: unit + 1, label: topicNames[unit + 1] };
   }

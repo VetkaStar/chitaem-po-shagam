@@ -16,11 +16,12 @@ export default function AutoAdvanceSettings({
         />
         Автоматически переходить дальше
       </label>
-      {model.settings.autoAdvance && (
+      {
         <label>
           Через{' '}
           <input
             aria-label="Задержка автоперехода в секундах"
+            disabled={!model.settings.autoAdvance}
             type="number"
             min={1}
             max={30}
@@ -33,7 +34,7 @@ export default function AutoAdvanceSettings({
           />{' '}
           секунд
         </label>
-      )}
+      }
     </div>
   );
 }

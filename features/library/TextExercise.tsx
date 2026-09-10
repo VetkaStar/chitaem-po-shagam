@@ -1,6 +1,8 @@
 'use client';
 import { useIllustrationPreload } from '@/components/use-illustration-preload';
 import ExerciseHeader from '@/components/exercise-header';
+import PracticeMenu from '@/components/practice-menu';
+import type { ReactNode } from 'react';
 import AutoAdvance from '@/components/auto-advance';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -26,6 +28,7 @@ import IllustrationGallery from '@/components/illustration-gallery';
 import { textIllustrations } from '@/content/illustrations';
 type Mode = 'read' | 'questions' | 'write';
 export default function TextExercise({
+  textPicker,
   item,
   model,
   onBack,
@@ -35,6 +38,7 @@ export default function TextExercise({
   taskTotal = 1,
   completedTasks = 0,
 }: {
+  textPicker?: ReactNode;
   item: ReadingText;
   model: LessonModel;
   onBack: () => void;
@@ -280,7 +284,7 @@ export default function TextExercise({
   const showQuestion = mode === 'questions' || question;
   return (
     <>
-      <div className="toolbar">
+      <div className="lesson-controls">
         <div
           className="mode-list text-mode-list"
           role="group"
@@ -310,17 +314,71 @@ export default function TextExercise({
             </button>
           ))}
         </div>
-        <button
-          className="quiet"
-          aria-label="Пауза"
-          onClick={() => {
-            setMic(false);
-            model.stop();
-            model.setPaused(true);
-          }}
-        >
-          <Pause size={18} />
-        </button>
+        {textPicker}
+        <PracticeMenu>
+          {' '}
+          {mode === 'read' && (
+            <label className="text-question-option">
+              <input
+                type="checkbox"
+                checked={ask}
+                onChange={(e) => setAsk(e.target.checked)}
+              />{' '}
+              Задать вопрос после прочтения
+            </label>
+          )}
+          {mode === 'read' && !showQuestion && !done && (
+            <>
+              <div className="text-flow-controls">
+                <label>
+                  Чтение{' '}
+                  <select
+                    aria-label="Ведение по тексту"
+                    value={model.settings.textFlow}
+                    onChange={(e) =>
+                      model.update(
+                        'textFlow',
+                        e.target.value as 'auto' | 'manual',
+                      )
+                    }
+                  >
+                    <option value="auto">Автоматическое</option>
+                    <option value="manual">Ручное</option>
+                  </select>
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={model.settings.showFullText !== false}
+                    onChange={(e) =>
+                      model.update('showFullText', e.target.checked)
+                    }
+                  />
+                  Показать весь текст
+                </label>
+              </div>
+              <ReadingGuideControls
+                model={model}
+                wordOnly={item.lines.length === 1}
+              />
+
+              {item.lines.length > 1 && model.settings.textFlow !== 'auto' && (
+                <div className="reading-line-picker" aria-label="Выбор строки">
+                  {item.lines.map((_, i) => (
+                    <button
+                      key={i}
+                      aria-current={line === i ? 'step' : undefined}
+                      onClick={() => chooseLine(i)}
+                    >
+                      Строка {i + 1}
+                      {readLines.includes(i) ? ' ✓' : ''}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </PracticeMenu>
       </div>
       {(done ||
         (accepted &&
@@ -384,67 +442,6 @@ export default function TextExercise({
               <IllustrationGallery assetId={textIllustrations[item.id]} />
             )}
           </details>
-        )}
-        {mode === 'read' && (
-          <label className="text-question-option">
-            <input
-              type="checkbox"
-              checked={ask}
-              onChange={(e) => setAsk(e.target.checked)}
-            />{' '}
-            Задать вопрос после прочтения
-          </label>
-        )}
-        {mode === 'read' && !showQuestion && !done && (
-          <>
-            <div className="text-flow-controls">
-              <label>
-                Чтение{' '}
-                <select
-                  aria-label="Ведение по тексту"
-                  value={model.settings.textFlow}
-                  onChange={(e) =>
-                    model.update(
-                      'textFlow',
-                      e.target.value as 'auto' | 'manual',
-                    )
-                  }
-                >
-                  <option value="auto">Автоматическое</option>
-                  <option value="manual">Ручное</option>
-                </select>
-              </label>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={model.settings.showFullText !== false}
-                  onChange={(e) =>
-                    model.update('showFullText', e.target.checked)
-                  }
-                />
-                Показать весь текст
-              </label>
-            </div>
-            <ReadingGuideControls
-              model={model}
-              wordOnly={item.lines.length === 1}
-            />
-
-            {item.lines.length > 1 && model.settings.textFlow !== 'auto' && (
-              <div className="reading-line-picker" aria-label="Выбор строки">
-                {item.lines.map((_, i) => (
-                  <button
-                    key={i}
-                    aria-current={line === i ? 'step' : undefined}
-                    onClick={() => chooseLine(i)}
-                  >
-                    Строка {i + 1}
-                    {readLines.includes(i) ? ' ✓' : ''}
-                  </button>
-                ))}
-              </div>
-            )}
-          </>
         )}
         {showQuestion ? (
           <div className="text-reference">

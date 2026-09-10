@@ -281,7 +281,7 @@ export function useLesson() {
   }, []);
   useEffect(() => {
     if (!parent && !paused && !rest && !done && mode !== 'read')
-      input.current?.focus();
+      input.current?.focus({ preventScroll: true });
   }, [index, mode, parent, paused, rest, done, stage]);
   function record(result: string, via: string) {
     setHistory((h) =>

@@ -8,7 +8,7 @@ export default function LessonToolbar({
 }: {
   model: Pick<
     LessonModel,
-    'mode' | 'stage' | 'navigate' | 'stop' | 'setPaused'
+    'mode' | 'stage' | 'navigate' | 'stop' | 'setPaused' | 'settings' | 'update'
   >;
 }) {
   const { mode, stage, navigate, stop, setPaused } = model;
@@ -35,17 +35,22 @@ export default function LessonToolbar({
             </TabsList>
           </Tabs>
         )}
-        <button
-          className="quiet"
-          style={{ marginLeft: 'auto' }}
-          onClick={() => {
-            stop();
-            setPaused(true);
-          }}
-          aria-label="Пауза"
-        >
-          <Pause size={18} />
-        </button>
+        {stage === 'pictures' && (
+          <div className="mode-list" role="group" aria-label="Режим картинок">
+            {(['free', 'letters'] as const).map((value) => (
+              <button
+                key={value}
+                aria-pressed={model.settings.pictureMode === value}
+                data-active={
+                  model.settings.pictureMode === value ? '' : undefined
+                }
+                onClick={() => model.update('pictureMode', value)}
+              >
+                {value === 'free' ? 'Свободный ответ' : 'Окошки для букв'}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

@@ -36,8 +36,10 @@ export default function ReadingApp() {
           </span>
         </div>
         {!done && <TopicNavigation model={model} />}
-        <LessonToolbar model={model} />
-        <PracticeControls model={model} />
+        <div className="lesson-controls">
+          <LessonToolbar model={model} />
+          <PracticeControls model={model} />
+        </div>
         {model.schedule.skips >= 2 && (
           <div className="rest-snooze" role="status">
             Разминку несколько раз пропустили. Сделать перерыв в напоминаниях?
@@ -50,7 +52,7 @@ export default function ReadingApp() {
         )}
         {model.schedule.until > Date.now() && (
           <p className="muted">
-            Напоминания об отдыхе временно выключены. «Пауза» доступна.
+            Напоминания об отдыхе временно выключены. «Разминка» доступна.
           </p>
         )}
         {model.schedule.due && (
@@ -68,7 +70,7 @@ export default function ReadingApp() {
             ? `Отдых через ${settings.breakMinutes} минут занятия`
             : settings.breakEvery
               ? `Отдых через ${settings.breakEvery} заданий`
-              : 'Отдых по кнопке «Пауза»'}
+              : 'Отдых по кнопке «Разминка»'}
         </div>
       </section>
     </AppPortal>

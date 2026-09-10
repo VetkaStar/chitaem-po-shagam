@@ -191,8 +191,6 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
               )}
             {stage === 'words' && mode === 'read' && (
               <>
-                <ReadingGuideControls model={model} wordOnly />
-
                 {(entry?.icon || wordIllustrations[target]) && (
                   <>
                     <button

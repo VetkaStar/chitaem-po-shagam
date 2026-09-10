@@ -123,87 +123,97 @@ export default function ExerciseFeedback({
           </div>
         </div>
       )}
-      {hint && mode !== 'fly' && (
-        <div className="hint-box">
-          {picture ? (
-            <>
-              <p>{picture.hint}</p>
-              <p>
-                Слово: <b>{target}</b>
-              </p>
-              <button className="sample" onClick={() => speak(target)}>
-                <Volume2 size={16} /> Послушать слово
-              </button>
-            </>
-          ) : (
-            <>
-              <p>
-                {mistakes >= 3
-                  ? 'Найди такой же. Потом прочитай.'
-                  : target.length > 1
-                    ? 'Начни с первой буквы и соедини звуки.'
-                    : 'Посмотри на букву. Повтори за взрослым.'}
-              </p>
-              <div className="sound-path">
-                {Array.from(target).map((c, i) => (
-                  <span key={i}>
-                    <b className={i === 0 ? 'first-focus' : ''}>{c}</b>
-                    {i < target.length - 1 && <ArrowRight size={20} />}
-                  </span>
-                ))}
-              </div>
-              {mistakes >= 2 && (
-                <button
-                  className="sample"
-                  onClick={() => speak(target.toLowerCase())}
-                >
-                  <Volume2 size={18} /> Послушать вместе
+      {mode !== 'fly' && (
+        <div
+          className="hint-space"
+          data-visible={hint}
+          aria-hidden={!hint}
+          inert={!hint}
+        >
+          <div className="hint-box">
+            {picture ? (
+              <>
+                <p>{picture.hint}</p>
+                <p>
+                  Слово: <b>{target}</b>
+                </p>
+                <button className="sample" onClick={() => speak(target)}>
+                  <Volume2 size={16} /> Послушать слово
                 </button>
-              )}
-              {mistakes >= 3 && target.length > 1 && (
-                <div className="support-choices">
-                  {[
-                    ...new Set([Array.from(target).reverse().join(''), target]),
-                  ].map((v) => (
-                    <button
-                      key={v}
-                      onClick={() => {
-                        if (v === target) {
-                          setFeedback({
-                            kind: 'neutral',
-                            text: `Да, это ${target}! Теперь прочитай.`,
-                          });
-                          setHeard('');
-                          if (settings.sound && settings.autoSpeech)
-                            speak(
-                              `Да! ${target.toLowerCase()}. Теперь прочитай.`,
-                            );
-                        } else {
-                          setFeedback({
-                            kind: 'error',
-                            text: `Посмотри: первая буква — ${target[0]}.`,
-                          });
-                        }
-                      }}
-                    >
-                      {v}
-                    </button>
+              </>
+            ) : (
+              <>
+                <p>
+                  {mistakes >= 3
+                    ? 'Найди такой же. Потом прочитай.'
+                    : target.length > 1
+                      ? 'Начни с первой буквы и соедини звуки.'
+                      : 'Посмотри на букву. Повтори за взрослым.'}
+                </p>
+                <div className="sound-path">
+                  {Array.from(target).map((c, i) => (
+                    <span key={i}>
+                      <b className={i === 0 ? 'first-focus' : ''}>{c}</b>
+                      {i < target.length - 1 && <ArrowRight size={20} />}
+                    </span>
                   ))}
                 </div>
-              )}
-              {mistakes >= 3 && (
-                <button
-                  className="text-button"
-                  onClick={() => {
-                    stop();
-                    setRest(true);
-                  }}
-                >
-                  <Leaf size={16} /> Немного отдохнуть
-                </button>
-              )}
-            </>
-          )}
+                {mistakes >= 2 && (
+                  <button
+                    className="sample"
+                    onClick={() => speak(target.toLowerCase())}
+                  >
+                    <Volume2 size={18} /> Послушать вместе
+                  </button>
+                )}
+                {mistakes >= 3 && target.length > 1 && (
+                  <div className="support-choices">
+                    {[
+                      ...new Set([
+                        Array.from(target).reverse().join(''),
+                        target,
+                      ]),
+                    ].map((v) => (
+                      <button
+                        key={v}
+                        onClick={() => {
+                          if (v === target) {
+                            setFeedback({
+                              kind: 'neutral',
+                              text: `Да, это ${target}! Теперь прочитай.`,
+                            });
+                            setHeard('');
+                            if (settings.sound && settings.autoSpeech)
+                              speak(
+                                `Да! ${target.toLowerCase()}. Теперь прочитай.`,
+                              );
+                          } else {
+                            setFeedback({
+                              kind: 'error',
+                              text: `Посмотри: первая буква — ${target[0]}.`,
+                            });
+                          }
+                        }}
+                      >
+                        {v}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {mistakes >= 3 && (
+                  <button
+                    className="text-button"
+                    onClick={() => {
+                      stop();
+                      setRest(true);
+                    }}
+                  >
+                    <Leaf size={16} /> Немного отдохнуть
+                  </button>
+                )}
+              </>
+            )}
+          </div>
         </div>
       )}
     </>

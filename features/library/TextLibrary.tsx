@@ -1,4 +1,5 @@
 'use client';
+import PracticeMenu from '@/components/practice-menu';
 import AutoAdvanceSettings from '@/components/auto-advance-settings';
 import { useMemo, useState } from 'react';
 import CompletionCelebration from '@/components/completion-celebration';
@@ -33,6 +34,7 @@ export default function TextLibrary({
         </span>
       </div>
       <TopicBar
+        autoControl={<AutoAdvanceSettings model={model} />}
         unit={model.settings.unit}
         current={topicNames[model.settings.unit]}
         nextLabel={topicNames[(model.settings.unit + 1) % topicNames.length]}
@@ -59,7 +61,6 @@ export default function TextLibrary({
           )
         }
       />
-      <AutoAdvanceSettings model={model} />
       <TopicTextSession
         key={kind + ':' + model.settings.unit}
         kind={kind}
@@ -109,24 +110,27 @@ function TopicTextSession({
         done={completed.length === deck.length && deck.length > 0}
         motion={model.settings.motion}
       />
-      <details className="text-session-picker">
-        <summary>Выбрать текст этой темы</summary>
-        <div className="portal-grid">
-          {deck.map((t, i) => (
-            <button
-              key={t.id}
-              onClick={() => {
-                model.stop();
-                setIndex(i);
-              }}
-            >
-              {t.title}
-            </button>
-          ))}
-        </div>
-      </details>
       <TextExercise
         key={item.id + ':' + round}
+        textPicker={
+          <>
+            <PracticeMenu label="Выбрать текст">
+              <div className="portal-grid">
+                {deck.map((t, i) => (
+                  <button
+                    key={t.id}
+                    onClick={() => {
+                      model.stop();
+                      setIndex(i);
+                    }}
+                  >
+                    {t.title}
+                  </button>
+                ))}
+              </div>
+            </PracticeMenu>
+          </>
+        }
         item={item}
         taskNumber={index + 1}
         taskTotal={deck.length}

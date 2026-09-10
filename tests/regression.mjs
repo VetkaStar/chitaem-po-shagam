@@ -41,7 +41,11 @@ function load(name, globals = {}) {
 const { makeDeck, wordPool, pictureAnswer } = load('session');
 for (let unit = 0; unit < 6; unit++) {
   assert(wordPool(unit).length >= 1);
-  assert(wordPool(unit).every(word => load("topic-material").fitsTopic(word, unit)));
+  assert(
+    wordPool(unit).every((word) =>
+      load('topic-material').fitsTopic(word, unit),
+    ),
+  );
   let old = [];
   for (let run = 0; run < 40; run++) {
     const deck = makeDeck(['АМ', 'УМ', 'МА', 'МУ'], 24, old);
@@ -243,7 +247,7 @@ assert.equal(topicNames.length, 13);
 assert.equal(nextTopic('syllables', 0).unit, 1);
 assert.equal(nextTopic('syllables', 12).stage, 'words');
 assert.equal(nextTopic('words', 12).stage, 'pictures');
-assert.equal(nextTopic('pictures', 0).stage, 'letters');
+assert.equal(nextTopic('pictures', 0).stage, 'pictures');
 console.log('PASS: next topics and section boundaries.');
 
 const { breakDue } = load('breaks');
@@ -534,59 +538,119 @@ for (const mode of ['colors', 'sequence'])
 assert(bubbleGrid(15).rows > bubbleGrid(5).rows);
 console.log('PASS bubble layout: every difficulty fits within a bounded grid');
 
-const { pairGrid } = load("rest-games");
+const { pairGrid } = load('rest-games');
 for (const amount of [2, 3, 4, 6, 8]) {
   const grid = pairGrid(amount);
   assert.equal(grid.rows * grid.columns, amount * 2);
   assert(grid.rows <= 4 && grid.columns <= 4);
 }
 
-const { advanceTextReading, readingLetters, checkTextWriting } = load('text-practice');
-let textProgress = advanceTextReading('Кот спит.', 0, 'кот', .9);
+const { advanceTextReading, readingLetters, checkTextWriting } =
+  load('text-practice');
+let textProgress = advanceTextReading('Кот спит.', 0, 'кот', 0.9);
 assert.equal(textProgress, 3);
-assert.equal(advanceTextReading('Кот спит.', textProgress, 'я хочу играть', .9), textProgress);
-assert.equal(advanceTextReading('Кот спит.', textProgress, 'спит', .3), textProgress);
-assert.equal(advanceTextReading('Кот спит.', textProgress, 'спит', .9), readingLetters('Кот спит.').length);
-assert.equal(advanceTextReading('Кот спит.', 0, 'спит кот', .9), 0);
-assert.equal(advanceTextReading('Мама мыла раму.', 0, 'мааама мыыыла раааму', .9), readingLetters('Мама мыла раму.').length);
+assert.equal(
+  advanceTextReading('Кот спит.', textProgress, 'я хочу играть', 0.9),
+  textProgress,
+);
+assert.equal(
+  advanceTextReading('Кот спит.', textProgress, 'спит', 0.3),
+  textProgress,
+);
+assert.equal(
+  advanceTextReading('Кот спит.', textProgress, 'спит', 0.9),
+  readingLetters('Кот спит.').length,
+);
+assert.equal(advanceTextReading('Кот спит.', 0, 'спит кот', 0.9), 0);
+assert.equal(
+  advanceTextReading('Мама мыла раму.', 0, 'мааама мыыыла раааму', 0.9),
+  readingLetters('Мама мыла раму.').length,
+);
 assert(checkTextWriting('КОТ спит', 'Кот спит.', 1).correct);
 assert(!checkTextWriting('кот123 спит', 'Кот спит.', 1).correct);
 assert(!checkTextWriting('спит кот', 'Кот спит.', 1).correct);
 assert.equal(checkTextWriting('Кот спти', 'Кот спит.', 1).hint.kind, 'swap');
 assert.equal(checkTextWriting('Кот спрт', 'Кот спит.', 1).hint.kind, 'replace');
 assert(!checkTextWriting('Лиса бежит', 'Кот спит.', 1).hint);
-console.log('PASS text practice: final sequential reading, low confidence and unrelated speech, text writing and precise typo help');
+console.log(
+  'PASS text practice: final sequential reading, low confidence and unrelated speech, text writing and precise typo help',
+);
 
 const { fitsTopic } = load('topic-material');
 const { textsForTopic } = load('topic-texts');
 assert.deepEqual(Array.from(wordPool(0)), ['МАМА']);
 assert(!wordPool(0).includes('ЧЕРЕПАХА'));
 for (let unit = 0; unit < 13; unit++) {
-  for (const kind of ['sentences','stories','poems']) {
+  for (const kind of ['sentences', 'stories', 'poems']) {
     const texts = textsForTopic(kind, unit);
     assert(texts.length > 0);
-    for (const t of texts) assert([...t.lines, ...t.options].every(s => fitsTopic(s, unit)));
+    for (const t of texts)
+      assert([...t.lines, ...t.options].every((s) => fitsTopic(s, unit)));
   }
 }
 const LetterDisplay = loadView('features/lesson/LetterDisplay.tsx').default;
-for (const [letterCase, expected] of [['upper','Б'], ['lower','б'], ['both','Б б']]) {
- const html = renderToStaticMarkup(React.createElement(LetterDisplay, {letter:'Б', settings:{letterMode:'alphabet',letterCase,color:false}}));
- assert(html.includes(expected)); assert(html.includes('[бэ]'));
+for (const [letterCase, expected] of [
+  ['upper', 'Б'],
+  ['lower', 'б'],
+  ['both', 'Б б'],
+]) {
+  const html = renderToStaticMarkup(
+    React.createElement(LetterDisplay, {
+      letter: 'Б',
+      settings: { letterMode: 'alphabet', letterCase, color: false },
+    }),
+  );
+  assert(html.includes(expected));
+  assert(html.includes('[бэ]'));
 }
-const soundHtml = renderToStaticMarkup(React.createElement(LetterDisplay, {letter:'Б', settings:{letterMode:'sounds',letterCase:'both',color:false}}));
-assert(soundHtml.includes('[б]')); assert(!soundHtml.includes('[бэ]'));
-console.log('PASS shared topics and letter presentation: all target alphabets, no advanced early words, case and sound/name distinction');
+const soundHtml = renderToStaticMarkup(
+  React.createElement(LetterDisplay, {
+    letter: 'Б',
+    settings: { letterMode: 'sounds', letterCase: 'both', color: false },
+  }),
+);
+assert(soundHtml.includes('[б]'));
+assert(!soundHtml.includes('[бэ]'));
+console.log(
+  'PASS shared topics and letter presentation: all target alphabets, no advanced early words, case and sound/name distinction',
+);
 
 const { guideParts, firstUnreadSource } = load('reading-guide');
-for(const value of ['Мама мыла раму.','Тим лёг на коврик.','Соня села рядом. Кот уснул.']) {
- for(const unit of ['line','word','syllable']) assert.equal(guideParts(value,unit).map(p=>p.text).join(''),value);
+for (const value of [
+  'Мама мыла раму.',
+  'Тим лёг на коврик.',
+  'Соня села рядом. Кот уснул.',
+]) {
+  for (const unit of ['line', 'word', 'syllable'])
+    assert.equal(
+      guideParts(value, unit)
+        .map((p) => p.text)
+        .join(''),
+      value,
+    );
 }
-assert.equal(guideParts('МУХА','syllable').filter(p=>p.letters).length,2);
-assert.equal(firstUnreadSource('Кот спит.',new Set([3,4,5,6])),0);
-assert.equal(firstUnreadSource('Кот спит.',new Set([0,1,2,3,4,5,6])),null);
-assert.equal(advanceTextReading('Мама, ау!',0,'мама ау',.9),readingLetters('Мама, ау!').length);
-const Guide=loadView('features/lesson/ReadingGuide.tsx').default;
-const quietGuide=renderToStaticMarkup(React.createElement(Guide,{text:'МУХА',focus:'syllable',progress:2,highlight:false,onSelect:noop}));
+assert.equal(guideParts('МУХА', 'syllable').filter((p) => p.letters).length, 2);
+assert.equal(firstUnreadSource('Кот спит.', new Set([3, 4, 5, 6])), 0);
+assert.equal(
+  firstUnreadSource('Кот спит.', new Set([0, 1, 2, 3, 4, 5, 6])),
+  null,
+);
+assert.equal(
+  advanceTextReading('Мама, ау!', 0, 'мама ау', 0.9),
+  readingLetters('Мама, ау!').length,
+);
+const Guide = loadView('features/lesson/ReadingGuide.tsx').default;
+const quietGuide = renderToStaticMarkup(
+  React.createElement(Guide, {
+    text: 'МУХА',
+    focus: 'syllable',
+    progress: 2,
+    highlight: false,
+    onSelect: noop,
+  }),
+);
 assert(!quietGuide.includes('guide-current'));
 assert(quietGuide.includes('Читать: ХА'));
-console.log('PASS reading guide: word/syllable reconstruction, uncovered prefix, adjacent vowels and optional highlighting');
+console.log(
+  'PASS reading guide: word/syllable reconstruction, uncovered prefix, adjacent vowels and optional highlighting',
+);

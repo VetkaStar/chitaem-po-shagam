@@ -329,6 +329,27 @@ header.app-header {
   }
 }
 
-.letter-display .reading{white-space:pre-wrap}.letter-display .letter-name{font-size:32px;margin:-10px 0 24px;text-align:center}
+.letter-display .reading {
+  white-space: pre-wrap;
+}
+.letter-display .letter-name {
+  font-size: 32px;
+  margin: -10px 0 24px;
+  text-align: center;
+}
 
-.catch-token .letter-display .reading{font-size:24px;margin:0;letter-spacing:1px}.catch-token .letter-display .letter-name{font-size:15px;margin:0}.catch-token .letter-display p{display:none}.catch-token .letter-display .letter-name{display:block}
+.catch-token .letter-display .reading {
+  font-size: 24px;
+  margin: 0;
+  letter-spacing: 1px;
+}
+.catch-token .letter-display .letter-name {
+  font-size: 15px;
+  margin: 0;
+}
+.catch-token .letter-display p {
+  display: none;
+}
+.catch-token .letter-display .letter-name {
+  display: block;
+}

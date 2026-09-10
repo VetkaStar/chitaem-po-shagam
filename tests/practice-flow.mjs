@@ -368,4 +368,19 @@ assert.equal(model.stars,guideStars+1);
 act(m=>{m.update('readingHighlight',false);m.update('readingFocus','syllable')});
 assert.equal(JSON.parse(storage.get('reading-steps-v3')).settings.readingHighlight,false);
 
+// Catching must preserve the section/mode in history and award one star.
+act(m => { m.update('breakEvery', 0); m.navigate('syllables', 'fly'); });
+const caught = model.flyCards[0];
+const catchStars = model.stars;
+act(m => m.setAnswer(caught.text));
+act(m => m.submit());
+assert.equal(model.stars, catchStars + 1);
+assert.equal(model.history.at(-1).stage, 'syllables');
+assert.equal(model.history.at(-1).mode, 'fly');
+assert.equal(model.history.at(-1).via, 'catch');
+assert.equal(model.flyCards.find(c => c.id === caught.id).caught, true);
+act(m => m.submit());
+assert.equal(model.stars, catchStars + 1);
+console.log('PASS catch integration: card, award, history and repeated submit');
+
 for (const slot of slots) slot?.cleanup?.();

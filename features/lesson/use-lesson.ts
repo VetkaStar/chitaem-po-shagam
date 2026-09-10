@@ -1,15 +1,24 @@
 'use client';
+import type { SpeechController } from './lesson-speech-types';
+import { restoreLessonProgress } from './lesson-storage';
+
+import { createSpeechHandler } from './lesson-speech-actions';
+import { createAnswerHandler } from './lesson-answer-actions';
+import { createCatchHandler } from './lesson-catch-actions';
+import { createVoiceHandler } from './lesson-voice-actions';
+import { createReportExporter } from './lesson-report';
+
 import { pictureRetry } from '@/lib/picture-retry';
-import { parseVision } from '@/lib/vision';
+
 import { useRestSchedule } from './use-rest-schedule';
 import { freshWordDeck, wordParts } from '@/content/word-bank';
 import { useEffect, useRef, useState } from 'react';
-import { levels, pictures, breaks, checkTyped } from '@/lib/learning';
-import { wordPool, makeDeck, pictureAnswer, synonyms } from '@/lib/session';
+import { levels, pictures, breaks } from '@/lib/learning';
+import { wordPool, makeDeck } from '@/lib/session';
 import { SlowReadingAttempt, matchFragment } from '@/lib/slow-reading';
 import { findTypo, type TypoHint } from '@/lib/typo';
-import { classifyUtterance } from '@/lib/feedback';
-import { startLocalSpeech } from '@/lib/local-speech';
+
+import { startLocalSpeech, type SpeechCallbacks } from '@/lib/local-speech';
 import {
   Stage,
   Mode,
@@ -43,7 +52,7 @@ export function useLesson() {
     [paused, setPaused] = useState(false),
     [rest, setRest] = useState(false),
     [done, setDone] = useState(false),
-    [restIndex, setRestIndex] = useState(0),
+    [, setRestIndex] = useState(0),
     [hint, setHint] = useState(false),
     [listening, setListening] = useState(false),
     [supported, setSupported] = useState(false),
@@ -67,17 +76,20 @@ export function useLesson() {
     [flyInputStatus, setFlyInputStatus] = useState('');
   const flyNext = useRef(3),
     caughtIds = useRef(new Set<number>());
-  const resultSink = useRef<(r: any) => void>(() => {}),
+  const resultSink = useRef<SpeechCallbacks['onResult']>(() => {}),
     helpLock = useRef(false),
     speechEpoch = useRef(0);
   const input = useRef<HTMLInputElement>(null),
-    recognition = useRef<any>(null),
+    recognition = useRef<SpeechController | null>(null),
     epoch = useRef(0),
     awarded = useRef(false),
     timer = useRef<ReturnType<typeof setTimeout> | null>(null),
     mounted = useRef(true);
   const unclearAttempts = useRef(0);
-  const [readingPart, setReadingPart] = useState<{text:string;start:number}|null>(null);
+  const [readingPart, setReadingPart] = useState<{
+    text: string;
+    start: number;
+  } | null>(null);
   const partPractice = useRef(new SlowReadingAttempt());
   const slowAttempt = useRef(new SlowReadingAttempt());
   const [speechPreview, setSpeechPreview] = useState(0);
@@ -168,7 +180,8 @@ export function useLesson() {
     setSpeaking(false);
   }
   function resetCard() {
-    setReadingPart(null); partPractice.current.reset();
+    setReadingPart(null);
+    partPractice.current.reset();
     unclearAttempts.current = 0;
     setPartsHelp(false);
     setWholeAgain(false);
@@ -217,70 +230,13 @@ export function useLesson() {
       ?.enumerateDevices()
       .then((d) => setMicDevices(d.filter((x) => x.kind === 'audioinput')))
       .catch(() => {});
-    try {
-      const raw = JSON.parse(
-        localStorage.getItem('reading-steps-v3') || 'null',
-      );
-      if (raw) {
-        const s = raw.settings || {};
-        setSettings({
-          ...defaults,
-          ...Object.fromEntries(
-            Object.keys(defaults)
-              .filter(
-                (k) => typeof s[k] === typeof defaults[k as keyof Settings],
-              )
-              .map((k) => [k, s[k]]),
-          ),
-          unit:
-            Number.isInteger(s.unit) && s.unit >= 0 && s.unit < levels.length
-              ? s.curriculumVersion === 2
-                ? s.unit
-                : s.unit === 5
-                  ? levels.length - 1
-                  : s.unit === 4
-                    ? 10
-                    : s.unit
-              : 0,
-          colorVision: parseVision(s.colorVision),
-          pictureMode: s.pictureMode === 'letters' ? 'letters' : 'free',
-          wordMode: s.wordMode === 'parts' ? 'parts' : 'whole',
-          letterMode: s.letterMode === 'sounds' ? 'sounds' : 'alphabet',
-          letterCase: s.letterCase === 'upper' || s.letterCase === 'lower' ? s.letterCase : 'both',
-          readingFocus: ['line','word','syllable'].includes(s.readingFocus) ? s.readingFocus : 'word',
-          readingHighlight: s.readingHighlight !== false,
-          flySpeed: [0.5, 1, 1.5, 2].includes(s.flySpeed) ? s.flySpeed : 1,
-          breakMinutes: [0, 3, 5, 10, 15].includes(s.breakMinutes)
-            ? s.breakMinutes
-            : 0,
-          curriculumVersion: 2,
-          length: [3, 5, 8].includes(s.length) ? s.length : 5,
-          breakEvery: [0, 3, 5, 8, 10].includes(s.breakEvery)
-            ? s.breakEvery
-            : defaults.breakEvery,
-        });
-        if (Array.isArray(raw.recentWords))
-          setRecentWords(
-            raw.recentWords
-              .filter((x: unknown) => typeof x === 'string')
-              .slice(-200),
-          );
-        if (Number.isInteger(raw.stars) && raw.stars >= 0) setStars(raw.stars);
-        if (Array.isArray(raw.history))
-          setHistory(
-            raw.history
-              .filter(
-                (e: any) =>
-                  e && typeof e.target === 'string' && typeof e.at === 'string',
-              )
-              .slice(-300),
-          );
-      }
-    } catch {
-      setStorageWarning(
-        'Сохранение недоступно. Можно заниматься, но результаты останутся только до закрытия страницы.',
-      );
-    }
+    restoreLessonProgress({
+      setSettings,
+      setRecentWords,
+      setStars,
+      setHistory,
+      setStorageWarning,
+    });
     setReady(true);
     return () => {
       mounted.current = false;
@@ -364,39 +320,14 @@ export function useLesson() {
       setCooldown(false);
     }, delay);
   }
-  function speak(text: string) {
-    setCooldown(true);
-    recognition.current?.setEnabled?.(false);
-    speechEpoch.current++;
-    const token = speechEpoch.current;
-    if (!settings.sound) {
-      releaseSoon();
-      return;
-    }
-    if (!('speechSynthesis' in window)) {
-      releaseSoon();
-      return;
-    }
-    speechSynthesis.cancel();
-    const voices = speechSynthesis.getVoices(),
-      voice = voices.find((v) => v.lang.toLowerCase().startsWith('ru'));
-    if (voices.length && !voice) {
-      releaseSoon();
-      return;
-    }
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'ru-RU';
-    if (voice) u.voice = voice;
-    u.rate = settings.slow ? 0.72 : 0.9;
-    setSpeaking(true);
-    u.onend = u.onerror = () => {
-      if (speechEpoch.current !== token) return;
-      setSpeaking(false);
-      setCooldown(true);
-      releaseSoon(450);
-    };
-    speechSynthesis.speak(u);
-  }
+  const speak = createVoiceHandler({
+    setCooldown,
+    recognition,
+    speechEpoch,
+    settings,
+    releaseSoon,
+    setSpeaking,
+  });
   function wrongResponse(value: string, via: string) {
     if (awarded.current || helpLock.current) return;
     helpLock.current = true;
@@ -425,101 +356,31 @@ export function useLesson() {
       );
     else releaseSoon(1200);
   }
-  function handleSpeech(r: any) {
-    if (
-      awarded.current ||
-      helpLock.current ||
-      speaking ||
-      parent ||
-      paused ||
-      rest ||
-      done
-    )
-      return;
-    setSpeechPreview(0);
-    const text = r.text || '',
-      confidence = r.result?.length
-        ? Math.min(...r.result.map((x: any) => x.conf))
-        : 0;
-    if (
-      stage === 'letters' &&
-      settings.letterMode === 'sounds' &&
-      names[target] &&
-      text.trim().toUpperCase() === names[target] &&
-      confidence >= 0.8
-    ) {
-      setFeedback({
-        kind: 'neutral',
-        text: `Ты назвал букву: ${names[target]}. А сейчас попробуй произнести её звук, без названия.`,
-      });
-      return;
-    }
-    const candidates =
-      stage === 'words'
-        ? wordPool(levels.length - 1)
-        : levels.flatMap((l) => l[stage === 'pictures' ? 'words' : stage]);
-    const verdict = classifyUtterance(
-      text,
-      confidence,
-      stage === 'letters' && settings.letterMode === 'alphabet'
-        ? names[target] || target
-        : target,
-      stage === 'letters' && settings.letterMode === 'alphabet'
-        ? candidates.map((x) => names[x] || x)
-        : candidates,
-      stage === 'letters' && settings.letterMode === 'alphabet' && names[target]
-        ? [names[target]]
-        : [],
-    );
-    if (verdict.kind === 'rest') {
-      stop();
-      setPaused(true);
-      return;
-    }
-    if (stage === 'words' && readingPart) {
-      const piece = partPractice.current.accept(text, confidence, readingPart.text);
-      if (piece.kind === 'complete') {
-        if(readingPart.text === target) { setReadingPart(null); success('local-speech'); return; }
-        setReadingPart(null); slowAttempt.current.reset(); setSpeechProgress(0);
-        setAttemptStatus('Эта часть прочитана! Теперь прочитай слово целиком.');
-      } else setAttemptStatus('Читай выбранную часть. Я слушаю.');
-      return;
-    }
-    if (verdict.kind === 'correct') {
-      setAttemptStatus('');
-      success('local-speech');
-      return;
-    }
-    if (stage !== 'letters') {
-      const part = slowAttempt.current.accept(text, confidence, target);
-      setSpeechProgress(part.progress);
-      if (part.kind === 'complete') {
-        setAttemptStatus('');
-        success('local-speech-parts');
-        return;
-      }
-      if (part.kind === 'pending') {
-        setAttemptStatus('Начало услышано. Продолжай, я жду.');
-        return;
-      }
-    }
-    if (verdict.kind === 'ignore') {
-      setAttemptStatus(
-        'Звук услышан. Попробуй прочитать слово на карточке — можно по частям.',
-      );
-      return;
-    }
-    if (verdict.kind === 'wrong') {
-      setAttemptStatus('');
-      wrongResponse(verdict.heard!, 'local-speech');
-      return;
-    }
-    setHeard('');
-    setFeedback({
-      kind: 'uncertain',
-      text: 'Не расслышал. Скажи ещё раз — я слушаю.',
-    });
-  }
+  const handleSpeech = createSpeechHandler({
+    awarded,
+    helpLock,
+    speaking,
+    parent,
+    paused,
+    rest,
+    done,
+    setSpeechPreview,
+    stage,
+    settings,
+    target,
+    setFeedback,
+    stop,
+    setPaused,
+    readingPart,
+    partPractice,
+    setReadingPart,
+    success,
+    slowAttempt,
+    setSpeechProgress,
+    setAttemptStatus,
+    wrongResponse,
+    setHeard,
+  });
   activitySink.current = (phase) => {
     if (
       awarded.current ||
@@ -634,7 +495,12 @@ export function useLesson() {
       onPartial: (text) => {
         if (epoch.current === token) {
           activitySink.current('sound');
-          if(stage === 'words') setSpeechPreview(matchFragment(text,target,slowAttempt.current.progress) ?? matchFragment(text,target) ?? 0);
+          if (stage === 'words')
+            setSpeechPreview(
+              matchFragment(text, target, slowAttempt.current.progress) ??
+                matchFragment(text, target) ??
+                0,
+            );
         }
       },
       onResult: (r) => {
@@ -787,44 +653,28 @@ export function useLesson() {
     }, 1000);
     return () => clearTimeout(t);
   }, [flyCards, mode, paused, rest, parent, done]);
-  function catchCard() {
-    if (!answer.trim() || paused || rest || done) return;
-    const card = flyCards.find(
-      (c) =>
-        !c.caught && !caughtIds.current.has(c.id) && checkTyped(answer, c.text),
-    );
-    if (!card) {
-      setFlyInputStatus('Найди такой же на дорожке. Можно исправить ответ.');
-      return;
-    }
-    caughtIds.current.add(card.id);
-    setFlyCards((cards) =>
-      cards.map((c) => (c.id === card.id ? { ...c, caught: true } : c)),
-    );
-    setAnswer('');
-    setFlyInputStatus(`Поймано: ${card.text}!`);
-    setStars((n) => n + 1);
-    setHistory((h) =>
-      [
-        ...h,
-        {
-          at: new Date().toISOString(),
-          target: card.text,
-          stage,
-          mode,
-          result: 'success',
-          via: 'catch',
-        },
-      ].slice(-300),
-    );
-    const completed = count + 1;
-    setCount(completed);
-    if (completed >= settings.length) setDone(true);
-    else if (schedule.shouldRest(completed, settings.length)) {
-      setRestIndex((i) => (i + 1) % breaks.length);
-      setRest(true);
-    }
-  }
+  const catchCard = createCatchHandler({
+    stage,
+    mode,
+    answer,
+    paused,
+    rest,
+    done,
+    flyCards,
+    caughtIds,
+    setFlyInputStatus,
+    setFlyCards,
+    setAnswer,
+    setStars,
+    setHistory,
+    count,
+    setCount,
+    settings,
+    setDone,
+    schedule,
+    setRestIndex,
+    setRest,
+  });
   function showTypo() {
     const correction = findTypo(answer, target, []);
     if (!correction) return false;
@@ -852,75 +702,27 @@ export function useLesson() {
     record(attempt === 1 ? 'retry' : 'help', slots ? 'slots' : 'typed');
     if (settings.sound && settings.autoSpeech) speak(help.message);
   }
-  function submit() {
-    setTypo(null);
-    if (mode === 'fly') {
-      catchCard();
-      return;
-    }
-    if (awarded.current) return;
-    if (!answer.trim()) return;
-    schedule.touch();
-    if (!/[а-яё]/i.test(answer)) {
-      setFeedback({
-        kind: 'uncertain',
-        text: 'Переключи клавиатуру на русский язык.',
-      });
-      return;
-    }
-    if (picture) {
-      const verdict = pictureAnswer(
-        answer,
-        target,
-        settings.pictureMode === 'free',
-      );
-      // A nearby spelling gets precise help immediately, before staged retries.
-      if (verdict.kind === 'other' && showTypo()) return;
-      if (settings.pictureMode === 'letters' && verdict.kind !== 'exact') {
-        if (
-          verdict.kind === 'part' ||
-          verdict.kind === 'related' ||
-          verdict.kind === 'similar'
-        ) {
-          setFeedback({ kind: 'neutral', text: verdict.message });
-          record('related', 'slots');
-          if (settings.sound && settings.autoSpeech) speak(verdict.message);
-          return;
-        }
-        pictureMiss(true);
-        return;
-      }
-      if (verdict.kind === 'exact') {
-        success('typed');
-        const variants = [target, ...(synonyms[target] || [])]
-          .slice(0, 4)
-          .map((x) => x.toLowerCase());
-        setFeedback({
-          kind: 'success',
-          text:
-            verdict.message ||
-            `Верно! Можно назвать так: ${variants.join(', ')}.`,
-        });
-      } else if (verdict.kind === 'part') {
-        setHint(false);
-        setHeard('');
-        setFeedback({ kind: 'neutral', text: verdict.message });
-        record('observation', 'typed');
-        if (settings.sound && settings.autoSpeech) speak(verdict.message);
-      } else if (verdict.kind === 'related' || verdict.kind === 'similar') {
-        setScene(true);
-        setHint(true);
-        setFeedback({ kind: 'neutral', text: verdict.message });
-        record('related', 'typed');
-        if (settings.sound && settings.autoSpeech) speak(verdict.message);
-      } else {
-        pictureMiss(false);
-      }
-      return;
-    }
-    if (checkTyped(answer, target)) success('typed');
-    else if (!showTypo()) wrongResponse('', 'typed');
-  }
+  const submit = createAnswerHandler({
+    setTypo,
+    mode,
+    catchCard,
+    awarded,
+    answer,
+    schedule,
+    setFeedback,
+    picture,
+    target,
+    settings,
+    showTypo,
+    record,
+    speak,
+    pictureMiss,
+    success,
+    setHint,
+    setHeard,
+    setScene,
+    wrongResponse,
+  });
   function next(skip = false) {
     if (!skip && !awarded.current) return;
     if (skip && !awarded.current) record('skipped', 'manual');
@@ -952,23 +754,7 @@ export function useLesson() {
     }
     setSettings((s) => ({ ...s, [key]: value }));
   }
-  function exportReport() {
-    const text = [
-      'Читаем по шагам — результаты на этом устройстве',
-      'Дата;Материал;Раздел;Режим;Результат;Проверка',
-      ...history.map((h) =>
-        [h.at, h.target, h.stage, h.mode, h.result, h.via].join(';'),
-      ),
-    ].join('\r\n');
-    const url = URL.createObjectURL(
-      new Blob(['\ufeff' + text], { type: 'text/csv;charset=utf-8' }),
-    );
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'reading-progress.csv';
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  }
+  const exportReport = createReportExporter({ history });
   useEffect(() => {
     const context = (document as any).modelContext;
     if (!context?.registerTool) return;
@@ -1008,7 +794,11 @@ export function useLesson() {
   }, [stage, mode, target, count, settings.length, paused, rest, parent, done]);
   const currentStage = stages.find((s) => s.id === stage)!;
 
-  function awardReadingText(id: string, title: string, practice: 'read' | 'write' | 'questions' = 'questions') {
+  function awardReadingText(
+    id: string,
+    title: string,
+    practice: 'read' | 'write' | 'questions' = 'questions',
+  ) {
     setStars((n) => n + 1);
     setHistory((h) =>
       [
@@ -1018,20 +808,29 @@ export function useLesson() {
           target: title,
           stage: 'words' as Stage,
           mode: (practice === 'write' ? 'type' : 'read') as Mode,
-          result: practice === 'questions' ? 'comprehension' : 'text-' + practice,
+          result:
+            practice === 'questions' ? 'comprehension' : 'text-' + practice,
           via: id,
         },
       ].slice(-300),
     );
   }
-  function selectReadingPart(start:number, text:string) {
-    if(stage !== 'words' || mode !== 'read' || awarded.current) return;
-    partPractice.current.reset(); slowAttempt.current.reset(); setSpeechProgress(0);
-    setReadingPart({start,text}); setAttemptStatus('Прочитай выбранную часть. Затем прочитаем слово целиком.');
-    recognition.current?.setEnabled(false); recognition.current?.setEnabled(true);
+  function selectReadingPart(start: number, text: string) {
+    if (stage !== 'words' || mode !== 'read' || awarded.current) return;
+    partPractice.current.reset();
+    slowAttempt.current.reset();
+    setSpeechProgress(0);
+    setReadingPart({ start, text });
+    setAttemptStatus(
+      'Прочитай выбранную часть. Затем прочитаем слово целиком.',
+    );
+    recognition.current?.setEnabled?.(false);
+    recognition.current?.setEnabled?.(true);
   }
   return {
-    speechPreview, readingPart, selectReadingPart,
+    speechPreview,
+    readingPart,
+    selectReadingPart,
     lessonActive,
     setLessonActive,
     schedule,

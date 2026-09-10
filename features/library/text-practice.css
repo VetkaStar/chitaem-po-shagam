@@ -1,0 +1,86 @@
+.text-question-option {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 20px 0;
+}
+.text-question-option input {
+  width: 22px;
+  height: 22px;
+}
+.text-practice-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px;
+  background: #edf3e6;
+  border-radius: 18px;
+  font-size: clamp(24px, 4vw, 34px);
+  line-height: 1.6;
+  margin: 20px 0;
+}
+.text-writing-label {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0;
+}
+.text-writing-label textarea {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid #cdddc6;
+  border-radius: 16px;
+  font-size: 24px;
+  resize: vertical;
+}
+.text-read-progress {
+  display: block;
+  width: 100%;
+  height: 18px;
+  margin: 16px 0;
+}
+.text-reference p {
+  line-height: 1.8;
+  font-size: 24px;
+}
+.text-reference button {
+  display: inline-flex;
+  vertical-align: middle;
+}
+.text-typo {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.text-typo span {
+  padding: 6px;
+}
+.text-typo .changed {
+  border: 2px solid currentColor;
+  border-radius: 8px;
+  font-weight: bold;
+}
+.text-mic-consent {
+  padding: 16px;
+  border: 1px solid #cdddc6;
+  border-radius: 16px;
+}
+.library details {
+  margin-top: 20px;
+}
+.library button[aria-pressed='true'] {
+  outline: 3px solid #367b60;
+  outline-offset: 2px;
+}
+
+.text-word-read {
+  font-weight: bold;
+  text-decoration: underline;
+  text-decoration-style: double;
+}
+.text-word-current {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+  border-radius: 3px;
+}

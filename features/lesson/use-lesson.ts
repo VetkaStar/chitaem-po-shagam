@@ -987,7 +987,7 @@ export function useLesson() {
   }, [stage, mode, target, count, settings.length, paused, rest, parent, done]);
   const currentStage = stages.find((s) => s.id === stage)!;
 
-  function awardReadingText(id: string, title: string) {
+  function awardReadingText(id: string, title: string, practice: 'read' | 'write' | 'questions' = 'questions') {
     setStars((n) => n + 1);
     setHistory((h) =>
       [
@@ -996,8 +996,8 @@ export function useLesson() {
           at: new Date().toISOString(),
           target: title,
           stage: 'words' as Stage,
-          mode: 'read' as Mode,
-          result: 'comprehension',
+          mode: (practice === 'write' ? 'write' : 'read') as Mode,
+          result: practice === 'questions' ? 'comprehension' : 'text-' + practice,
           via: id,
         },
       ].slice(-300),

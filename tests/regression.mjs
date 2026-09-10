@@ -539,3 +539,19 @@ for (const amount of [2, 3, 4, 6, 8]) {
   assert.equal(grid.rows * grid.columns, amount * 2);
   assert(grid.rows <= 4 && grid.columns <= 4);
 }
+
+const { advanceTextReading, readingLetters, checkTextWriting } = load('text-practice');
+let textProgress = advanceTextReading('Кот спит.', 0, 'кот', .9);
+assert.equal(textProgress, 3);
+assert.equal(advanceTextReading('Кот спит.', textProgress, 'я хочу играть', .9), textProgress);
+assert.equal(advanceTextReading('Кот спит.', textProgress, 'спит', .3), textProgress);
+assert.equal(advanceTextReading('Кот спит.', textProgress, 'спит', .9), readingLetters('Кот спит.').length);
+assert.equal(advanceTextReading('Кот спит.', 0, 'спит кот', .9), 0);
+assert.equal(advanceTextReading('Мама мыла раму.', 0, 'мааама мыыыла раааму', .9), readingLetters('Мама мыла раму.').length);
+assert(checkTextWriting('КОТ спит', 'Кот спит.', 1).correct);
+assert(!checkTextWriting('кот123 спит', 'Кот спит.', 1).correct);
+assert(!checkTextWriting('спит кот', 'Кот спит.', 1).correct);
+assert.equal(checkTextWriting('Кот спти', 'Кот спит.', 1).hint.kind, 'swap');
+assert.equal(checkTextWriting('Кот спрт', 'Кот спит.', 1).hint.kind, 'replace');
+assert(!checkTextWriting('Лиса бежит', 'Кот спит.', 1).hint);
+console.log('PASS text practice: final sequential reading, low confidence and unrelated speech, text writing and precise typo help');

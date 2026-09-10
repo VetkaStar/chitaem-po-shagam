@@ -13,10 +13,12 @@ export default function TextExercise({
   item,
   model,
   onBack,
+  onNext,
 }: {
   item: ReadingText;
   model: LessonModel;
   onBack: () => void;
+  onNext?: () => void;
 }) {
   const [mode, setMode] = useState<Mode>('read'),
     [ask, setAsk] = useState(false),
@@ -148,7 +150,7 @@ export default function TextExercise({
     <>
       <CompletionCelebration done={done} motion={model.settings.motion} />
       <button className="text-button" onClick={onBack}>
-        ← Другой текст
+        Пропустить текст →
       </button>
       <h2>{item.title}</h2>
       <div
@@ -248,7 +250,17 @@ export default function TextExercise({
       )}
       {!done && showQuestion ? (
         <>
-          <h3>{item.question}</h3>
+          <h3>
+            {item.question}{' '}
+            {model.settings.sound && (
+              <button
+                aria-label="Послушать вопрос"
+                onClick={() => model.speak(item.question)}
+              >
+                <Volume2 size={18} />
+              </button>
+            )}
+          </h3>
           <div className="portal-actions">
             {options.map((option) => (
               <button
@@ -386,8 +398,8 @@ export default function TextExercise({
       )}
       <p role="status">{message}</p>
       {done && (
-        <button className="primary" onClick={onBack}>
-          Выбрать следующий текст →
+        <button className="primary" onClick={onNext ?? onBack}>
+          Следующий текст →
         </button>
       )}
     </>

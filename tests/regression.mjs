@@ -40,7 +40,8 @@ function load(name, globals = {}) {
 }
 const { makeDeck, wordPool, pictureAnswer } = load('session');
 for (let unit = 0; unit < 6; unit++) {
-  assert(wordPool(unit).length >= 8);
+  assert(wordPool(unit).length >= 1);
+  assert(wordPool(unit).every(word => load("topic-material").fitsTopic(word, unit)));
   let old = [];
   for (let run = 0; run < 40; run++) {
     const deck = makeDeck(['АМ', 'УМ', 'МА', 'МУ'], 24, old);
@@ -555,3 +556,23 @@ assert.equal(checkTextWriting('Кот спти', 'Кот спит.', 1).hint.kin
 assert.equal(checkTextWriting('Кот спрт', 'Кот спит.', 1).hint.kind, 'replace');
 assert(!checkTextWriting('Лиса бежит', 'Кот спит.', 1).hint);
 console.log('PASS text practice: final sequential reading, low confidence and unrelated speech, text writing and precise typo help');
+
+const { fitsTopic } = load('topic-material');
+const { textsForTopic } = load('topic-texts');
+assert.deepEqual(Array.from(wordPool(0)), ['МАМА']);
+assert(!wordPool(0).includes('ЧЕРЕПАХА'));
+for (let unit = 0; unit < 13; unit++) {
+  for (const kind of ['sentences','stories','poems']) {
+    const texts = textsForTopic(kind, unit);
+    assert(texts.length > 0);
+    for (const t of texts) assert([...t.lines, ...t.options].every(s => fitsTopic(s, unit)));
+  }
+}
+const LetterDisplay = loadView('features/lesson/LetterDisplay.tsx').default;
+for (const [letterCase, expected] of [['upper','Б'], ['lower','б'], ['both','Б б']]) {
+ const html = renderToStaticMarkup(React.createElement(LetterDisplay, {letter:'Б', settings:{letterMode:'alphabet',letterCase,color:false}}));
+ assert(html.includes(expected)); assert(html.includes('[бэ]'));
+}
+const soundHtml = renderToStaticMarkup(React.createElement(LetterDisplay, {letter:'Б', settings:{letterMode:'sounds',letterCase:'both',color:false}}));
+assert(soundHtml.includes('[б]')); assert(!soundHtml.includes('[бэ]'));
+console.log('PASS shared topics and letter presentation: all target alphabets, no advanced early words, case and sound/name distinction');

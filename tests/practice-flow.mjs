@@ -214,7 +214,8 @@ for (const pictureMode of ['free', 'letters']) {
   assert(!model.hint);
   assert.match(model.feedback.text, /Почти/);
 }
-// New word lessons prefer unseen words, persisted even when skipped.
+// New word lessons prefer unseen words within the chosen topic.
+act(m => m.update("unit", 12));
 const seen = new Set();
 for (let i = 0; i < 10; i++) {
   act((m) => m.navigate('words', 'read'));
@@ -340,3 +341,13 @@ for (const slot of slots) slot?.cleanup?.();
 console.log(
   'PASS practice flow: synonyms, progressive letter help, fresh words, parts→whole, stars, timed rests, pause and snooze',
 );
+
+act(m => m.update('letterCase','lower'));
+assert.equal(model.settings.letterCase,'lower');
+assert.equal(JSON.parse(storage.get('reading-steps-v3')).settings.letterCase,'lower');
+act(m => m.update('unit',0));
+act(m => m.navigate('words','read'));
+assert.equal(model.target,'МАМА');
+act(m => m.navigate('syllables','read'));
+assert.equal(model.settings.unit,0);
+assert(['АМ','УМ','МА','МУ'].includes(model.target));

@@ -14,6 +14,7 @@ export type Settings = {
   pictureMode: 'free' | 'letters';
   wordMode: 'whole' | 'parts';
   letterMode: 'sounds' | 'alphabet';
+  letterCase: 'upper' | 'lower' | 'both';
   flySpeed: number;
   motion: boolean;
   sound: boolean;
@@ -41,6 +42,7 @@ export const defaults: Settings = {
   pictureMode: 'free',
   wordMode: 'whole',
   letterMode: 'alphabet',
+  letterCase: 'both',
   flySpeed: 1,
   motion: true,
   sound: true,

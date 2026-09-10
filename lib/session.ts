@@ -1,7 +1,8 @@
+import { fitsTopic } from './topic-material';
 import { wordBank } from '../content/word-bank';
 import { levels, normalize } from './learning';
 
-// Word practice has its own starter vocabulary; letter/syllable sets stay progressive.
+// All word exercises follow the selected cumulative alphabet.
 export const firstWords = [
   'МАМА',
   'ПАПА',
@@ -15,7 +16,7 @@ export const firstWords = [
 export function wordPool(unit: number) {
   return [
     ...new Set([
-      ...wordBank.map((e) => e.word),
+      ...wordBank.map((e) => e.word).filter((word) => fitsTopic(word, unit)),
       ...levels.slice(0, unit + 1).flatMap((l) => l.words),
     ]),
   ];

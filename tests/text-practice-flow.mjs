@@ -279,3 +279,20 @@ assert.equal(JSON.parse(storage.get('reading-text-options-v1')).ask, false);
 console.log(
   'PASS text flows: partial vs final, pause/resume, stale callbacks, refusal, all lines before question, independent questions, writing, modes, saved setting, one award',
 );
+
+const Library = load('features/library/TextLibrary.tsx').default;
+const topicModel = {...model, settings:{...model.settings,unit:0}, update(){}};
+mount(() => Library({kind:'sentences',model:topicModel}));
+const sessionNode = nodes(result).find(n => typeof n.type === 'function' && n.type.name === 'TopicTextSession');
+assert(sessionNode);
+mount(() => sessionNode.type(sessionNode.props));
+let previousText;
+for(let i=0;i<6;i++) {
+ const exercise = nodes(result).find(n => n.props?.item && n.props?.onNext);
+ assert(exercise);
+ assert.notEqual(exercise.props.item.id, previousText);
+ previousText=exercise.props.item.id;
+ exercise.props.onNext(); flush();
+ assert.equal(topicModel.settings.unit,0);
+}
+console.log('PASS topic session: next text stays in topic, cycles without returning to selection or immediate repeat');

@@ -241,6 +241,7 @@ export function useLesson() {
           pictureMode: s.pictureMode === 'letters' ? 'letters' : 'free',
           wordMode: s.wordMode === 'parts' ? 'parts' : 'whole',
           letterMode: s.letterMode === 'sounds' ? 'sounds' : 'alphabet',
+          letterCase: s.letterCase === 'upper' || s.letterCase === 'lower' ? s.letterCase : 'both',
           flySpeed: [0.5, 1, 1.5, 2].includes(s.flySpeed) ? s.flySpeed : 1,
           breakMinutes: [0, 3, 5, 10, 15].includes(s.breakMinutes)
             ? s.breakMinutes
@@ -996,7 +997,7 @@ export function useLesson() {
           at: new Date().toISOString(),
           target: title,
           stage: 'words' as Stage,
-          mode: (practice === 'write' ? 'write' : 'read') as Mode,
+          mode: (practice === 'write' ? 'type' : 'read') as Mode,
           result: practice === 'questions' ? 'comprehension' : 'text-' + practice,
           via: id,
         },

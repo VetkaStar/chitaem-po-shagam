@@ -54,6 +54,25 @@ export default function PracticeControls({ model: m }: { model: LessonModel }) {
           </select>
         </label>
       )}
+      {m.stage === 'letters' && m.settings.letterMode === 'alphabet' && (
+        <label>
+          Показывать{' '}
+          <select
+            aria-label="Вид букв"
+            value={m.settings.letterCase}
+            onChange={(e) =>
+              m.update(
+                'letterCase',
+                e.target.value as 'upper' | 'lower' | 'both',
+              )
+            }
+          >
+            <option value="upper">Заглавные — Б</option>
+            <option value="lower">Строчные — б</option>
+            <option value="both">Обе — Б б</option>
+          </select>
+        </label>
+      )}
       {m.mode === 'fly' && (
         <label>
           Скорость{' '}

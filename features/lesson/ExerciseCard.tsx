@@ -1,4 +1,5 @@
 'use client';
+import LetterDisplay from './LetterDisplay';
 import LetterSlots from './LetterSlots';
 import { wordEntry, wordParts } from '@/content/word-bank';
 import { useState } from 'react';
@@ -217,7 +218,11 @@ export default function ExerciseCard({
                             : 'running',
                       }}
                     >
-                      <span>{card.text}</span>
+                      {stage === 'letters' ? (
+                        <LetterDisplay letter={card.text} settings={settings} />
+                      ) : (
+                        <span>{card.text}</span>
+                      )}
                       {card.caught && <Check size={23} />}
                     </div>
                   </div>
@@ -243,6 +248,8 @@ export default function ExerciseCard({
                   {scene ? 'Первая картинка' : 'Посмотреть другую картинку'}
                 </button>
               </div>
+            ) : stage === 'letters' ? (
+              <LetterDisplay letter={target} settings={settings} />
             ) : (
               <div
                 className="reading"

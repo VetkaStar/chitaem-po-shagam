@@ -1,4 +1,6 @@
 export const wordBank = [
+  { word: 'СОН', parts: ['СОН'], icon: '' },
+  { word: 'КРОТ', parts: ['КРОТ'], icon: '' },
   {
     word: 'МАМА',
     parts: ['МА', 'МА'],

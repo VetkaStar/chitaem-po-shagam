@@ -4,7 +4,8 @@ import LetterDisplay from './LetterDisplay';
 
 import { Check } from 'lucide-react';
 
-import PictureScene from '@/components/picture-scene';
+import IllustrationGallery from '@/components/illustration-gallery';
+import { wordIllustrations } from '@/content/illustrations';
 
 import type { Dispatch, SetStateAction } from 'react';
 import type { Stage, Mode, Settings, Feedback } from './config';
@@ -86,25 +87,13 @@ export default function ExerciseMaterial({
           ))}
         </div>
       ) : picture ? (
-        <div>
-          {scene ? (
-            <PictureScene word={target} />
-          ) : (
-            <div
-              className="picture"
-              role="img"
-              aria-label="Картинка предмета для задания"
-            >
-              {picture.icon}
-            </div>
-          )}
-          <button
-            className="text-button scene-toggle"
-            onClick={() => setScene((v) => !v)}
-          >
-            {scene ? 'Первая картинка' : 'Посмотреть другую картинку'}
-          </button>
-        </div>
+        <IllustrationGallery
+          key={`${target}-${index}`}
+          assetId={wordIllustrations[target]}
+          concealAnswer
+          context={scene}
+          onContextChange={setScene}
+        />
       ) : stage === 'words' && mode === 'read' ? (
         <div className="reading">
           <ReadingGuide

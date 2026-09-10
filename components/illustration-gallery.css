@@ -1,0 +1,45 @@
+.illustration-gallery {
+  width: min(100%, 320px);
+  min-width: 0;
+  margin: 16px auto;
+  text-align: center;
+}
+.reviewed-illustration {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+  border-radius: 18px;
+  background: #faf9f3;
+}
+.illustration-landscape {
+  width: min(100%, 560px);
+}
+.illustration-landscape .reviewed-illustration {
+  aspect-ratio: 16 / 9;
+}
+.illustration-navigation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding-top: 8px;
+  min-height: 66px;
+}
+.illustration-position {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #52634e;
+}
+.illustration-navigation button {
+  max-width: 100%;
+  white-space: normal;
+}
+.text-illustration {
+  margin: 12px 0;
+}
+.text-illustration summary {
+  cursor: pointer;
+  padding: 8px 0;
+}

@@ -1,4 +1,6 @@
 'use client';
+import IllustrationGallery from '@/components/illustration-gallery';
+import { wordIllustrations } from '@/content/illustrations';
 import ExerciseVoiceMonitor from './ExerciseVoiceMonitor';
 import ExerciseFeedback from './ExerciseFeedback';
 import ExerciseActions from './ExerciseActions';
@@ -166,7 +168,7 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
                   Нажми на слово или слог для отдельной попытки. Потом прочитаем
                   слово целиком.
                 </p>
-                {entry?.icon && (
+                {(entry?.icon || wordIllustrations[target]) && (
                   <>
                     <button
                       className="text-button scene-toggle"
@@ -176,15 +178,21 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
                         ? 'Скрыть картинку'
                         : 'Показать картинку'}
                     </button>
-                    {showWordPicture && (
-                      <div
-                        className="word-picture"
-                        role="img"
-                        aria-label={target}
-                      >
-                        {entry.icon}
-                      </div>
-                    )}
+                    {showWordPicture &&
+                      (wordIllustrations[target] ? (
+                        <IllustrationGallery
+                          key={`${target}-${index}`}
+                          assetId={wordIllustrations[target]}
+                        />
+                      ) : (
+                        <div
+                          className="word-picture"
+                          role="img"
+                          aria-label={target}
+                        >
+                          {entry?.icon}
+                        </div>
+                      ))}
                   </>
                 )}
                 {model.showParts && (

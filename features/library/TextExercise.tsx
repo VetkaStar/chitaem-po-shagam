@@ -11,6 +11,8 @@ import { letterOffset, firstUnreadSource } from '@/lib/reading-guide';
 import { useTextMicrophone } from './use-text-microphone';
 import CompletionCelebration from '@/components/completion-celebration';
 import './text-practice.css';
+import IllustrationGallery from '@/components/illustration-gallery';
+import { textIllustrations } from '@/content/illustrations';
 type Mode = 'read' | 'questions' | 'write';
 export default function TextExercise({
   item,
@@ -126,9 +128,13 @@ export default function TextExercise({
     const start = letterOffset(item.lines[line], readStart);
     for (let i = start; i < start + speech.progress; i++)
       covered.current.add(i);
-    if (speech.progress > 0 && !accepted && firstUnreadSource(item.lines[line], covered.current) === null) {
+    if (
+      speech.progress > 0 &&
+      !accepted &&
+      firstUnreadSource(item.lines[line], covered.current) === null
+    ) {
       setAccepted(true);
-      setReadLines(v => [...new Set([...v, line])]);
+      setReadLines((v) => [...new Set([...v, line])]);
       setMessage('Строка прочитана!');
     }
   }, [speech.progress, line, readStart, accepted]);
@@ -205,6 +211,12 @@ export default function TextExercise({
         Пропустить текст →
       </button>
       <h2>{item.title}</h2>
+      {textIllustrations[item.id] && (
+        <details className="text-illustration" key={item.id}>
+          <summary>Показать картинку к тексту</summary>
+          <IllustrationGallery assetId={textIllustrations[item.id]} />
+        </details>
+      )}
       <div
         className="portal-actions"
         role="group"

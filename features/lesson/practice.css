@@ -290,3 +290,41 @@
     display: none;
   }
 }
+
+/* Match both header edges to the same grid as the page below. */
+header.app-header {
+  height: auto;
+  padding: 0;
+  display: block;
+}
+.app-header-inner {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 860px);
+  gap: 64px;
+  align-items: center;
+  width: 100%;
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 12px 30px;
+  min-height: 97px;
+}
+.app-header-inner .brand {
+  width: max-content;
+  white-space: nowrap;
+}
+.app-header-inner .header-actions {
+  justify-self: end;
+}
+@media (max-width: 800px) {
+  .app-header-inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 79px;
+    padding: 12px 16px;
+  }
+  .app-header-inner .header-actions {
+    margin-left: auto;
+  }
+}

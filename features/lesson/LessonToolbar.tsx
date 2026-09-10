@@ -15,27 +15,29 @@ export default function LessonToolbar({
   return (
     <>
       <div className="toolbar">
-        <Tabs
-          value={mode}
-          onValueChange={(v) => {
-            if (stage === 'pictures') return;
-            navigate(stage, v as Mode);
-          }}
-        >
-          <TabsList className="mode-list">
-            <TabsTrigger value="read" disabled={stage === 'pictures'}>
-              <Mic /> Читаю
-            </TabsTrigger>
-            <TabsTrigger value="fly" disabled={stage === 'pictures'}>
-              <Keyboard /> Ловлю
-            </TabsTrigger>
-            <TabsTrigger value="type">
-              <ImageIcon /> Пишу
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        {stage !== 'pictures' && (
+          <Tabs
+            value={mode}
+            onValueChange={(v) => {
+              navigate(stage, v as Mode);
+            }}
+          >
+            <TabsList className="mode-list">
+              <TabsTrigger value="read">
+                <Mic /> Читаю
+              </TabsTrigger>
+              <TabsTrigger value="fly">
+                <Keyboard /> Ловлю
+              </TabsTrigger>
+              <TabsTrigger value="type">
+                <ImageIcon /> Пишу
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        )}
         <button
           className="quiet"
+          style={{ marginLeft: 'auto' }}
           onClick={() => {
             stop();
             setPaused(true);

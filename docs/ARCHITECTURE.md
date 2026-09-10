@@ -109,3 +109,6 @@ components/completion-celebration.tsx и .css — общее поздравле�
 Общая тема — settings.unit. lib/topic-material.ts проверяет изученные буквы; lib/session.ts фильтрует словарь, lib/topic-texts.ts отбирает читаемые тексты и варианты ответа с приоритетом недавно открытых тем. content/topic-texts.ts содержит авторские короткие заготовки. TextLibrary ведёт последовательность текстов внутри темы, не возвращает к каталогу после ответа. LetterDisplay.tsx отвечает за звук в скобках, название буквы и варианты Б/б/Б б; letterCase сохраняется в общих настройках.
 
 Навигатор чтения: lib/reading-guide.ts создаёт части строки с исходными позициями; ReadingGuide/ReadingGuideControls — общие элементы слов и текстов. readingFocus (line/word/syllable) и readingHighlight сохраняются в settings. TextExercise хранит покрытие подтверждённых букв и прочитанных строк; выбор поздней части не засчитывает пропущенную. В словах selectReadingPart запускает отдельную попытку без награды за неполное слово.
+
+
+Общая панель темы: components/topic-bar.tsx и topic-bar.css. TopicNavigation адаптирует её для первых разделов, TextLibrary использует тот же компонент для текстов. Порядок кнопок: предыдущая, список тем, следующая. TextLibrary использует lesson/lesson-top, TextExercise — общую рамку exercise и mode-list; стили текста остаются в text-practice.css.

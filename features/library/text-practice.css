@@ -84,3 +84,55 @@
   outline-offset: 3px;
   border-radius: 3px;
 }
+
+/* Shared lesson layout: heading and topic navigation stay outside the exercise. */
+.text-mode-list {
+  display: inline-flex;
+  align-items: center;
+}
+.library .text-mode-list button[aria-pressed='true'] {
+  outline: none;
+}
+.text-session-count {
+  color: #7b8677;
+  font-size: 13px;
+  margin: 12px 0;
+}
+.library .text-session-picker {
+  margin: 0 0 18px;
+  font-size: 14px;
+}
+.text-session-picker summary {
+  cursor: pointer;
+}
+.text-exercise h2 {
+  font-size: 24px;
+  margin: 20px 0;
+}
+.text-exercise p {
+  line-height: 1.7;
+}
+.text-read-progress {
+  appearance: none;
+  border: 0;
+  height: 4px;
+  border-radius: 4px;
+  background: #ecf0e5;
+}
+.text-read-progress::-webkit-progress-bar {
+  background: #ecf0e5;
+  border-radius: 4px;
+}
+.text-read-progress::-webkit-progress-value {
+  background: #8caa78;
+  border-radius: 4px;
+}
+.text-read-progress::-moz-progress-bar {
+  background: #8caa78;
+  border-radius: 4px;
+}
+@media (max-width: 600px) {
+  .text-mode-list button {
+    padding: 10px 9px !important;
+  }
+}

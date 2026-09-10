@@ -1,5 +1,7 @@
 'use client';
 import { useMemo, useState } from 'react';
+import { Star } from 'lucide-react';
+import TopicBar from '@/components/topic-bar';
 import { textLabels, type TextKind } from '@/content/reading-library';
 import { topicNames } from '@/lib/topics';
 import { textsForTopic } from '@/lib/topic-texts';
@@ -14,23 +16,47 @@ export default function TextLibrary({
   model: LessonModel;
 }) {
   return (
-    <section className="portal-panel library">
-      <p className="eyebrow">ЧИТАЕМ, ПОНИМАЕМ И ПИШЕМ</p>
-      <h1>{textLabels[kind]}</h1>
-      <label className="text-question-option">
-        Моя тема{' '}
-        <select
-          aria-label="Общая тема"
-          value={model.settings.unit}
-          onChange={(e) => model.update('unit', Number(e.target.value))}
-        >
-          {topicNames.map((name, i) => (
-            <option value={i} key={name}>
-              {name}
-            </option>
-          ))}
-        </select>
-      </label>
+    <section className="lesson library">
+      <div className="lesson-top">
+        <div>
+          <small>
+            ШАГ 0{kind === 'sentences' ? 5 : kind === 'stories' ? 6 : 7} ·
+            ЧИТАЕМ И ПОНИМАЕМ
+          </small>
+          <h1>{textLabels[kind]}</h1>
+        </div>
+        <span className="pill">
+          <Star size={17} />
+          {model.stars} <span className="desktop-word">звёзд</span>
+        </span>
+      </div>
+      <TopicBar
+        unit={model.settings.unit}
+        current={topicNames[model.settings.unit]}
+        nextLabel={topicNames[(model.settings.unit + 1) % topicNames.length]}
+        onPrevious={
+          model.settings.unit > 0
+            ? () => {
+                model.stop();
+                model.update('unit', model.settings.unit - 1);
+              }
+            : undefined
+        }
+        onNext={() => {
+          model.stop();
+          model.update('unit', (model.settings.unit + 1) % topicNames.length);
+        }}
+        onSelect={(unit) => {
+          model.stop();
+          model.update('unit', unit);
+        }}
+        speaking={model.speaking}
+        onSpeak={() =>
+          model.speak(
+            `Сейчас: ${topicNames[model.settings.unit]}. Следующая тема: ${topicNames[(model.settings.unit + 1) % topicNames.length]}.`,
+          )
+        }
+      />
       <TopicTextSession
         key={kind + ':' + model.settings.unit}
         kind={kind}
@@ -74,10 +100,10 @@ function TopicTextSession({
     );
   return (
     <>
-      <p>
+      <p className="text-session-count">
         Текст {index + 1} из {deck.length} · {topicNames[model.settings.unit]}
       </p>
-      <details>
+      <details className="text-session-picker">
         <summary>Выбрать текст этой темы</summary>
         <div className="portal-grid">
           {deck.map((t, i) => (

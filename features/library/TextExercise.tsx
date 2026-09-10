@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Volume2 } from 'lucide-react';
+import { Mic, MessageCircle, Keyboard, Pause, Volume2 } from 'lucide-react';
 import type { ReadingText } from '@/content/reading-library';
 import type { LessonModel } from '../lesson/use-lesson';
 import { shuffled } from '@/lib/session';
@@ -206,276 +206,306 @@ export default function TextExercise({
   const showQuestion = mode === 'questions' || question;
   return (
     <>
-      <CompletionCelebration done={done} motion={model.settings.motion} />
-      <button className="text-button" onClick={onBack}>
-        Пропустить текст →
-      </button>
-      <h2>{item.title}</h2>
-      {textIllustrations[item.id] && (
-        <details className="text-illustration" key={item.id}>
-          <summary>Показать картинку к тексту</summary>
-          <IllustrationGallery assetId={textIllustrations[item.id]} />
-        </details>
-      )}
-      <div
-        className="portal-actions"
-        role="group"
-        aria-label="Режим работы с текстом"
-      >
-        {(
-          [
-            ['read', 'Читаю'],
-            ['questions', 'Отвечаю'],
-            ['write', 'Пишу'],
-          ] as const
-        ).map(([value, label]) => (
-          <button
-            key={value}
-            aria-pressed={mode === value}
-            onClick={() => changeMode(value)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      {mode === 'read' && (
-        <label className="text-question-option">
-          <input
-            type="checkbox"
-            checked={ask}
-            onChange={(e) => setAsk(e.target.checked)}
-          />{' '}
-          Задать вопрос после прочтения
-        </label>
-      )}
-      {mode === 'read' && !showQuestion && !done && (
-        <>
-          <ReadingGuideControls model={model} />
-          <div className="reading-line-picker" aria-label="Выбор строки">
-            {item.lines.map((_, i) => (
-              <button
-                key={i}
-                aria-current={line === i ? 'step' : undefined}
-                onClick={() => chooseLine(i)}
-              >
-                Строка {i + 1}
-                {readLines.includes(i) ? ' ✓' : ''}
-              </button>
-            ))}
-          </div>
-          <p className="reading-guide-hint">
-            Нажми на слово или слог, чтобы читать с этого места. Подсветка
-            следует за подтверждённым чтением.
-          </p>
-        </>
-      )}
-      {showQuestion ? (
-        <div className="text-reference">
-          {item.lines.map((text, i) => (
-            <p key={i}>
-              {text}{' '}
-              <button
-                aria-label={`Послушать строку ${i + 1}`}
-                disabled={!model.settings.sound}
-                onClick={() => model.speak(text)}
-              >
-                <Volume2 size={18} />
-              </button>
-            </p>
+      <div className="toolbar">
+        <div
+          className="mode-list text-mode-list"
+          role="group"
+          aria-label="Режим работы с текстом"
+        >
+          {(
+            [
+              ['read', 'Читаю'],
+              ['questions', 'Отвечаю'],
+              ['write', 'Пишу'],
+            ] as const
+          ).map(([value, label]) => (
+            <button
+              key={value}
+              aria-pressed={mode === value}
+              data-active={mode === value ? '' : undefined}
+              onClick={() => changeMode(value)}
+            >
+              {value === 'read' ? (
+                <Mic size={16} />
+              ) : value === 'questions' ? (
+                <MessageCircle size={16} />
+              ) : (
+                <Keyboard size={16} />
+              )}{' '}
+              {label}
+            </button>
           ))}
         </div>
-      ) : (
-        <>
-          <p>
-            Строка {line + 1} из {item.lines.length} ·{' '}
-            {mode === 'write' ? 'Перепиши строку' : 'Прочитай вслух'}
-          </p>
-          <div className="text-practice-line">
-            {mode === 'read' ? (
-              <ReadingGuide
-                text={item.lines[line]}
-                color={model.settings.color}
-                focus={model.settings.readingFocus ?? 'word'}
-                highlight={model.settings.readingHighlight !== false}
-                progress={
-                  letterOffset(item.lines[line], readStart) +
-                  Math.max(speech.progress, speech.previewProgress ?? 0)
-                }
-                onSelect={choosePart}
-              />
-            ) : (
-              <span>{item.lines[line]}</span>
-            )}
-            <button
-              aria-label="Послушать строку"
-              disabled={!model.settings.sound}
-              onClick={() => {
-                setMic(false);
-                model.speak(item.lines[line]);
-              }}
-            >
-              <Volume2 size={20} />
-            </button>
-          </div>
-        </>
-      )}
-      {!done && showQuestion ? (
-        <>
-          <h3>
-            {item.question}{' '}
-            {model.settings.sound && (
-              <button
-                aria-label="Послушать вопрос"
-                onClick={() => model.speak(item.question)}
-              >
-                <Volume2 size={18} />
-              </button>
-            )}
-          </h3>
-          <div className="portal-actions">
-            {options.map((option) => (
-              <button
-                key={option}
-                onClick={() => {
-                  if (option === item.answer) finish();
-                  else setMessage('Давай найдём ответ в тексте. ' + item.hint);
-                }}
-              >
-                {option}
-              </button>
+        <button
+          className="quiet"
+          aria-label="Пауза"
+          onClick={() => {
+            setMic(false);
+            model.stop();
+            model.setPaused(true);
+          }}
+        >
+          <Pause size={18} />
+        </button>
+      </div>
+      <div className="exercise text-exercise">
+        <CompletionCelebration done={done} motion={model.settings.motion} />
+        <button className="text-button" onClick={onBack}>
+          Пропустить текст →
+        </button>
+        <h2>{item.title}</h2>
+        {textIllustrations[item.id] && (
+          <details className="text-illustration" key={item.id}>
+            <summary>Показать картинку к тексту</summary>
+            <IllustrationGallery assetId={textIllustrations[item.id]} />
+          </details>
+        )}
+        {mode === 'read' && (
+          <label className="text-question-option">
+            <input
+              type="checkbox"
+              checked={ask}
+              onChange={(e) => setAsk(e.target.checked)}
+            />{' '}
+            Задать вопрос после прочтения
+          </label>
+        )}
+        {mode === 'read' && !showQuestion && !done && (
+          <>
+            <ReadingGuideControls model={model} />
+            <div className="reading-line-picker" aria-label="Выбор строки">
+              {item.lines.map((_, i) => (
+                <button
+                  key={i}
+                  aria-current={line === i ? 'step' : undefined}
+                  onClick={() => chooseLine(i)}
+                >
+                  Строка {i + 1}
+                  {readLines.includes(i) ? ' ✓' : ''}
+                </button>
+              ))}
+            </div>
+            <p className="reading-guide-hint">
+              Нажми на слово или слог, чтобы читать с этого места. Подсветка
+              следует за подтверждённым чтением.
+            </p>
+          </>
+        )}
+        {showQuestion ? (
+          <div className="text-reference">
+            {item.lines.map((text, i) => (
+              <p key={i}>
+                {text}{' '}
+                <button
+                  aria-label={`Послушать строку ${i + 1}`}
+                  disabled={!model.settings.sound}
+                  onClick={() => model.speak(text)}
+                >
+                  <Volume2 size={18} />
+                </button>
+              </p>
             ))}
           </div>
-        </>
-      ) : (
-        !done && (
+        ) : (
           <>
-            {mode === 'read' && !accepted && (
-              <>
-                <progress
-                  className="text-read-progress"
-                  aria-label="Прочитанная часть строки"
-                  max={readingLetters(item.lines[line]).length}
-                  value={
-                    letterOffset(item.lines[line], readStart) + speech.progress
+            <p>
+              Строка {line + 1} из {item.lines.length} ·{' '}
+              {mode === 'write' ? 'Перепиши строку' : 'Прочитай вслух'}
+            </p>
+            <div className="text-practice-line">
+              {mode === 'read' ? (
+                <ReadingGuide
+                  text={item.lines[line]}
+                  color={model.settings.color}
+                  focus={model.settings.readingFocus ?? 'word'}
+                  highlight={model.settings.readingHighlight !== false}
+                  progress={
+                    letterOffset(item.lines[line], readStart) +
+                    Math.max(speech.progress, speech.previewProgress ?? 0)
                   }
+                  onSelect={choosePart}
                 />
-                {mic && (
-                  <>
-                    <meter
-                      min={0}
-                      max={1}
-                      value={speech.level}
-                      aria-label="Уровень микрофона"
-                    />
-                    <p role="status">{speech.status}</p>
-                  </>
-                )}
-                {!model.settings.micConsent ? (
-                  <div className="text-mic-consent">
-                    <p>
-                      Взрослому: речь распознаётся на устройстве. Голос не
-                      отправляется и не сохраняется.
-                    </p>
+              ) : (
+                <span>{item.lines[line]}</span>
+              )}
+              <button
+                aria-label="Послушать строку"
+                disabled={!model.settings.sound}
+                onClick={() => {
+                  setMic(false);
+                  model.speak(item.lines[line]);
+                }}
+              >
+                <Volume2 size={20} />
+              </button>
+            </div>
+          </>
+        )}
+        {!done && showQuestion ? (
+          <>
+            <h3>
+              {item.question}{' '}
+              {model.settings.sound && (
+                <button
+                  aria-label="Послушать вопрос"
+                  onClick={() => model.speak(item.question)}
+                >
+                  <Volume2 size={18} />
+                </button>
+              )}
+            </h3>
+            <div className="portal-actions">
+              {options.map((option) => (
+                <button
+                  key={option}
+                  onClick={() => {
+                    if (option === item.answer) finish();
+                    else
+                      setMessage('Давай найдём ответ в тексте. ' + item.hint);
+                  }}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          </>
+        ) : (
+          !done && (
+            <>
+              {mode === 'read' && !accepted && (
+                <>
+                  <progress
+                    className="text-read-progress"
+                    aria-label="Прочитанная часть строки"
+                    max={readingLetters(item.lines[line]).length}
+                    value={
+                      letterOffset(item.lines[line], readStart) +
+                      speech.progress
+                    }
+                  />
+                  {mic && (
+                    <>
+                      <meter
+                        min={0}
+                        max={1}
+                        value={speech.level}
+                        aria-label="Уровень микрофона"
+                      />
+                      <p role="status">{speech.status}</p>
+                    </>
+                  )}
+                  {!model.settings.micConsent ? (
+                    <div className="text-mic-consent">
+                      <p>
+                        Взрослому: речь распознаётся на устройстве. Голос не
+                        отправляется и не сохраняется.
+                      </p>
+                      <button
+                        onClick={() => {
+                          model.update('micConsent', true);
+                          setMic(true);
+                        }}
+                      >
+                        Разрешить микрофон и начать
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      className="primary"
+                      onClick={() => setMic((v) => !v)}
+                    >
+                      {mic
+                        ? 'Выключить микрофон'
+                        : 'Начать чтение с микрофоном'}
+                    </button>
+                  )}
+                  <details>
+                    <summary>Проверить вместе со взрослым</summary>
                     <button
                       onClick={() => {
-                        model.update('micConsent', true);
-                        setMic(true);
+                        setAccepted(true);
+                        setReadLines((v) => [...new Set([...v, line])]);
+                        setMessage('Строка прочитана вместе со взрослым.');
                       }}
                     >
-                      Разрешить микрофон и начать
+                      Строка прочитана верно
                     </button>
-                  </div>
-                ) : (
-                  <button className="primary" onClick={() => setMic((v) => !v)}>
-                    {mic ? 'Выключить микрофон' : 'Начать чтение с микрофоном'}
-                  </button>
-                )}
-                <details>
-                  <summary>Проверить вместе со взрослым</summary>
-                  <button
-                    onClick={() => {
-                      setAccepted(true);
-                      setReadLines((v) => [...new Set([...v, line])]);
-                      setMessage('Строка прочитана вместе со взрослым.');
-                    }}
-                  >
-                    Строка прочитана верно
-                  </button>
-                </details>
-              </>
-            )}
-            {mode === 'write' && (
-              <>
-                <label className="text-writing-label">
-                  Твоя строка
-                  <textarea
-                    ref={input}
-                    rows={3}
-                    value={answer}
-                    disabled={accepted}
-                    onChange={(e) => {
-                      setAnswer(e.target.value);
-                      setHint(undefined);
-                    }}
-                    onKeyDown={(e) => {
-                      if (
-                        e.key === 'Enter' &&
-                        !e.shiftKey &&
-                        !e.repeat &&
-                        !e.nativeEvent.isComposing
-                      ) {
-                        e.preventDefault();
-                        check();
-                      }
-                    }}
-                  />
-                </label>
-                {hint && (
-                  <div className="text-typo" aria-label="Подсказка по буквам">
-                    {hint.cells.map((cell, i) => (
-                      <span key={i} className={cell.changed ? 'changed' : ''}>
-                        {cell.changed
-                          ? `${cell.before || '□'} → ${cell.after || 'убрать'}`
-                          : cell.before}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                {!accepted && (
-                  <button onClick={check} disabled={!answer.trim()}>
-                    Проверить · Enter
-                  </button>
-                )}
-                <p className="muted">
-                  Регистр и знаки препинания пока не проверяем.
-                </p>
-              </>
-            )}
-            {accepted && (
-              <button
-                className="primary"
-                ref={nextButton}
-                onKeyDown={(e) => {
-                  if (e.repeat) e.preventDefault();
-                }}
-                onClick={next}
-              >
-                {line + 1 < item.lines.length
-                  ? 'Следующая строка →'
-                  : mode === 'read' && ask
-                    ? 'Ответить на вопрос →'
-                    : 'Завершить →'}
-              </button>
-            )}
-          </>
-        )
-      )}
-      <p role="status">{message}</p>
-      {done && (
-        <button className="primary" onClick={onNext ?? onBack}>
-          Следующий текст →
-        </button>
-      )}
+                  </details>
+                </>
+              )}
+              {mode === 'write' && (
+                <>
+                  <label className="text-writing-label">
+                    Твоя строка
+                    <textarea
+                      ref={input}
+                      rows={3}
+                      value={answer}
+                      disabled={accepted}
+                      onChange={(e) => {
+                        setAnswer(e.target.value);
+                        setHint(undefined);
+                      }}
+                      onKeyDown={(e) => {
+                        if (
+                          e.key === 'Enter' &&
+                          !e.shiftKey &&
+                          !e.repeat &&
+                          !e.nativeEvent.isComposing
+                        ) {
+                          e.preventDefault();
+                          check();
+                        }
+                      }}
+                    />
+                  </label>
+                  {hint && (
+                    <div className="text-typo" aria-label="Подсказка по буквам">
+                      {hint.cells.map((cell, i) => (
+                        <span key={i} className={cell.changed ? 'changed' : ''}>
+                          {cell.changed
+                            ? `${cell.before || '□'} → ${cell.after || 'убрать'}`
+                            : cell.before}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {!accepted && (
+                    <button onClick={check} disabled={!answer.trim()}>
+                      Проверить · Enter
+                    </button>
+                  )}
+                  <p className="muted">
+                    Регистр и знаки препинания пока не проверяем.
+                  </p>
+                </>
+              )}
+              {accepted && (
+                <button
+                  className="primary"
+                  ref={nextButton}
+                  onKeyDown={(e) => {
+                    if (e.repeat) e.preventDefault();
+                  }}
+                  onClick={next}
+                >
+                  {line + 1 < item.lines.length
+                    ? 'Следующая строка →'
+                    : mode === 'read' && ask
+                      ? 'Ответить на вопрос →'
+                      : 'Завершить →'}
+                </button>
+              )}
+            </>
+          )
+        )}
+        <p role="status">{message}</p>
+        {done && (
+          <button className="primary" onClick={onNext ?? onBack}>
+            Следующий текст →
+          </button>
+        )}
+      </div>
     </>
   );
 }

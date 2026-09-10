@@ -1,0 +1,23 @@
+.topic-list {
+  min-width: 44px;
+  padding: 12px;
+  flex-shrink: 0;
+}
+.topic-options {
+  grid-column: 1/-1;
+}
+.topic-navigation .topic-actions {
+  flex-shrink: 0;
+}
+.topic-heading {
+  min-width: 0;
+}
+@media (max-width: 800px) {
+  .topic-navigation {
+    grid-template-columns: 1fr;
+  }
+  .topic-next {
+    flex: 1;
+    min-width: 0;
+  }
+}

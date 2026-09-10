@@ -156,8 +156,8 @@ mount(() =>
 speechCallbacks.onPartial('кот спит');
 flush();
 assert.equal(completes, 0);
-assert.equal(result.progress,0);
-assert.equal(result.previewProgress,7);
+assert.equal(result.progress, 0);
+assert.equal(result.previewProgress, 7);
 speechCallbacks.onActivity('pause');
 flush();
 assert.equal(completes, 0);
@@ -221,7 +221,9 @@ function text(n) {
   return text(n.props?.children);
 }
 function click(label) {
-  const b = nodes(result).find((n) => n.type === 'button' && text(n) === label);
+  const b = nodes(result).find(
+    (n) => n.type === 'button' && text(n).trim() === label,
+  );
   assert(b, 'button ' + label);
   b.props.onClick();
   flush();
@@ -283,32 +285,53 @@ console.log(
 );
 
 const Library = load('features/library/TextLibrary.tsx').default;
-const topicModel = {...model, settings:{...model.settings,unit:0}, update(){}};
-mount(() => Library({kind:'sentences',model:topicModel}));
-const sessionNode = nodes(result).find(n => typeof n.type === 'function' && n.type.name === 'TopicTextSession');
+const topicModel = {
+  ...model,
+  settings: { ...model.settings, unit: 0 },
+  update() {},
+};
+mount(() => Library({ kind: 'sentences', model: topicModel }));
+const sessionNode = nodes(result).find(
+  (n) => typeof n.type === 'function' && n.type.name === 'TopicTextSession',
+);
 assert(sessionNode);
 mount(() => sessionNode.type(sessionNode.props));
 let previousText;
-for(let i=0;i<6;i++) {
- const exercise = nodes(result).find(n => n.props?.item && n.props?.onNext);
- assert(exercise);
- assert.notEqual(exercise.props.item.id, previousText);
- previousText=exercise.props.item.id;
- exercise.props.onNext(); flush();
- assert.equal(topicModel.settings.unit,0);
+for (let i = 0; i < 6; i++) {
+  const exercise = nodes(result).find((n) => n.props?.item && n.props?.onNext);
+  assert(exercise);
+  assert.notEqual(exercise.props.item.id, previousText);
+  previousText = exercise.props.item.id;
+  exercise.props.onNext();
+  flush();
+  assert.equal(topicModel.settings.unit, 0);
 }
-console.log('PASS topic session: next text stays in topic, cycles without returning to selection or immediate repeat');
+console.log(
+  'PASS topic session: next text stays in topic, cycles without returning to selection or immediate repeat',
+);
 
-mount(()=>Exercise({item,model,onBack(){}}));
+mount(() => Exercise({ item, model, onBack() {} }));
 click('Строка 2');
 click('Строка прочитана верно');
 // The next action must return to unread first line, not complete the whole text.
-const continueButton=nodes(result).find(n=>n.type==='button' && n.props.className==='primary' && !text(n).includes('микрофоном'));
-continueButton.props.onClick();flush();
+const continueButton = nodes(result).find(
+  (n) =>
+    n.type === 'button' &&
+    n.props.className === 'primary' &&
+    !text(n).includes('микрофоном'),
+);
+continueButton.props.onClick();
+flush();
 assert(text(result).includes('Строка 1 из 2'));
-const guideNode=nodes(result).find(n=>n.props?.onSelect && n.props?.text==='Кот спит.');
-guideNode.props.onSelect(4,'спит');flush();
-uiMic[4]();flush();
+const guideNode = nodes(result).find(
+  (n) => n.props?.onSelect && n.props?.text === 'Кот спит.',
+);
+guideNode.props.onSelect(4, 'спит');
+flush();
+uiMic[4]();
+flush();
 assert(!text(result).includes('Строка прочитана!'));
-assert.equal(uiMic[0],'Кот спит.');
-console.log('PASS guided selection: reading last line or suffix cannot skip unread prefix');
+assert.equal(uiMic[0], 'Кот спит.');
+console.log(
+  'PASS guided selection: reading last line or suffix cannot skip unread prefix',
+);

@@ -1,5 +1,5 @@
 'use client';
-import { visionProfiles, type VisionMode } from '@/lib/vision';
+import { visionProfiles, visionStyle, type VisionMode } from '@/lib/vision';
 export default function VisionSettings({
   value,
   onChange,
@@ -33,11 +33,32 @@ export default function VisionSettings({
             сине-жёлтых — бирюзовый и малиновый. Выбери наиболее удобный вариант
             по образцу.
           </p>
-          <div className="vision-preview" aria-label="Образец подсказок">
-            <span className="vowel">А — гласная</span>
-            <span className="consonant">М — согласная</span>
-            <span className="feedback success">✓ Получилось</span>
-            <span className="feedback uncertain">? Подсказка</span>
+          <div
+            className="vision-preview"
+            aria-label="Образец подсказок"
+            data-vision={value}
+            style={visionStyle(value)}
+          >
+            <div className="vision-example vision-example-vowel">
+              <strong aria-hidden="true">А</strong>
+              <b>А — гласная</b>
+              <small>Две толстые линии</small>
+            </div>
+            <div className="vision-example vision-example-consonant">
+              <strong aria-hidden="true">М</strong>
+              <b>М — согласная</b>
+              <small>Одна толстая линия</small>
+            </div>
+            <div className="vision-example vision-example-success">
+              <strong aria-hidden="true">✓</strong>
+              <b>Получилось</b>
+              <small>Галочка и сплошная рамка</small>
+            </div>
+            <div className="vision-example vision-example-hint">
+              <strong aria-hidden="true">?</strong>
+              <b>Подсказка</b>
+              <small>Вопрос и пунктирная рамка</small>
+            </div>
           </div>
           <p>
             Гласные — двойная линия, согласные — одна. В пузырьках ищем

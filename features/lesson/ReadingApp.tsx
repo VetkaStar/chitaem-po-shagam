@@ -2,6 +2,7 @@
 import './practice.css';
 import './vision.css';
 import './bubble-layout.css';
+import './rest-layout.css';
 import AppPortal from '../portal/AppPortal';
 import { Leaf, Star } from 'lucide-react';
 import { levels } from '@/lib/learning';

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { pairDeck } from '@/lib/rest-games';
+import type { CSSProperties } from 'react';
+import { pairDeck, pairGrid } from '@/lib/rest-games';
 
 export default function MatchPairs() {
   const [amount, setAmount] = useState(3),
@@ -40,8 +41,9 @@ export default function MatchPairs() {
     }
   }
   const done = cards.length > 0 && matched.length === cards.length;
+  const grid = pairGrid(amount);
   return (
-    <div>
+    <div className="match-pairs">
       <div className="game-controls">
         <label>
           Игра{' '}
@@ -80,7 +82,15 @@ export default function MatchPairs() {
           ? 'Все пары нашлись! Молодец!'
           : `Найди две одинаковые картинки. Найдено ${matched.length / 2} из ${amount} пар.`}
       </p>
-      <div className="pair-grid pair-expanded">
+      <div
+        className="pair-grid pair-expanded"
+        style={
+          {
+            '--pair-columns': grid.columns,
+            '--pair-rows': grid.rows,
+          } as CSSProperties
+        }
+      >
         {cards.map((c, i) => {
           const visible =
             mode === 'visible' || open.includes(i) || matched.includes(i);

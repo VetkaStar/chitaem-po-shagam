@@ -1,0 +1,67 @@
+/* One viewport-bounded frame for every rest activity and difficulty. */
+.rest-dialog.hub-dialog {
+  width: min(610px, calc(100vw - 28px));
+  height: min(900px, calc(100dvh - 32px));
+  max-height: calc(100dvh - 32px);
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  overflow: hidden;
+}
+.rest-dialog.hub-dialog .rest-hub {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.rest-hub .rest-activity {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding: 4px;
+}
+.rest-hub .return-lesson {
+  flex-shrink: 0;
+  margin-top: 16px;
+}
+.match-pairs .game-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
+  width: 100%;
+}
+.match-pairs .game-controls label {
+  display: grid;
+  grid-template-rows: 20px 42px;
+  gap: 4px;
+  min-width: 0;
+}
+.match-pairs .game-controls select {
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  font-size: 13px;
+  text-overflow: ellipsis;
+}
+.match-pairs p[role='status'] {
+  height: 64px;
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  margin: 8px 0;
+}
+.match-pairs .pair-grid.pair-expanded {
+  height: 320px;
+  min-height: 320px;
+  grid-template-columns: repeat(var(--pair-columns), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--pair-rows), minmax(0, 1fr));
+  gap: 10px;
+}
+.match-pairs .pair-grid.pair-expanded button {
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  aspect-ratio: auto;
+  padding: 4px;
+  font-size: clamp(24px, 5vw, 36px);
+}

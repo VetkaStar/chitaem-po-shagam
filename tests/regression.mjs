@@ -531,3 +531,10 @@ for (const mode of ['colors', 'sequence'])
   }
 assert(bubbleGrid(15).rows > bubbleGrid(5).rows);
 console.log('PASS bubble layout: every difficulty fits within a bounded grid');
+
+const { pairGrid } = load("rest-games");
+for (const amount of [2, 3, 4, 6, 8]) {
+  const grid = pairGrid(amount);
+  assert.equal(grid.rows * grid.columns, amount * 2);
+  assert(grid.rows <= 4 && grid.columns <= 4);
+}

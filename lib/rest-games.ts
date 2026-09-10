@@ -50,3 +50,8 @@ export function bubbleGrid(count: number) {
   const columns = count <= 6 ? 3 : 4;
   return { columns, rows: Math.max(1, Math.ceil(count / columns)) };
 }
+
+export function pairGrid(amount: number) {
+  const columns = amount <= 2 ? 2 : amount <= 3 ? 3 : 4;
+  return { columns, rows: Math.ceil((amount * 2) / columns) };
+}

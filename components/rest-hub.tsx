@@ -94,117 +94,119 @@ export default function RestHub({
   }
   return (
     <div className="rest-hub">
-      {game === 'menu' ? (
-        <>
-          <p>Выбери, как отдохнуть</p>
-          <div className="rest-menu">
-            <button onClick={() => choose('move')}>
-              <span>🙌</span>
-              <b>Размяться</b>
-              <small>Двигаемся вместе</small>
-            </button>
-            <button onClick={() => choose('bubbles')}>
-              <span>🫧</span>
-              <b>Пузырьки</b>
-              <small>Найди нужный цвет</small>
-            </button>
-            <button onClick={() => choose('pairs')}>
-              <span>🍓</span>
-              <b>Найди пару</b>
-              <small>Открой две картинки</small>
-            </button>
-            <button onClick={() => choose('music')}>
-              <span>🎵</span>
-              <b>Музыкальная полянка</b>
-              <small>Играй или слушай мелодию</small>
-            </button>
-          </div>
-        </>
-      ) : (
-        <>
-          <button className="text-button" onClick={() => choose('menu')}>
-            ← Другой отдых
-          </button>
-          {game === 'move' && (
-            <div className="movement">
-              <span className="rest-emoji">{breaks[move].icon}</span>
-              <h3>{breaks[move].title}</h3>
-              <p>{breaks[move].text}</p>
-              <button onClick={() => onSpeak(breaks[move].text)}>
-                🔊 Послушать
+      <div className="rest-activity">
+        {game === 'menu' ? (
+          <>
+            <p>Выбери, как отдохнуть</p>
+            <div className="rest-menu">
+              <button onClick={() => choose('move')}>
+                <span>🙌</span>
+                <b>Размяться</b>
+                <small>Двигаемся вместе</small>
               </button>
-              <button
-                onClick={() => {
-                  window.speechSynthesis?.cancel();
-                  setMove((i) => (i + 1) % breaks.length);
-                }}
-              >
-                Другое движение →
+              <button onClick={() => choose('bubbles')}>
+                <span>🫧</span>
+                <b>Пузырьки</b>
+                <small>Найди нужный цвет</small>
+              </button>
+              <button onClick={() => choose('pairs')}>
+                <span>🍓</span>
+                <b>Найди пару</b>
+                <small>Открой две картинки</small>
+              </button>
+              <button onClick={() => choose('music')}>
+                <span>🎵</span>
+                <b>Музыкальная полянка</b>
+                <small>Играй или слушай мелодию</small>
               </button>
             </div>
-          )}
-          {game === 'bubbles' && (
-            <ColorBubbles
-              sound={sound}
-              motion={motion}
-              autoSpeech={autoSpeech}
-              vision={vision}
-              onSpeak={onSpeak}
-              onTone={() => tone(2, 0.14)}
-            />
-          )}
-          {game === 'pairs' && <MatchPairs />}
-          {game === 'music' && (
-            <>
-              <span className="music-tree" aria-hidden>
-                🌿
-              </span>
-              <p>Нажимай на цветы — сочини свою мелодию</p>
-              <div className="music-keys">
-                {['🌼', '🌷', '🌸', '🌻', '🌺'].map((s, i) => (
-                  <button
-                    key={s}
-                    className={active === i ? 'note-on' : ''}
-                    aria-label={`Нота ${i + 1}`}
-                    disabled={playing}
-                    onClick={() => tone(i)}
-                  >
-                    {s}
-                  </button>
-                ))}
+          </>
+        ) : (
+          <>
+            <button className="text-button" onClick={() => choose('menu')}>
+              ← Другой отдых
+            </button>
+            {game === 'move' && (
+              <div className="movement">
+                <span className="rest-emoji">{breaks[move].icon}</span>
+                <h3>{breaks[move].title}</h3>
+                <p>{breaks[move].text}</p>
+                <button onClick={() => onSpeak(breaks[move].text)}>
+                  🔊 Послушать
+                </button>
+                <button
+                  onClick={() => {
+                    window.speechSynthesis?.cancel();
+                    setMove((i) => (i + 1) % breaks.length);
+                  }}
+                >
+                  Другое движение →
+                </button>
               </div>
-              <button onClick={melody}>
-                {playing ? '■ Остановить мелодию' : '▶ Послушать мелодию'}
-              </button>
-              <p className="music-verse">
-                Руки к солнцу подними,
-                <br />
-                Облачку рукой махни.
-                <br />
-                Тихо плечи опусти,
-                <br />
-                Улыбнись и отдохни.
-              </p>
-              <button
-                onClick={() => {
-                  silence();
-                  onSpeak(
-                    'Руки к солнцу подними. Облачку рукой махни. Тихо плечи опусти. Улыбнись и отдохни.',
-                  );
-                }}
-              >
-                🔊 Стишок с движениями
-              </button>
-              {!sound && (
-                <small>
-                  Звук выключен в настройках взрослого. Цветы всё равно
-                  загораются.
-                </small>
-              )}
-            </>
-          )}
-        </>
-      )}
+            )}
+            {game === 'bubbles' && (
+              <ColorBubbles
+                sound={sound}
+                motion={motion}
+                autoSpeech={autoSpeech}
+                vision={vision}
+                onSpeak={onSpeak}
+                onTone={() => tone(2, 0.14)}
+              />
+            )}
+            {game === 'pairs' && <MatchPairs />}
+            {game === 'music' && (
+              <>
+                <span className="music-tree" aria-hidden>
+                  🌿
+                </span>
+                <p>Нажимай на цветы — сочини свою мелодию</p>
+                <div className="music-keys">
+                  {['🌼', '🌷', '🌸', '🌻', '🌺'].map((s, i) => (
+                    <button
+                      key={s}
+                      className={active === i ? 'note-on' : ''}
+                      aria-label={`Нота ${i + 1}`}
+                      disabled={playing}
+                      onClick={() => tone(i)}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+                <button onClick={melody}>
+                  {playing ? '■ Остановить мелодию' : '▶ Послушать мелодию'}
+                </button>
+                <p className="music-verse">
+                  Руки к солнцу подними,
+                  <br />
+                  Облачку рукой махни.
+                  <br />
+                  Тихо плечи опусти,
+                  <br />
+                  Улыбнись и отдохни.
+                </p>
+                <button
+                  onClick={() => {
+                    silence();
+                    onSpeak(
+                      'Руки к солнцу подними. Облачку рукой махни. Тихо плечи опусти. Улыбнись и отдохни.',
+                    );
+                  }}
+                >
+                  🔊 Стишок с движениями
+                </button>
+                {!sound && (
+                  <small>
+                    Звук выключен в настройках взрослого. Цветы всё равно
+                    загораются.
+                  </small>
+                )}
+              </>
+            )}
+          </>
+        )}
+      </div>
       <button
         className="primary return-lesson"
         onClick={() => {

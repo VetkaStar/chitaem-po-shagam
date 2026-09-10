@@ -1,7 +1,7 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { bubbleSymbols, type VisionMode } from '@/lib/vision';
-import { bubbleRound, bubbleChoice } from '@/lib/rest-games';
+import { bubbleRound, bubbleChoice, bubbleGrid } from '@/lib/rest-games';
 const colors = [
   { name: 'розовые', single: 'розовый', fill: '#ee92bb' },
   { name: 'зелёные', single: 'зелёный', fill: '#85c994' },
@@ -111,6 +111,7 @@ export default function ColorBubbles({
           : 'Верно! Найди остальные такого же цвета.',
       );
   }
+  const grid = bubbleGrid(board.length);
   return (
     <div className="color-bubbles">
       <div className="game-controls">
@@ -179,22 +180,24 @@ export default function ColorBubbles({
           </button>
         )}
       </div>
-      {mode === 'sequence' && (
-        <div className="bubble-sequence" aria-label="Порядок цветов">
-          {order.map((c, i) => (
-            <span
-              key={i}
-              className={i === step ? 'current' : i < step ? 'finished' : ''}
-              style={{ background: colors[c].fill }}
-            >
-              {i + 1}.{' '}
-              {symbols
-                ? `${bubbleSymbols[c].symbol} ${bubbleSymbols[c].name}`
-                : colors[c].single}
-            </span>
-          ))}
-        </div>
-      )}
+      <div className="bubble-sequence-space">
+        {mode === 'sequence' && (
+          <div className="bubble-sequence" aria-label="Порядок цветов">
+            {order.map((c, i) => (
+              <span
+                key={i}
+                className={i === step ? 'current' : i < step ? 'finished' : ''}
+                style={{ background: colors[c].fill }}
+              >
+                {i + 1}.{' '}
+                {symbols
+                  ? `${bubbleSymbols[c].symbol} ${bubbleSymbols[c].name}`
+                  : colors[c].single}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
       <p role="status" className="bubble-response">
         {message ||
           (symbols
@@ -205,6 +208,12 @@ export default function ColorBubbles({
         className={
           'color-bubble-field dense ' +
           (moving && motion ? 'bubble-moving' : 'bubble-static')
+        }
+        style={
+          {
+            '--bubble-columns': grid.columns,
+            '--bubble-rows': grid.rows,
+          } as CSSProperties
         }
       >
         {board.map((c, i) => (

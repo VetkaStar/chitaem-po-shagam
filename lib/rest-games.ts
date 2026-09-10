@@ -45,3 +45,8 @@ export function pairDeck(amount: number) {
   ]).slice(0, amount);
   return shuffled([...chosen, ...chosen]);
 }
+
+export function bubbleGrid(count: number) {
+  const columns = count <= 6 ? 3 : 4;
+  return { columns, rows: Math.max(1, Math.ceil(count / columns)) };
+}

@@ -514,3 +514,15 @@ assert(pictureRetry(4, 'СЫР', true).hint);
 console.log(
   'PASS picture retries: unrelated first answer stays unrevealed; spelling help remains immediate',
 );
+
+const { bubbleGrid } = load('rest-games');
+for (const mode of ['colors', 'sequence'])
+  for (const density of [1, 2, 3]) {
+    const count = bubbleRound(mode, density).board.length;
+    const grid = bubbleGrid(count);
+    assert(grid.columns * grid.rows >= count);
+    assert(grid.rows <= 4);
+    assert(grid.columns <= 4);
+  }
+assert(bubbleGrid(15).rows > bubbleGrid(5).rows);
+console.log('PASS bubble layout: every difficulty fits within a bounded grid');

@@ -1514,3 +1514,23 @@ meter::-webkit-meter-optimum-value {
     font-size: 18px;
   }
 }
+
+/* Compact lesson layout; expanding help never repositions the page above it. */
+html { overflow-anchor: none; scrollbar-gutter: stable; }
+@media (max-width: 1280px) {
+  header.app-header { height: 72px; }
+  .shell.shell { margin-top: 22px; gap: 28px; grid-template-columns: 190px minmax(0, 860px); }
+  .lesson-top { margin-bottom: 14px; }
+  .lesson-top h1 { margin-bottom: 12px; }
+  .lesson-controls { margin: 12px 0; padding: 8px; }
+  .exercise { padding: 18px 24px; min-height: 0; }
+  .exercise h2 { margin: 14px 0; }
+}
+@media (max-width: 800px) {
+  .shell.shell { display: block; padding: 0 14px; margin-top: 16px; }
+}
+@media (max-width: 600px) {
+  .exercise { padding: 16px 12px; }
+  .lesson-controls .mode-list { flex-wrap: wrap; }
+  .exercise .primary { min-width: 0; max-width: 100%; }
+}

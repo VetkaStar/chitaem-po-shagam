@@ -35,7 +35,7 @@ export default function ReadingApp() {
             {stars} <span className="desktop-word">звёзд</span>
           </span>
         </div>
-        {!done && <TopicNavigation model={model} />}
+        <TopicNavigation model={model} />
         <div className="lesson-controls">
           <LessonToolbar model={model} />
           <PracticeControls model={model} />
@@ -59,7 +59,7 @@ export default function ReadingApp() {
           <p className="muted">После этого задания предложим отдохнуть.</p>
         )}
         <ExerciseCard model={model} />
-        {done && <TopicNavigation model={model} />}
+        
         <div className="foot">
           <Leaf size={16} />{' '}
           {settings.motion

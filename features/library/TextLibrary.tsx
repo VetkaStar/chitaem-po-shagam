@@ -1,7 +1,6 @@
 'use client';
 import PracticeMenu from '@/components/practice-menu';
-import AutoAdvanceSettings from '@/components/auto-advance-settings';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import CompletionCelebration from '@/components/completion-celebration';
 import { Star } from 'lucide-react';
 import TopicBar from '@/components/topic-bar';
@@ -18,6 +17,7 @@ export default function TextLibrary({
   kind: TextKind;
   model: LessonModel;
 }) {
+  const micSession = useRef(false);
   return (
     <section className="lesson library">
       <div className="lesson-top">
@@ -34,7 +34,7 @@ export default function TextLibrary({
         </span>
       </div>
       <TopicBar
-        autoControl={<AutoAdvanceSettings model={model} />}
+        
         unit={model.settings.unit}
         current={topicNames[model.settings.unit]}
         nextLabel={topicNames[(model.settings.unit + 1) % topicNames.length]}
@@ -62,6 +62,7 @@ export default function TextLibrary({
         }
       />
       <TopicTextSession
+        micSession={micSession}
         key={kind + ':' + model.settings.unit}
         kind={kind}
         model={model}
@@ -70,9 +71,11 @@ export default function TextLibrary({
   );
 }
 function TopicTextSession({
+  micSession,
   kind,
   model,
 }: {
+  micSession: { current: boolean };
   kind: TextKind;
   model: LessonModel;
 }) {
@@ -111,6 +114,7 @@ function TopicTextSession({
         motion={model.settings.motion}
       />
       <TextExercise
+        micSession={micSession}
         key={item.id + ':' + round}
         textPicker={
           <>

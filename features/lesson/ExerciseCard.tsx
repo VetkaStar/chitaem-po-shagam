@@ -3,6 +3,7 @@ import { useIllustrationPreload } from '@/components/use-illustration-preload';
 import TaskInstruction from '@/components/task-instruction';
 import CompletionCelebration from '@/components/completion-celebration';
 import { RotateCcw } from 'lucide-react';
+import AutoAdvanceSettings from '@/components/auto-advance-settings';
 import AutoAdvance from '@/components/auto-advance';
 import IllustrationGallery from '@/components/illustration-gallery';
 import { wordIllustrations } from '@/content/illustrations';
@@ -87,20 +88,10 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
   const nextButton = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (feedback.kind === 'success' && !done && !paused && !parent && !rest)
-      nextButton.current?.focus();
+      nextButton.current?.focus({ preventScroll: true });
   }, [feedback.kind, done, paused, parent, rest]);
   return (
     <>
-      {(done || feedback.kind === 'success') && (
-        <AutoAdvance
-          key={`${index}-${done}`}
-          enabled={settings.autoAdvance}
-          seconds={settings.autoAdvanceSeconds}
-          blocked={parent || paused || rest || speaking}
-          onNext={() => (done ? model.continueLesson() : next())}
-          label={done ? 'Следующее занятие' : 'Следующее задание'}
-        />
-      )}
       <CompletionCelebration done={done} motion={settings.motion} />
       <div className={'exercise ' + feedback.kind}>
         <ExerciseHeader
@@ -140,7 +131,9 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
               }}
             >
               Следующее занятие <ArrowRight size={17} />
+              <AutoAdvance inline enabled={settings.autoAdvance} seconds={settings.autoAdvanceSeconds} blocked={parent || paused || rest || speaking} onNext={model.continueLesson} />
             </button>
+            {!settings.autoAdvance && <div className="auto-offer"><p>Продолжать автоматически после задания и занятия?</p><AutoAdvanceSettings model={model} /></div>}
           </div>
         ) : (
           <>
@@ -320,6 +313,7 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
                 />
               )}
             <ExerciseActions
+              countdown={<AutoAdvance key={`${index}-${model.repeatEpoch}`} inline enabled={settings.autoAdvance} seconds={settings.autoAdvanceSeconds} blocked={parent || paused || rest || speaking} onNext={() => next()} />}
               feedback={feedback}
               nextButton={nextButton}
               next={next}

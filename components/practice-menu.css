@@ -90,16 +90,15 @@
   overflow: auto;
 }
 .hint-space {
-  height: 180px;
+  height: auto;
   overflow: auto;
   margin: 10px 0;
 }
 .hint-space .hint-box {
   margin: 0 auto;
 }
-.hint-space[data-visible='false'] .hint-box {
-  visibility: hidden;
-  pointer-events: none;
+.hint-space[data-visible='false'] {
+  display: none;
 }
 @media (max-width: 600px) {
   .topic-auto {
@@ -111,4 +110,27 @@
   .lesson-controls {
     gap: 8px;
   }
+}
+
+/* Expanded content grows down without browser scroll anchoring. */
+html { overflow-anchor: none; scrollbar-gutter: stable; }
+.lesson-controls .mode-list { display: flex; flex-wrap: wrap; gap: 8px !important; }
+.lesson-controls .mode-list button { background: #fffefa !important; color: #315c40 !important; }
+.lesson-controls .mode-list button:is([data-active], [aria-selected="true"], [aria-pressed="true"]) { background: #377c60 !important; color: white !important; box-shadow: inset 0 -3px 0 #224e3b; }
+.auto-offer { margin: 20px auto 0; max-width: 480px; padding: 12px; background: #f0f4ea; border-radius: 16px; }
+.auto-offer .auto-settings { justify-content: center; }
+@media (max-width: 1280px) {
+  header { height: 76px; }
+  .shell { margin-top: 24px; gap: 28px; }
+  .lesson-top { margin-bottom: 18px; }
+  .lesson-controls { margin: 12px 0; }
+  .exercise { padding: 20px 24px; min-height: 0; }
+}
+@media (max-width: 600px) {
+  .lesson-controls .toolbar { width: 100%; }
+  .lesson-controls .mode-list { width: 100%; }
+  .lesson-controls .mode-list button { flex: 1; padding: 10px 8px !important; }
+  .lesson-controls .practice-menu { margin-left: auto; }
+  .exercise { padding: 16px 12px; }
+  .exercise .primary { min-width: 0; max-width: 100%; padding: 15px 20px; }
 }

@@ -2,9 +2,10 @@ import type { ExerciseModel } from './exercise-types';
 
 import { Mic, MicOff, ArrowRight, Check } from 'lucide-react';
 
-import type { RefObject } from 'react';
+import type { ReactNode, RefObject } from 'react';
 
 export default function ExerciseActions({
+  countdown,
   feedback,
   nextButton,
   next,
@@ -23,6 +24,7 @@ export default function ExerciseActions({
   speak,
   target,
 }: {
+  countdown?: ReactNode;
   feedback: ExerciseModel['feedback'];
   nextButton: RefObject<HTMLButtonElement | null>;
   next: ExerciseModel['next'];
@@ -52,7 +54,7 @@ export default function ExerciseActions({
             if (e.key === 'Enter' && e.repeat) e.preventDefault();
           }}
         >
-          Дальше · Enter <ArrowRight />
+          Дальше · Enter <ArrowRight />{countdown}
         </button>
       ) : mode === 'read' ? (
         <>

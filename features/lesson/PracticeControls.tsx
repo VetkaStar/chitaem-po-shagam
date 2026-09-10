@@ -1,11 +1,13 @@
 'use client';
+import AutoAdvanceSettings from '@/components/auto-advance-settings';
 import PracticeMenu from '@/components/practice-menu';
 import ReadingGuideControls from './ReadingGuideControls';
 import type { LessonModel } from './use-lesson';
 export default function PracticeControls({ model: m }: { model: LessonModel }) {
-  if (m.stage === 'pictures') return null;
+
   return (
     <PracticeMenu>
+      <AutoAdvanceSettings model={m} />
       <div className="practice-controls" aria-label="Настройки упражнения">
         {m.stage === 'words' && m.mode === 'read' && (
           <ReadingGuideControls model={m} wordOnly />

@@ -216,7 +216,7 @@ export function useLesson() {
     setSession((n) => n + 1);
     setFlyInputStatus('');
     repeatReward.current = false;
-    setLessonMic(false);
+    setLessonMic(lessonMic && m === 'read' && s !== 'pictures');
     resetCard();
     setStage(s);
     setMode(s === 'pictures' ? 'type' : m);

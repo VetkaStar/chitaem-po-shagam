@@ -4,6 +4,7 @@ import { illustrationSizes, useIllustrationPreload } from '@/components/use-illu
 import ExerciseHeader from '@/components/exercise-header';
 import PracticeMenu from '@/components/practice-menu';
 import type { ReactNode } from 'react';
+import AutoAdvanceSettings from '@/components/auto-advance-settings';
 import AutoAdvance from '@/components/auto-advance';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -29,6 +30,7 @@ import IllustrationGallery from '@/components/illustration-gallery';
 import { textIllustrations } from '@/content/illustrations';
 type Mode = 'read' | 'questions' | 'write';
 export default function TextExercise({
+  micSession,
   textPicker,
   item,
   model,
@@ -39,6 +41,7 @@ export default function TextExercise({
   taskTotal = 1,
   completedTasks = 0,
 }: {
+  micSession?: { current: boolean };
   textPicker?: ReactNode;
   item: ReadingText;
   model: LessonModel;
@@ -60,7 +63,14 @@ export default function TextExercise({
   const [answer, setAnswer] = useState(''),
     [attempts, setAttempts] = useState(0),
     [message, setMessage] = useState(''),
-    [mic, setMic] = useState(false);
+    [mic, setMicState] = useState(micSession?.current ?? false);
+  function setMic(value: boolean | ((previous: boolean) => boolean)) {
+    setMicState(previous => {
+      const next = typeof value === 'function' ? value(previous) : value;
+      if (micSession) micSession.current = next;
+      return next;
+    });
+  }
   const [readStart, setReadStart] = useState(0);
   const [readLines, setReadLines] = useState<number[]>([]);
   const covered = useRef(new Set<number>());
@@ -103,13 +113,12 @@ export default function TextExercise({
     };
   }, []);
   useEffect(() => {
-    if (accepted) nextButton.current?.focus();
-    else if (mode === 'write') input.current?.focus();
+    if (accepted) nextButton.current?.focus({ preventScroll: true });
+    else if (mode === 'write') input.current?.focus({ preventScroll: true });
   }, [accepted, mode, line]);
   function finish() {
     setDone(true);
     onComplete?.();
-    setMic(false);
     setMessage('Молодец! Задание выполнено.');
     if (!awarded.current.has(mode)) {
       awarded.current.add(mode);
@@ -266,7 +275,6 @@ export default function TextExercise({
       setMessage('');
     } else if (mode === 'read' && ask) {
       setQuestion(true);
-      setMic(false);
       setMessage('Текст прочитан. Теперь ответь на вопрос.');
     } else finish();
   }
@@ -317,6 +325,7 @@ export default function TextExercise({
         </div>
         {textPicker}
         <PracticeMenu>
+          <AutoAdvanceSettings model={model} />
           {' '}
           {mode === 'read' && (
             <label className="text-question-option">
@@ -381,19 +390,6 @@ export default function TextExercise({
           )}
         </PracticeMenu>
       </div>
-      {(done ||
-        (accepted &&
-          !showQuestion &&
-          (mode !== 'read' || model.settings.textFlow !== 'auto'))) && (
-        <AutoAdvance
-          key={`${line}-${done}-${question}`}
-          enabled={model.settings.autoAdvance}
-          seconds={model.settings.autoAdvanceSeconds}
-          blocked={model.parent || model.paused || model.rest || model.speaking}
-          onNext={() => (done ? (onNext ?? onBack)() : next())}
-          label={done ? 'Следующий текст' : 'Дальше'}
-        />
-      )}
       <div className="exercise text-exercise">
         <ExerciseHeader
           number={taskNumber}
@@ -704,6 +700,7 @@ export default function TextExercise({
                     : mode === 'read' && ask
                       ? 'Ответить на вопрос →'
                       : 'Завершить →'}
+                  <AutoAdvance key={`${line}-${question}`} inline enabled={model.settings.autoAdvance && (mode !== 'read' || model.settings.textFlow !== 'auto')} seconds={model.settings.autoAdvanceSeconds} blocked={model.parent || model.paused || model.rest || model.speaking} onNext={next} />
                 </button>
               )}
             </>
@@ -726,9 +723,11 @@ export default function TextExercise({
             Пропустить →
           </button>
         </div>
+        {done && completedTasks >= taskTotal && !model.settings.autoAdvance && <div className="auto-offer"><p>Продолжать автоматически?</p><AutoAdvanceSettings model={model} /></div>}
         {done && (
           <button className="primary" onClick={onNext ?? onBack}>
             Следующий текст →
+            <AutoAdvance inline enabled={model.settings.autoAdvance} seconds={model.settings.autoAdvanceSeconds} blocked={model.parent || model.paused || model.rest || model.speaking} onNext={onNext ?? onBack} />
           </button>
         )}
       </div>

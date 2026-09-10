@@ -1,6 +1,5 @@
 'use client';
 import { nextTopic, topicNames } from '@/lib/topics';
-import AutoAdvanceSettings from '@/components/auto-advance-settings';
 import TopicBar from '@/components/topic-bar';
 import type { Stage } from './config';
 import type { LessonModel } from './use-lesson';
@@ -27,7 +26,7 @@ export default function TopicNavigation({
     <TopicBar
       unit={settings.unit}
       current={current}
-      autoControl={<AutoAdvanceSettings model={model} />}
+      
       nextTitle={stage === 'pictures' ? 'Новые картинки' : 'Следующая тема'}
       nextLabel={stage === 'pictures' ? 'Ещё одно занятие' : next.label}
       done={done}

@@ -483,4 +483,13 @@ assert.equal(model.stars, repeatStars + 1, 'replay does not duplicate reward');
 console.log(
   'PASS repeat exercise: same material, cleared input, unchanged lesson position, retry after success, single award',
 );
+// A started microphone follows reading navigation and stops on an explicit stop or non-reading mode.
+act(m => { m.navigate('syllables', 'read'); m.setLessonMic(true); });
+act(m => m.continueLesson());
+assert.equal(model.lessonMic, true, 'next lesson keeps microphone intent');
+act(m => m.changeTopic('syllables', 3));
+assert.equal(model.lessonMic, true, 'next topic keeps microphone intent');
+act(m => m.navigate('words', 'type'));
+assert.equal(model.lessonMic, false, 'writing does not keep microphone active');
+console.log('PASS microphone intent across lessons and topics');
 for (const slot of slots) slot?.cleanup?.();

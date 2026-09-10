@@ -58,6 +58,8 @@ export function restoreLessonProgress({
           ? s.readingFocus
           : 'word',
         readingHighlight: s.readingHighlight !== false,
+        textFlow: s.textFlow === 'manual' ? 'manual' : 'auto',
+        showFullText: s.showFullText !== false,
         flySpeed: [0.5, 1, 1.5, 2].includes(s.flySpeed) ? s.flySpeed : 1,
         breakMinutes: [0, 3, 5, 10, 15].includes(s.breakMinutes)
           ? s.breakMinutes

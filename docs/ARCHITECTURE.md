@@ -115,3 +115,6 @@ components/completion-celebration.tsx и .css — общее поздравле�
 
 
 Автопереход: components/auto-advance.tsx (жизненный цикл таймера), auto-advance-settings.tsx (общая настройка), auto-advance.css. Используется ExerciseCard и TextExercise, настройки доступны в занятии и ParentSettings. lessonLength и continueLesson в useLesson ограничивают повторы слов текущей темы.
+
+
+TaskInstruction — общий компонент инструкции с озвучкой. use-text-microphone сохраняет подтверждённый префикс фразы. TextExercise владеет автоматическим/ручным ведением строк, полный текст остаётся видимым. TextLibrary считает выполненные тексты перед общей похвалой. Каталог адаптивных изображений: content/illustration-sources.ts; предзагрузка: components/use-illustration-preload.ts.

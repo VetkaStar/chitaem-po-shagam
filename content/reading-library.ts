@@ -8,6 +8,7 @@ export type ReadingText = {
   options: string[];
   answer: string;
   hint: string;
+  lineIllustrations?: { src: string; alt: string }[];
 };
 // Original starter texts. Questions check meaning, not pronunciation.
 export const readingTexts: ReadingText[] = [

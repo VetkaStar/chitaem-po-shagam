@@ -20,11 +20,16 @@ export function advanceTextReading(
   const goal = readingLetters(target),
     part = readingLetters(heard);
   if (!part || confidence < 0.65 || heard.includes('[unk]')) return progress;
-  const continuation = matchFragment(part, goal, progress);
-  if (continuation !== null) return continuation;
-  const restart = matchFragment(part, goal, 0);
-  if (restart !== null) return Math.max(progress, restart);
-  return progress;
+  function prefix(start: number) {
+    let position = start;
+    for (const word of textWords(heard)) {
+      const next = matchFragment(word, goal, position);
+      if (next === null) break;
+      position = next;
+    }
+    return position;
+  }
+  return Math.max(progress, prefix(progress), prefix(0));
 }
 export function checkTextWriting(
   value: string,

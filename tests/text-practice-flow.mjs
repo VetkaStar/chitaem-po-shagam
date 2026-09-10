@@ -188,6 +188,36 @@ speechCallbacks.onResult(final('я не хочу'));
 flush();
 assert.equal(rests, 1);
 slots.forEach((s) => s?.cleanup?.());
+// Preserve the correctly recognized prefix of a phrase with a wrong ending.
+key = 'prefix';
+target = 'Аня посадила семечко в горшок.';
+enabled = true;
+flush();
+speechCallbacks.onResult({
+  text: 'аня посадила семечко на стол',
+  result: [
+    { word: 'аня', conf: 0.95 },
+    { word: 'посадила', conf: 0.95 },
+    { word: 'семечко', conf: 0.95 },
+    { word: 'на', conf: 0.95 },
+    { word: 'стол', conf: 0.95 },
+  ],
+});
+flush();
+assert.equal(result.progress, 18);
+assert.equal(result.needsHelp, true);
+speechCallbacks.onResult({
+  text: 'в горшок',
+  result: [
+    { word: 'в', conf: 0.95 },
+    { word: 'горшок', conf: 0.95 },
+  ],
+});
+flush();
+assert.equal(result.progress, 25);
+console.log(
+  'PASS recognized prefix survives incorrect ending; continuation completes without rereading',
+);
 const Exercise = load('features/library/TextExercise.tsx').default;
 const item = {
   id: 'test',

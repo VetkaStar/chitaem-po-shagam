@@ -17,6 +17,8 @@ export type Settings = {
   letterCase: 'upper' | 'lower' | 'both';
   readingFocus: 'line' | 'word' | 'syllable';
   readingHighlight: boolean;
+  textFlow: 'auto' | 'manual';
+  showFullText: boolean;
   flySpeed: number;
   motion: boolean;
   sound: boolean;
@@ -50,6 +52,8 @@ export const defaults: Settings = {
   letterCase: 'both',
   readingFocus: 'word',
   readingHighlight: true,
+  textFlow: 'auto',
+  showFullText: true,
   flySpeed: 1,
   motion: true,
   sound: true,

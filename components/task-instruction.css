@@ -1,0 +1,75 @@
+.task-instruction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 16px 0 24px;
+}
+.task-instruction p {
+  margin: 0 !important;
+  line-height: 1.6;
+  font-size: 16px;
+}
+.task-instruction button {
+  flex-shrink: 0;
+}
+.exercise-footer {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.answer-option {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+.text-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+.full-text-line {
+  padding: 16px;
+  border-radius: 16px;
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: clamp(22px, 3vw, 30px);
+  line-height: 1.65;
+}
+.full-text-line.active-line {
+  background: #edf3e6;
+  border-left: 4px solid #377c60;
+}
+.full-text-line .reading-guide {
+  flex: 1;
+}
+.full-text-line > button {
+  flex-shrink: 0;
+}
+.text-success {
+  color: #936b20;
+  font-weight: 600;
+  margin: 16px 0;
+}
+.text-error-place {
+  padding: 12px;
+  background: #fff3de;
+  border-radius: 12px;
+  margin: 12px 0;
+}
+.text-flow-controls {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.text-flow-controls label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+[data-audio='off'] button:has(svg.lucide-volume-2) {
+  display: none !important;
+}

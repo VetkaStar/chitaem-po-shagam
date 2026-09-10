@@ -1,4 +1,6 @@
 'use client';
+import { illustrationSources } from '@/content/illustration-sources';
+import { illustrationSizes } from './use-illustration-preload';
 import { useState } from 'react';
 import {
   illustrations,
@@ -35,11 +37,13 @@ export default function IllustrationGallery({
     >
       <img
         className="reviewed-illustration"
-        src={picture.src}
+        src={picture.src + '?v=2'}
+        srcSet={illustrationSources[picture.src]}
+        sizes={illustrationSizes(assetId)}
         alt={concealAnswer ? 'Картинка предмета для задания' : picture.alt}
         width={picture.width}
         height={picture.height}
-        loading="lazy"
+        loading="eager"
         decoding="async"
       />
       <div className="illustration-navigation">

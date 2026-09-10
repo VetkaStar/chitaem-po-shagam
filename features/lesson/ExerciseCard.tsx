@@ -1,4 +1,7 @@
 'use client';
+import { useIllustrationPreload } from '@/components/use-illustration-preload';
+import TaskInstruction from '@/components/task-instruction';
+import CompletionCelebration from '@/components/completion-celebration';
 import { RotateCcw } from 'lucide-react';
 import AutoAdvance from '@/components/auto-advance';
 import IllustrationGallery from '@/components/illustration-gallery';
@@ -77,6 +80,7 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
   } = model;
   const [showWordPicture, setShowWordPicture] = useState(false);
   useEffect(() => setShowWordPicture(false), [target, index]);
+  useIllustrationPreload(wordIllustrations[target]);
   const entry = wordEntry(target);
   const parts = wordParts(target);
   const displayWord = model.showParts ? parts.join('·') : target;
@@ -97,6 +101,7 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
           label={done ? 'Следующее занятие' : 'Следующее задание'}
         />
       )}
+      <CompletionCelebration done={done} motion={settings.motion} />
       <div className={'exercise ' + feedback.kind}>
         <div className="exercise-top">
           <span>
@@ -151,6 +156,21 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
         ) : (
           <>
             <h2>{task}</h2>
+            <TaskInstruction
+              text={
+                mode === 'fly'
+                  ? 'Напечатай одну из движущихся карточек и нажми Enter.'
+                  : mode === 'read' && stage === 'letters'
+                    ? settings.letterMode === 'sounds'
+                      ? 'Включи микрофон и произнеси звук. Можно проверить вместе со взрослым.'
+                      : 'Включи микрофон и назови букву. Можно проверить вместе со взрослым.'
+                    : mode === 'read'
+                      ? 'Включи микрофон и читай в своём темпе. Можно нажать на слог и продолжать с него или прочитать слово целиком.'
+                      : 'Введи ответ и нажми галочку или Enter.'
+              }
+              sound={settings.sound}
+              speak={speak}
+            />
             <ExerciseMaterial
               mode={mode}
               settings={settings}
@@ -183,10 +203,7 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
             {stage === 'words' && mode === 'read' && (
               <>
                 <ReadingGuideControls model={model} wordOnly />
-                <p className="reading-guide-hint">
-                  Нажми на слог и продолжай читать дальше. Можно прочитать слово
-                  целиком.
-                </p>
+
                 {(entry?.icon || wordIllustrations[target]) && (
                   <>
                     <button

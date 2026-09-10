@@ -14,6 +14,7 @@ export function useTextMicrophone(
     [level, setLevel] = useState(0),
     [status, setStatus] = useState('Нажми на микрофон и прочитай строку.');
   const [previewProgress, setPreviewProgress] = useState(0);
+  const [needsHelp, setNeedsHelp] = useState(false);
   const [progressKey, setProgressKey] = useState(resetKey);
   const position = useRef(0),
     completed = useRef(false),
@@ -23,6 +24,7 @@ export function useTextMicrophone(
     position.current = 0;
     completed.current = false;
     setProgress(0);
+    setNeedsHelp(false);
     setPreviewProgress(0);
     setProgressKey(resetKey);
   }, [target, resetKey]);
@@ -67,15 +69,28 @@ export function useTextMicrophone(
           callbacks.current.onRest();
           return;
         }
-        const confidence = result.result?.length
-          ? Math.min(...result.result.map((w) => w.conf))
-          : 0;
-        const next = advanceTextReading(
-          target,
-          position.current,
-          result.text ?? '',
-          confidence,
-        );
+        const previous = position.current;
+        const tokens = result.result;
+        let next = previous;
+        if (tokens?.length && tokens.every((w) => typeof w.word === 'string')) {
+          let trusted = '';
+          for (const token of tokens) {
+            if (token.conf < 0.65) break;
+            trusted += (trusted ? ' ' : '') + token.word;
+          }
+          next = advanceTextReading(target, previous, trusted, 1);
+        } else {
+          const confidence = tokens?.length
+            ? Math.min(...tokens.map((w) => w.conf))
+            : 0;
+          next = advanceTextReading(
+            target,
+            previous,
+            result.text ?? '',
+            confidence,
+          );
+        }
+        setNeedsHelp(next < readingLetters(target).length);
         position.current = next;
         setProgress(next);
         if (next === readingLetters(target).length && next > 0) {
@@ -99,6 +114,7 @@ export function useTextMicrophone(
     progress: progressKey === resetKey ? progress : 0,
     previewProgress: progressKey === resetKey ? previewProgress : 0,
     level,
+    needsHelp,
     status,
   };
 }

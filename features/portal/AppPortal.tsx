@@ -68,6 +68,7 @@ export default function AppPortal({
   return (
     <div
       data-vision={model.settings.colorVision}
+      data-audio={model.settings.sound ? 'on' : 'off'}
       style={visionStyle(model.settings.colorVision)}
       className={model.settings.motion ? 'motion' : 'calm'}
     >

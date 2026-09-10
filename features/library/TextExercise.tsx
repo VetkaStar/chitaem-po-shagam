@@ -1,4 +1,5 @@
 'use client';
+import { useIllustrationPreload } from '@/components/use-illustration-preload';
 import AutoAdvance from '@/components/auto-advance';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -17,7 +18,8 @@ import ReadingGuide from '../lesson/ReadingGuide';
 import ReadingGuideControls from '../lesson/ReadingGuideControls';
 import { letterOffset, firstUnreadSource } from '@/lib/reading-guide';
 import { useTextMicrophone } from './use-text-microphone';
-import CompletionCelebration from '@/components/completion-celebration';
+import TaskInstruction from '@/components/task-instruction';
+import { guideParts } from '@/lib/reading-guide';
 import './text-practice.css';
 import IllustrationGallery from '@/components/illustration-gallery';
 import { textIllustrations } from '@/content/illustrations';
@@ -27,12 +29,15 @@ export default function TextExercise({
   model,
   onBack,
   onNext,
+  onComplete,
 }: {
   item: ReadingText;
   model: LessonModel;
   onBack: () => void;
   onNext?: () => void;
+  onComplete?: () => void;
 }) {
+  useIllustrationPreload(textIllustrations[item.id]);
   const [mode, setMode] = useState<Mode>('read'),
     [ask, setAsk] = useState(false),
     [loaded, setLoaded] = useState(false);
@@ -91,6 +96,7 @@ export default function TextExercise({
   }, [accepted, mode, line]);
   function finish() {
     setDone(true);
+    onComplete?.();
     setMic(false);
     setMessage('Молодец! Задание выполнено.');
     if (!awarded.current.has(mode)) {
@@ -146,6 +152,45 @@ export default function TextExercise({
       setMessage('Строка прочитана!');
     }
   }, [speech.progress, line, readStart, accepted]);
+  useEffect(() => {
+    if (
+      model.settings.textFlow !== 'auto' ||
+      mode !== 'read' ||
+      !accepted ||
+      done ||
+      question ||
+      model.parent ||
+      model.paused ||
+      model.rest ||
+      model.speaking
+    )
+      return;
+    let timer: ReturnType<typeof setTimeout>;
+    const arm = () => {
+      clearTimeout(timer);
+      if (!document.hidden)
+        timer = setTimeout(() => {
+          if (!document.hidden) next();
+        }, 600);
+    };
+    arm();
+    document.addEventListener('visibilitychange', arm);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('visibilitychange', arm);
+    };
+  }, [
+    accepted,
+    done,
+    question,
+    line,
+    mode,
+    model.settings.textFlow,
+    model.parent,
+    model.paused,
+    model.rest,
+    model.speaking,
+  ]);
   function choosePart(source: number) {
     setReadStart(source);
     setSelectionEpoch((n) => n + 1);
@@ -270,7 +315,10 @@ export default function TextExercise({
           <Pause size={18} />
         </button>
       </div>
-      {(done || (accepted && !showQuestion)) && (
+      {(done ||
+        (accepted &&
+          !showQuestion &&
+          (mode !== 'read' || model.settings.textFlow !== 'auto'))) && (
         <AutoAdvance
           key={`${line}-${done}-${question}`}
           enabled={model.settings.autoAdvance}
@@ -281,19 +329,37 @@ export default function TextExercise({
         />
       )}
       <div className="exercise text-exercise">
-        <CompletionCelebration done={done} motion={model.settings.motion} />
-        <button className="text-button" onClick={repeatExercise}>
-          <RotateCcw size={16} />
-          Повторить задание
-        </button>
-        <button className="text-button" onClick={onBack}>
-          Пропустить текст →
-        </button>
         <h2>{item.title}</h2>
-        {textIllustrations[item.id] && (
+        <TaskInstruction
+          text={
+            showQuestion
+              ? mode === 'read'
+                ? 'Текст прочитан. Теперь ответь на вопрос.'
+                : 'Прочитай текст и выбери ответ на вопрос.'
+              : mode === 'write'
+                ? 'Перепиши текущую строку. Затем нажми «Проверить» или Enter.'
+                : 'Включи микрофон и читай с выделенной строки. Можно не спешить; прочитанное начало сохраняется.'
+          }
+          sound={model.settings.sound}
+          speak={model.speak}
+        />
+
+        {(textIllustrations[item.id] || item.lineIllustrations?.length) && (
           <details className="text-illustration" key={item.id}>
             <summary>Показать картинку к тексту</summary>
-            <IllustrationGallery assetId={textIllustrations[item.id]} />
+            {item.lineIllustrations?.[line] ? (
+              <div className="illustration-gallery illustration-landscape">
+                <img
+                  className="reviewed-illustration"
+                  src={item.lineIllustrations[line].src}
+                  alt={item.lineIllustrations[line].alt}
+                  width={560}
+                  height={315}
+                />
+              </div>
+            ) : (
+              <IllustrationGallery assetId={textIllustrations[item.id]} />
+            )}
           </details>
         )}
         {mode === 'read' && (
@@ -308,23 +374,53 @@ export default function TextExercise({
         )}
         {mode === 'read' && !showQuestion && !done && (
           <>
-            <ReadingGuideControls model={model} />
-            <div className="reading-line-picker" aria-label="Выбор строки">
-              {item.lines.map((_, i) => (
-                <button
-                  key={i}
-                  aria-current={line === i ? 'step' : undefined}
-                  onClick={() => chooseLine(i)}
+            <div className="text-flow-controls">
+              <label>
+                Чтение{' '}
+                <select
+                  aria-label="Ведение по тексту"
+                  value={model.settings.textFlow}
+                  onChange={(e) =>
+                    model.update(
+                      'textFlow',
+                      e.target.value as 'auto' | 'manual',
+                    )
+                  }
                 >
-                  Строка {i + 1}
-                  {readLines.includes(i) ? ' ✓' : ''}
-                </button>
-              ))}
+                  <option value="auto">Автоматическое</option>
+                  <option value="manual">Ручное</option>
+                </select>
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={model.settings.showFullText !== false}
+                  onChange={(e) =>
+                    model.update('showFullText', e.target.checked)
+                  }
+                />
+                Показать весь текст
+              </label>
             </div>
-            <p className="reading-guide-hint">
-              Нажми на слово или слог, чтобы читать с этого места. Подсветка
-              следует за подтверждённым чтением.
-            </p>
+            <ReadingGuideControls
+              model={model}
+              wordOnly={item.lines.length === 1}
+            />
+
+            {item.lines.length > 1 && model.settings.textFlow !== 'auto' && (
+              <div className="reading-line-picker" aria-label="Выбор строки">
+                {item.lines.map((_, i) => (
+                  <button
+                    key={i}
+                    aria-current={line === i ? 'step' : undefined}
+                    onClick={() => chooseLine(i)}
+                  >
+                    Строка {i + 1}
+                    {readLines.includes(i) ? ' ✓' : ''}
+                  </button>
+                ))}
+              </div>
+            )}
           </>
         )}
         {showQuestion ? (
@@ -348,33 +444,76 @@ export default function TextExercise({
               Строка {line + 1} из {item.lines.length} ·{' '}
               {mode === 'write' ? 'Перепиши строку' : 'Прочитай вслух'}
             </p>
-            <div className="text-practice-line">
-              {mode === 'read' ? (
-                <ReadingGuide
-                  text={item.lines[line]}
-                  color={model.settings.color}
-                  focus={model.settings.readingFocus ?? 'word'}
-                  highlight={model.settings.readingHighlight !== false}
-                  progress={
-                    letterOffset(item.lines[line], readStart) +
-                    Math.max(speech.progress, speech.previewProgress ?? 0)
-                  }
-                  onSelect={choosePart}
-                />
-              ) : (
-                <span>{item.lines[line]}</span>
+            <div className="full-reading-text">
+              {item.lines.map(
+                (text, i) =>
+                  (model.settings.showFullText !== false || i === line) && (
+                    <div
+                      key={i}
+                      className={
+                        'full-text-line' + (i === line ? ' active-line' : '')
+                      }
+                    >
+                      {i === line && mode === 'read' ? (
+                        <ReadingGuide
+                          text={text}
+                          color={model.settings.color}
+                          focus={
+                            speech.needsHelp
+                              ? 'word'
+                              : (model.settings.readingFocus ?? 'word')
+                          }
+                          highlight={
+                            model.settings.readingHighlight !== false ||
+                            speech.needsHelp
+                          }
+                          progress={
+                            letterOffset(text, readStart) +
+                            Math.max(
+                              speech.progress,
+                              speech.previewProgress ?? 0,
+                            )
+                          }
+                          onSelect={choosePart}
+                        />
+                      ) : (
+                        <span>{text}</span>
+                      )}
+                      {model.settings.sound && (
+                        <button
+                          className="quiet"
+                          aria-label={
+                            i === line
+                              ? 'Послушать строку'
+                              : `Послушать строку ${i + 1}`
+                          }
+                          onClick={() => {
+                            setMic(false);
+                            model.speak(text);
+                          }}
+                        >
+                          <Volume2 size={18} />
+                        </button>
+                      )}
+                    </div>
+                  ),
               )}
-              <button
-                aria-label="Послушать строку"
-                disabled={!model.settings.sound}
-                onClick={() => {
-                  setMic(false);
-                  model.speak(item.lines[line]);
-                }}
-              >
-                <Volume2 size={20} />
-              </button>
             </div>
+            {mode === 'read' && speech.needsHelp && !accepted && (
+              <div className="text-error-place" role="status">
+                Продолжи со слова «
+                {
+                  guideParts(item.lines[line], 'word').find(
+                    (p) =>
+                      p.letters &&
+                      letterOffset(item.lines[line], p.end) >
+                        letterOffset(item.lines[line], readStart) +
+                          speech.progress,
+                  )?.text
+                }
+                ». Прочитанное начало сохранено.
+              </div>
+            )}
           </>
         )}
         {!done && showQuestion ? (
@@ -390,18 +529,28 @@ export default function TextExercise({
                 </button>
               )}
             </h3>
-            <div className="portal-actions">
+            <div className="text-options">
               {options.map((option) => (
-                <button
-                  key={option}
-                  onClick={() => {
-                    if (option === item.answer) finish();
-                    else
-                      setMessage('Давай найдём ответ в тексте. ' + item.hint);
-                  }}
-                >
-                  {option}
-                </button>
+                <span className="answer-option" key={option}>
+                  <button
+                    onClick={() => {
+                      if (option === item.answer) finish();
+                      else
+                        setMessage('Давай найдём ответ в тексте. ' + item.hint);
+                    }}
+                  >
+                    {option}
+                  </button>
+                  {model.settings.sound && (
+                    <button
+                      className="quiet"
+                      aria-label={`Послушать ответ: ${option}`}
+                      onClick={() => model.speak(option)}
+                    >
+                      <Volume2 size={18} />
+                    </button>
+                  )}
+                </span>
               ))}
             </div>
           </>
@@ -535,7 +684,23 @@ export default function TextExercise({
             </>
           )
         )}
-        <p role="status">{message}</p>
+        {done && (
+          <div className="text-success" role="status">
+            ⭐ Молодец! Задание выполнено. ⭐
+          </div>
+        )}
+        {!done && message !== 'Текст прочитан. Теперь ответь на вопрос.' && (
+          <p role="status">{message}</p>
+        )}
+        <div className="exercise-footer">
+          <button className="text-button" onClick={repeatExercise}>
+            <RotateCcw size={16} />
+            Повторить задание
+          </button>
+          <button className="text-button" onClick={onBack}>
+            Пропустить →
+          </button>
+        </div>
         {done && (
           <button className="primary" onClick={onNext ?? onBack}>
             Следующий текст →

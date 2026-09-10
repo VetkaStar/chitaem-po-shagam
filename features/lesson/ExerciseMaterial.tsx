@@ -106,7 +106,11 @@ export default function ExerciseMaterial({
                   ? 'word'
                   : settings.readingFocus
             }
-            highlight={settings.readingHighlight}
+            highlight={
+              settings.readingHighlight ||
+              feedback.kind === 'error' ||
+              feedback.kind === 'uncertain'
+            }
             progress={
               feedback.kind === 'success'
                 ? target.length

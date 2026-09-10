@@ -1,6 +1,7 @@
 'use client';
 import AutoAdvanceSettings from '@/components/auto-advance-settings';
 import { useMemo, useState } from 'react';
+import CompletionCelebration from '@/components/completion-celebration';
 import { Star } from 'lucide-react';
 import TopicBar from '@/components/topic-bar';
 import { textLabels, type TextKind } from '@/content/reading-library';
@@ -77,6 +78,7 @@ function TopicTextSession({
   const [round, setRound] = useState(0),
     [index, setIndex] = useState(0);
   const [last, setLast] = useState('');
+  const [completed, setCompleted] = useState<string[]>([]);
   const deck = useMemo(() => {
     const result = shuffled(textsForTopic(kind, model.settings.unit));
     if (result.length > 1 && result[0].id === last)
@@ -88,6 +90,7 @@ function TopicTextSession({
     model.stop();
     if (index + 1 < deck.length) setIndex((n) => n + 1);
     else {
+      setCompleted([]);
       setLast(item.id);
       setRound((n) => n + 1);
       setIndex(0);
@@ -102,6 +105,10 @@ function TopicTextSession({
     );
   return (
     <>
+      <CompletionCelebration
+        done={completed.length === deck.length && deck.length > 0}
+        motion={model.settings.motion}
+      />
       <p className="text-session-count">
         Текст {index + 1} из {deck.length} · {topicNames[model.settings.unit]}
       </p>
@@ -125,6 +132,11 @@ function TopicTextSession({
         key={item.id + ':' + round}
         item={item}
         model={model}
+        onComplete={() =>
+          setCompleted((ids) =>
+            ids.includes(item.id) ? ids : [...ids, item.id],
+          )
+        }
         onBack={next}
         onNext={next}
       />

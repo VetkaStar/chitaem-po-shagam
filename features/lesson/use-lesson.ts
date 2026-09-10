@@ -1,4 +1,5 @@
 'use client';
+import { pictureRetry } from '@/lib/picture-retry';
 import { parseVision } from '@/lib/vision';
 import { useRestSchedule } from './use-rest-schedule';
 import { freshWordDeck, wordParts } from '@/content/word-bank';
@@ -804,11 +805,7 @@ export function useLesson() {
     }
   }
   function showTypo() {
-    const correction = findTypo(
-      answer,
-      target,
-      picture ? wordPool(levels.length - 1) : [],
-    );
+    const correction = findTypo(answer, target, []);
     if (!correction) return false;
     setTypo(correction);
     setHint(false);
@@ -817,6 +814,22 @@ export function useLesson() {
     record('spelling-help', 'typed');
     if (settings.sound && settings.autoSpeech) speak(correction.message);
     return true;
+  }
+  function pictureMiss(slots: boolean) {
+    const attempt = mistakes + 1;
+    setMistakes(attempt);
+    const help = pictureRetry(
+      attempt,
+      target,
+      slots,
+      settings.colorVision !== 'off',
+    );
+    setHint(help.hint);
+    if (help.scene) setScene(true);
+    setHeard('');
+    setFeedback({ kind: 'neutral', text: help.message });
+    record(attempt === 1 ? 'retry' : 'help', slots ? 'slots' : 'typed');
+    if (settings.sound && settings.autoSpeech) speak(help.message);
   }
   function submit() {
     setTypo(null);
@@ -840,22 +853,20 @@ export function useLesson() {
         target,
         settings.pictureMode === 'free',
       );
+      // A nearby spelling gets precise help immediately, before staged retries.
+      if (verdict.kind === 'other' && showTypo()) return;
       if (settings.pictureMode === 'letters' && verdict.kind !== 'exact') {
-        const attempt = mistakes + 1;
-        setMistakes(attempt);
-        setHint(attempt >= 3);
-        setFeedback({
-          kind: 'neutral',
-          text:
-            verdict.kind === 'part' || verdict.kind === 'related'
-              ? verdict.message
-              : attempt === 1
-                ? 'Почти! Посмотри на цвета окошек и проверь буквы.'
-                : attempt === 2
-                  ? `Начни с буквы ${target[0]}. Попробуй ещё раз.`
-                  : `Давай вместе: ${target}. Напиши по одной букве.`,
-        });
-        record('spelling-help', 'slots');
+        if (
+          verdict.kind === 'part' ||
+          verdict.kind === 'related' ||
+          verdict.kind === 'similar'
+        ) {
+          setFeedback({ kind: 'neutral', text: verdict.message });
+          record('related', 'slots');
+          if (settings.sound && settings.autoSpeech) speak(verdict.message);
+          return;
+        }
+        pictureMiss(true);
         return;
       }
       if (verdict.kind === 'exact') {
@@ -882,14 +893,7 @@ export function useLesson() {
         record('related', 'typed');
         if (settings.sound && settings.autoSpeech) speak(verdict.message);
       } else {
-        if (showTypo()) return;
-        setScene(true);
-        setHint(true);
-        setFeedback({
-          kind: 'uncertain',
-          text: verdict.kind === 'other' ? verdict.message : 'Напиши слово.',
-        });
-        record('help', 'typed');
+        pictureMiss(false);
       }
       return;
     }

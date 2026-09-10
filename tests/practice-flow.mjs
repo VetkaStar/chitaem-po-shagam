@@ -170,16 +170,50 @@ act((m) => m.submit());
 assert.equal(model.stars, before + 1);
 act((m) => m.update('pictureMode', 'letters'));
 act((m) => m.next());
-for (let n = 1; n <= 3; n++) {
+for (let n = 1; n <= 4; n++) {
   act((m) => m.setAnswer('ЫЫЫЫ'));
   act((m) => m.submit());
   assert.equal(model.mistakes, n);
   assert.notEqual(model.feedback.kind, 'success');
-  assert.equal(model.hint, n >= 3);
+  assert.equal(model.hint, n >= 4);
+  if (n === 1) {
+    assert(!model.typo);
+    assert(!model.feedback.text.includes(model.target));
+    assert(!model.scene);
+  }
 }
 act((m) => m.setAnswer(m.target));
 act((m) => m.submit());
 assert.equal(model.feedback.kind, 'success');
+// In free input the first unrelated answer does not reveal the word or switch images.
+act((m) => {
+  m.update('pictureMode', 'free');
+  m.next();
+});
+act((m) => m.setAnswer('ЫЫЫЫЫЫ'));
+act((m) => m.submit());
+assert.equal(model.mistakes, 1);
+assert(!model.hint);
+assert(!model.scene);
+assert(!model.feedback.text.includes(model.target));
+act((m) => m.submit());
+assert(model.hint);
+assert(model.scene);
+// One-letter mistakes get immediate letter-level help in BOTH picture modes.
+for (const pictureMode of ['free', 'letters']) {
+  act((m) => {
+    m.update('pictureMode', pictureMode);
+    m.navigate('pictures', 'type');
+  });
+  const misspelled = 'Щ' + model.target.slice(1);
+  act((m) => m.setAnswer(misspelled));
+  act((m) => m.submit());
+  assert(model.typo);
+  assert.equal(model.typo.kind, 'replace');
+  assert.equal(model.mistakes, 0);
+  assert(!model.hint);
+  assert.match(model.feedback.text, /Почти/);
+}
 // New word lessons prefer unseen words, persisted even when skipped.
 const seen = new Set();
 for (let i = 0; i < 10; i++) {

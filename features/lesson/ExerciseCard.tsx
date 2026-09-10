@@ -382,7 +382,7 @@ export default function ExerciseCard({
                 value={answer}
                 onChange={setAnswer}
                 onSubmit={submit}
-                attempts={mistakes}
+                attempts={Math.max(0, mistakes - 1)}
                 disabled={
                   feedback.kind === 'success' || paused || parent || rest
                 }

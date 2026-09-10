@@ -497,3 +497,20 @@ for (const mode of ['protan', 'deutan', 'tritan', 'mono']) {
 console.log(
   'PASS vision: validated profiles, 4.5:1 palette contrast, distinct symbols, non-color slot and bubble instructions',
 );
+
+const { pictureRetry } = load('picture-retry');
+for (const slots of [true, false]) {
+  const first = pictureRetry(1, 'ДЕРЕВО', slots);
+  assert(!first.hint);
+  assert(!first.scene);
+  assert(!first.message.includes('дерево'));
+  assert(!first.message.includes('ДЕРЕВО'));
+}
+assert(pictureRetry(2, 'ДЕРЕВО', false).hint);
+assert(!pictureRetry(2, 'СЫР', true).hint);
+assert.match(pictureRetry(2, 'СЫР', true, true).message, /линии/);
+assert(!pictureRetry(3, 'СЫР', true).hint);
+assert(pictureRetry(4, 'СЫР', true).hint);
+console.log(
+  'PASS picture retries: unrelated first answer stays unrevealed; spelling help remains immediate',
+);

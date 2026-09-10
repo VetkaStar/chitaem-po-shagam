@@ -1,0 +1,60 @@
+.completion-celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.completion-card {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  width: min(420px, calc(100vw - 40px));
+  padding: 32px 20px;
+  border: 3px solid #367b60;
+  border-radius: 32px;
+  background: #fffef6;
+  color: #234b3b;
+  box-shadow: 0 12px 60px #17362c33;
+  text-align: center;
+}
+.completion-card strong {
+  font-size: clamp(38px, 8vw, 64px);
+  line-height: 1.1;
+}
+.completion-card > span {
+  font-size: 20px;
+}
+.completion-stars {
+  color: #926100;
+  font-size: 42px;
+  letter-spacing: 12px;
+}
+.completion-celebration[data-motion='true'] .completion-card {
+  animation: completion-arrive 350ms ease-out both;
+}
+.completion-celebration[data-motion='true'] .completion-stars {
+  animation: completion-stars 900ms ease-in-out 2;
+}
+@keyframes completion-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes completion-stars {
+  50% {
+    transform: translateY(-8px) scale(1.08);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .completion-celebration[data-motion='true'] .completion-card,
+  .completion-celebration[data-motion='true'] .completion-stars {
+    animation: none;
+  }
+}

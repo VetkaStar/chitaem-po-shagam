@@ -154,7 +154,7 @@ export default function RestHub({
                 onTone={() => tone(2, 0.14)}
               />
             )}
-            {game === 'pairs' && <MatchPairs />}
+            {game === 'pairs' && <MatchPairs motion={motion} />}
             {game === 'music' && (
               <>
                 <span className="music-tree" aria-hidden>

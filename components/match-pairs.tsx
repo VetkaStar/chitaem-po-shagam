@@ -1,9 +1,10 @@
 'use client';
+import CompletionCelebration from './completion-celebration';
 import { useState, useEffect, useRef } from 'react';
 import type { CSSProperties } from 'react';
 import { pairDeck, pairGrid } from '@/lib/rest-games';
 
-export default function MatchPairs() {
+export default function MatchPairs({ motion = true }: { motion?: boolean }) {
   const [amount, setAmount] = useState(3),
     [mode, setMode] = useState('memory'),
     [speed, setSpeed] = useState(1800),
@@ -44,6 +45,7 @@ export default function MatchPairs() {
   const grid = pairGrid(amount);
   return (
     <div className="match-pairs">
+      <CompletionCelebration done={done} motion={motion} />
       <div className="game-controls">
         <label>
           Игра{' '}

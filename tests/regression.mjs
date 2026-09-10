@@ -384,6 +384,7 @@ function loadView(relative) {
       module,
       exports: module.exports,
       require(p) {
+        if (p.endsWith('.css')) return {};
         if (!p.startsWith('.') && !p.startsWith('@/')) return require(p);
         const base = p.startsWith('@/')
           ? p.slice(2)

@@ -1,4 +1,5 @@
 'use client';
+import CompletionCelebration from './completion-celebration';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { bubbleSymbols, type VisionMode } from '@/lib/vision';
 import { bubbleRound, bubbleChoice, bubbleGrid } from '@/lib/rest-games';
@@ -114,6 +115,7 @@ export default function ColorBubbles({
   const grid = bubbleGrid(board.length);
   return (
     <div className="color-bubbles">
+      <CompletionCelebration done={done} motion={motion} />
       <div className="game-controls">
         <label>
           Игра{' '}

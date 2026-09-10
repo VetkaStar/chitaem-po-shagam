@@ -458,4 +458,29 @@ console.log(
   'PASS fast reading: selected start, preview without award, full highlight, two passes, no single-word loop, saved auto advance',
 );
 
+act((m) => {
+  m.update('partsThenWhole', false);
+  m.navigate('words', 'type');
+});
+const repeatTarget = model.target,
+  repeatIndex = model.index,
+  repeatCount = model.count,
+  repeatStars = model.stars;
+act((m) => m.setAnswer('ОШИБКА'));
+act((m) => m.repeatExercise());
+assert.equal(model.target, repeatTarget);
+assert.equal(model.answer, '');
+assert.equal(model.count, repeatCount);
+act((m) => m.setAnswer(m.target));
+act((m) => m.submit());
+assert.equal(model.stars, repeatStars + 1);
+act((m) => m.repeatExercise());
+assert.equal(model.index, repeatIndex);
+assert.notEqual(model.feedback.kind, 'success');
+act((m) => m.setAnswer(m.target));
+act((m) => m.submit());
+assert.equal(model.stars, repeatStars + 1, 'replay does not duplicate reward');
+console.log(
+  'PASS repeat exercise: same material, cleared input, unchanged lesson position, retry after success, single award',
+);
 for (const slot of slots) slot?.cleanup?.();

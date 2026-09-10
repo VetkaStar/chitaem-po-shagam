@@ -1,4 +1,5 @@
 'use client';
+import { RotateCcw } from 'lucide-react';
 import AutoAdvance from '@/components/auto-advance';
 import IllustrationGallery from '@/components/illustration-gallery';
 import { wordIllustrations } from '@/content/illustrations';
@@ -334,6 +335,10 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
               target={target}
             />
             <div className="exercise-footer">
+              <button className="text-button" onClick={model.repeatExercise}>
+                <RotateCcw size={16} />
+                Повторить задание
+              </button>
               {mode !== 'fly' && (
                 <button className="text-button" onClick={() => setHint(!hint)}>
                   <HelpCircle size={16} />

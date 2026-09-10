@@ -1,6 +1,8 @@
 import type { LessonModel } from './use-lesson';
 export type ExerciseModel = Pick<
   LessonModel,
+  | 'repeatExercise'
+  | 'repeatEpoch'
   | 'lessonLength'
   | 'continueLesson'
   | 'speechPreview'

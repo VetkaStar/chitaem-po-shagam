@@ -92,6 +92,8 @@ export function useLesson() {
   } | null>(null);
   const selectedPartRef = useRef(readingPart);
   selectedPartRef.current = readingPart;
+  const [repeatEpoch, setRepeatEpoch] = useState(0);
+  const repeatReward = useRef(false);
   const partPractice = useRef(new SlowReadingAttempt());
   const slowAttempt = useRef(new SlowReadingAttempt());
   const [speechPreview, setSpeechPreview] = useState(0);
@@ -213,6 +215,7 @@ export function useLesson() {
   function navigate(s: Stage, m: Mode = mode) {
     setSession((n) => n + 1);
     setFlyInputStatus('');
+    repeatReward.current = false;
     setLessonMic(false);
     resetCard();
     setStage(s);
@@ -318,8 +321,8 @@ export function useLesson() {
     recognition.current?.setEnabled?.(false);
     setFeedback({ kind: 'success', text: `Верно! ${target}. Получилось!` });
     setHeard('');
-    setStars((n) => n + 1);
-    record('success', via);
+    if (!repeatReward.current) setStars((n) => n + 1);
+    record(repeatReward.current ? 'repeat-success' : 'success', via);
     if (mode === 'read' && settings.sound && settings.autoSpeech)
       speak(`Верно! ${target.toLowerCase()}.`);
   }
@@ -548,6 +551,7 @@ export function useLesson() {
     settings.micDevice,
     settings.letterMode,
     settings.wordMode,
+    repeatEpoch,
   ]);
   useEffect(() => {
     recognition.current?.setEnabled?.(
@@ -742,10 +746,29 @@ export function useLesson() {
     setScene,
     wrongResponse,
   });
+  function repeatExercise() {
+    if (done) return;
+    repeatReward.current = repeatReward.current || awarded.current;
+    record('repeat', 'manual');
+    resetCard();
+    setRepeatEpoch((n) => n + 1);
+    if (mode === 'fly') {
+      caughtIds.current.clear();
+      setFlyCards((cards) =>
+        cards.map((card) => ({
+          ...card,
+          id: flyNext.current++,
+          caught: false,
+        })),
+      );
+      setFlyInputStatus('Попробуй эти карточки ещё раз.');
+    }
+  }
   function next(skip = false) {
     if (!skip && !awarded.current) return;
     if (skip && !awarded.current) record('skipped', 'manual');
     const nextCount = count + 1;
+    repeatReward.current = false;
     resetCard();
     setIndex((i) => i + 1);
     setCount(nextCount);
@@ -769,6 +792,7 @@ export function useLesson() {
       if (!awarded.current) resetCard();
     }
     if (key === 'unit' || key === 'length') {
+      repeatReward.current = false;
       setSession((n) => n + 1);
       resetCard();
       setIndex(0);
@@ -866,6 +890,8 @@ export function useLesson() {
     recognition.current?.setEnabled?.(true);
   }
   return {
+    repeatExercise,
+    repeatEpoch,
     lessonLength,
     continueLesson,
     speechPreview,

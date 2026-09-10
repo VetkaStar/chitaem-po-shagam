@@ -1,7 +1,14 @@
 'use client';
 import AutoAdvance from '@/components/auto-advance';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Mic, MessageCircle, Keyboard, Pause, Volume2 } from 'lucide-react';
+import {
+  Mic,
+  MessageCircle,
+  Keyboard,
+  Pause,
+  Volume2,
+  RotateCcw,
+} from 'lucide-react';
 import type { ReadingText } from '@/content/reading-library';
 import type { LessonModel } from '../lesson/use-lesson';
 import { shuffled } from '@/lib/session';
@@ -170,6 +177,20 @@ export default function TextExercise({
     setHint(undefined);
     setMessage('');
   }
+  function repeatExercise() {
+    model.stop();
+    setSelectionEpoch((n) => n + 1);
+    setReadStart(0);
+    covered.current.clear();
+    if (!question && mode !== 'questions')
+      setReadLines((lines) => lines.filter((i) => i !== line));
+    setAccepted(false);
+    setDone(false);
+    setAnswer('');
+    setAttempts(0);
+    setHint(undefined);
+    setMessage('Попробуем это задание ещё раз.');
+  }
   function next() {
     if (!accepted) return;
     const unreadLine =
@@ -261,6 +282,10 @@ export default function TextExercise({
       )}
       <div className="exercise text-exercise">
         <CompletionCelebration done={done} motion={model.settings.motion} />
+        <button className="text-button" onClick={repeatExercise}>
+          <RotateCcw size={16} />
+          Повторить задание
+        </button>
         <button className="text-button" onClick={onBack}>
           Пропустить текст →
         </button>

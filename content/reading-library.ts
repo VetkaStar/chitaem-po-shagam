@@ -54,6 +54,20 @@ export const readingTexts: ReadingText[] = [
   },
   {
     id: 'story-cat',
+    lineIllustrations: [
+  {
+    "src": "illustrations/stories/story-cat-01.webp",
+    "alt": "Соня и кот Тим в комнате."
+  },
+  {
+    "src": "illustrations/stories/story-cat-02.webp",
+    "alt": "Тим ложится на коврик рядом с Соней."
+  },
+  {
+    "src": "illustrations/stories/story-cat-03.webp",
+    "alt": "Тим спит на коврике рядом с Соней."
+  }
+],
     kind: 'stories',
     title: 'Тихий уголок',
     lines: [
@@ -68,6 +82,20 @@ export const readingTexts: ReadingText[] = [
   },
   {
     id: 'story-boat',
+    lineIllustrations: [
+  {
+    "src": "illustrations/stories/story-boat-01.webp",
+    "alt": "Миша складывает бумажную лодку."
+  },
+  {
+    "src": "illustrations/stories/story-boat-02.webp",
+    "alt": "Миша опускает бумажную лодку в таз с водой."
+  },
+  {
+    "src": "illustrations/stories/story-boat-03.webp",
+    "alt": "Бумажная лодка плывёт, Миша машет ей рукой."
+  }
+],
     kind: 'stories',
     title: 'Бумажная лодка',
     lines: [
@@ -82,6 +110,24 @@ export const readingTexts: ReadingText[] = [
   },
   {
     id: 'story-seed',
+    lineIllustrations: [
+  {
+    "src": "illustrations/stories/story-seed-01.webp",
+    "alt": "Аня сажает семечко в горшок с землёй."
+  },
+  {
+    "src": "illustrations/stories/story-seed-02.webp",
+    "alt": "Аня поливает землю в горшке."
+  },
+  {
+    "src": "illustrations/stories/story-seed-03.webp",
+    "alt": "Аня замечает маленький росток в горшке."
+  },
+  {
+    "src": "illustrations/stories/story-seed-04.webp",
+    "alt": "Аня ставит горшок с ростком ближе к окну."
+  }
+],
     kind: 'stories',
     title: 'Росток',
     lines: [

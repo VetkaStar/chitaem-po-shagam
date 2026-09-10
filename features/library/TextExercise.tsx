@@ -1,5 +1,6 @@
 'use client';
-import { useIllustrationPreload } from '@/components/use-illustration-preload';
+import { illustrationSources } from '@/content/illustration-sources';
+import { illustrationSizes, useIllustrationPreload } from '@/components/use-illustration-preload';
 import ExerciseHeader from '@/components/exercise-header';
 import PracticeMenu from '@/components/practice-menu';
 import type { ReactNode } from 'react';
@@ -48,7 +49,7 @@ export default function TextExercise({
   taskTotal?: number;
   completedTasks?: number;
 }) {
-  useIllustrationPreload(textIllustrations[item.id]);
+  useIllustrationPreload(textIllustrations[item.id], item.lineIllustrations);
   const [mode, setMode] = useState<Mode>('read'),
     [ask, setAsk] = useState(false),
     [loaded, setLoaded] = useState(false);
@@ -432,7 +433,11 @@ export default function TextExercise({
               <div className="illustration-gallery illustration-landscape">
                 <img
                   className="reviewed-illustration"
-                  src={item.lineIllustrations[line].src}
+                  src={item.lineIllustrations[line].src + '?v=2'}
+                  srcSet={illustrationSources[item.lineIllustrations[line].src]}
+                  sizes={illustrationSizes('scene-story')}
+                  loading="eager"
+                  decoding="async"
                   alt={item.lineIllustrations[line].alt}
                   width={560}
                   height={315}

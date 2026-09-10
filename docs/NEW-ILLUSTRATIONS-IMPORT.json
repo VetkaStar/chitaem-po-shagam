@@ -1,0 +1,1396 @@
+{
+  "images": [
+    {
+      "src": "illustrations/words-23-46/word-23-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 8282,
+      "sha256": "5e7260b4ebc33b97818b08cf42eba9c312a883f827d45740b93b88f0b3aac18f",
+      "source": "materials/illustrations/incoming/words-23-46/word-23-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-23-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 23642,
+      "sha256": "8708bbeaeade914bd2a6414a076f81b9a8930a7a1e0861cf19228b8ad2afd82e",
+      "source": "materials/illustrations/incoming/words-23-46/word-23-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-23-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 20004,
+      "sha256": "c2c5b908e87562f849707324302776f88b4574ac9593811a31569412212a30b5",
+      "source": "materials/illustrations/incoming/words-23-46/word-23-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-23-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 55056,
+      "sha256": "05a4eef5f1191da1b409b391be6251d17d47cb9cf5bc99d42d7ff5b9531f0e1d",
+      "source": "materials/illustrations/incoming/words-23-46/word-23-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-23-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 8794,
+      "sha256": "fe7b086d4a10a3c2b137ac5fd89e97a9ae433c32bb2114d8b0b29bd78d6fa80b",
+      "source": "materials/illustrations/incoming/words-23-46/word-23-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-23-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 24106,
+      "sha256": "d887f452c43b3bf63c43ab1866c48d81c28ec04e760b9c881caf6cd8e8040351",
+      "source": "materials/illustrations/incoming/words-23-46/word-23-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-24-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 7312,
+      "sha256": "7fc0a09b70fbe5aa9cdf02cf31d72ac7392486e0a528ca6a7570b9640546ef96",
+      "source": "materials/illustrations/incoming/words-23-46/word-24-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-24-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 20722,
+      "sha256": "823d472d7f15878341dd7ba231e02ac3683be7bde942216061e8a9901857ae99",
+      "source": "materials/illustrations/incoming/words-23-46/word-24-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-24-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 20610,
+      "sha256": "96a038f5bc5d3cf87fb24c9811727272a6daa33fd0dd1aec4d4fc17b51d6769e",
+      "source": "materials/illustrations/incoming/words-23-46/word-24-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-24-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 63754,
+      "sha256": "51282c5c51fbdaabc465d8fb7e1fe3a3e0539854b4d3b304798abd20da09b00a",
+      "source": "materials/illustrations/incoming/words-23-46/word-24-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-24-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 5980,
+      "sha256": "2b25764add642cef4599a557cf9217bcbf949fcaacf634204efa7087109aa252",
+      "source": "materials/illustrations/incoming/words-23-46/word-24-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-24-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 17412,
+      "sha256": "ad203f5cc2c3129629434d78d4035e79c9b9337949fe3f8cef202072357dc66c",
+      "source": "materials/illustrations/incoming/words-23-46/word-24-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-25-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 4448,
+      "sha256": "d8885fd71e06b715770974c0d1823c2542f3fea496171413c0846c6cc88c175d",
+      "source": "materials/illustrations/incoming/words-23-46/word-25-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-25-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 12182,
+      "sha256": "7fcb35b2f429a3939cdf8939706c836c79636b72665df8c452acd6816165ac64",
+      "source": "materials/illustrations/incoming/words-23-46/word-25-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-25-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 19854,
+      "sha256": "a9e733ffa4094a0a3338e089db80f8ae7ff6ee7328b8971194cc06a4894e0c11",
+      "source": "materials/illustrations/incoming/words-23-46/word-25-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-25-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 59474,
+      "sha256": "46293cd0480ed372944be623f827901f81300e8608197ce6f6549b94edd99724",
+      "source": "materials/illustrations/incoming/words-23-46/word-25-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-25-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 3648,
+      "sha256": "5ff2d2db6ad39ab570fc54acd932cb8c19d2ac4088615f467a69b2ba209f3c44",
+      "source": "materials/illustrations/incoming/words-23-46/word-25-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-25-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 10068,
+      "sha256": "322ccd1e937a4285ece5b79dcee8f4c73a9fda30cb914793cd62fce6b0877d36",
+      "source": "materials/illustrations/incoming/words-23-46/word-25-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-26-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 12590,
+      "sha256": "f0205f82503ac31fefbc377750ac159cef978a37683bbfff4e9acabfbfcba0e0",
+      "source": "materials/illustrations/incoming/words-23-46/word-26-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-26-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 34172,
+      "sha256": "3f71ef1ba4a137614e3c59106b2a4d212c71ac9eddf3088574f885eb03549bc3",
+      "source": "materials/illustrations/incoming/words-23-46/word-26-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-26-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 27488,
+      "sha256": "3128be27353c83945e44ef133b461ae70cd890e22f0eecdb7df18655017079fb",
+      "source": "materials/illustrations/incoming/words-23-46/word-26-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-26-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 85208,
+      "sha256": "fc901b87c590c74119e06d42af6fc4fb8310db0e8e6f90ee42c5a66d68e31380",
+      "source": "materials/illustrations/incoming/words-23-46/word-26-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-26-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 16672,
+      "sha256": "ec464cf0137ce72be11e1df92e803be9aa5138a34560e1e4b644a0a271babade",
+      "source": "materials/illustrations/incoming/words-23-46/word-26-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-26-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 47042,
+      "sha256": "e6b30f5a96efda554883fe837a288e12ec63d788fcd6116f6653010230d246d2",
+      "source": "materials/illustrations/incoming/words-23-46/word-26-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-27-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 9054,
+      "sha256": "e1c394a8f6c43a75f559694ea2f47db756e8f81ad35c828257fa18f5ab7eb9f2",
+      "source": "materials/illustrations/incoming/words-23-46/word-27-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-27-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 26408,
+      "sha256": "a2652901f4479596007566f39c99705e8194577d785612fbdb4f54976eaa6e6f",
+      "source": "materials/illustrations/incoming/words-23-46/word-27-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-27-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 20336,
+      "sha256": "4db34ccfb9a0f2ecdf639c80bec57380c46b81e22739916436d7790a66473d85",
+      "source": "materials/illustrations/incoming/words-23-46/word-27-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-27-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 58590,
+      "sha256": "40bdf8e20f3861835168f5f5ad89d34f560891ff9a9f273c1094b35769688f33",
+      "source": "materials/illustrations/incoming/words-23-46/word-27-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-27-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 10520,
+      "sha256": "f667176b02670d94219244fec81960187806f05ac0bb531767a810ff44e36bc8",
+      "source": "materials/illustrations/incoming/words-23-46/word-27-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-27-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 30922,
+      "sha256": "3a2de409b79010ab0b239b16c54b6f2efc71c13b01f558c19ef4e4726833c902",
+      "source": "materials/illustrations/incoming/words-23-46/word-27-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-28-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 5832,
+      "sha256": "b02d7ef768a98451e9d390eb9667565c53742027da5bfdc111bf951f5405bed3",
+      "source": "materials/illustrations/incoming/words-23-46/word-28-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-28-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 17452,
+      "sha256": "421d23177196fd6529973ee9c6db16ac88f6cb4904901fd00b8d74b3929750d5",
+      "source": "materials/illustrations/incoming/words-23-46/word-28-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-28-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 22476,
+      "sha256": "c1f9bcebbd98243bd7fccc140293b8c0394e234c4a343d9e59e755475c66f8d0",
+      "source": "materials/illustrations/incoming/words-23-46/word-28-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-28-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 64210,
+      "sha256": "674738bc5cb7541b2abbd28715b13a7ffb1f9311a44fe65ea39e8301aaf0d36f",
+      "source": "materials/illustrations/incoming/words-23-46/word-28-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-28-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 6336,
+      "sha256": "1c4a1dc76f4efc663ac550adac22e43767229f5aa72a31b7742a05cb328ccc10",
+      "source": "materials/illustrations/incoming/words-23-46/word-28-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-28-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 18634,
+      "sha256": "0fcbd9776ee55e44eefc555e9786f985a69c90fdeafb660778214cbabe6a25b2",
+      "source": "materials/illustrations/incoming/words-23-46/word-28-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-29-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 8806,
+      "sha256": "78e11d613ccaced9db06a05e61d0f85b05d36c405f99c6bcb7411aa357ed1afc",
+      "source": "materials/illustrations/incoming/words-23-46/word-29-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-29-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 24786,
+      "sha256": "a0e8e6017d5012be320182654bbb904e665ca45f38893810b256da90f371ade9",
+      "source": "materials/illustrations/incoming/words-23-46/word-29-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-29-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 20724,
+      "sha256": "db1f69f50d6da815499d1e1b003534c20c40d05fab668aa3340c2abce1910798",
+      "source": "materials/illustrations/incoming/words-23-46/word-29-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-29-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 58224,
+      "sha256": "d39825d9bbcd16d3cf6f4ea198e0313133cdbb1ce31b4fcb2f9d6ea12e06d745",
+      "source": "materials/illustrations/incoming/words-23-46/word-29-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-29-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 2238,
+      "sha256": "91c6291757e0617d655737cdb32c114160fb29a442902303e86feda0721f8cf0",
+      "source": "materials/illustrations/incoming/words-23-46/word-29-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-29-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 7294,
+      "sha256": "ef720214a452752f47d209c0fc486236c44cd627b94b909202ef62d100d67e36",
+      "source": "materials/illustrations/incoming/words-23-46/word-29-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-30-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 17636,
+      "sha256": "38127494aad5612e033b733407a5ce59ff3811594f8060375b8ee001acd86fd6",
+      "source": "materials/illustrations/incoming/words-23-46/word-30-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-30-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 54158,
+      "sha256": "451e9bb8a75a3151ea3f09cd1f1ce6a05d24ec0d37765f8eb5017f617d50d525",
+      "source": "materials/illustrations/incoming/words-23-46/word-30-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-30-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 27266,
+      "sha256": "c0ca95f6659898edd30177e7edcc79e50084e1193fd18d0e74c2bd0c01f307a3",
+      "source": "materials/illustrations/incoming/words-23-46/word-30-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-30-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 82894,
+      "sha256": "42841fdd2a41210561134399bbec4757b56d60d7644c89e27d5abf0d9d5835a2",
+      "source": "materials/illustrations/incoming/words-23-46/word-30-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-30-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 19124,
+      "sha256": "3eb53042865fd0ccaf8b0657b6b1aad0265d15a102ac5d504c3b1534ce8b649d",
+      "source": "materials/illustrations/incoming/words-23-46/word-30-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-30-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 57666,
+      "sha256": "038474fb0d05fca8691fe390fc8a48d0711308253c89b428c7d12b197ef87e31",
+      "source": "materials/illustrations/incoming/words-23-46/word-30-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-31-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 7286,
+      "sha256": "1b60f3bcda4dc86f3a03785c3cd773273c1edd91d7c67099c41fe546394bb3af",
+      "source": "materials/illustrations/incoming/words-23-46/word-31-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-31-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 20748,
+      "sha256": "5ce5867005cc5a8b960dd5a8b69f40628bdec6f01261fd6430c75cbfec312db8",
+      "source": "materials/illustrations/incoming/words-23-46/word-31-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-31-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 19430,
+      "sha256": "c53ab8bbdb8050efb49249da68861485d11240c1a3618f547de9d16bd7ce52ae",
+      "source": "materials/illustrations/incoming/words-23-46/word-31-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-31-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 49990,
+      "sha256": "cce55b9f6dc3d75f7a39b9234446e7333b688f1925caa7dba6217cddb2437e74",
+      "source": "materials/illustrations/incoming/words-23-46/word-31-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-31-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 6690,
+      "sha256": "15dccfd893ae9c78528ec8739b7cf48effbac7f05ebcbea40c6b803a334e5480",
+      "source": "materials/illustrations/incoming/words-23-46/word-31-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-31-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 20002,
+      "sha256": "3d262d717b7ca364579ad2e2f7f4fbc8d839f87bee5d8e026956d4cf2310c973",
+      "source": "materials/illustrations/incoming/words-23-46/word-31-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-32-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 8806,
+      "sha256": "9ed91588b168d16c090cde116bfcc01d830c8e34c04eaf76b7aef93dfd8cde18",
+      "source": "materials/illustrations/incoming/words-23-46/word-32-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-32-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 26250,
+      "sha256": "f69ac9625d6a54a67684ccbce2fc550b910a69da38d99b0b7f361a00c49c9412",
+      "source": "materials/illustrations/incoming/words-23-46/word-32-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-32-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 25142,
+      "sha256": "92266e635769c8d0fdf057c9afe64bdb97cc9a765db3a371f0ad1eaf552cf5b1",
+      "source": "materials/illustrations/incoming/words-23-46/word-32-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-32-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 76964,
+      "sha256": "17aa3e5dbb5f92116a7203bb8d9d4fef5ec995f0188215128c12ab6b1ede9481",
+      "source": "materials/illustrations/incoming/words-23-46/word-32-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-32-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 9446,
+      "sha256": "f1d6b6ea8c12d250234789c96ed477b0838ad879af49ace8c0042682c39282ed",
+      "source": "materials/illustrations/incoming/words-23-46/word-32-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-32-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 24870,
+      "sha256": "e135b4e92b322509065fd1751ee33f936ba96f4f6331c60aee031fc3a4a00ead",
+      "source": "materials/illustrations/incoming/words-23-46/word-32-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-33-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 8396,
+      "sha256": "066fee515ba3d08924c06d720a72d6cc154202ff49b79369ca006497caad64b1",
+      "source": "materials/illustrations/incoming/words-23-46/word-33-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-33-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 22566,
+      "sha256": "0633b896c60acab7ac62d885848eb0d4198821e08fd465d3c260028423ac6cc4",
+      "source": "materials/illustrations/incoming/words-23-46/word-33-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-33-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 24596,
+      "sha256": "dc51af8526f4fde8cc151c79c5448daacafa7d9fa0b1615082bf983e4732e7a2",
+      "source": "materials/illustrations/incoming/words-23-46/word-33-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-33-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 75290,
+      "sha256": "c97006a775c608bfe80e81c58552e8fda205d5f6a553c6a6933b65d2fb0ce033",
+      "source": "materials/illustrations/incoming/words-23-46/word-33-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-33-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 6436,
+      "sha256": "0a04bd4ff6cf0396b5e894980e89fb6fba45065b70ed7b13c0a49644dd9650fa",
+      "source": "materials/illustrations/incoming/words-23-46/word-33-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-33-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 17340,
+      "sha256": "afd98b3b5dc142930ddd71dd1bd99f34356c60e9b124fd49af037da140135be7",
+      "source": "materials/illustrations/incoming/words-23-46/word-33-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-34-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 9156,
+      "sha256": "79c0c54f645e69b866d9493d75ac215d5fd1cacc4addc6385065fbde576a7560",
+      "source": "materials/illustrations/incoming/words-23-46/word-34-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-34-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 27948,
+      "sha256": "aea344466bfafc404efd70aa721bde73ba176df08274fc951cf72fbbee4e4102",
+      "source": "materials/illustrations/incoming/words-23-46/word-34-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-34-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 21432,
+      "sha256": "f8263634fcbd6bcb1d49554619c75768112767894df004d6d94d3dfb90d6f9cd",
+      "source": "materials/illustrations/incoming/words-23-46/word-34-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-34-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 70226,
+      "sha256": "475d542662d179a21511ff84b111bdcc29c668b906f9b30e50648981b6f8a2a5",
+      "source": "materials/illustrations/incoming/words-23-46/word-34-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-34-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 13034,
+      "sha256": "d383030558fcb06f793224ab66d19f99f5d1b0c23121f0f6005d3097c5755ace",
+      "source": "materials/illustrations/incoming/words-23-46/word-34-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-34-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 41814,
+      "sha256": "accec40cb26a798a00bbc53caca124fa9d8511af28f863f5a67af75de7d299ee",
+      "source": "materials/illustrations/incoming/words-23-46/word-34-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-35-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 15954,
+      "sha256": "d644966fc773bf707354c6c40330dac06d4168f0718b0007a0cb7983b4497b83",
+      "source": "materials/illustrations/incoming/words-23-46/word-35-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-35-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 50130,
+      "sha256": "0a1764899cecb6573649e7a5c04dd7ed903df8beb8d66e7e460adf05df114bed",
+      "source": "materials/illustrations/incoming/words-23-46/word-35-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-35-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 20544,
+      "sha256": "ba5b197dcdf65756c70355b46be0ec742baa402f394b2b1aa201ec3037509567",
+      "source": "materials/illustrations/incoming/words-23-46/word-35-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-35-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 63968,
+      "sha256": "cc6d7a81f9182a62e592cd12572875e4dbc5a57cc4218c2ff0d0096db64171fc",
+      "source": "materials/illustrations/incoming/words-23-46/word-35-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-35-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 14136,
+      "sha256": "ddddfbf2e716fd78f8e82f4d36f5f86d437fc9ae1cae28259df2b5c12213716b",
+      "source": "materials/illustrations/incoming/words-23-46/word-35-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-35-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 44902,
+      "sha256": "452e635b5230062ce40fbfbf39b28e19b02460debdaf99497797c62d0c31f295",
+      "source": "materials/illustrations/incoming/words-23-46/word-35-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-36-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 9188,
+      "sha256": "51d18701faae1fda0baa13cdb12993535ccbe8edbf9b941ca0b925d1bec236ca",
+      "source": "materials/illustrations/incoming/words-23-46/word-36-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-36-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 27424,
+      "sha256": "8e751c79c0a723a91981c69a0f7623d76bdaf2eae390e49dba29c5a8e5c5e2d9",
+      "source": "materials/illustrations/incoming/words-23-46/word-36-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-36-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 21522,
+      "sha256": "63d7226ed86c5234cc27dd64cce2e7a323f1123033592c5ed6676d40f13e7a16",
+      "source": "materials/illustrations/incoming/words-23-46/word-36-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-36-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 66498,
+      "sha256": "29a1ab5404fa239dbd05133e34afef2aa6b6119ca5235a3bd1492f9700963150",
+      "source": "materials/illustrations/incoming/words-23-46/word-36-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-36-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 9270,
+      "sha256": "64fd56ac2c6b0adc6fccbf4ebafe1d4b01f0c8036a9567e797af45639057bd8d",
+      "source": "materials/illustrations/incoming/words-23-46/word-36-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-36-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 25874,
+      "sha256": "288cc18f21f456ddd927d53105362158043e6553bf3f48d1c2e60c01df7322e0",
+      "source": "materials/illustrations/incoming/words-23-46/word-36-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-37-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 4450,
+      "sha256": "64e150b0156ececca1e34dbeedad5cab73dbdddbe4d2ede42cac6a56df52bb10",
+      "source": "materials/illustrations/incoming/words-23-46/word-37-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-37-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 12072,
+      "sha256": "b3c22e61132b93de7f3cba8fd404765f7e5d09ac41d8d189f59de3065662aa48",
+      "source": "materials/illustrations/incoming/words-23-46/word-37-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-37-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 21290,
+      "sha256": "15acb0ccfd6ffa4d7c459aa572a3c7cfc1a867a7704c2340e320f8b5fe78a291",
+      "source": "materials/illustrations/incoming/words-23-46/word-37-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-37-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 62154,
+      "sha256": "588134ffa67d7d642bc5019f49a85b4a62bac1142a1e380c5828e25ac1839a8a",
+      "source": "materials/illustrations/incoming/words-23-46/word-37-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-37-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 3690,
+      "sha256": "0129d4faa173d5dbd837693dcfd324484bf87eda8774df5811d9c5a8956e34a9",
+      "source": "materials/illustrations/incoming/words-23-46/word-37-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-37-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 9574,
+      "sha256": "3c7953b683db3cd24c13a7d78508c7149f59e0c5c4c430a46852078a286ad46d",
+      "source": "materials/illustrations/incoming/words-23-46/word-37-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-38-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 8310,
+      "sha256": "754d584a16f4b9932f07b89ef77bf4e20c0fd94e853c36a40f6cb6cad5db7bc9",
+      "source": "materials/illustrations/incoming/words-23-46/word-38-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-38-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 22434,
+      "sha256": "f45ae0a44f7ca59662caa84a19d999eebefc1a3093c15c0cb9c09dea22e20d5b",
+      "source": "materials/illustrations/incoming/words-23-46/word-38-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-38-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 23312,
+      "sha256": "ad7bc5cbbac1f8e05f540321399c722ff99c14fbe4798d0b96a1c2e44d1a2f1d",
+      "source": "materials/illustrations/incoming/words-23-46/word-38-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-38-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 65696,
+      "sha256": "b952024b0b2527453bc789c76a8676696f64cb838a313772bf04f61ce92c4af2",
+      "source": "materials/illustrations/incoming/words-23-46/word-38-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-38-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 7836,
+      "sha256": "43844fb0e17197a9059fb2a6afcfcb5a0305ad1f6cc000b273d7e1023656bfa5",
+      "source": "materials/illustrations/incoming/words-23-46/word-38-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-38-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 21068,
+      "sha256": "62c571ae86aca8f851d256572f1398965894a95aac03eccc7401126240e67344",
+      "source": "materials/illustrations/incoming/words-23-46/word-38-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-39-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 5272,
+      "sha256": "0d0eb18fbd548db9212870609d3840c434ef7c32e010e7abda2eda8efb30ab59",
+      "source": "materials/illustrations/incoming/words-23-46/word-39-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-39-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 15398,
+      "sha256": "8447690a8fa8f73d6c4812a5cdfed09d5261d7be34dd89e6ee356c7dc53334b5",
+      "source": "materials/illustrations/incoming/words-23-46/word-39-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-39-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 12088,
+      "sha256": "a01ccda49a0418ece75f3462c86c726c1d6f182abbfeafcbeaa73ec82897737a",
+      "source": "materials/illustrations/incoming/words-23-46/word-39-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-39-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 35596,
+      "sha256": "a75a58cd6452edeb9dbbdcb2fce316990ab454332af5e990926533809c13ef8e",
+      "source": "materials/illustrations/incoming/words-23-46/word-39-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-39-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 4714,
+      "sha256": "88c04dc6f4c62976cd8d85599cc8c317395d05a249fe188955821361cf4faf1f",
+      "source": "materials/illustrations/incoming/words-23-46/word-39-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-39-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 14434,
+      "sha256": "e34a3e1310e41f372b86c97049cecae1326c2b1774f6a8af62816a6c9428b0be",
+      "source": "materials/illustrations/incoming/words-23-46/word-39-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-40-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 9860,
+      "sha256": "70559f13329bef8bfc7947737c496db1118459b9dd1b860bbadf4444eb52cc3a",
+      "source": "materials/illustrations/incoming/words-23-46/word-40-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-40-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 27456,
+      "sha256": "e80e7a764c1209816ec7aca29532c6f7e4220860522b2b9898b5652b6f4a6ded",
+      "source": "materials/illustrations/incoming/words-23-46/word-40-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-40-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 19884,
+      "sha256": "9074e00fd34264fd42da8d0534982c00831ac087594b28ad4bf4ede3d4797343",
+      "source": "materials/illustrations/incoming/words-23-46/word-40-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-40-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 58360,
+      "sha256": "56e8c0737ec1c11f0a3efd538fd7c71b4657b0c70c5aa4c50dbbb5a6116a39ef",
+      "source": "materials/illustrations/incoming/words-23-46/word-40-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-40-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 9832,
+      "sha256": "b43aa49349169b603170651a9453c356a985d670663265ca79f10447947c21e6",
+      "source": "materials/illustrations/incoming/words-23-46/word-40-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-40-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 27904,
+      "sha256": "e8bc93db6864d98bba3954b09915d3e504036f787490fcd982de2e04ac389094",
+      "source": "materials/illustrations/incoming/words-23-46/word-40-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-41-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 6142,
+      "sha256": "5e3591100255e5c4c3a5b4e901884f9caf2637b424184f8206948bd2946548a5",
+      "source": "materials/illustrations/incoming/words-23-46/word-41-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-41-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 18090,
+      "sha256": "85f41242ef6bec6d8c8ce7abe12678406c95d52cdf550492f576515f59407e89",
+      "source": "materials/illustrations/incoming/words-23-46/word-41-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-41-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 15480,
+      "sha256": "de6bfca965f30b2ce885a02437da47c83ff70518c7c6c486d0250412e0b5eff9",
+      "source": "materials/illustrations/incoming/words-23-46/word-41-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-41-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 45408,
+      "sha256": "eb575058c251014de178a329dd0ef067fe9da1623a862c2505b419e3ee790e47",
+      "source": "materials/illustrations/incoming/words-23-46/word-41-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-41-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 4746,
+      "sha256": "fd15750f04714552af51d968be236f74ea4dc5dbf242e551ec1537fbee3dd405",
+      "source": "materials/illustrations/incoming/words-23-46/word-41-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-41-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 13822,
+      "sha256": "c247f9d0a2a67c76ab084e34fc1707cd6312836cf0ec5aefbe12ed4fa0263f67",
+      "source": "materials/illustrations/incoming/words-23-46/word-41-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-42-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 4740,
+      "sha256": "eff95dc0449712b0de064408a688ed860e196bfacc600c095304f95380d99ff4",
+      "source": "materials/illustrations/incoming/words-23-46/word-42-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-42-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 13012,
+      "sha256": "aa7942be9c206f7b73c9c9eba249dd7761297b7f51c44902663e270b3248ce97",
+      "source": "materials/illustrations/incoming/words-23-46/word-42-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-42-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 18074,
+      "sha256": "ce8e55d3a43cf90afca9795a49cc9cd2cb5f499de20700e9befba0562eb73497",
+      "source": "materials/illustrations/incoming/words-23-46/word-42-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-42-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 56206,
+      "sha256": "aaae2776b25802438f739f941210fcd8c2363a82832ba3af18ea7a3b99de2259",
+      "source": "materials/illustrations/incoming/words-23-46/word-42-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-42-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 3344,
+      "sha256": "192277735421b32b64fe1b4360d7bba82c73e3b31ce9422c61c880c13458b9bd",
+      "source": "materials/illustrations/incoming/words-23-46/word-42-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-42-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 9514,
+      "sha256": "26b04378b5c374b753bd3742d0b436de431546f73b5b3fc0d4c7bc7773b6030a",
+      "source": "materials/illustrations/incoming/words-23-46/word-42-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-43-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 7776,
+      "sha256": "5f448cc05dcbc43bf548a774f0672243bfabe853c53bf26c77c9de88d362682a",
+      "source": "materials/illustrations/incoming/words-23-46/word-43-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-43-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 22790,
+      "sha256": "46956e04b3e32859e0ba4c9b755880cdfdf32a17db4f014d4cb7fbcfb1255701",
+      "source": "materials/illustrations/incoming/words-23-46/word-43-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-43-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 18758,
+      "sha256": "15a88f09059f1ca8f41f6be636dacbb3b609b160466de75aa6b8e8dd825c2a30",
+      "source": "materials/illustrations/incoming/words-23-46/word-43-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-43-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 58064,
+      "sha256": "177775149b14fc7d04d051ed561f7b64bf04e06b3c240b1862bbbd2e36a7d160",
+      "source": "materials/illustrations/incoming/words-23-46/word-43-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-43-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 7710,
+      "sha256": "7f814f104fbf12799a5facccd3f7175412506051083e5bb4dbe6413ed041b4b7",
+      "source": "materials/illustrations/incoming/words-23-46/word-43-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-43-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 21524,
+      "sha256": "e6cb4e04fe188011686d50425946614562e0d8cb04bc101222d9e166c203a6f1",
+      "source": "materials/illustrations/incoming/words-23-46/word-43-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-44-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 5796,
+      "sha256": "daa0c992942d94edf242ed0745a156a2500d20ab44ef5ae6d490583da9de3ef3",
+      "source": "materials/illustrations/incoming/words-23-46/word-44-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-44-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 18208,
+      "sha256": "2332b13fe42818df24c39ab18f2272a4c611d5dbc49e4421a10631ff6aa1f6f8",
+      "source": "materials/illustrations/incoming/words-23-46/word-44-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-44-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 17716,
+      "sha256": "ea7109a5f3c4b2ecfa55954ee938806760efc5dee67e19c2f0af78565974faf0",
+      "source": "materials/illustrations/incoming/words-23-46/word-44-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-44-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 54422,
+      "sha256": "054bedc52fbeeb3540b7c1e3ad45ebd838cac7103eb4b2720f96fb90887b1446",
+      "source": "materials/illustrations/incoming/words-23-46/word-44-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-44-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 8008,
+      "sha256": "6a3e68871fefde8fd753287fe0895760ec8116883d8549eade5e0ef2b72307b0",
+      "source": "materials/illustrations/incoming/words-23-46/word-44-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-44-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 26096,
+      "sha256": "473b543054e096dfe41640b7378340811e01fcacad5dacf564741f5d9beb7041",
+      "source": "materials/illustrations/incoming/words-23-46/word-44-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-45-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 8286,
+      "sha256": "59e914df682a1aa9167bf39322287ba76a0866698be24f2b681a2d72817c18b8",
+      "source": "materials/illustrations/incoming/words-23-46/word-45-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-45-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 31392,
+      "sha256": "4055ff95504a877daecf869cc4a727bd8be71b6ce78f3df8ecc475edb9c72e72",
+      "source": "materials/illustrations/incoming/words-23-46/word-45-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-45-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 20264,
+      "sha256": "86296b2c8ccca852a4a47405c287e5816ae6707fec4e371cc352583b3143b71a",
+      "source": "materials/illustrations/incoming/words-23-46/word-45-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-45-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 60286,
+      "sha256": "321932eee8504a694aef947c79e5fd6ba063a7d93ccdf9561d217f205a91d9ee",
+      "source": "materials/illustrations/incoming/words-23-46/word-45-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-45-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 9386,
+      "sha256": "1640ae7a6be3c3da3dde6b2474ee0b1c14349d6847172ca91118b245cc621c96",
+      "source": "materials/illustrations/incoming/words-23-46/word-45-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-45-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 29914,
+      "sha256": "ac26b5448107d2af855009876b471f89eb24c86dad1799bb7a5f11fe485a82be",
+      "source": "materials/illustrations/incoming/words-23-46/word-45-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-46-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 8890,
+      "sha256": "e7c220c3b84ae6464574656a6825de4c2fddf6590bc4348a9325434c640ad4f9",
+      "source": "materials/illustrations/incoming/words-23-46/word-46-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-46-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 25456,
+      "sha256": "78a77e9fd891cde71c1d84c481be61ef5aa7ed61c3eaf8ac5341ea713e313c3b",
+      "source": "materials/illustrations/incoming/words-23-46/word-46-alternate.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-46-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 19426,
+      "sha256": "06445537dbe75b8f2ebcdfc61faf5a1a143e8ffc2998d8bbf5f3c5f8b28581da",
+      "source": "materials/illustrations/incoming/words-23-46/word-46-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-46-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 53330,
+      "sha256": "7cbd55d21184f88df18ee600bc7ff38689c63864c427644e1bc00920a4fd33af",
+      "source": "materials/illustrations/incoming/words-23-46/word-46-context.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-46-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 8974,
+      "sha256": "de29c10ea6f81da1942c641387adecba70609835f7de9df2bedc6c346ff5fae0",
+      "source": "materials/illustrations/incoming/words-23-46/word-46-main.png"
+    },
+    {
+      "src": "illustrations/words-23-46/word-46-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 23760,
+      "sha256": "cd3f4e55bdb5cd2b07dd3b7368de3ad366c689a940f9bc327487ccbdebb47798",
+      "source": "materials/illustrations/incoming/words-23-46/word-46-main.png"
+    },
+    {
+      "src": "illustrations/stories/story-boat-01.webp",
+      "width": 560,
+      "height": 315,
+      "bytes": 28716,
+      "sha256": "586f14b0d14bbfe9fe5be6ac4a978a2765ab746abf521ef1f92998b2bd754897",
+      "source": "materials/illustrations/incoming/stories/story-boat-01.png"
+    },
+    {
+      "src": "illustrations/stories/story-boat-01-320w.webp",
+      "width": 320,
+      "height": 180,
+      "bytes": 11752,
+      "sha256": "b9821922755aa99c178af6d306b50027e97b0dedda7015a0187860768948caa8",
+      "source": "materials/illustrations/incoming/stories/story-boat-01.png"
+    },
+    {
+      "src": "illustrations/stories/story-boat-01-1120w.webp",
+      "width": 1120,
+      "height": 630,
+      "bytes": 80682,
+      "sha256": "a95af971969add1ef3f25ee1afc151dd854b42b6778ed58743230c403aee674c",
+      "source": "materials/illustrations/incoming/stories/story-boat-01.png"
+    },
+    {
+      "src": "illustrations/stories/story-boat-02.webp",
+      "width": 560,
+      "height": 315,
+      "bytes": 28974,
+      "sha256": "afbf40d44a57c8c0950480375bf279cd607313c0c646a52e7267168c65b810fd",
+      "source": "materials/illustrations/incoming/stories/story-boat-02.png"
+    },
+    {
+      "src": "illustrations/stories/story-boat-02-320w.webp",
+      "width": 320,
+      "height": 180,
+      "bytes": 11432,
+      "sha256": "bcfb62ea49ad3fdff89cd5dde858bd770e70925d2ba06cdcec4db98ddfd3fcef",
+      "source": "materials/illustrations/incoming/stories/story-boat-02.png"
+    },
+    {
+      "src": "illustrations/stories/story-boat-02-1120w.webp",
+      "width": 1120,
+      "height": 630,
+      "bytes": 81732,
+      "sha256": "24b116aa2276c3bbe35497a2b3cb135593bd0069de083c5f3cfe361fa80822b7",
+      "source": "materials/illustrations/incoming/stories/story-boat-02.png"
+    },
+    {
+      "src": "illustrations/stories/story-boat-03.webp",
+      "width": 560,
+      "height": 315,
+      "bytes": 30352,
+      "sha256": "7ce27c1b064e033c1c714b0509db4f90d1433463d8e25a4dc9cb3497291050f2",
+      "source": "materials/illustrations/incoming/stories/story-boat-03.png"
+    },
+    {
+      "src": "illustrations/stories/story-boat-03-320w.webp",
+      "width": 320,
+      "height": 180,
+      "bytes": 12246,
+      "sha256": "700a12371ea10d558c1bdddcf8e2450a4d20bd3f56b0607c573831c225fc88a7",
+      "source": "materials/illustrations/incoming/stories/story-boat-03.png"
+    },
+    {
+      "src": "illustrations/stories/story-boat-03-1120w.webp",
+      "width": 1120,
+      "height": 630,
+      "bytes": 85388,
+      "sha256": "876849ac8007d840f1c33464ee4829f5d7b79fe6686cb7e22ca08a349324496a",
+      "source": "materials/illustrations/incoming/stories/story-boat-03.png"
+    },
+    {
+      "src": "illustrations/stories/story-cat-01.webp",
+      "width": 560,
+      "height": 315,
+      "bytes": 27896,
+      "sha256": "79bbc7701011dda30d301b593a355457e789a5138bd61db7cdf7cc3c62f5c559",
+      "source": "materials/illustrations/incoming/stories/story-cat-01.png"
+    },
+    {
+      "src": "illustrations/stories/story-cat-01-320w.webp",
+      "width": 320,
+      "height": 180,
+      "bytes": 11510,
+      "sha256": "a6f2d6af6f8efb72e973a3acb2a2e44c5eb01fbaf0f783fc02cd581894f99673",
+      "source": "materials/illustrations/incoming/stories/story-cat-01.png"
+    },
+    {
+      "src": "illustrations/stories/story-cat-01-1120w.webp",
+      "width": 1120,
+      "height": 630,
+      "bytes": 79826,
+      "sha256": "34c55f2797dd0396e3cf8f40255a345378a4022a3a4bf041ce92e93b07e37f00",
+      "source": "materials/illustrations/incoming/stories/story-cat-01.png"
+    },
+    {
+      "src": "illustrations/stories/story-cat-02.webp",
+      "width": 560,
+      "height": 315,
+      "bytes": 28590,
+      "sha256": "63541349c0adc1707d21f634e73fde0c2aa65d2e435344779d195dea985eac4a",
+      "source": "materials/illustrations/incoming/stories/story-cat-02.png"
+    },
+    {
+      "src": "illustrations/stories/story-cat-02-320w.webp",
+      "width": 320,
+      "height": 180,
+      "bytes": 11752,
+      "sha256": "c00fb9b5fbdb498121c2118cc7051f846bd65246b8e69808e64ccceefa670f84",
+      "source": "materials/illustrations/incoming/stories/story-cat-02.png"
+    },
+    {
+      "src": "illustrations/stories/story-cat-02-1120w.webp",
+      "width": 1120,
+      "height": 630,
+      "bytes": 82832,
+      "sha256": "3d22363995acba39adc4b9ccad43dfb0944e52f4aee4465c0e6f2e9c4bb40c65",
+      "source": "materials/illustrations/incoming/stories/story-cat-02.png"
+    },
+    {
+      "src": "illustrations/stories/story-cat-03.webp",
+      "width": 560,
+      "height": 315,
+      "bytes": 28206,
+      "sha256": "c7296e59668320ce754eae130023c4784504b5a1f41cf210139900c1614b940a",
+      "source": "materials/illustrations/incoming/stories/story-cat-03.png"
+    },
+    {
+      "src": "illustrations/stories/story-cat-03-320w.webp",
+      "width": 320,
+      "height": 180,
+      "bytes": 11590,
+      "sha256": "4eb8f6f242cc524d22e1bed9bccca744706350bca181cfb619f2933768ff57ae",
+      "source": "materials/illustrations/incoming/stories/story-cat-03.png"
+    },
+    {
+      "src": "illustrations/stories/story-cat-03-1120w.webp",
+      "width": 1120,
+      "height": 630,
+      "bytes": 81120,
+      "sha256": "375903e9635ebea4fca4d408832b4af2212ab92085b4438394973b6263dc744d",
+      "source": "materials/illustrations/incoming/stories/story-cat-03.png"
+    },
+    {
+      "src": "illustrations/stories/story-seed-01.webp",
+      "width": 560,
+      "height": 315,
+      "bytes": 31644,
+      "sha256": "79f4e13023c0e83289f47c2146254ba9b35dd74f58d1b9eb54a3b2aafcd2bd45",
+      "source": "materials/illustrations/incoming/stories/story-seed-01.png"
+    },
+    {
+      "src": "illustrations/stories/story-seed-01-320w.webp",
+      "width": 320,
+      "height": 180,
+      "bytes": 13044,
+      "sha256": "2555b30b683bc3c168ef63e89cb088c83ac15645a8906bd017ec6ca84aabb87c",
+      "source": "materials/illustrations/incoming/stories/story-seed-01.png"
+    },
+    {
+      "src": "illustrations/stories/story-seed-01-1120w.webp",
+      "width": 1120,
+      "height": 630,
+      "bytes": 87378,
+      "sha256": "ba41d746ca7657edec34381dec4c298982fa62f244690e3069980d5c9a35541e",
+      "source": "materials/illustrations/incoming/stories/story-seed-01.png"
+    },
+    {
+      "src": "illustrations/stories/story-seed-02.webp",
+      "width": 560,
+      "height": 315,
+      "bytes": 32906,
+      "sha256": "78a4c14364009b9cf73909f2ba40ed92253e0e431dde59029d34b99360f638c5",
+      "source": "materials/illustrations/incoming/stories/story-seed-02.png"
+    },
+    {
+      "src": "illustrations/stories/story-seed-02-320w.webp",
+      "width": 320,
+      "height": 180,
+      "bytes": 13456,
+      "sha256": "4819bfa68ee3aed411f430f605b07b9095db476ff25bf3ad4aeaf7aa828eadea",
+      "source": "materials/illustrations/incoming/stories/story-seed-02.png"
+    },
+    {
+      "src": "illustrations/stories/story-seed-02-1120w.webp",
+      "width": 1120,
+      "height": 630,
+      "bytes": 92396,
+      "sha256": "c555ebf37739517de6d8c743ee5d3091c6d8bca57e56bbd12febf96e75eb8422",
+      "source": "materials/illustrations/incoming/stories/story-seed-02.png"
+    },
+    {
+      "src": "illustrations/stories/story-seed-03.webp",
+      "width": 560,
+      "height": 315,
+      "bytes": 32418,
+      "sha256": "9a7ea466e9d5430dc24f09f7af3021e7cc0b05ff9ab9f76d1fc3a94e1d83977c",
+      "source": "materials/illustrations/incoming/stories/story-seed-03.png"
+    },
+    {
+      "src": "illustrations/stories/story-seed-03-320w.webp",
+      "width": 320,
+      "height": 180,
+      "bytes": 13196,
+      "sha256": "32ba59f9a17e5531bff613047ce8f2018a8dcdf4018a2937caf94ab520cfc26d",
+      "source": "materials/illustrations/incoming/stories/story-seed-03.png"
+    },
+    {
+      "src": "illustrations/stories/story-seed-03-1120w.webp",
+      "width": 1120,
+      "height": 630,
+      "bytes": 91644,
+      "sha256": "e4b24bbe06eeee24c1d1fb5ac4fcd2a182551c668dc056fc3f7be9d34c287027",
+      "source": "materials/illustrations/incoming/stories/story-seed-03.png"
+    },
+    {
+      "src": "illustrations/stories/story-seed-04.webp",
+      "width": 560,
+      "height": 315,
+      "bytes": 31180,
+      "sha256": "d4671b88a6079137d81b86dc7910fae4cce84dcc293e0e8343f4fcb3be90daa1",
+      "source": "materials/illustrations/incoming/stories/story-seed-04.png"
+    },
+    {
+      "src": "illustrations/stories/story-seed-04-320w.webp",
+      "width": 320,
+      "height": 180,
+      "bytes": 12948,
+      "sha256": "3e84303f02bc4dfeae87f187335d879957e4c112dd57deca5db9170ebded26a3",
+      "source": "materials/illustrations/incoming/stories/story-seed-04.png"
+    },
+    {
+      "src": "illustrations/stories/story-seed-04-1120w.webp",
+      "width": 1120,
+      "height": 630,
+      "bytes": 86578,
+      "sha256": "6dc08989cd78de0bbb0410950cd0524267f2a4de2411f4d9569e4a43c05eef19",
+      "source": "materials/illustrations/incoming/stories/story-seed-04.png"
+    }
+  ]
+}

@@ -13,6 +13,8 @@ export function useTextMicrophone(
   const [progress, setProgress] = useState(0),
     [level, setLevel] = useState(0),
     [status, setStatus] = useState('Нажми на микрофон и прочитай строку.');
+  const [previewProgress, setPreviewProgress] = useState(0);
+  const [progressKey, setProgressKey] = useState(resetKey);
   const position = useRef(0),
     completed = useRef(false),
     callbacks = useRef({ onComplete, onRest });
@@ -21,6 +23,8 @@ export function useTextMicrophone(
     position.current = 0;
     completed.current = false;
     setProgress(0);
+    setPreviewProgress(0);
+    setProgressKey(resetKey);
   }, [target, resetKey]);
   useEffect(() => {
     if (!enabled) {
@@ -39,7 +43,12 @@ export function useTextMicrophone(
       onReady: () => {
         if (active) setStatus('Я слушаю. Читай в своём темпе.');
       },
-      onPartial: () => {},
+      onPartial: (text) => {
+        if (active && !completed.current)
+          setPreviewProgress(
+            advanceTextReading(target, position.current, text, 1),
+          );
+      },
       onActivity: (phase) => {
         if (active)
           setStatus(
@@ -53,6 +62,7 @@ export function useTextMicrophone(
       },
       onResult: (result) => {
         if (!active || completed.current) return;
+        setPreviewProgress(0);
         if (classifyUtterance(result.text ?? '', 1, '', []).kind === 'rest') {
           callbacks.current.onRest();
           return;
@@ -85,5 +95,10 @@ export function useTextMicrophone(
       speech.abort();
     };
   }, [target, resetKey, enabled, deviceId]);
-  return { progress, level, status };
+  return {
+    progress: progressKey === resetKey ? progress : 0,
+    previewProgress: progressKey === resetKey ? previewProgress : 0,
+    level,
+    status,
+  };
 }

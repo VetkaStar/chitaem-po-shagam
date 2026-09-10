@@ -15,6 +15,8 @@ export type Settings = {
   wordMode: 'whole' | 'parts';
   letterMode: 'sounds' | 'alphabet';
   letterCase: 'upper' | 'lower' | 'both';
+  readingFocus: 'line' | 'word' | 'syllable';
+  readingHighlight: boolean;
   flySpeed: number;
   motion: boolean;
   sound: boolean;
@@ -43,6 +45,8 @@ export const defaults: Settings = {
   wordMode: 'whole',
   letterMode: 'alphabet',
   letterCase: 'both',
+  readingFocus: 'word',
+  readingHighlight: true,
   flySpeed: 1,
   motion: true,
   sound: true,

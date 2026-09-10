@@ -337,7 +337,7 @@ for (const mode of ['protan', 'deutan', 'tritan', 'mono', 'off']) {
   );
   assert.equal(model.stars, visionStars);
 }
-for (const slot of slots) slot?.cleanup?.();
+
 console.log(
   'PASS practice flow: synonyms, progressive letter help, fresh words, parts→whole, stars, timed rests, pause and snooze',
 );
@@ -351,3 +351,21 @@ assert.equal(model.target,'МАМА');
 act(m => m.navigate('syllables','read'));
 assert.equal(model.settings.unit,0);
 assert(['АМ','УМ','МА','МУ'].includes(model.target));
+
+act(m => { m.update('unit',2); m.update('wordMode','whole'); m.navigate('words','read'); });
+for(let i=0;model.target!=='МУХА' && i<25;i++) act(m=>m.next(true));
+assert.equal(model.target,'МУХА');
+act(m=>{m.update('micConsent',true);m.setLessonMic(true)});
+act(()=>speechOptions.onReady());
+const guideStars=model.stars;
+act(m=>m.selectReadingPart(2,'ХА'));
+act(()=>speechOptions.onResult({text:'ха',result:[{conf:.95}]}));
+assert.equal(model.readingPart,null);
+assert.equal(model.stars,guideStars);
+assert.notEqual(model.feedback.kind,'success');
+act(()=>speechOptions.onResult({text:'муха',result:[{conf:.95}]}));
+assert.equal(model.stars,guideStars+1);
+act(m=>{m.update('readingHighlight',false);m.update('readingFocus','syllable')});
+assert.equal(JSON.parse(storage.get('reading-steps-v3')).settings.readingHighlight,false);
+
+for (const slot of slots) slot?.cleanup?.();

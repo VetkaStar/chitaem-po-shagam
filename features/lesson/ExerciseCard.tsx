@@ -1,4 +1,6 @@
 'use client';
+import ReadingGuide from './ReadingGuide';
+import ReadingGuideControls from './ReadingGuideControls';
 import LetterDisplay from './LetterDisplay';
 import LetterSlots from './LetterSlots';
 import { wordEntry, wordParts } from '@/content/word-bank';
@@ -25,6 +27,10 @@ export default function ExerciseCard({
 }: {
   model: Pick<
     LessonModel,
+    | 'speechPreview'
+    | 'readingPart'
+    | 'selectReadingPart'
+    | 'update'
     | 'showParts'
     | 'wholeAgain'
     | 'setPartsHelp'
@@ -248,6 +254,24 @@ export default function ExerciseCard({
                   {scene ? 'Первая картинка' : 'Посмотреть другую картинку'}
                 </button>
               </div>
+            ) : stage === 'words' && mode === 'read' ? (
+              <div className="reading">
+                <ReadingGuide
+                  text={target}
+                  color={settings.color}
+                  focus={
+                    model.showParts
+                      ? 'syllable'
+                      : settings.readingFocus === 'line'
+                        ? 'word'
+                        : settings.readingFocus
+                  }
+                  highlight={settings.readingHighlight}
+                  progress={Math.max(speechProgress, model.speechPreview)}
+                  selected={model.readingPart?.start}
+                  onSelect={model.selectReadingPart}
+                />
+              </div>
             ) : stage === 'letters' ? (
               <LetterDisplay letter={target} settings={settings} />
             ) : (
@@ -295,6 +319,11 @@ export default function ExerciseCard({
               )}
             {stage === 'words' && mode === 'read' && (
               <>
+                <ReadingGuideControls model={model} wordOnly />
+                <p className="reading-guide-hint">
+                  Нажми на слово или слог для отдельной попытки. Потом прочитаем
+                  слово целиком.
+                </p>
                 {entry?.icon && (
                   <>
                     <button

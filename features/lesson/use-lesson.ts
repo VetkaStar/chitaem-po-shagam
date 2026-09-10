@@ -6,7 +6,7 @@ import { freshWordDeck, wordParts } from '@/content/word-bank';
 import { useEffect, useRef, useState } from 'react';
 import { levels, pictures, breaks, checkTyped } from '@/lib/learning';
 import { wordPool, makeDeck, pictureAnswer, synonyms } from '@/lib/session';
-import { SlowReadingAttempt } from '@/lib/slow-reading';
+import { SlowReadingAttempt, matchFragment } from '@/lib/slow-reading';
 import { findTypo, type TypoHint } from '@/lib/typo';
 import { classifyUtterance } from '@/lib/feedback';
 import { startLocalSpeech } from '@/lib/local-speech';
@@ -77,7 +77,10 @@ export function useLesson() {
     timer = useRef<ReturnType<typeof setTimeout> | null>(null),
     mounted = useRef(true);
   const unclearAttempts = useRef(0);
+  const [readingPart, setReadingPart] = useState<{text:string;start:number}|null>(null);
+  const partPractice = useRef(new SlowReadingAttempt());
   const slowAttempt = useRef(new SlowReadingAttempt());
+  const [speechPreview, setSpeechPreview] = useState(0);
   const [speechProgress, setSpeechProgress] = useState(0),
     [attemptStatus, setAttemptStatus] = useState('');
   const activitySink = useRef<(phase: 'sound' | 'pause') => void>(() => {});
@@ -143,6 +146,7 @@ export function useLesson() {
               : 'Напечатай слово';
   function stop() {
     slowAttempt.current.reset();
+    setSpeechPreview(0);
     setSpeechProgress(0);
     setAttemptStatus('');
     epoch.current++;
@@ -164,6 +168,7 @@ export function useLesson() {
     setSpeaking(false);
   }
   function resetCard() {
+    setReadingPart(null); partPractice.current.reset();
     unclearAttempts.current = 0;
     setPartsHelp(false);
     setWholeAgain(false);
@@ -242,6 +247,8 @@ export function useLesson() {
           wordMode: s.wordMode === 'parts' ? 'parts' : 'whole',
           letterMode: s.letterMode === 'sounds' ? 'sounds' : 'alphabet',
           letterCase: s.letterCase === 'upper' || s.letterCase === 'lower' ? s.letterCase : 'both',
+          readingFocus: ['line','word','syllable'].includes(s.readingFocus) ? s.readingFocus : 'word',
+          readingHighlight: s.readingHighlight !== false,
           flySpeed: [0.5, 1, 1.5, 2].includes(s.flySpeed) ? s.flySpeed : 1,
           breakMinutes: [0, 3, 5, 10, 15].includes(s.breakMinutes)
             ? s.breakMinutes
@@ -429,6 +436,7 @@ export function useLesson() {
       done
     )
       return;
+    setSpeechPreview(0);
     const text = r.text || '',
       confidence = r.result?.length
         ? Math.min(...r.result.map((x: any) => x.conf))
@@ -466,6 +474,15 @@ export function useLesson() {
     if (verdict.kind === 'rest') {
       stop();
       setPaused(true);
+      return;
+    }
+    if (stage === 'words' && readingPart) {
+      const piece = partPractice.current.accept(text, confidence, readingPart.text);
+      if (piece.kind === 'complete') {
+        if(readingPart.text === target) { setReadingPart(null); success('local-speech'); return; }
+        setReadingPart(null); slowAttempt.current.reset(); setSpeechProgress(0);
+        setAttemptStatus('Эта часть прочитана! Теперь прочитай слово целиком.');
+      } else setAttemptStatus('Читай выбранную часть. Я слушаю.');
       return;
     }
     if (verdict.kind === 'correct') {
@@ -614,8 +631,11 @@ export function useLesson() {
       onActivity: (phase) => {
         if (epoch.current === token) activitySink.current(phase);
       },
-      onPartial: () => {
-        if (epoch.current === token) activitySink.current('sound');
+      onPartial: (text) => {
+        if (epoch.current === token) {
+          activitySink.current('sound');
+          if(stage === 'words') setSpeechPreview(matchFragment(text,target,slowAttempt.current.progress) ?? matchFragment(text,target) ?? 0);
+        }
       },
       onResult: (r) => {
         if (epoch.current === token && mounted.current) resultSink.current(r);
@@ -1004,7 +1024,14 @@ export function useLesson() {
       ].slice(-300),
     );
   }
+  function selectReadingPart(start:number, text:string) {
+    if(stage !== 'words' || mode !== 'read' || awarded.current) return;
+    partPractice.current.reset(); slowAttempt.current.reset(); setSpeechProgress(0);
+    setReadingPart({start,text}); setAttemptStatus('Прочитай выбранную часть. Затем прочитаем слово целиком.');
+    recognition.current?.setEnabled(false); recognition.current?.setEnabled(true);
+  }
   return {
+    speechPreview, readingPart, selectReadingPart,
     lessonActive,
     setLessonActive,
     schedule,

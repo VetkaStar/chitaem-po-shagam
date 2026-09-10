@@ -5,6 +5,9 @@ import type { ReadingText } from '@/content/reading-library';
 import type { LessonModel } from '../lesson/use-lesson';
 import { shuffled } from '@/lib/session';
 import { checkTextWriting, readingLetters } from '@/lib/text-practice';
+import ReadingGuide from '../lesson/ReadingGuide';
+import ReadingGuideControls from '../lesson/ReadingGuideControls';
+import { letterOffset, firstUnreadSource } from '@/lib/reading-guide';
 import { useTextMicrophone } from './use-text-microphone';
 import CompletionCelebration from '@/components/completion-celebration';
 import './text-practice.css';
@@ -31,6 +34,10 @@ export default function TextExercise({
     [attempts, setAttempts] = useState(0),
     [message, setMessage] = useState(''),
     [mic, setMic] = useState(false);
+  const [readStart, setReadStart] = useState(0);
+  const [readLines, setReadLines] = useState<number[]>([]);
+  const covered = useRef(new Set<number>());
+  const [selectionEpoch, setSelectionEpoch] = useState(0);
   const [hint, setHint] =
     useState<ReturnType<typeof checkTextWriting>['hint']>();
   const awarded = useRef(new Set<string>()),
@@ -82,8 +89,8 @@ export default function TextExercise({
     }
   }
   const speech = useTextMicrophone(
-    item.lines[line],
-    item.id + ':' + mode + ':' + line,
+    item.lines[line].slice(readStart),
+    readStart + ':' + selectionEpoch + ':' + item.id + ':' + mode + ':' + line,
     mic &&
       mode === 'read' &&
       !accepted &&
@@ -96,20 +103,58 @@ export default function TextExercise({
       model.settings.micConsent,
     model.settings.micDevice,
     () => {
-      setAccepted(true);
-      setMessage('Строка прочитана!');
+      const start = letterOffset(item.lines[line], readStart);
+      for (let i = start; i < readingLetters(item.lines[line]).length; i++)
+        covered.current.add(i);
+      const missing = firstUnreadSource(item.lines[line], covered.current);
+      if (missing !== null) {
+        setReadStart(missing);
+        setSelectionEpoch((n) => n + 1);
+        setMessage('Эта часть прочитана! Теперь прочитаем пропущенное начало.');
+      } else {
+        setAccepted(true);
+        setReadLines((v) => [...new Set([...v, line])]);
+        setMessage('Строка прочитана!');
+      }
     },
     () => {
       setMic(false);
       model.setPaused(true);
     },
   );
+  useEffect(() => {
+    const start = letterOffset(item.lines[line], readStart);
+    for (let i = start; i < start + speech.progress; i++)
+      covered.current.add(i);
+    if (speech.progress > 0 && !accepted && firstUnreadSource(item.lines[line], covered.current) === null) {
+      setAccepted(true);
+      setReadLines(v => [...new Set([...v, line])]);
+      setMessage('Строка прочитана!');
+    }
+  }, [speech.progress, line, readStart, accepted]);
+  function choosePart(source: number) {
+    setReadStart(source);
+    setSelectionEpoch((n) => n + 1);
+    setAccepted(false);
+    setMessage('Читай с выбранного места. Все части строки нужно прочитать.');
+  }
+  function chooseLine(index: number) {
+    setLine(index);
+    setReadStart(0);
+    setSelectionEpoch((n) => n + 1);
+    covered.current.clear();
+    setAccepted(readLines.includes(index));
+    setMessage('');
+  }
   function changeMode(value: Mode) {
     if (value === mode) return;
     model.stop();
     setMic(false);
     setMode(value);
     setLine(0);
+    setReadStart(0);
+    setReadLines([]);
+    covered.current.clear();
     setAccepted(false);
     setQuestion(false);
     setDone(false);
@@ -120,8 +165,15 @@ export default function TextExercise({
   }
   function next() {
     if (!accepted) return;
-    if (line + 1 < item.lines.length) {
-      setLine((n) => n + 1);
+    const unreadLine =
+      mode === 'read'
+        ? item.lines.findIndex((_, i) => !readLines.includes(i))
+        : line + 1;
+    if (mode === 'read' ? unreadLine >= 0 : line + 1 < item.lines.length) {
+      setLine(mode === 'read' ? unreadLine : line + 1);
+      setReadStart(0);
+      covered.current.clear();
+      setSelectionEpoch((n) => n + 1);
       setAccepted(false);
       setAnswer('');
       setAttempts(0);
@@ -184,6 +236,27 @@ export default function TextExercise({
           Задать вопрос после прочтения
         </label>
       )}
+      {mode === 'read' && !showQuestion && !done && (
+        <>
+          <ReadingGuideControls model={model} />
+          <div className="reading-line-picker" aria-label="Выбор строки">
+            {item.lines.map((_, i) => (
+              <button
+                key={i}
+                aria-current={line === i ? 'step' : undefined}
+                onClick={() => chooseLine(i)}
+              >
+                Строка {i + 1}
+                {readLines.includes(i) ? ' ✓' : ''}
+              </button>
+            ))}
+          </div>
+          <p className="reading-guide-hint">
+            Нажми на слово или слог, чтобы читать с этого места. Подсветка
+            следует за подтверждённым чтением.
+          </p>
+        </>
+      )}
       {showQuestion ? (
         <div className="text-reference">
           {item.lines.map((text, i) => (
@@ -206,35 +279,21 @@ export default function TextExercise({
             {mode === 'write' ? 'Перепиши строку' : 'Прочитай вслух'}
           </p>
           <div className="text-practice-line">
-            <span>
-              {item.lines[line].split(/(\s+)/).map((word, i, words) => {
-                const before = readingLetters(
-                  words.slice(0, i).join(''),
-                ).length;
-                const end = before + readingLetters(word).length;
-                const read =
-                  mode === 'read' && end > before && speech.progress >= end;
-                const current =
-                  mode === 'read' &&
-                  end > before &&
-                  before <= speech.progress &&
-                  speech.progress < end;
-                return (
-                  <span
-                    key={i}
-                    className={
-                      read
-                        ? 'text-word-read'
-                        : current
-                          ? 'text-word-current'
-                          : ''
-                    }
-                  >
-                    {word}
-                  </span>
-                );
-              })}
-            </span>
+            {mode === 'read' ? (
+              <ReadingGuide
+                text={item.lines[line]}
+                color={model.settings.color}
+                focus={model.settings.readingFocus ?? 'word'}
+                highlight={model.settings.readingHighlight !== false}
+                progress={
+                  letterOffset(item.lines[line], readStart) +
+                  Math.max(speech.progress, speech.previewProgress ?? 0)
+                }
+                onSelect={choosePart}
+              />
+            ) : (
+              <span>{item.lines[line]}</span>
+            )}
             <button
               aria-label="Послушать строку"
               disabled={!model.settings.sound}
@@ -284,7 +343,9 @@ export default function TextExercise({
                   className="text-read-progress"
                   aria-label="Прочитанная часть строки"
                   max={readingLetters(item.lines[line]).length}
-                  value={speech.progress}
+                  value={
+                    letterOffset(item.lines[line], readStart) + speech.progress
+                  }
                 />
                 {mic && (
                   <>
@@ -322,6 +383,7 @@ export default function TextExercise({
                   <button
                     onClick={() => {
                       setAccepted(true);
+                      setReadLines((v) => [...new Set([...v, line])]);
                       setMessage('Строка прочитана вместе со взрослым.');
                     }}
                   >

@@ -1,0 +1,39 @@
+.reading-guide {
+  white-space: pre-wrap;
+}
+.reading-guide button {
+  display: inline;
+  padding: 2px 3px;
+  margin: 3px 0;
+  border: 2px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  box-shadow: none;
+  min-height: 0;
+  letter-spacing: inherit;
+}
+.reading-guide button.guide-current {
+  border-color: currentColor;
+  background: #e5eedc;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.reading-guide button:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
+}
+.reading-line-picker {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+.reading-line-picker button[aria-current] {
+  border: 3px solid currentColor;
+}
+.reading-guide-hint {
+  font-size: 14px;
+}

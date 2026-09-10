@@ -576,3 +576,17 @@ for (const [letterCase, expected] of [['upper','Б'], ['lower','б'], ['both','�
 const soundHtml = renderToStaticMarkup(React.createElement(LetterDisplay, {letter:'Б', settings:{letterMode:'sounds',letterCase:'both',color:false}}));
 assert(soundHtml.includes('[б]')); assert(!soundHtml.includes('[бэ]'));
 console.log('PASS shared topics and letter presentation: all target alphabets, no advanced early words, case and sound/name distinction');
+
+const { guideParts, firstUnreadSource } = load('reading-guide');
+for(const value of ['Мама мыла раму.','Тим лёг на коврик.','Соня села рядом. Кот уснул.']) {
+ for(const unit of ['line','word','syllable']) assert.equal(guideParts(value,unit).map(p=>p.text).join(''),value);
+}
+assert.equal(guideParts('МУХА','syllable').filter(p=>p.letters).length,2);
+assert.equal(firstUnreadSource('Кот спит.',new Set([3,4,5,6])),0);
+assert.equal(firstUnreadSource('Кот спит.',new Set([0,1,2,3,4,5,6])),null);
+assert.equal(advanceTextReading('Мама, ау!',0,'мама ау',.9),readingLetters('Мама, ау!').length);
+const Guide=loadView('features/lesson/ReadingGuide.tsx').default;
+const quietGuide=renderToStaticMarkup(React.createElement(Guide,{text:'МУХА',focus:'syllable',progress:2,highlight:false,onSelect:noop}));
+assert(!quietGuide.includes('guide-current'));
+assert(quietGuide.includes('Читать: ХА'));
+console.log('PASS reading guide: word/syllable reconstruction, uncovered prefix, adjacent vowels and optional highlighting');

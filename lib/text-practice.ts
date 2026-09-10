@@ -1,3 +1,4 @@
+import { matchFragment } from './slow-reading';
 import { findTypo } from './typo';
 export function textWords(text: string) {
   return (
@@ -8,9 +9,7 @@ export function textWords(text: string) {
   );
 }
 export function readingLetters(text: string) {
-  return textWords(text)
-    .join('')
-    .replace(/([ауоыиэяюе])\1+/gu, '$1');
+  return textWords(text).join('');
 }
 export function advanceTextReading(
   target: string,
@@ -21,8 +20,10 @@ export function advanceTextReading(
   const goal = readingLetters(target),
     part = readingLetters(heard);
   if (!part || confidence < 0.65 || heard.includes('[unk]')) return progress;
-  if (goal.slice(progress).startsWith(part)) return progress + part.length;
-  if (goal.startsWith(part)) return Math.max(progress, part.length);
+  const continuation = matchFragment(part, goal, progress);
+  if (continuation !== null) return continuation;
+  const restart = matchFragment(part, goal, 0);
+  if (restart !== null) return Math.max(progress, restart);
   return progress;
 }
 export function checkTextWriting(

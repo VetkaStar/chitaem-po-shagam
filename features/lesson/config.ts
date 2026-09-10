@@ -21,6 +21,9 @@ export type Settings = {
   motion: boolean;
   sound: boolean;
   autoSpeech: boolean;
+  partsThenWhole: boolean;
+  autoAdvance: boolean;
+  autoAdvanceSeconds: number;
   slow: boolean;
   color: boolean;
   colorVision: VisionMode;
@@ -51,6 +54,9 @@ export const defaults: Settings = {
   motion: true,
   sound: true,
   autoSpeech: false,
+  partsThenWhole: false,
+  autoAdvance: false,
+  autoAdvanceSeconds: 3,
   slow: true,
   color: true,
   colorVision: 'off',

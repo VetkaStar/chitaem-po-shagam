@@ -1,4 +1,5 @@
 'use client';
+import AutoAdvanceSettings from '@/components/auto-advance-settings';
 import { useMemo, useState } from 'react';
 import { Star } from 'lucide-react';
 import TopicBar from '@/components/topic-bar';
@@ -57,6 +58,7 @@ export default function TextLibrary({
           )
         }
       />
+      <AutoAdvanceSettings model={model} />
       <TopicTextSession
         key={kind + ':' + model.settings.unit}
         kind={kind}

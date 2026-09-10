@@ -1,0 +1,33 @@
+.auto-advance {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0;
+  color: #315c40;
+  font-size: 15px;
+}
+.auto-settings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin: 12px 0;
+  font-size: 14px;
+}
+.auto-settings label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.auto-settings input[type='number'] {
+  width: 70px;
+  border: 1px solid #cdddc6;
+  border-radius: 10px;
+  padding: 8px;
+}
+.auto-settings input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+}

@@ -113,22 +113,29 @@ export function createSpeechHandler(context: {
       return;
     }
     if (stage === 'words' && readingPart) {
-      const piece = partPractice.current.accept(
-        text,
-        confidence,
-        readingPart.text,
-      );
+      // Keep listening to the remainder, including a fast result containing several syllables.
+      const remainder = target.slice(readingPart.start);
+      const piece = partPractice.current.accept(text, confidence, remainder);
+      setSpeechProgress(readingPart.start + piece.progress);
       if (piece.kind === 'complete') {
-        if (readingPart.text === target) {
-          setReadingPart(null);
-          success('local-speech');
-          return;
-        }
         setReadingPart(null);
-        slowAttempt.current.reset();
-        setSpeechProgress(0);
-        setAttemptStatus('Эта часть прочитана! Теперь прочитай слово целиком.');
-      } else setAttemptStatus('Читай выбранную часть. Я слушаю.');
+        if (readingPart.start === 0) success('local-speech');
+        else {
+          slowAttempt.current.reset();
+          setSpeechProgress(0);
+          setAttemptStatus(
+            'Эта часть прочитана! Теперь прочитай слово целиком.',
+          );
+        }
+      } else if (piece.kind === 'pending') {
+        setAttemptStatus('Продолжай читать. Я слушаю.');
+      } else if (verdict.kind === 'correct') {
+        setReadingPart(null);
+        success('local-speech');
+      } else
+        setAttemptStatus(
+          'Не расслышал. Можно читать дальше по слогам или слово целиком.',
+        );
       return;
     }
     if (verdict.kind === 'correct') {

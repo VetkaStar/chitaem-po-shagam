@@ -215,7 +215,7 @@ for (const pictureMode of ['free', 'letters']) {
   assert.match(model.feedback.text, /Почти/);
 }
 // New word lessons prefer unseen words within the chosen topic.
-act(m => m.update("unit", 12));
+act((m) => m.update('unit', 12));
 const seen = new Set();
 for (let i = 0; i < 10; i++) {
   act((m) => m.navigate('words', 'read'));
@@ -342,45 +342,120 @@ console.log(
   'PASS practice flow: synonyms, progressive letter help, fresh words, parts→whole, stars, timed rests, pause and snooze',
 );
 
-act(m => m.update('letterCase','lower'));
-assert.equal(model.settings.letterCase,'lower');
-assert.equal(JSON.parse(storage.get('reading-steps-v3')).settings.letterCase,'lower');
-act(m => m.update('unit',0));
-act(m => m.navigate('words','read'));
-assert.equal(model.target,'МАМА');
-act(m => m.navigate('syllables','read'));
-assert.equal(model.settings.unit,0);
-assert(['АМ','УМ','МА','МУ'].includes(model.target));
+act((m) => m.update('letterCase', 'lower'));
+assert.equal(model.settings.letterCase, 'lower');
+assert.equal(
+  JSON.parse(storage.get('reading-steps-v3')).settings.letterCase,
+  'lower',
+);
+act((m) => m.update('unit', 0));
+act((m) => m.navigate('words', 'read'));
+assert.equal(model.target, 'МАМА');
+act((m) => m.navigate('syllables', 'read'));
+assert.equal(model.settings.unit, 0);
+assert(['АМ', 'УМ', 'МА', 'МУ'].includes(model.target));
 
-act(m => { m.update('unit',2); m.update('wordMode','whole'); m.navigate('words','read'); });
-for(let i=0;model.target!=='МУХА' && i<25;i++) act(m=>m.next(true));
-assert.equal(model.target,'МУХА');
-act(m=>{m.update('micConsent',true);m.setLessonMic(true)});
-act(()=>speechOptions.onReady());
-const guideStars=model.stars;
-act(m=>m.selectReadingPart(2,'ХА'));
-act(()=>speechOptions.onResult({text:'ха',result:[{conf:.95}]}));
-assert.equal(model.readingPart,null);
-assert.equal(model.stars,guideStars);
-assert.notEqual(model.feedback.kind,'success');
-act(()=>speechOptions.onResult({text:'муха',result:[{conf:.95}]}));
-assert.equal(model.stars,guideStars+1);
-act(m=>{m.update('readingHighlight',false);m.update('readingFocus','syllable')});
-assert.equal(JSON.parse(storage.get('reading-steps-v3')).settings.readingHighlight,false);
+act((m) => {
+  m.update('unit', 2);
+  m.update('wordMode', 'whole');
+  m.navigate('words', 'read');
+});
+for (let i = 0; model.target !== 'МУХА' && i < 25; i++)
+  act((m) => m.next(true));
+assert.equal(model.target, 'МУХА');
+act((m) => {
+  m.update('micConsent', true);
+  m.setLessonMic(true);
+});
+act(() => speechOptions.onReady());
+const guideStars = model.stars;
+act((m) => m.selectReadingPart(2, 'ХА'));
+act(() => speechOptions.onResult({ text: 'ха', result: [{ conf: 0.95 }] }));
+assert.equal(model.readingPart, null);
+assert.equal(model.stars, guideStars);
+assert.notEqual(model.feedback.kind, 'success');
+act(() => speechOptions.onResult({ text: 'муха', result: [{ conf: 0.95 }] }));
+assert.equal(model.stars, guideStars + 1);
+act((m) => {
+  m.update('readingHighlight', false);
+  m.update('readingFocus', 'syllable');
+});
+assert.equal(
+  JSON.parse(storage.get('reading-steps-v3')).settings.readingHighlight,
+  false,
+);
 
 // Catching must preserve the section/mode in history and award one star.
-act(m => { m.update('breakEvery', 0); m.navigate('syllables', 'fly'); });
+act((m) => {
+  m.update('breakEvery', 0);
+  m.navigate('syllables', 'fly');
+});
 const caught = model.flyCards[0];
 const catchStars = model.stars;
-act(m => m.setAnswer(caught.text));
-act(m => m.submit());
+act((m) => m.setAnswer(caught.text));
+act((m) => m.submit());
 assert.equal(model.stars, catchStars + 1);
 assert.equal(model.history.at(-1).stage, 'syllables');
 assert.equal(model.history.at(-1).mode, 'fly');
 assert.equal(model.history.at(-1).via, 'catch');
-assert.equal(model.flyCards.find(c => c.id === caught.id).caught, true);
-act(m => m.submit());
+assert.equal(model.flyCards.find((c) => c.id === caught.id).caught, true);
+act((m) => m.submit());
 assert.equal(model.stars, catchStars + 1);
 console.log('PASS catch integration: card, award, history and repeated submit');
+
+// Fast full-word results must finish the visual guide, including a selected first syllable.
+act((m) => {
+  m.update('unit', 0);
+  m.update('wordMode', 'whole');
+  m.update('partsThenWhole', false);
+  m.navigate('words', 'read');
+  m.setLessonMic(true);
+});
+act(() => speechOptions.onReady());
+act((m) => m.selectReadingPart(0, 'МА'));
+const fastStars = model.stars;
+act(() => speechOptions.onPartial('мама'));
+assert.equal(model.stars, fastStars, 'partial never awards');
+act(() => speechOptions.onResult({ text: 'мама', result: [{ conf: 0.95 }] }));
+assert.equal(model.feedback.kind, 'success');
+assert.equal(model.speechProgress, 4);
+assert.equal(model.readingPart, null);
+assert.equal(
+  model.lessonLength,
+  1,
+  'one available word is one exercise, not five repeats',
+);
+act((m) => m.next());
+assert(model.done);
+act((m) => m.continueLesson());
+assert(model.settings.unit > 0);
+assert(model.pool.some((w) => w !== 'МАМА'));
+// Explicit two-pass setting, including fast input, awards only after the second pass.
+act((m) => {
+  m.update('unit', 0);
+  m.update('partsThenWhole', true);
+  m.navigate('words', 'read');
+  m.setLessonMic(true);
+});
+act(() => speechOptions.onReady());
+const twoPassStars = model.stars;
+act(() => speechOptions.onResult({ text: 'ма', result: [{ conf: 0.95 }] }));
+assert.equal(model.speechProgress, 2);
+act(() => speechOptions.onResult({ text: 'ма', result: [{ conf: 0.95 }] }));
+assert(model.wholeAgain);
+assert.equal(model.stars, twoPassStars);
+act(() => speechOptions.onResult({ text: 'мама', result: [{ conf: 0.95 }] }));
+assert.equal(model.stars, twoPassStars + 1);
+act((m) => {
+  m.update('autoAdvance', true);
+  m.update('autoAdvanceSeconds', 3);
+});
+assert.equal(
+  JSON.parse(storage.get('reading-steps-v3')).settings.autoAdvanceSeconds,
+  3,
+);
+console.log(
+  'PASS fast reading: selected start, preview without award, full highlight, two passes, no single-word loop, saved auto advance',
+);
 
 for (const slot of slots) slot?.cleanup?.();

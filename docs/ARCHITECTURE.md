@@ -112,3 +112,6 @@ components/completion-celebration.tsx и .css — общее поздравле�
 
 
 Общая панель темы: components/topic-bar.tsx и topic-bar.css. TopicNavigation адаптирует её для первых разделов, TextLibrary использует тот же компонент для текстов. Порядок кнопок: предыдущая, список тем, следующая. TextLibrary использует lesson/lesson-top, TextExercise — общую рамку exercise и mode-list; стили текста остаются в text-practice.css.
+
+
+Автопереход: components/auto-advance.tsx (жизненный цикл таймера), auto-advance-settings.tsx (общая настройка), auto-advance.css. Используется ExerciseCard и TextExercise, настройки доступны в занятии и ParentSettings. lessonLength и continueLesson в useLesson ограничивают повторы слов текущей темы.

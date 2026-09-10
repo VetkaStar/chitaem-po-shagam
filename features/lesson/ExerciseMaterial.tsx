@@ -107,8 +107,18 @@ export default function ExerciseMaterial({
                   : settings.readingFocus
             }
             highlight={settings.readingHighlight}
-            progress={Math.max(speechProgress, model.speechPreview)}
-            selected={model.readingPart?.start}
+            progress={
+              feedback.kind === 'success'
+                ? target.length
+                : Math.max(speechProgress, model.speechPreview)
+            }
+            selected={
+              model.readingPart &&
+              Math.max(speechProgress, model.speechPreview) <=
+                model.readingPart.start
+                ? model.readingPart.start
+                : undefined
+            }
             onSelect={model.selectReadingPart}
           />
         </div>

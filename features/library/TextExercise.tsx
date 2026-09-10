@@ -1,4 +1,5 @@
 'use client';
+import AutoAdvance from '@/components/auto-advance';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Mic, MessageCircle, Keyboard, Pause, Volume2 } from 'lucide-react';
 import type { ReadingText } from '@/content/reading-library';
@@ -248,6 +249,16 @@ export default function TextExercise({
           <Pause size={18} />
         </button>
       </div>
+      {(done || (accepted && !showQuestion)) && (
+        <AutoAdvance
+          key={`${line}-${done}-${question}`}
+          enabled={model.settings.autoAdvance}
+          seconds={model.settings.autoAdvanceSeconds}
+          blocked={model.parent || model.paused || model.rest || model.speaking}
+          onNext={() => (done ? (onNext ?? onBack)() : next())}
+          label={done ? 'Следующий текст' : 'Дальше'}
+        />
+      )}
       <div className="exercise text-exercise">
         <CompletionCelebration done={done} motion={model.settings.motion} />
         <button className="text-button" onClick={onBack}>

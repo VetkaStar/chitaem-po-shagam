@@ -90,6 +90,8 @@ export function useLesson() {
     text: string;
     start: number;
   } | null>(null);
+  const selectedPartRef = useRef(readingPart);
+  selectedPartRef.current = readingPart;
   const partPractice = useRef(new SlowReadingAttempt());
   const slowAttempt = useRef(new SlowReadingAttempt());
   const [speechPreview, setSpeechPreview] = useState(0);
@@ -109,7 +111,7 @@ export function useLesson() {
     stage === 'words' &&
     mode === 'read' &&
     !wholeAgain &&
-    (settings.wordMode === 'parts' || partsHelp);
+    (settings.wordMode === 'parts' || settings.partsThenWhole || partsHelp);
   const pool =
     stage === 'pictures'
       ? pictures.map((x) => x.word)
@@ -121,6 +123,10 @@ export function useLesson() {
       stage === 'pictures'
         ? (pictures.find((p) => p.word === target) ?? null)
         : null;
+  const lessonLength =
+    stage === 'words' && mode !== 'fly'
+      ? Math.min(settings.length, new Set(pool).size)
+      : settings.length;
   const showParts = wantsParts && wordParts(target).length > 1;
   useEffect(() => {
     if (ready)
@@ -285,7 +291,10 @@ export function useLesson() {
   function success(via: string) {
     setTypo(null);
     if (awarded.current) return;
-    if (showParts) {
+    if (
+      showParts &&
+      (settings.partsThenWhole || settings.wordMode === 'parts' || partsHelp)
+    ) {
       setWholeAgain(true);
       setPartsHelp(false);
       slowAttempt.current.reset();
@@ -303,6 +312,9 @@ export function useLesson() {
       return;
     }
     awarded.current = true;
+    setReadingPart(null);
+    setSpeechPreview(0);
+    setSpeechProgress(target.length);
     recognition.current?.setEnabled?.(false);
     setFeedback({ kind: 'success', text: `Верно! ${target}. Получилось!` });
     setHeard('');
@@ -497,7 +509,14 @@ export function useLesson() {
           activitySink.current('sound');
           if (stage === 'words')
             setSpeechPreview(
-              matchFragment(text, target, slowAttempt.current.progress) ??
+              matchFragment(
+                text,
+                target,
+                selectedPartRef.current
+                  ? selectedPartRef.current.start +
+                      partPractice.current.progress
+                  : slowAttempt.current.progress,
+              ) ??
                 matchFragment(text, target) ??
                 0,
             );
@@ -730,8 +749,8 @@ export function useLesson() {
     resetCard();
     setIndex((i) => i + 1);
     setCount(nextCount);
-    if (nextCount >= settings.length) setDone(true);
-    else if (schedule.shouldRest(nextCount, settings.length)) {
+    if (nextCount >= lessonLength) setDone(true);
+    else if (schedule.shouldRest(nextCount, lessonLength)) {
       setRest(true);
       setRestIndex((i) => (i + 1) % breaks.length);
     }
@@ -741,7 +760,12 @@ export function useLesson() {
       setLessonMic(false);
       stop();
     }
-    if (key === 'pictureMode' || key === 'wordMode' || key === 'letterMode') {
+    if (
+      key === 'pictureMode' ||
+      key === 'wordMode' ||
+      key === 'letterMode' ||
+      key === 'partsThenWhole'
+    ) {
       if (!awarded.current) resetCard();
     }
     if (key === 'unit' || key === 'length') {
@@ -815,6 +839,20 @@ export function useLesson() {
       ].slice(-300),
     );
   }
+  function continueLesson() {
+    if (
+      stage === 'words' &&
+      pool.length <= settings.length &&
+      settings.unit < levels.length - 1
+    ) {
+      const later = levels.findIndex(
+        (_, unit) =>
+          unit > settings.unit &&
+          wordPool(unit).some((word) => !pool.includes(word)),
+      );
+      changeTopic(stage, later >= 0 ? later : settings.unit + 1);
+    } else navigate(stage, mode);
+  }
   function selectReadingPart(start: number, text: string) {
     if (stage !== 'words' || mode !== 'read' || awarded.current) return;
     partPractice.current.reset();
@@ -822,12 +860,14 @@ export function useLesson() {
     setSpeechProgress(0);
     setReadingPart({ start, text });
     setAttemptStatus(
-      'Прочитай выбранную часть. Затем прочитаем слово целиком.',
+      'Читай с выбранного слога и продолжай дальше. Можно читать без пауз.',
     );
     recognition.current?.setEnabled?.(false);
     recognition.current?.setEnabled?.(true);
   }
   return {
+    lessonLength,
+    continueLesson,
     speechPreview,
     readingPart,
     selectReadingPart,

@@ -11,7 +11,7 @@
     "start": "wrangler dev --config dist/server/wrangler.json",
     "lint": "oxlint",
     "format": "oxfmt",
-    "test": "node tests/regression.mjs && node tests/practice-flow.mjs && node tests/text-practice-flow.mjs && node tests/illustrations.mjs",
+    "test": "node tests/regression.mjs && node tests/practice-flow.mjs && node tests/text-practice-flow.mjs && node tests/illustrations.mjs && node tests/auto-advance.mjs",
     "typecheck": "tsc --noEmit",
     "build:pages": "vite build --config vite.pages.config.ts"
   },

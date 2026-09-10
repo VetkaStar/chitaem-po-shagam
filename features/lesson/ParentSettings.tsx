@@ -1,4 +1,5 @@
 'use client';
+import AutoAdvanceSettings from '@/components/auto-advance-settings';
 import VisionSettings from './VisionSettings';
 import { visionStyle } from '@/lib/vision';
 import { Mic, MicOff, ArrowRight, Download } from 'lucide-react';
@@ -76,6 +77,7 @@ export default function ParentSettings({
             Настройки и результаты сохраняются только в этом браузере на этом
             устройстве.
           </DialogDescription>
+          <AutoAdvanceSettings model={model} />
           <div className="setting">
             <label>Материал</label>
             <Select
@@ -266,10 +268,10 @@ export default function ParentSettings({
           <div className="parent-info">
             <h3>Как заниматься</h3>
             <p>
-              Буквы, слоги и слова следуют выбранной теме. Слова состоят
-              из уже доступных букв; новые появляются по мере смены темы. В новом занятии порядок перемешивается,
-              одинаковые карточки не идут подряд. В паузе можно выбрать игру или
-              движение.
+              Буквы, слоги и слова следуют выбранной теме. Слова состоят из уже
+              доступных букв; новые появляются по мере смены темы. В новом
+              занятии порядок перемешивается, одинаковые карточки не идут
+              подряд. В паузе можно выбрать игру или движение.
             </p>
             <p>
               Начните с 3–5 заданий. Один экран — одно действие. Можно отвечать

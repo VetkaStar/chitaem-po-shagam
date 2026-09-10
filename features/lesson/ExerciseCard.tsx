@@ -1,4 +1,5 @@
 'use client';
+import AutoAdvance from '@/components/auto-advance';
 import IllustrationGallery from '@/components/illustration-gallery';
 import { wordIllustrations } from '@/content/illustrations';
 import ExerciseVoiceMonitor from './ExerciseVoiceMonitor';
@@ -85,10 +86,21 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
   }, [feedback.kind, done, paused, parent, rest]);
   return (
     <>
+      {(done || feedback.kind === 'success') && (
+        <AutoAdvance
+          key={`${index}-${done}`}
+          enabled={settings.autoAdvance}
+          seconds={settings.autoAdvanceSeconds}
+          blocked={parent || paused || rest || speaking}
+          onNext={() => (done ? model.continueLesson() : next())}
+          label={done ? 'Следующее занятие' : 'Следующее задание'}
+        />
+      )}
       <div className={'exercise ' + feedback.kind}>
         <div className="exercise-top">
           <span>
-            Задание {Math.min(count + 1, settings.length)} из {settings.length}
+            Задание {Math.min(count + 1, model.lessonLength)} из{' '}
+            {model.lessonLength}
           </span>
           <button
             className="quiet"
@@ -100,7 +112,7 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
           </button>
         </div>
         <Progress
-          value={(count / settings.length) * 100}
+          value={(count / model.lessonLength) * 100}
           aria-label="Прогресс занятия"
           className="lesson-progress"
         />
@@ -111,6 +123,12 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
             </span>
             <h2>Ты позанимался. Здорово!</h2>
             <p>Пройдено заданий: {count}. Теперь можно отдохнуть.</p>
+            {stage === 'words' && model.lessonLength < settings.length && (
+              <p>
+                Все доступные слова этой темы пройдены. В следующей теме
+                появятся новые буквы и слова.
+              </p>
+            )}
             <button
               className="primary"
               onClick={() => {
@@ -123,10 +141,10 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
             <button
               className="text-button"
               onClick={() => {
-                navigate(stage, mode);
+                model.continueLesson();
               }}
             >
-              Ещё короткое занятие <ArrowRight size={17} />
+              Следующее занятие <ArrowRight size={17} />
             </button>
           </div>
         ) : (
@@ -165,8 +183,8 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
               <>
                 <ReadingGuideControls model={model} wordOnly />
                 <p className="reading-guide-hint">
-                  Нажми на слово или слог для отдельной попытки. Потом прочитаем
-                  слово целиком.
+                  Нажми на слог и продолжай читать дальше. Можно прочитать слово
+                  целиком.
                 </p>
                 {(entry?.icon || wordIllustrations[target]) && (
                   <>

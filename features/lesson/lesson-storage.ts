@@ -40,6 +40,12 @@ export function restoreLessonProgress({
                   ? 10
                   : s.unit
             : 0,
+        autoAdvanceSeconds:
+          Number.isInteger(s.autoAdvanceSeconds) &&
+          s.autoAdvanceSeconds >= 1 &&
+          s.autoAdvanceSeconds <= 30
+            ? s.autoAdvanceSeconds
+            : 3,
         colorVision: parseVision(s.colorVision),
         pictureMode: s.pictureMode === 'letters' ? 'letters' : 'free',
         wordMode: s.wordMode === 'parts' ? 'parts' : 'whole',

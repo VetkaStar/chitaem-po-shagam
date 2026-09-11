@@ -38,7 +38,8 @@
   height: 48px;
   min-height: 48px;
   overflow: auto;
-  margin: 6px 0 !important;
+  margin: 6px 0;
+  font-size: 14px;
 }
 .color-bubbles .color-bubble-field.dense {
   height: 280px;

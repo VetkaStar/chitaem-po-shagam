@@ -93,6 +93,7 @@
 .text-exercise p {
   line-height: 1.7;
 }
+/* Both layouts size .mode-list buttons with stronger selectors; text modes need tighter padding on phones. */
 @media (max-width: 600px) {
   .text-mode-list button {
     padding: 10px 9px !important;

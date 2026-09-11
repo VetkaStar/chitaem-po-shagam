@@ -158,17 +158,18 @@ h2 {
   background: transparent;
   color: #274f3a;
 }
+/* Plain rules are enough for dialogs: their Tailwind utilities sit in a cascade layer. */
 .parent-dialog {
-  max-width: min(600px, calc(100vw - 28px)) !important;
+  max-width: min(600px, calc(100vw - 28px));
   max-height: calc(88vh / var(--zoom));
   overflow-y: auto;
-  padding: 28px !important;
-  gap: 18px !important;
+  padding: 28px;
+  gap: 18px;
 }
 .dialog-heading {
-  font-size: 24px !important;
-  font-weight: 700 !important;
-  line-height: 1.3 !important;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.3;
   padding-right: 20px;
 }
 .setting {
@@ -236,8 +237,8 @@ h2 {
 }
 .rest-dialog {
   text-align: center;
-  max-width: 460px !important;
-  padding: 28px !important;
+  max-width: 460px;
+  padding: 28px;
 }
 .rest-dialog p {
   line-height: 1.65;
@@ -280,7 +281,7 @@ h2 {
     font-size: 20px;
   }
   .parent-dialog {
-    padding: 22px !important;
+    padding: 22px;
   }
   .primary {
     min-width: 210px;
@@ -327,7 +328,7 @@ meter::-webkit-meter-optimum-value {
   border-radius: 12px;
 }
 .hub-dialog {
-  max-width: 610px !important;
+  max-width: 610px;
   max-height: calc(90vh / var(--zoom));
   overflow: auto;
 }
@@ -418,11 +419,11 @@ meter::-webkit-meter-optimum-value {
   display: block;
   font-size: 56px;
 }
-.music-verse {
+.rest-hub .music-verse {
   background: #f4f6ea;
   border-radius: 18px;
   padding: 14px;
-  font-size: 16px !important;
+  font-size: 16px;
 }
 .music-verse + button {
   margin-bottom: 12px;
@@ -453,9 +454,9 @@ meter::-webkit-meter-optimum-value {
   margin-top: 16px;
 }
 .bubble-goal p {
-  font-size: 20px !important;
+  font-size: 20px;
   font-weight: 600;
-  margin: 0 !important;
+  margin: 0;
 }
 .color-swatch {
   width: 35px;
@@ -468,11 +469,6 @@ meter::-webkit-meter-optimum-value {
 .color-bubbles > small {
   font-size: 12px;
   letter-spacing: 0;
-}
-.bubble-response {
-  font-size: 14px !important;
-  min-height: 44px;
-  margin: 8px 0 !important;
 }
 .color-bubble-field {
   display: grid;
@@ -553,7 +549,7 @@ meter::-webkit-meter-optimum-value {
     gap: 1px;
   }
   .bubble-goal p {
-    font-size: 17px !important;
+    font-size: 17px;
   }
   .color-bubble {
     width: 70%;

@@ -145,6 +145,7 @@
   font-size: 20px;
   color: #202020;
 }
+/* Bubble colours come from inline styles, so the colour-vision overrides need !important. */
 [data-vision]:not([data-vision='off']) .bubble-sequence span {
   color: #202020;
   background: #fff !important;

@@ -140,11 +140,11 @@
   background: #f3f2e8;
   border-radius: 14px;
 }
-.star-total {
+.portal-panel .star-total {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 28px !important;
+  font-size: 28px;
   color: #98692c;
 }
 .support-block {

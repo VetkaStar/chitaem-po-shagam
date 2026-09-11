@@ -6,7 +6,7 @@
   margin: 16px 0 24px;
 }
 .task-instruction p {
-  margin: 0 !important;
+  margin: 0;
   line-height: 1.6;
   font-size: 16px;
 }
@@ -66,6 +66,7 @@
   gap: 8px;
   align-items: center;
 }
+/* With sound off every speaker button hides, whichever rule displays it. */
 [data-audio='off'] button:has(svg.lucide-volume-2) {
   display: none !important;
 }

@@ -149,25 +149,6 @@ h2 {
   justify-content: space-between;
   margin-bottom: 20px;
 }
-.mode-list {
-  height: auto !important;
-  padding: 4px !important;
-  background: #eaf0e4 !important;
-  border-radius: 15px !important;
-  gap: 3px !important;
-}
-.mode-list button {
-  border: 0 !important;
-  padding: 11px 17px !important;
-  min-height: 43px;
-  border-radius: 12px !important;
-  font-size: 14px;
-}
-.mode-list button[data-active] {
-  background: #fffefb !important;
-  color: #315c40 !important;
-  box-shadow: 0 2px 5px #2536200a;
-}
 .quiet {
   border: 0;
   background: #edf2e9;
@@ -178,23 +159,6 @@ h2 {
   position: relative;
   overflow: hidden;
   min-height: 490px;
-}
-.exercise-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: #7b8677;
-  font-size: 13px;
-}
-.lesson-progress {
-  margin: 16px 0 0;
-}
-.lesson-progress [data-slot=progress-track] {
-  height: 4px;
-  background: #ecf0e5;
-}
-.lesson-progress [data-slot=progress-indicator] {
-  background: #8caa78;
 }
 .reading {
   margin: 8px auto 0;
@@ -481,9 +445,6 @@ h2 {
 .flying {
   animation: float-letter 9s ease-in-out infinite;
 }
-.listening {
-  background: #9d6738 !important;
-}
 .motion .exercise.success .reading {
   animation: small-bounce .45s ease-out;
 }
@@ -526,9 +487,6 @@ h2 {
   .desktop-word {
     display: none;
   }
-  .mode-list button {
-    padding: 10px 12px !important;
-  }
   .exercise {
     min-height: 480px;
   }
@@ -549,9 +507,6 @@ h2 {
   .lesson-meta>span {
     max-width: 55%;
     line-height: 1.6;
-  }
-  .lesson-progress {
-    margin-top: 12px;
   }
   .parent-dialog {
     padding: 22px !important;
@@ -1265,64 +1220,6 @@ meter::-webkit-meter-optimum-value {
   letter-spacing: 0;
   margin-top: 8px;
 }
-.topic-navigation {
-  padding: 16px 18px;
-  margin: 0 0 18px;
-  background: #edf3e6;
-  border: 1px solid #dce5d2;
-  border-radius: 20px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px 16px;
-  text-align: left;
-}
-.topic-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-.topic-heading strong,.topic-heading small {
-  display: block;
-}
-.topic-heading small {
-  letter-spacing: 0;
-  font-size: 12px;
-  margin-bottom: 4px;
-}
-.topic-heading strong {
-  font-size: 19px;
-}
-.topic-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.topic-next {
-  background: #377c60;
-  color: white;
-  border: 0;
-  min-width: 220px;
-  justify-content: space-between;
-  padding: 12px 16px;
-}
-.topic-next:hover {
-  background: #296c50;
-}
-.topic-next span {
-  text-align: left;
-}
-.topic-next small {
-  display: block;
-  font-size: 12px;
-  letter-spacing: 0;
-  color: #eef7e6;
-  font-weight: 400;
-  margin-top: 4px;
-}
-.topic-back {
-  padding: 12px;
-}
 .topic-picker {
   grid-column: 1/-1;
   font-size: 14px;
@@ -1332,44 +1229,6 @@ meter::-webkit-meter-optimum-value {
   width: fit-content;
   padding: 8px 0;
   min-height: 36px;
-}
-.topic-grid {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 8px;
-  margin-top: 8px;
-}
-.topic-grid button {
-  justify-content: space-between;
-  text-align: left;
-  padding: 12px;
-  font-size: 14px;
-}
-.topic-grid button[aria-current] {
-  background: #d7e7c7;
-  border-color: #86a26c;
-}
-.topic-completed {
-  margin-top: 18px;
-}
-@media (max-width:600px) {
-  .topic-navigation {
-    grid-template-columns: 1fr;
-    padding: 13px;
-  }
-  .topic-actions {
-    width: 100%;
-  }
-  .topic-next {
-    flex: 1;
-    min-width: 0;
-  }
-  .topic-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-  .topic-heading strong {
-    font-size: 18px;
-  }
 }
 
 /* Compact lesson layout; expanding help never repositions the page above it. */

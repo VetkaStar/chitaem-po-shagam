@@ -36,18 +36,18 @@ export default function WordBridge({
     <section className="word-bridge" aria-label="Из слогов в слово" onClickCapture={onInteract}>
       <h3>Смотри, слоги умеют дружить!</h3>
       <div className="task-instruction">
-        <p>
-          Собери слово по порядку: <b>{item.parts.join(' · ')}</b>
-        </p>
         {sound && (
           <button
-            className="quiet"
+            className="speak-button"
             aria-label="Послушать задание со слогами"
             onClick={() => speak(`Смотри, слоги умеют дружить! Собери слово по порядку: ${item.parts.join(', ')}.`)}
           >
             <Volume2 size={18} />
           </button>
         )}
+        <p>
+          Собери слово по порядку: <b>{item.parts.join(' · ')}</b>
+        </p>
       </div>
       <div className="bridge-slots" aria-label="Собранные слоги">
         {item.parts.map((p, i) => (

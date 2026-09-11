@@ -7,7 +7,7 @@ import { Check } from 'lucide-react';
 import IllustrationGallery from '@/components/illustration-gallery';
 import { wordIllustrations } from '@/content/illustrations';
 
-import type { Dispatch, SetStateAction } from 'react';
+import type { CSSProperties, Dispatch, SetStateAction } from 'react';
 import type { Stage, Mode, Settings, Feedback } from './config';
 
 import type { ExerciseModel } from './exercise-types';
@@ -95,7 +95,10 @@ export default function ExerciseMaterial({
           onContextChange={setScene}
         />
       ) : stage === 'words' && mode === 'read' ? (
-        <div className="reading">
+        <div
+          className="reading"
+          style={{ '--letters': Array.from(target).length } as CSSProperties}
+        >
           <ReadingGuide
             text={target}
             color={settings.color}
@@ -132,16 +135,19 @@ export default function ExerciseMaterial({
         <div
           className="reading"
           key={target + '-' + index}
-          style={{
-            animationPlayState:
-              paused ||
-              parent ||
-              rest ||
-              listening ||
-              feedback.kind === 'success'
-                ? 'paused'
-                : 'running',
-          }}
+          style={
+            {
+              '--letters': Array.from(displayWord).length,
+              animationPlayState:
+                paused ||
+                parent ||
+                rest ||
+                listening ||
+                feedback.kind === 'success'
+                  ? 'paused'
+                  : 'running',
+            } as CSSProperties
+          }
           aria-label={target}
         >
           {Array.from(displayWord).map((char, i) => (

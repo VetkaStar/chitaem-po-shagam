@@ -2,6 +2,7 @@
 import { illustrationSources } from '@/content/illustration-sources';
 import { illustrationSizes } from './use-illustration-preload';
 import { useState } from 'react';
+import { RefreshCw } from 'lucide-react';
 import {
   illustrations,
   type IllustrationId,
@@ -60,6 +61,7 @@ export default function IllustrationGallery({
             onContextChange?.(next === 'context');
           }}
         >
+          <RefreshCw size={15} aria-hidden="true" />
           Посмотреть другую картинку
         </button>
       </div>

@@ -1,23 +1,197 @@
-.topic-list {
-  min-width: 44px;
-  padding: 12px;
-  flex-shrink: 0;
+/* Topic row above the task; the topic list opens under it. */
+.topic-navigation {
+  position: relative;
+  text-align: left;
 }
-.topic-options {
-  grid-column: 1/-1;
+.topic-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
 }
-.topic-navigation .topic-actions {
-  flex-shrink: 0;
+.topic-bar .speak-button {
+  --size: 40px;
 }
 .topic-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
   min-width: 0;
 }
-@media (max-width: 800px) {
-  .topic-navigation {
-    grid-template-columns: 1fr;
+.topic-heading small {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.topic-heading strong {
+  overflow: hidden;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--ink);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.topic-spacer {
+  flex: 1;
+}
+.topic-bar button {
+  flex-shrink: 0;
+  min-width: 0;
+  min-height: 0;
+}
+.topic-list {
+  height: 40px;
+  margin-left: 8px;
+  padding: 0 12px;
+  gap: 8px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--icon);
+  font-size: 14px;
+  font-weight: 700;
+}
+.topic-list[aria-expanded='true'] {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+}
+.topic-back {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 11px;
+  background: var(--surface);
+  color: var(--icon);
+}
+.topic-back:disabled {
+  opacity: 1;
+  border-color: var(--line-soft);
+  color: var(--line-strong);
+}
+.topic-next {
+  height: 40px;
+  padding: 0 10px 0 14px;
+  gap: 8px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--chip);
+  color: var(--icon);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.topic-next:hover {
+  background: var(--primary-soft);
+}
+.topic-next-title {
+  color: var(--ink-3);
+}
+.topic-next b {
+  font-weight: 800;
+}
+.topic-next-short {
+  display: none;
+}
+.topic-options {
+  position: absolute;
+  z-index: 35;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  max-height: calc(65vh / var(--zoom));
+  overflow: auto;
+  padding: 16px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 16px 40px rgba(34, 58, 40, 0.18);
+}
+.topic-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.topic-grid button {
+  height: 46px;
+  min-height: 0;
+  padding: 0 12px;
+  justify-content: space-between;
+  gap: 8px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: left;
+}
+.topic-grid button span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.topic-grid button[aria-current] {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+  font-weight: 800;
+}
+.topic-auto {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+.topic-auto .auto-settings {
+  margin: 0;
+  font-size: 13px;
+}
+@media (max-width: 699px) {
+  .topic-bar {
+    gap: 8px;
+    padding: 6px;
+    border-radius: 14px;
+  }
+  .topic-bar .speak-button {
+    --size: 36px;
+  }
+  .topic-heading small {
+    font-size: 11px;
+  }
+  .topic-heading strong {
+    font-size: 16px;
+  }
+  .topic-list {
+    width: 40px;
+    margin: 0;
+    padding: 0;
+    border-radius: 11px;
+  }
+  .topic-list span,
+  .topic-next-title,
+  .topic-next b,
+  .topic-back {
+    display: none;
   }
   .topic-next {
-    flex: 1;
-    min-width: 0;
+    padding: 0 12px;
+    gap: 6px;
+    font-size: 13px;
+  }
+  .topic-next-short {
+    display: inline;
+  }
+  .topic-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .topic-grid button {
+    height: 48px;
+    font-size: 14px;
   }
 }

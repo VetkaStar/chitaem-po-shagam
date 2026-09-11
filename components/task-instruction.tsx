@@ -12,16 +12,16 @@ export default function TaskInstruction({
 }) {
   return (
     <div className="task-instruction">
-      <p>{text}</p>
       {sound && (
         <button
-          className="quiet"
+          className="speak-button"
           aria-label="Послушать инструкцию"
           onClick={() => speak(text)}
         >
           <Volume2 size={18} />
         </button>
       )}
+      <p>{text}</p>
     </div>
   );
 }

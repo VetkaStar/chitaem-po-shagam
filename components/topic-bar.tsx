@@ -4,9 +4,13 @@ import { useId, useState } from 'react';
 import { ArrowLeft, ArrowRight, Check, List, Volume2 } from 'lucide-react';
 import { topicNames } from '@/lib/topics';
 import './topic-bar.css';
+
+/** One row: speaker, current topic, list of topics, previous and next topic. The list opens under the row. */
 export default function TopicBar({
   autoControl,
+  caption,
   nextTitle = 'Следующая тема',
+  nextShort = 'Следующая',
   unit,
   current,
   nextLabel,
@@ -18,7 +22,9 @@ export default function TopicBar({
   done = false,
 }: {
   autoControl?: ReactNode;
+  caption?: string;
   nextTitle?: string;
+  nextShort?: string;
   unit: number;
   current: string;
   nextLabel: string;
@@ -36,29 +42,19 @@ export default function TopicBar({
       className={'topic-navigation' + (done ? ' topic-completed' : '')}
       aria-label="Темы занятия"
     >
-      <div className="topic-heading">
-        <div>
-          <small>{done ? 'Можно идти дальше' : 'Моя тема'}</small>
-          <strong>{current}</strong>
-        </div>
+      <div className="topic-bar">
         <button
-          className="quiet"
+          className="speak-button"
           aria-label="Послушать про следующую тему"
           disabled={speaking}
           onClick={onSpeak}
         >
           <Volume2 size={19} />
         </button>
-      </div>
-      <div className="topic-actions">
-        <button
-          className="topic-back"
-          aria-label="Предыдущая тема"
-          disabled={!onPrevious}
-          onClick={onPrevious}
-        >
-          <ArrowLeft size={20} />
-        </button>
+        <div className="topic-heading">
+          <small>{done ? 'Можно идти дальше' : (caption ?? 'Моя тема')}</small>
+          <strong>{current}</strong>
+        </div>
         {onSelect && (
           <button
             className="topic-list"
@@ -68,21 +64,33 @@ export default function TopicBar({
             aria-controls={id}
             onClick={() => setOpen(!open)}
           >
-            <List size={21} />
+            <List size={17} />
+            <span>Все темы</span>
+          </button>
+        )}
+        <span className="topic-spacer" />
+        {(onSelect || onPrevious) && (
+          <button
+            className="topic-back"
+            aria-label="Предыдущая тема"
+            disabled={!onPrevious}
+            onClick={onPrevious}
+          >
+            <ArrowLeft size={18} />
           </button>
         )}
         <button
           className="topic-next"
+          aria-label={`${nextTitle}: ${nextLabel}`}
           onClick={() => {
             setOpen(false);
             onNext();
           }}
         >
-          <span>
-            {nextTitle}
-            <small>{nextLabel}</small>
-          </span>
-          <ArrowRight size={23} />
+          <span className="topic-next-title">{nextTitle}:</span>
+          <b>{nextLabel}</b>
+          <span className="topic-next-short">{nextShort}</span>
+          <ArrowRight size={18} />
         </button>
       </div>
       {autoControl && <div className="topic-auto">{autoControl}</div>}

@@ -4,35 +4,40 @@ import './vision.css';
 import './bubble-layout.css';
 import './rest-layout.css';
 import AppPortal from '../portal/AppPortal';
-import { Leaf, Star } from 'lucide-react';
-import { levels } from '@/lib/learning';
+import { Star } from 'lucide-react';
+import { plural } from '@/lib/plural';
 import { stages } from './config';
 import { useLesson } from './use-lesson';
 import LessonToolbar from './LessonToolbar';
 import ExerciseCard from './ExerciseCard';
 import PracticeControls from './PracticeControls';
 import TopicNavigation from './TopicNavigation';
+// After the other lesson styles. app/globals.css still loads later (static-entry/main.tsx), so lesson.css scopes its rules to .lesson.
+import './lesson.css';
 export default function ReadingApp() {
   const model = useLesson();
-  const { settings, stage, currentStage, stars, done } = model;
+  const { stage, currentStage, stars } = model;
   return (
     <AppPortal model={model}>
       <section className="lesson">
         <div className="lesson-top">
-          <div>
+          <div className="lesson-title">
             <small>
-              ШАГ 0{stages.findIndex((s) => s.id === stage) + 1} ·{' '}
+              ШАГ {stages.findIndex((s) => s.id === stage) + 1} ·{' '}
               {stage === 'pictures'
                 ? 'НАЗЫВАЕМ ПРЕДМЕТЫ'
                 : stage === 'words'
                   ? 'ПЕРВЫЕ СЛОВА'
-                  : levels[settings.unit].name}
+                  : currentStage.name.toUpperCase()}
             </small>
             <h1>{currentStage.title}</h1>
           </div>
           <span className="pill">
             <Star size={17} />
-            {stars} <span className="desktop-word">звёзд</span>
+            {stars}{' '}
+            <span className="desktop-word">
+              {plural(stars, ['звезда', 'звезды', 'звёзд'])}
+            </span>
           </span>
         </div>
         <TopicNavigation model={model} />
@@ -59,19 +64,6 @@ export default function ReadingApp() {
           <p className="muted">После этого задания предложим отдохнуть.</p>
         )}
         <ExerciseCard model={model} />
-        
-        <div className="foot">
-          <Leaf size={16} />{' '}
-          {settings.motion
-            ? 'Движение включено · можно остановиться в любой момент'
-            : 'Без спешки и таймера'}{' '}
-          <span>·</span>{' '}
-          {settings.breakMinutes
-            ? `Отдых через ${settings.breakMinutes} минут занятия`
-            : settings.breakEvery
-              ? `Отдых через ${settings.breakEvery} заданий`
-              : 'Отдых по кнопке «Разминка»'}
-        </div>
       </section>
     </AppPortal>
   );

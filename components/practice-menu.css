@@ -1,17 +1,14 @@
+/* Row of modes with the exercise settings menu; the menu opens as a panel under its button. */
 .lesson-controls {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
-  flex-wrap: wrap;
-  margin: 18px 0;
-  padding: 10px;
-  border: 1px solid #dce5d5;
-  border-radius: 20px;
-  background: #f0f4ea;
 }
 .lesson-controls .toolbar {
   margin: 0;
+}
+.lesson-controls .practice-menu {
+  margin-left: auto;
 }
 .practice-menu {
   position: relative;
@@ -21,73 +18,120 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  cursor: pointer;
+  height: 44px;
+  padding: 0 16px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--icon);
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
   list-style: none;
-  padding: 12px 16px;
-  border: 1px solid #d4dfce;
-  border-radius: 13px;
-  background: #fffefa;
-  font-size: 14px;
-  font-weight: 600;
+  cursor: pointer;
 }
 .practice-menu > summary::-webkit-details-marker {
   display: none;
 }
+.practice-menu > summary svg {
+  flex-shrink: 0;
+  width: 17px;
+  height: 17px;
+}
+.practice-menu > summary:hover {
+  background: var(--surface-2);
+}
+.practice-menu[open] > summary {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+}
+.practice-menu > summary:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+}
 .practice-menu-panel {
   position: absolute;
   z-index: 30;
-  right: 0;
   top: calc(100% + 8px);
-  width: min(440px, calc(100vw - 48px));
+  right: 0;
+  width: min(460px, calc(100vw / var(--zoom) - 32px));
   max-height: calc(65vh / var(--zoom));
   overflow: auto;
   padding: 20px;
-  background: #fffefa;
-  border: 1px solid #d4dfce;
+  border: 1.5px solid var(--line-strong);
   border-radius: 20px;
-  box-shadow: 0 12px 36px #223a2824;
+  background: var(--surface);
+  box-shadow: 0 16px 40px rgba(34, 58, 40, 0.18);
+  color: var(--ink-2);
+  font-size: 15px;
+  font-weight: 700;
   text-align: left;
 }
-.practice-menu-panel label {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 10px 0;
-}
+.practice-menu-panel .auto-settings,
 .practice-menu-panel .practice-controls {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: flex-start;
+  gap: 14px;
   margin: 0;
+  font-size: 15px;
+}
+.practice-menu-panel .auto-settings {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.practice-menu-panel .practice-controls + .practice-controls,
+.practice-menu-panel .auto-settings + .practice-controls {
+  margin-top: 14px;
+}
+.practice-menu-panel .practice-controls .practice-controls {
+  margin: 0;
+}
+.practice-menu-panel label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 15px;
+}
+.practice-menu-panel label:has(> input[type='checkbox']) {
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+.practice-menu-panel label > input[type='checkbox'] {
+  flex-shrink: 0;
+}
+.practice-menu-panel select {
+  height: 40px;
+  max-width: 100%;
+  padding: 0 12px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+.practice-menu-panel input[type='checkbox'] {
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  accent-color: var(--primary);
+}
+.practice-menu-panel input[type='number'] {
+  width: 56px;
+  height: 40px;
+  padding: 0 6px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 12px;
+  font: inherit;
+  text-align: center;
 }
 .practice-menu-panel .portal-grid {
   grid-template-columns: 1fr;
-}
-.topic-auto {
-  grid-column: 1/-1;
-  justify-self: end;
-}
-.topic-auto .auto-settings {
-  margin: 0;
-  font-size: 13px;
-}
-.topic-navigation {
-  position: relative;
-}
-.topic-navigation .topic-options {
-  position: absolute;
-  z-index: 35;
-  left: 0;
-  right: 0;
-  top: calc(100% + 8px);
-  padding: 16px;
-  border: 1px solid #d4dfce;
-  border-radius: 20px;
-  background: #fffefa;
-  box-shadow: 0 12px 36px #223a2824;
-  max-height: calc(65vh / var(--zoom));
-  overflow: auto;
 }
 .hint-space {
   height: auto;
@@ -100,35 +144,40 @@
 .hint-space[data-visible='false'] {
   display: none;
 }
-@media (max-width: 600px) {
-  .topic-auto {
-    justify-self: stretch;
-  }
-  .auto-settings {
-    min-height: 80px;
-  }
-  .lesson-controls {
-    gap: 8px;
-  }
-}
 
 /* Expanded content grows down without browser scroll anchoring. */
-html { overflow-anchor: none; scrollbar-gutter: stable; }
-.lesson-controls .mode-list { display: flex; flex-wrap: wrap; gap: 8px !important; }
-.lesson-controls .mode-list button { background: #fffefa !important; color: #315c40 !important; }
-.lesson-controls .mode-list button:is([data-active], [aria-selected="true"], [aria-pressed="true"]) { background: #377c60 !important; color: white !important; box-shadow: inset 0 -3px 0 #224e3b; }
-.auto-offer { margin: 20px auto 0; max-width: 480px; padding: 12px; background: #f0f4ea; border-radius: 16px; }
-.auto-offer .auto-settings { justify-content: center; }
-@media (max-width: 1280px) {
-  .lesson-top { margin-bottom: 18px; }
-  .lesson-controls { margin: 12px 0; }
-  .exercise { padding: 20px 24px; min-height: 0; }
+html {
+  overflow-anchor: none;
+  scrollbar-gutter: stable;
 }
-@media (max-width: 600px) {
-  .lesson-controls .toolbar { width: 100%; }
-  .lesson-controls .mode-list { width: 100%; }
-  .lesson-controls .mode-list button { flex: 1; padding: 10px 8px !important; }
-  .lesson-controls .practice-menu { margin-left: auto; }
-  .exercise { padding: 16px 12px; }
-  .exercise .primary { min-width: 0; max-width: 100%; padding: 15px 20px; }
+.auto-offer {
+  margin: 20px auto 0;
+  max-width: 480px;
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--surface-2);
+}
+.auto-offer .auto-settings {
+  justify-content: center;
+}
+@media (min-width: 700px) and (max-width: 1099px) {
+  .practice-menu > summary {
+    height: 48px;
+  }
+}
+@media (max-width: 699px) {
+  .practice-menu > summary {
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+  }
+  .practice-menu > summary span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 }

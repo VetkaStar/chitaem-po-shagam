@@ -12,7 +12,7 @@ export default function PracticeMenu({
     <details className="practice-menu">
       <summary>
         <SlidersHorizontal size={17} />
-        {label}
+        <span>{label}</span>
       </summary>
       <div className="practice-menu-panel">{children}</div>
     </details>

@@ -26,8 +26,13 @@ export default function TopicNavigation({
     <TopicBar
       unit={settings.unit}
       current={current}
-      
+      caption={
+        stage === 'pictures'
+          ? 'Моя тема'
+          : `Тема ${settings.unit + 1} из ${topicNames.length}`
+      }
       nextTitle={stage === 'pictures' ? 'Новые картинки' : 'Следующая тема'}
+      nextShort={stage === 'pictures' ? 'Новые' : 'Следующая'}
       nextLabel={stage === 'pictures' ? 'Ещё одно занятие' : next.label}
       done={done}
       speaking={speaking}

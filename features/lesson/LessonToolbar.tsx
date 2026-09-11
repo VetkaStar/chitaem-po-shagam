@@ -1,5 +1,5 @@
 'use client';
-import { Mic, Keyboard, Image as ImageIcon, Pause } from 'lucide-react';
+import { Mic, Pencil, Target } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Mode } from './config';
 import type { LessonModel } from './use-lesson';
@@ -27,10 +27,10 @@ export default function LessonToolbar({
                 <Mic /> Читаю
               </TabsTrigger>
               <TabsTrigger value="fly">
-                <Keyboard /> Ловлю
+                <Target /> Ловлю
               </TabsTrigger>
               <TabsTrigger value="type">
-                <ImageIcon /> Пишу
+                <Pencil /> Пишу
               </TabsTrigger>
             </TabsList>
           </Tabs>

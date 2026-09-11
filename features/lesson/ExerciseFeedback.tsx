@@ -9,7 +9,6 @@ import {
   HelpCircle,
 } from 'lucide-react';
 
-import { Star } from 'lucide-react';
 export default function ExerciseFeedback({
   feedback,
   mode,
@@ -45,39 +44,24 @@ export default function ExerciseFeedback({
   stop: ExerciseModel['stop'];
   setRest: ExerciseModel['setRest'];
 }) {
+  // A hint line keeps its own speaker, like every other line of the task.
+  const said = (text: string) => (
+    <div className="said">
+      {settings.sound && (
+        <button
+          className="speak-button"
+          aria-label="Послушать подсказку"
+          disabled={speaking}
+          onClick={() => speak(text)}
+        >
+          <Volume2 size={18} />
+        </button>
+      )}
+      <p>{text}</p>
+    </div>
+  );
   return (
     <>
-      {feedback.kind === 'success' && (
-        <div className="success-badge" aria-hidden="true">
-          <Star /> <span>+1 звезда</span>
-          <Star />
-        </div>
-      )}
-      <div
-        className={'feedback ' + feedback.kind}
-        role="status"
-        aria-live="polite"
-      >
-        {feedback.kind === 'success' ? (
-          <Check size={20} />
-        ) : feedback.kind === 'error' ? (
-          <RotateCcw size={18} />
-        ) : feedback.kind === 'uncertain' ? (
-          <HelpCircle size={18} />
-        ) : null}
-        <span>{mode === 'fly' ? flyInputStatus : feedback.text}</span>
-        {mode !== 'fly' && settings.sound && (
-          <button
-            className="feedback-speaker"
-            aria-label="Озвучить объяснение"
-            title="Озвучить объяснение"
-            disabled={speaking}
-            onClick={() => speak(feedback.text)}
-          >
-            <Volume2 size={19} />
-          </button>
-        )}
-      </div>
       {heard && mode === 'read' && (
         <div className="comparison">
           <div>
@@ -123,6 +107,31 @@ export default function ExerciseFeedback({
           </div>
         </div>
       )}
+      <div
+        className={'feedback ' + feedback.kind}
+        role="status"
+        aria-live="polite"
+      >
+        {mode !== 'fly' && settings.sound && (
+          <button
+            className="speak-button"
+            aria-label="Озвучить объяснение"
+            title="Озвучить объяснение"
+            disabled={speaking}
+            onClick={() => speak(feedback.text)}
+          >
+            <Volume2 size={18} />
+          </button>
+        )}
+        {feedback.kind === 'success' ? (
+          <Check size={19} />
+        ) : feedback.kind === 'error' ? (
+          <RotateCcw size={19} />
+        ) : feedback.kind === 'uncertain' ? (
+          <HelpCircle size={19} />
+        ) : null}
+        <span>{mode === 'fly' ? flyInputStatus : feedback.text}</span>
+      </div>
       {mode !== 'fly' && (
         <div
           className="hint-space"
@@ -133,23 +142,23 @@ export default function ExerciseFeedback({
           <div className="hint-box">
             {picture ? (
               <>
-                <p>{picture.hint}</p>
-                <p>
+                {said(picture.hint)}
+                <p className="hint-word">
                   Слово: <b>{target}</b>
                 </p>
-                <button className="sample" onClick={() => speak(target)}>
+                <button className="pill-button sample" onClick={() => speak(target)}>
                   <Volume2 size={16} /> Послушать слово
                 </button>
               </>
             ) : (
               <>
-                <p>
-                  {mistakes >= 3
+                {said(
+                  mistakes >= 3
                     ? 'Найди такой же. Потом прочитай.'
                     : target.length > 1
                       ? 'Начни с первой буквы и соедини звуки.'
-                      : 'Посмотри на букву. Повтори за взрослым.'}
-                </p>
+                      : 'Посмотри на букву. Повтори за взрослым.',
+                )}
                 <div className="sound-path">
                   {Array.from(target).map((c, i) => (
                     <span key={i}>
@@ -160,10 +169,10 @@ export default function ExerciseFeedback({
                 </div>
                 {mistakes >= 2 && (
                   <button
-                    className="sample"
+                    className="pill-button sample"
                     onClick={() => speak(target.toLowerCase())}
                   >
-                    <Volume2 size={18} /> Послушать вместе
+                    <Volume2 size={16} /> Послушать вместе
                   </button>
                 )}
                 {mistakes >= 3 && target.length > 1 && (
@@ -202,7 +211,7 @@ export default function ExerciseFeedback({
                 )}
                 {mistakes >= 3 && (
                   <button
-                    className="text-button"
+                    className="link-button"
                     onClick={() => {
                       stop();
                       setRest(true);

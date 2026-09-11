@@ -58,7 +58,7 @@ export default function ExerciseAnswerInput({
     <>
       {mode === 'read' ? (
         <button
-          className="sample"
+          className="pill-button sample"
           onClick={() =>
             stage === 'letters' &&
             settings.letterMode === 'sounds' &&

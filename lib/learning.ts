@@ -191,11 +191,3 @@ export function checkTyped(
     normalize(v).length > 0
   );
 }
-export function checkSpeech(
-  alternatives: { transcript: string; confidence: number }[],
-  target: string,
-) {
-  return alternatives.some((a) => normalize(a.transcript) === normalize(target))
-    ? 'success'
-    : 'uncertain';
-}

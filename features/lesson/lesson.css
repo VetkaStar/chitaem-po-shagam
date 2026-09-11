@@ -3,7 +3,8 @@
    On laptop the task sheet is drawn by .exercise and .lesson-actions together, so the actions sit under the task.
    On tablet and phone the main buttons move to a dock fixed to the bottom edge, links go under the sheet.
    Every line of text has its own speaker in front of it.
-   app/globals.css is imported after the app (static-entry/main.tsx), so rules here are scoped to .lesson to outrank it. */
+   This file holds all styles of the lesson screen. app/globals.css is imported after the app (static-entry/main.tsx),
+   so rules here are scoped to .lesson to outrank its shared rules. */
 
 /* ---------- speaker ---------- */
 .speak-button {
@@ -123,6 +124,18 @@ section.lesson > * {
   font-weight: 600;
   color: var(--ink-3);
 }
+.lesson .rest-snooze {
+  padding: 12px;
+  border: 1px solid #d4ddc9;
+  border-radius: 14px;
+  background: #f8f7eb;
+}
+.lesson .rest-snooze button {
+  margin: 6px;
+  padding: 8px 12px;
+  border: 1px solid #bcccb8;
+  border-radius: 10px;
+}
 .lesson .lesson-controls {
   flex-wrap: nowrap;
   margin: 0;
@@ -131,6 +144,9 @@ section.lesson > * {
   background: none;
 }
 .lesson .toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin: 0;
 }
 
@@ -217,10 +233,16 @@ section.lesson > * {
   font-weight: 600;
   color: var(--ink-3);
 }
+.lesson .sound-note {
+  max-width: 500px;
+}
 
 /* ---------- reading material ---------- */
 .lesson .reading {
   --size: 136px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-height: 0;
   margin: 0;
   padding-top: 0.05em;
@@ -229,7 +251,13 @@ section.lesson > * {
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: 0.03em;
-  color: var(--ink);
+}
+.motion .lesson .exercise.success .reading {
+  animation: small-bounce 0.45s ease-out;
+}
+.lesson .reading .syllable-gap {
+  display: inline-block;
+  width: 0.22em;
 }
 .lesson .reading:has(.reading-guide) {
   --size: 116px;
@@ -237,6 +265,7 @@ section.lesson > * {
 .lesson .letter-display .reading {
   --size: 120px;
   --letters: 3;
+  white-space: pre-wrap;
 }
 .lesson .letter-display {
   display: flex;
@@ -255,12 +284,6 @@ section.lesson > * {
   font-size: 30px;
   font-weight: 700;
   color: var(--ink);
-}
-.lesson .vowel {
-  color: var(--vowel);
-}
-.lesson .consonant {
-  color: var(--consonant);
 }
 .lesson .reading .first-focus {
   padding: 0 0.05em;
@@ -320,6 +343,7 @@ section.lesson > * {
 .lesson .word-picture {
   font-size: 96px;
   line-height: 1.2;
+  text-align: center;
 }
 
 /* ---------- boxes of help: word by syllables, hints, typos, word bridge ---------- */
@@ -367,6 +391,13 @@ section.lesson > * {
   align-self: stretch;
   overflow: visible;
 }
+.lesson .hint-space[data-visible='false'] {
+  display: none;
+}
+.lesson .hint-box {
+  color: #5c715c;
+  font-size: 15px;
+}
 .lesson .hint-box p {
   margin: 0;
 }
@@ -405,14 +436,15 @@ section.lesson > * {
   font-weight: 700;
   letter-spacing: 0;
 }
+/* Marked letters. With a colour-vision mode on, vision.css draws them with patterns instead. */
 .lesson .sound-path b.first-focus,
-.lesson .typo-letters .typo-mark {
+[data-vision='off'] .lesson .typo-letters .typo-mark {
   border: 1.5px solid var(--mark-line);
   background: var(--mark);
   box-shadow: 0 3px 0 var(--mark-line);
 }
-.lesson .typo-letters .typo-fix,
-.lesson .slow-progress .heard-letter {
+[data-vision='off'] .lesson .typo-letters .typo-fix,
+[data-vision='off'] .lesson .slow-progress .heard-letter {
   border: 1.5px solid var(--ok-line);
   background: var(--ok-bg);
   box-shadow: 0 3px 0 var(--ok-line);
@@ -448,6 +480,9 @@ section.lesson > * {
   color: var(--ink-3);
 }
 .lesson .typo-letters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 4px;
 }
 .lesson .comparison {
@@ -498,6 +533,8 @@ section.lesson > * {
   color: var(--ink);
 }
 .lesson .bridge-slots {
+  display: flex;
+  justify-content: center;
   gap: 14px;
   margin: 0;
 }
@@ -529,11 +566,15 @@ section.lesson > * {
   margin: 0;
   font-size: 16px;
   font-weight: 700;
+  line-height: 1.6;
   color: var(--ok-ink);
 }
 
 /* ---------- feedback, voice, success ---------- */
 .lesson .feedback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-height: 0;
   max-width: 640px;
   margin: 0 auto;
@@ -568,6 +609,9 @@ section.lesson > * {
 .lesson .feedback > svg {
   flex-shrink: 0;
 }
+.lesson .feedback > span {
+  min-width: 0;
+}
 .lesson .voice-orbit {
   display: flex;
   flex-direction: column;
@@ -587,10 +631,46 @@ section.lesson > * {
   color: var(--ok-ink);
 }
 .lesson .equalizer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
   height: 54px;
 }
+.lesson .equalizer i {
+  display: block;
+  width: 7px;
+  min-height: 8px;
+  border-radius: 8px;
+  background: #72976a;
+  transition: height 90ms linear;
+}
+.lesson .equalizer i:nth-child(3n) {
+  background: #c39751;
+}
+.lesson .voice-success .equalizer i {
+  background: #75a257;
+}
+/* Bar heights come from inline styles, so the calm variants need !important. */
+.calm .lesson .equalizer {
+  height: 30px;
+}
+.calm .lesson .equalizer i {
+  transition: none;
+  height: 12px !important;
+  opacity: 0.65;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lesson .equalizer i {
+    height: 12px !important;
+  }
+}
 .lesson .slow-progress {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 5px;
+  max-width: 450px;
   margin: 0 auto;
 }
 .lesson .slow-progress small {
@@ -602,6 +682,9 @@ section.lesson > * {
   color: var(--ink-3);
 }
 .lesson .success-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 12px;
   margin: 0;
   color: var(--star-ink);
@@ -611,6 +694,40 @@ section.lesson > * {
 .lesson .success-badge svg {
   width: 30px;
   height: 30px;
+  fill: var(--star-fill);
+  stroke: var(--star-stroke);
+}
+.motion .lesson .success-badge {
+  animation: reward-in 0.65s ease-out;
+}
+.motion .lesson .success-badge svg:first-child {
+  animation: star-sway 1.6s ease-in-out 2;
+}
+.motion .lesson .success-badge svg:last-child {
+  animation: star-sway 1.6s ease-in-out 0.2s 2;
+}
+@keyframes reward-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(8px);
+  }
+  65% {
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes star-sway {
+  50% {
+    transform: rotate(18deg) scale(1.25);
+  }
+}
+@keyframes small-bounce {
+  50% {
+    transform: translateY(-8px);
+  }
 }
 .lesson .completion {
   display: flex;
@@ -678,6 +795,7 @@ section.lesson > * {
 /* ---------- catching, typing, pictures ---------- */
 .lesson .catch-game {
   align-self: stretch;
+  overflow: hidden;
   margin: 0;
   padding: 12px 12px 8px;
   border: 1.5px solid var(--line);
@@ -691,11 +809,24 @@ section.lesson > * {
   color: var(--ink-3);
 }
 .lesson .catch-lane {
+  position: relative;
+  overflow: hidden;
   height: 70px;
   border-top: 1.5px dashed var(--line);
 }
 .lesson .catch-token {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 155px;
+  max-width: 65%;
+  min-width: 90px;
   min-height: 50px;
+  overflow: hidden;
   padding: 0 14px;
   border: 2px solid var(--line-strong);
   border-radius: 15px;
@@ -705,26 +836,65 @@ section.lesson > * {
   font-size: 28px;
   font-weight: 700;
   letter-spacing: 0.06em;
+  animation: catch-drift 25s linear infinite alternate;
 }
+/* Play state also comes from an inline style, so a caught card needs !important to stop. */
 .lesson .catch-token.caught {
+  animation-play-state: paused !important;
   border-color: var(--ok-line);
   background: var(--ok-bg);
   box-shadow: none;
   color: var(--ok-ink);
 }
+.lesson .catch-game.still .catch-token {
+  animation: none;
+  left: 35%;
+}
+.lesson .catch-game.still .catch-lane:nth-child(3) .catch-token {
+  left: 12%;
+}
+.lesson .catch-game.still .catch-lane:nth-child(4) .catch-token {
+  left: 35%;
+}
+@keyframes catch-drift {
+  from {
+    left: 0;
+  }
+  to {
+    left: calc(100% - 155px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lesson .catch-token {
+    animation: none;
+    left: 30%;
+  }
+}
 .lesson .catch-token .letter-display .reading {
-  font-size: inherit;
-  letter-spacing: inherit;
-  line-height: 1;
   padding: 0;
   color: inherit;
+  font-size: inherit;
+  line-height: 1;
+  letter-spacing: inherit;
+}
+.lesson .catch-token .letter-display p {
+  display: none;
+}
+.lesson .catch-token .letter-display .letter-name {
+  display: block;
+  margin: 0;
+  font-size: 15px;
 }
 .lesson .answer-form {
+  display: flex;
+  gap: 9px;
   width: 360px;
   max-width: 100%;
   margin: 0 auto;
 }
 .lesson .answer-form input {
+  width: 100%;
+  min-width: 0;
   height: 58px;
   padding: 0 16px;
   border: 2px solid var(--line-strong);
@@ -735,6 +905,8 @@ section.lesson > * {
   font-size: 22px;
   font-weight: 700;
   letter-spacing: 0.06em;
+  text-align: center;
+  text-transform: uppercase;
 }
 .lesson .answer-form input:focus {
   border-color: var(--primary);
@@ -745,6 +917,7 @@ section.lesson > * {
   font-family: var(--font-ui);
   font-size: 18px;
   letter-spacing: 0;
+  text-transform: none;
   color: var(--ink-3);
 }
 .lesson :is(.answer-form, .letter-slots) .check-button {
@@ -756,6 +929,7 @@ section.lesson > * {
   align-items: center;
   gap: 8px;
   margin: 0 auto;
+  text-align: center;
 }
 .lesson .letter-slots p {
   max-width: 520px;
@@ -771,6 +945,9 @@ section.lesson > * {
   color: var(--ink);
 }
 .lesson .slots-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 8px;
   margin: 0;
 }
@@ -784,6 +961,7 @@ section.lesson > * {
   font-family: var(--font-reading);
   font-size: 34px;
   font-weight: 700;
+  text-align: center;
 }
 .lesson .slots-row input.slot-vowel {
   border-color: #b95742;
@@ -796,6 +974,10 @@ section.lesson > * {
 .lesson .slots-row input:focus {
   box-shadow: 0 0 0 4px var(--primary-soft);
   outline: none;
+}
+.lesson .slots-row input::placeholder {
+  opacity: 1;
+  color: #52634e;
 }
 .lesson .illustration-gallery {
   width: min(100%, 240px);
@@ -869,6 +1051,8 @@ section.lesson > * {
   font-weight: 600;
 }
 .lesson .adult-actions {
+  display: flex;
+  justify-content: center;
   gap: 8px;
 }
 .lesson .adult-actions button,
@@ -923,11 +1107,17 @@ section.lesson > * {
   background: var(--listen);
   box-shadow: 0 4px 0 var(--listen-edge);
 }
+[data-vision]:not([data-vision='off']) .lesson .lesson-actions .primary {
+  background: var(--vision-first);
+  box-shadow: 0 4px 0 #202020;
+}
 .lesson .lesson-actions .primary .countdown {
   margin-left: 4px;
 }
 .lesson .mic-unsupported {
+  max-width: 500px;
   margin: 0;
+  color: #7b8677;
   font-size: 14px;
 }
 

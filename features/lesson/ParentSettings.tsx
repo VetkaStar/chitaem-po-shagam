@@ -39,7 +39,6 @@ export default function ParentSettings({
     | 'history'
     | 'exportReport'
     | 'storageWarning'
-    | 'target'
   >;
 }) {
   const {
@@ -57,7 +56,6 @@ export default function ParentSettings({
     history,
     exportReport,
     storageWarning,
-    target,
   } = model;
   return (
     <>

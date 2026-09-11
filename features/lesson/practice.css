@@ -26,74 +26,6 @@
   border: 1px solid #ccd9c8;
   border-radius: 12px;
 }
-.letter-slots {
-  text-align: center;
-  margin: 24px auto;
-}
-.slots-row {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 16px 0;
-}
-.slots-row input {
-  width: 46px;
-  height: 58px;
-  text-align: center;
-  border: 2px solid #cddbc6;
-  border-radius: 12px;
-  font-size: 28px;
-  background: #fff;
-}
-.slots-row input.slot-vowel {
-  border-color: #b95742;
-  background: #fff0ed;
-}
-.slots-row input.slot-consonant {
-  border-color: #397454;
-  background: #ecf6ed;
-}
-.slots-row input:focus {
-  outline: 3px solid #d9aa46;
-  outline-offset: 3px;
-}
-.slots-row input::placeholder {
-  opacity: 1;
-  color: #52634e;
-}
-.word-picture {
-  font-size: 96px;
-  text-align: center;
-  margin: 8px auto;
-}
-.word-help {
-  text-align: center;
-  background: #f0f5e9;
-  padding: 14px;
-  border-radius: 18px;
-  margin: 12px 0;
-}
-.word-help button {
-  margin: 6px;
-}
-.reading .syllable-gap {
-  display: inline-block;
-  width: 0.22em;
-}
-.rest-snooze {
-  border: 1px solid #d4ddc9;
-  border-radius: 14px;
-  padding: 12px;
-  margin: 14px 0;
-  background: #f8f7eb;
-}
-.rest-snooze button {
-  margin: 6px;
-  padding: 8px 12px;
-  border: 1px solid #bcccb8;
-  border-radius: 10px;
-}
 .bubble-sequence {
   display: flex;
   gap: 8px;
@@ -122,46 +54,12 @@
   aspect-ratio: 1;
   height: auto;
 }
-.color-bubble-field.dense .color-bubble-slot {
-  min-width: 0;
-  height: 95px;
-}
-.color-bubble-field.dense .color-bubble {
-  width: 76px;
-  height: 76px;
-}
-.sound-note {
-  max-width: 500px;
-  margin: 12px auto;
-  text-align: center;
-  font-size: 15px;
-}
-@media (max-width: 500px) {
-  .slots-row {
-    gap: 5px;
-  }
-  .slots-row input {
-    width: 36px;
-    height: 48px;
-    font-size: 24px;
-  }
-  .practice-controls label {
-    flex-wrap: wrap;
-  }
-  .color-bubble-field.dense .color-bubble {
-    width: 58px;
-    height: 58px;
-  }
-  .color-bubble-field.dense .color-bubble-slot {
-    height: 74px;
-  }
-}
-
 .color-bubble-field.dense {
   grid-template-rows: none;
   grid-auto-rows: 125px;
 }
 .color-bubble-field.dense .color-bubble-slot {
+  min-width: 0;
   height: 125px;
 }
 .color-bubble-field.dense .color-bubble {
@@ -171,6 +69,9 @@
   aspect-ratio: 1;
 }
 @media (max-width: 500px) {
+  .practice-controls label {
+    flex-wrap: wrap;
+  }
   .color-bubble-field.dense {
     grid-auto-rows: 95px;
   }
@@ -216,29 +117,4 @@
   .app-content .library .portal-grid {
     grid-template-columns: 1fr;
   }
-}
-
-.letter-display .reading {
-  white-space: pre-wrap;
-}
-.letter-display .letter-name {
-  font-size: 32px;
-  margin: -10px 0 24px;
-  text-align: center;
-}
-
-.catch-token .letter-display .reading {
-  font-size: 24px;
-  margin: 0;
-  letter-spacing: 1px;
-}
-.catch-token .letter-display .letter-name {
-  font-size: 15px;
-  margin: 0;
-}
-.catch-token .letter-display p {
-  display: none;
-}
-.catch-token .letter-display .letter-name {
-  display: block;
 }

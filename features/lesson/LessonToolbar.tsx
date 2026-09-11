@@ -8,10 +8,10 @@ export default function LessonToolbar({
 }: {
   model: Pick<
     LessonModel,
-    'mode' | 'stage' | 'navigate' | 'stop' | 'setPaused' | 'settings' | 'update'
+    'mode' | 'stage' | 'navigate' | 'settings' | 'update'
   >;
 }) {
-  const { mode, stage, navigate, stop, setPaused } = model;
+  const { mode, stage, navigate } = model;
   return (
     <>
       <div className="toolbar">

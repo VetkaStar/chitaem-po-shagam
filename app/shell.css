@@ -219,6 +219,9 @@
 /* Big screens keep the laptop layout, only larger, as in the approved mockups.
    CSS zoom does not change media queries, so there is no feedback loop. */
 html {
+  /* Expanding help grows the page down without moving what is above it. */
+  overflow-anchor: none;
+  scrollbar-gutter: stable;
   zoom: var(--zoom);
 }
 @media (min-width: 1800px) and (min-height: 900px) {

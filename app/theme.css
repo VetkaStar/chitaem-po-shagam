@@ -3,6 +3,8 @@
 :root {
   /* Page scale on big screens, see app/shell.css. Viewport units are zoomed too, so divide them by it. */
   --zoom: 1;
+  --radius: 0.8rem;
+  color-scheme: light;
   --font-ui: 'Nunito', 'Segoe UI', Arial, sans-serif;
   --font-reading: 'Andika', 'Nunito', Arial, sans-serif;
 

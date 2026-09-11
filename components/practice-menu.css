@@ -4,9 +4,6 @@
   align-items: center;
   gap: 12px;
 }
-.lesson-controls .toolbar {
-  margin: 0;
-}
 .lesson-controls .practice-menu {
   margin-left: auto;
 }
@@ -132,23 +129,6 @@
 }
 .practice-menu-panel .portal-grid {
   grid-template-columns: 1fr;
-}
-.hint-space {
-  height: auto;
-  overflow: auto;
-  margin: 10px 0;
-}
-.hint-space .hint-box {
-  margin: 0 auto;
-}
-.hint-space[data-visible='false'] {
-  display: none;
-}
-
-/* Expanded content grows down without browser scroll anchoring. */
-html {
-  overflow-anchor: none;
-  scrollbar-gutter: stable;
 }
 .auto-offer {
   margin: 20px auto 0;

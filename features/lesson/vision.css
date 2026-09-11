@@ -172,11 +172,8 @@
     .feedback.neutral,
     .sample,
     .text-button,
-    .keyboard-tip,
     .heard,
-    .muted,
-    .foot,
-    .aside-note
+    .muted
   ) {
   color: #333;
 }

@@ -8,18 +8,6 @@
   width: 22px;
   height: 22px;
 }
-.text-practice-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 24px;
-  background: #edf3e6;
-  border-radius: 18px;
-  font-size: clamp(24px, 4vw, 34px);
-  line-height: 1.6;
-  margin: 20px 0;
-}
 .text-writing-label {
   display: grid;
   gap: 10px;
@@ -36,8 +24,24 @@
 .text-read-progress {
   display: block;
   width: 100%;
-  height: 18px;
+  height: 4px;
   margin: 16px 0;
+  appearance: none;
+  border: 0;
+  border-radius: 4px;
+  background: #ecf0e5;
+}
+.text-read-progress::-webkit-progress-bar {
+  background: #ecf0e5;
+  border-radius: 4px;
+}
+.text-read-progress::-webkit-progress-value {
+  background: #8caa78;
+  border-radius: 4px;
+}
+.text-read-progress::-moz-progress-bar {
+  background: #8caa78;
+  border-radius: 4px;
 }
 .text-reference p {
   line-height: 1.8;
@@ -74,17 +78,6 @@
   outline-offset: 2px;
 }
 
-.text-word-read {
-  font-weight: bold;
-  text-decoration: underline;
-  text-decoration-style: double;
-}
-.text-word-current {
-  outline: 2px solid currentColor;
-  outline-offset: 3px;
-  border-radius: 3px;
-}
-
 /* Shared lesson layout: heading and topic navigation stay outside the exercise. */
 .text-mode-list {
   display: inline-flex;
@@ -93,43 +86,12 @@
 .library .text-mode-list button[aria-pressed='true'] {
   outline: none;
 }
-.text-session-count {
-  color: #7b8677;
-  font-size: 13px;
-  margin: 12px 0;
-}
-.library .text-session-picker {
-  margin: 0 0 18px;
-  font-size: 14px;
-}
-.text-session-picker summary {
-  cursor: pointer;
-}
 .text-exercise h2 {
   font-size: 24px;
   margin: 20px 0;
 }
 .text-exercise p {
   line-height: 1.7;
-}
-.text-read-progress {
-  appearance: none;
-  border: 0;
-  height: 4px;
-  border-radius: 4px;
-  background: #ecf0e5;
-}
-.text-read-progress::-webkit-progress-bar {
-  background: #ecf0e5;
-  border-radius: 4px;
-}
-.text-read-progress::-webkit-progress-value {
-  background: #8caa78;
-  border-radius: 4px;
-}
-.text-read-progress::-moz-progress-bar {
-  background: #8caa78;
-  border-radius: 4px;
 }
 @media (max-width: 600px) {
   .text-mode-list button {

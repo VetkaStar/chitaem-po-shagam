@@ -12,4 +12,3 @@ export function classifyUtterance(text:string,confidence:number,target:string,ca
  if(confidence<.8)return {kind:'unclear'};
  return {kind:'wrong',heard:allowed.find(w=>normalize(w)===clean)};
 }
-export function supportStep(mistakes:number){return mistakes>=3?'choose':mistakes>=2?'model':'first-letter'}

@@ -1,6 +1,6 @@
 import { matchFragment } from './slow-reading';
 import { findTypo } from './typo';
-export function textWords(text: string) {
+function textWords(text: string) {
   return (
     text
       .toLocaleLowerCase('ru')

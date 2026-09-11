@@ -1,4 +1,4 @@
-export const wordBridges = [
+const wordBridges = [
   {
     word: 'МАМА',
     parts: ['МА', 'МА'],

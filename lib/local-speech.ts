@@ -24,7 +24,7 @@ function loadScript() {
     });
   return scriptPromise;
 }
-export function loadLocalModel(progress: (text: string) => void = () => {}) {
+function loadLocalModel(progress: (text: string) => void = () => {}) {
   if (cachedModel) return cachedModel;
   cachedModel = (async () => {
     await loadScript();

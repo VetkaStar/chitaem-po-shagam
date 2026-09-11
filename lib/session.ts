@@ -3,16 +3,6 @@ import { wordBank } from '../content/word-bank';
 import { levels, normalize } from './learning';
 
 // All word exercises follow the selected cumulative alphabet.
-export const firstWords = [
-  'МАМА',
-  'ПАПА',
-  'ДОМ',
-  'КОТ',
-  'МАК',
-  'СОК',
-  'НОС',
-  'СОМ',
-];
 export function wordPool(unit: number) {
   return [
     ...new Set([

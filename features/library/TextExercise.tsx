@@ -11,7 +11,6 @@ import {
   Mic,
   MessageCircle,
   Keyboard,
-  Pause,
   Volume2,
   RotateCcw,
 } from 'lucide-react';

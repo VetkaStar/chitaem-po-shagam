@@ -13,10 +13,6 @@
 .task-instruction button {
   flex-shrink: 0;
 }
-.exercise-footer {
-  flex-wrap: wrap;
-  gap: 12px;
-}
 .answer-option {
   display: inline-flex;
   gap: 4px;

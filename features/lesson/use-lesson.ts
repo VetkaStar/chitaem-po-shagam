@@ -897,7 +897,6 @@ export function useLesson() {
     speechPreview,
     readingPart,
     selectReadingPart,
-    lessonActive,
     setLessonActive,
     schedule,
     showParts,

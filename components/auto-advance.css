@@ -39,6 +39,3 @@
 .countdown-progress { transition: stroke-dashoffset 1s linear; }
 .countdown > span { font-size: 13px; }
 @media (prefers-reduced-motion: reduce) { .countdown-progress { transition: none; } }
-
-.auto-stop { margin: 8px 0; }
-.auto-stop button { min-width: 210px; }

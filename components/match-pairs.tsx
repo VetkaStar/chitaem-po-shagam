@@ -9,21 +9,25 @@ export default function MatchPairs({ motion = true }: { motion?: boolean }) {
     [mode, setMode] = useState('memory'),
     [speed, setSpeed] = useState(1800),
     [round, setRound] = useState(0);
-  const [cards, setCards] = useState<string[]>([]),
+  const [cards, setCards] = useState(() => pairDeck(amount)),
     [open, setOpen] = useState<number[]>([]),
     [matched, setMatched] = useState<number[]>([]);
   const lock = useRef(false),
     timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => {
+  useEffect(
+    () => () => {
+      if (timer.current) clearTimeout(timer.current);
+    },
+    [],
+  );
+  /** New cards after any change of the game settings and on «Новые картинки». */
+  function restart(nextAmount: number) {
     if (timer.current) clearTimeout(timer.current);
-    setCards(pairDeck(amount));
+    setCards(pairDeck(nextAmount));
     setOpen([]);
     setMatched([]);
     lock.current = false;
-    return () => {
-      if (timer.current) clearTimeout(timer.current);
-    };
-  }, [amount, mode, speed, round]);
+  }
   function flip(i: number) {
     if (lock.current || open.includes(i) || matched.includes(i)) return;
     const next = [...open, i];
@@ -49,7 +53,13 @@ export default function MatchPairs({ motion = true }: { motion?: boolean }) {
       <div className="game-controls">
         <label>
           Игра{' '}
-          <select value={mode} onChange={(e) => setMode(e.target.value)}>
+          <select
+            value={mode}
+            onChange={(e) => {
+              setMode(e.target.value);
+              restart(amount);
+            }}
+          >
             <option value="memory">Запомни картинки</option>
             <option value="visible">Найди одинаковые — всё видно</option>
           </select>
@@ -58,7 +68,11 @@ export default function MatchPairs({ motion = true }: { motion?: boolean }) {
           Сложность{' '}
           <select
             value={amount}
-            onChange={(e) => setAmount(Number(e.target.value))}
+            onChange={(e) => {
+              const next = Number(e.target.value);
+              setAmount(next);
+              restart(next);
+            }}
           >
             {[2, 3, 4, 6, 8].map((n) => (
               <option key={n} value={n}>
@@ -71,7 +85,10 @@ export default function MatchPairs({ motion = true }: { motion?: boolean }) {
           Время запомнить{' '}
           <select
             value={speed}
-            onChange={(e) => setSpeed(Number(e.target.value))}
+            onChange={(e) => {
+              setSpeed(Number(e.target.value));
+              restart(amount);
+            }}
           >
             <option value={3000}>3 секунды</option>
             <option value={1800}>1,8 секунды</option>
@@ -112,7 +129,12 @@ export default function MatchPairs({ motion = true }: { motion?: boolean }) {
           );
         })}
       </div>
-      <button onClick={() => setRound((n) => n + 1)}>
+      <button
+        onClick={() => {
+          setRound((n) => n + 1);
+          restart(amount);
+        }}
+      >
         {done ? 'Ещё пары' : 'Новые картинки'}
       </button>
     </div>

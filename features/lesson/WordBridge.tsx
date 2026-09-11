@@ -17,13 +17,14 @@ export default function WordBridge({
   sound: boolean;
   onInteract?: () => void;
 }) {
-  const item = useMemo(() => {
+  // Picked once: ExerciseCard mounts a new bridge for every task and topic.
+  const [item] = useState(() => {
     const all = availableBridges(levels[unit].letters);
     return (
       all.find((b) => b.parts.includes(target)) ||
       all[Math.floor(Math.random() * all.length)]
     );
-  }, [unit, target]);
+  });
   const cards = useMemo(
     () => (item ? shuffled(item.parts.map((text, id) => ({ text, id }))) : []),
     [item],

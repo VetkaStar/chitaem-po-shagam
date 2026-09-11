@@ -78,8 +78,10 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
     pool,
     setFlyInputStatus,
   } = model;
-  const [showWordPicture, setShowWordPicture] = useState(false);
-  useEffect(() => setShowWordPicture(false), [target, index]);
+  // The word picture stays open only on the task it was opened for.
+  const pictureKey = `${target}-${index}`;
+  const [pictureOpenFor, setPictureOpenFor] = useState<string | null>(null);
+  const showWordPicture = pictureOpenFor === pictureKey;
   useIllustrationPreload(wordIllustrations[target]);
   const entry = wordEntry(target);
   const parts = wordParts(target);
@@ -306,7 +308,9 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
                   <button
                     className="pill-button"
                     aria-pressed={showWordPicture}
-                    onClick={() => setShowWordPicture((v) => !v)}
+                    onClick={() =>
+                      setPictureOpenFor(showWordPicture ? null : pictureKey)
+                    }
                   >
                     <ImageIcon size={16} />
                     {showWordPicture ? 'Скрыть картинку' : 'Показать картинку'}
@@ -370,7 +374,7 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
             {advanceStop('only-narrow')}
             {showBridge && (
               <WordBridge
-                key={index}
+                key={`${index}-${target}-${settings.unit}`}
                 onInteract={stopAdvance}
                 unit={settings.unit}
                 target={target}

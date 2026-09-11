@@ -10,10 +10,16 @@ export function useRestSchedule(
   const elapsed = useRef(0),
     [due, setDue] = useState(false),
     [until, setUntil] = useState(0),
+    [snoozed, setSnoozed] = useState(false),
     [skips, setSkips] = useState(0);
+  // A new rest frequency starts counting from zero.
+  const [frequency, setFrequency] = useState({ every, minutes });
+  if (frequency.every !== every || frequency.minutes !== minutes) {
+    setFrequency({ every, minutes });
+    setDue(false);
+  }
   useEffect(() => {
     elapsed.current = 0;
-    setDue(false);
   }, [every, minutes]);
   useEffect(() => {
     if (!active) lastActivity.current = null;
@@ -33,6 +39,13 @@ export function useRestSchedule(
     }, 1000);
     return () => clearInterval(id);
   }, [active, minutes, until]);
+  useEffect(() => {
+    if (!snoozed) return;
+    const id = setInterval(() => {
+      if (Date.now() >= until) setSnoozed(false);
+    }, 1000);
+    return () => clearInterval(id);
+  }, [snoozed, until]);
   function shouldRest(completed: number, length: number) {
     return (
       Date.now() >= until &&
@@ -47,6 +60,7 @@ export function useRestSchedule(
   }
   function snooze(n: number) {
     setUntil(Date.now() + n * 60000);
+    setSnoozed(true);
     elapsed.current = 0;
     setDue(false);
     setSkips(0);
@@ -57,5 +71,15 @@ export function useRestSchedule(
   function suspend() {
     lastActivity.current = null;
   }
-  return { due, until, skips, shouldRest, returned, snooze, touch, suspend };
+  return {
+    due,
+    until,
+    snoozed,
+    skips,
+    shouldRest,
+    returned,
+    snooze,
+    touch,
+    suspend,
+  };
 }

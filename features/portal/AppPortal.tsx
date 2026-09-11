@@ -50,19 +50,18 @@ export default function AppPortal({
   model: LessonModel;
   children: ReactNode;
 }) {
-  const [profile, setProfile] = useState<Profile | null>(null),
-    [loaded, setLoaded] = useState(false),
+  const [profile, setProfile] = useState<Profile | null>(() => {
+      try {
+        return parseProfile(localStorage.getItem(profileKey));
+      } catch {
+        return null;
+      }
+    }),
     [view, setView] = useState('home'),
     [menuOpen, setMenuOpen] = useState(false),
     [warning, setWarning] = useState('');
   const { layout, look, paper } = model.settings;
   const style: StyleValue = { layout, look, paper };
-  useEffect(() => {
-    try {
-      setProfile(parseProfile(localStorage.getItem(profileKey)));
-    } catch {}
-    setLoaded(true);
-  }, []);
   useEffect(() => {
     const root = document.documentElement;
     root.dataset.layout = layout;
@@ -112,7 +111,8 @@ export default function AppPortal({
     }
     start(p.start);
   }
-  if (!loaded)
+  // Settings and progress come from storage right after the first render; wait for them before choosing a screen.
+  if (!model.ready)
     return (
       <main className="portal-panel">
         <p>Готовим твоё место…</p>

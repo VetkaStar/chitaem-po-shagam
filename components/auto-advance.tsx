@@ -20,10 +20,18 @@ export default function AutoAdvance({
 }) {
   const [remaining, setRemaining] = useState(seconds),
     [cancelled, setCancelled] = useState(false);
-  const callback = useRef(onNext);
-  callback.current = onNext;
-  useEffect(() => {
+  // Whatever restarts the countdown also shows it full again.
+  const run = `${enabled}|${blocked}|${seconds}|${cancelled}|${stopped}`;
+  const [shownRun, setShownRun] = useState(run);
+  if (shownRun !== run) {
+    setShownRun(run);
     setRemaining(seconds);
+  }
+  const callback = useRef(onNext);
+  useEffect(() => {
+    callback.current = onNext;
+  }, [onNext]);
+  useEffect(() => {
     if (!enabled || blocked || cancelled || stopped) return;
     let timer: ReturnType<typeof setInterval> | undefined,
       left = seconds,
@@ -34,8 +42,7 @@ export default function AutoAdvance({
       left = seconds;
       setRemaining(seconds);
     }
-    function resume() {
-      suspend();
+    function start() {
       if (document.hidden || !document.hasFocus()) return;
       timer = setInterval(() => {
         if (document.querySelector?.('.practice-menu[open]')) {
@@ -52,7 +59,11 @@ export default function AutoAdvance({
         }
       }, 1000);
     }
-    resume();
+    function resume() {
+      suspend();
+      start();
+    }
+    start();
     document.addEventListener('visibilitychange', resume);
     window.addEventListener('blur', suspend);
     window.addEventListener('focus', resume);

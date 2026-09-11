@@ -30,8 +30,9 @@ export default function ColorBubbles({
     [speed, setSpeed] = useState(1),
     [moving, setMoving] = useState(motion),
     [round, setRound] = useState(0);
-  const [board, setBoard] = useState<number[]>([]),
-    [order, setOrder] = useState<number[]>([]),
+  const [{ board, order }, setGame] = useState(() =>
+      bubbleRound(mode, density),
+    ),
     [step, setStep] = useState(0),
     [popped, setPopped] = useState<number[]>([]),
     [message, setMessage] = useState('');
@@ -39,21 +40,25 @@ export default function ColorBubbles({
     locked = useRef(false),
     timer = useRef<ReturnType<typeof setTimeout> | null>(null),
     speaker = useRef(onSpeak);
-  speaker.current = onSpeak;
   useEffect(() => {
+    speaker.current = onSpeak;
+  }, [onSpeak]);
+  useEffect(
+    () => () => {
+      if (timer.current) clearTimeout(timer.current);
+    },
+    [],
+  );
+  /** A fresh board after a change of game or difficulty and on «Начать заново». */
+  function restart(nextMode: string, nextDensity: number) {
     if (timer.current) clearTimeout(timer.current);
     caught.current.clear();
     locked.current = false;
     setPopped([]);
     setStep(0);
     setMessage('');
-    const next = bubbleRound(mode, density);
-    setOrder(next.order);
-    setBoard(next.board);
-    return () => {
-      if (timer.current) clearTimeout(timer.current);
-    };
-  }, [mode, density, round]);
+    setGame(bubbleRound(nextMode, nextDensity));
+  }
   const done = order.length > 0 && step >= order.length,
     color = colors[order[Math.min(step, order.length - 1)] ?? 0];
   const symbols = vision !== 'off',
@@ -119,7 +124,13 @@ export default function ColorBubbles({
       <div className="game-controls">
         <label>
           Игра{' '}
-          <select value={mode} onChange={(e) => setMode(e.target.value)}>
+          <select
+            value={mode}
+            onChange={(e) => {
+              setMode(e.target.value);
+              restart(e.target.value, density);
+            }}
+          >
             <option value="colors">
               {symbols ? 'Собери одинаковые знаки' : 'Собери один цвет'}
             </option>
@@ -134,7 +145,11 @@ export default function ColorBubbles({
           Сложность{' '}
           <select
             value={density}
-            onChange={(e) => setDensity(Number(e.target.value))}
+            onChange={(e) => {
+              const next = Number(e.target.value);
+              setDensity(next);
+              restart(mode, next);
+            }}
           >
             <option value={1}>Легко — мало пузырьков</option>
             <option value={2}>Средне</option>
@@ -252,7 +267,12 @@ export default function ColorBubbles({
           </div>
         ))}
       </div>
-      <button onClick={() => setRound((n) => n + 1)}>
+      <button
+        onClick={() => {
+          setRound((n) => n + 1);
+          restart(mode, density);
+        }}
+      >
         {done ? 'Ещё пузырьки' : 'Начать заново'}
       </button>
     </div>

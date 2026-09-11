@@ -66,7 +66,7 @@ export default function ReadingApp() {
             ))}
           </div>
         )}
-        {model.schedule.until > Date.now() && (
+        {model.schedule.snoozed && (
           <p className="muted">
             Напоминания об отдыхе временно выключены. «Разминка» доступна.
           </p>

@@ -11,17 +11,16 @@ export default function CompletionCelebration({
   done: boolean;
   motion: boolean;
 }) {
-  const [visible, setVisible] = useState(false);
+  const [expired, setExpired] = useState(false);
   useEffect(() => {
-    if (!done) {
-      setVisible(false);
-      return;
-    }
-    setVisible(true);
-    const timer = setTimeout(() => setVisible(false), 2000);
-    return () => clearTimeout(timer);
+    if (!done) return;
+    const timer = setTimeout(() => setExpired(true), 2000);
+    return () => {
+      clearTimeout(timer);
+      setExpired(false);
+    };
   }, [done]);
-  if (!done || !visible) return null;
+  if (!done || expired) return null;
   return createPortal(
     <div
       className="completion-celebration"

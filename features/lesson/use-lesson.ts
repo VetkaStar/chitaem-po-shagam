@@ -899,6 +899,7 @@ export function useLesson() {
     recognition.current?.setEnabled?.(true);
   }
   return {
+    ready,
     repeatExercise,
     repeatEpoch,
     lessonLength,

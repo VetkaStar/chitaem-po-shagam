@@ -1,5 +1,6 @@
 'use client';
 import { BookOpen, Menu, Settings2, Star, UserRound } from 'lucide-react';
+import { plural } from '@/lib/plural';
 import type { LessonModel } from './use-lesson';
 export default function LessonHeader({
   model,
@@ -41,6 +42,9 @@ export default function LessonHeader({
             <span className="app-bar-stars" aria-label={`Звёзд: ${stars}`}>
               <Star size={16} />
               <span>{stars}</span>
+              <span className="app-bar-stars-word">
+                {plural(stars, ['звезда', 'звезды', 'звёзд'])}
+              </span>
             </span>
           )}
           <button

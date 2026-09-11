@@ -1,10 +1,11 @@
 'use client';
 import { nextTopic, topicNames } from '@/lib/topics';
 import TopicBar from '@/components/topic-bar';
-import type { Stage } from './config';
+import { stages, type Stage } from './config';
 import type { LessonModel } from './use-lesson';
 export default function TopicNavigation({
   model,
+  compact = false,
 }: {
   model: Pick<
     LessonModel,
@@ -17,6 +18,7 @@ export default function TopicNavigation({
     | 'update'
     | 'navigate'
   >;
+  compact?: boolean;
 }) {
   const { stage, settings, changeTopic, done, speak, speaking } = model;
   const next = nextTopic(stage, settings.unit);
@@ -24,6 +26,12 @@ export default function TopicNavigation({
     stage === 'pictures' ? 'Называем картинки' : topicNames[settings.unit];
   return (
     <TopicBar
+      compact={compact}
+      chipLabel={
+        stage === 'pictures'
+          ? ''
+          : `${stages.find((s) => s.id === stage)?.name ?? 'Тема'} · тема`
+      }
       unit={settings.unit}
       current={current}
       caption={

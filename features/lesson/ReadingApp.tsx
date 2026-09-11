@@ -12,35 +12,46 @@ import LessonToolbar from './LessonToolbar';
 import ExerciseCard from './ExerciseCard';
 import PracticeControls from './PracticeControls';
 import TopicNavigation from './TopicNavigation';
+import FocusBar from './FocusBar';
 // After the other lesson styles. app/globals.css still loads later (static-entry/main.tsx), so lesson.css scopes its rules to .lesson.
 import './lesson.css';
+import './focus.css';
 export default function ReadingApp() {
   const model = useLesson();
-  const { stage, currentStage, stars } = model;
+  const { settings, stage, currentStage, stars } = model;
   return (
     <AppPortal model={model}>
       <section className="lesson">
-        <div className="lesson-top">
-          <div className="lesson-title">
-            <small>
-              ШАГ {stages.findIndex((s) => s.id === stage) + 1} ·{' '}
-              {stage === 'pictures'
-                ? 'НАЗЫВАЕМ ПРЕДМЕТЫ'
-                : stage === 'words'
-                  ? 'ПЕРВЫЕ СЛОВА'
-                  : currentStage.name.toUpperCase()}
-            </small>
-            <h1>{currentStage.title}</h1>
-          </div>
-          <span className="pill">
-            <Star size={17} />
-            {stars}{' '}
-            <span className="desktop-word">
-              {plural(stars, ['звезда', 'звезды', 'звёзд'])}
-            </span>
-          </span>
-        </div>
-        <TopicNavigation model={model} />
+        {settings.layout === 'focus' ? (
+          <>
+            <h1 className="sr-only">{currentStage.title}</h1>
+            <FocusBar model={model} />
+          </>
+        ) : (
+          <>
+            <div className="lesson-top">
+              <div className="lesson-title">
+                <small>
+                  ШАГ {stages.findIndex((s) => s.id === stage) + 1} ·{' '}
+                  {stage === 'pictures'
+                    ? 'НАЗЫВАЕМ ПРЕДМЕТЫ'
+                    : stage === 'words'
+                      ? 'ПЕРВЫЕ СЛОВА'
+                      : currentStage.name.toUpperCase()}
+                </small>
+                <h1>{currentStage.title}</h1>
+              </div>
+              <span className="pill">
+                <Star size={17} />
+                {stars}{' '}
+                <span className="desktop-word">
+                  {plural(stars, ['звезда', 'звезды', 'звёзд'])}
+                </span>
+              </span>
+            </div>
+            <TopicNavigation model={model} />
+          </>
+        )}
         <div className="lesson-controls">
           <LessonToolbar model={model} />
           <PracticeControls model={model} />

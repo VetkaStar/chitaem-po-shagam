@@ -13,6 +13,7 @@ import Welcome from './Welcome';
 import Cabinet from './Cabinet';
 import About from './About';
 import StylePicker, { type StyleValue } from './StylePicker';
+import { PortalContext } from './portal-context';
 import TextLibrary from '../library/TextLibrary';
 import { parseProfile, profileKey, type Profile } from './profile';
 
@@ -118,6 +119,8 @@ export default function AppPortal({
       </main>
     );
   const askStyle = !!profile && !model.settings.styleChosen && view !== 'about' && view !== 'edit';
+  // «Фокус» shows a task without the app header and the section menu; the task has its own bar.
+  const focusActivity = layout === 'focus' && view === 'lesson' && !!profile && !askStyle;
   return (
     <div
       data-vision={model.settings.colorVision}
@@ -125,15 +128,18 @@ export default function AppPortal({
       style={visionStyle(model.settings.colorVision)}
       className={'app-root ' + (model.settings.motion ? 'motion' : 'calm')}
     >
-      <LessonHeader
-        model={model}
-        onHome={() => go('home')}
-        onCabinet={() => go('cabinet')}
-        onMenu={() => setMenuOpen(true)}
-        active={view}
-        hasProfile={!!profile}
-      />
-      <main className="app-layout">
+      {!focusActivity && (
+        <LessonHeader
+          model={model}
+          onHome={() => go('home')}
+          onCabinet={() => go('cabinet')}
+          onMenu={() => setMenuOpen(true)}
+          active={view}
+          hasProfile={!!profile}
+        />
+      )}
+      <PortalContext.Provider value={{ home: () => go('home') }}>
+      <main className={'app-layout' + (focusActivity ? ' focus-activity' : '')}>
         <LessonSidebar
           model={model}
           active={view === 'lesson' ? model.stage : view}
@@ -233,9 +239,13 @@ export default function AppPortal({
           )}
           <footer className="portal-footer">
             <span>by Vetka_Star</span>
+            <button className="footer-about" onClick={() => go('about')}>
+              О проекте
+            </button>
           </footer>
         </div>
       </main>
+      </PortalContext.Provider>
       <ParentSettings model={model} />
       <RestDialog model={model} />
       <MicrophoneConsent model={model} />

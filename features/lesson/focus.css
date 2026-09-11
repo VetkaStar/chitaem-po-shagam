@@ -1,0 +1,673 @@
+/* «Фокус» layout: during a task only the task and big buttons; pages keep a light header without the section menu.
+   Extends lesson.css and app/shell.css. Rules start with :root[data-layout='focus'] so they outrank both.
+   Sizes follow the approved mockups: laptop from 1100px, tablet 700–1099px, phone below 700px. */
+
+/* ---------- pages ---------- */
+.app-bar-stars-word,
+.portal-footer .footer-about {
+  display: none;
+}
+:root[data-layout='focus'] .app-bar {
+  border-bottom: 0;
+  background: var(--ground);
+}
+:root[data-layout='focus'] :is(.app-bar-button, .speak-button) {
+  border-radius: 999px;
+}
+:root[data-layout='focus'] .app-content > .portal-panel {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+:root[data-layout='focus'] .portal-footer .footer-about {
+  display: inline-flex;
+  height: 40px;
+  min-height: 0;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--ink-2);
+  font-size: 15px;
+  font-weight: 700;
+}
+@media (min-width: 700px) {
+  :root[data-layout='focus'] .app-nav {
+    display: none;
+  }
+}
+@media (min-width: 1100px) {
+  :root[data-layout='focus'] .app-bar-inner {
+    display: flex;
+    gap: 10px;
+    max-width: 1120px;
+    height: 76px;
+    padding: 0 40px;
+  }
+  :root[data-layout='focus'] .app-bar-actions {
+    margin-left: auto;
+  }
+  :root[data-layout='focus'] .app-bar-stars {
+    display: inline-flex;
+    height: 40px;
+    padding: 0 14px 0 12px;
+  }
+  :root[data-layout='focus'] .app-bar-stars-word {
+    display: inline;
+  }
+  :root[data-layout='focus'] .app-layout {
+    display: block;
+    max-width: 1120px;
+    margin: 8px auto 0;
+    padding: 0 40px 48px;
+  }
+}
+@media (min-width: 700px) and (max-width: 1099px) {
+  :root[data-layout='focus'] .app-layout {
+    padding: 20px 24px 40px;
+  }
+}
+@media (max-width: 699px) {
+  :root[data-layout='focus'] .app-layout {
+    padding: 14px 16px 32px;
+  }
+}
+
+/* ---------- task screen frame ---------- */
+:root[data-layout='focus'] .app-layout.focus-activity {
+  display: block;
+  max-width: none;
+  margin: 0;
+  padding: 0 0 40px;
+}
+:root[data-layout='focus'] .focus-activity .portal-footer {
+  max-width: 920px;
+  margin: 20px auto 0;
+}
+@media (min-width: 1100px) {
+  :root[data-layout='focus'] .focus-activity .lesson {
+    width: 920px;
+    max-width: calc(100% - 48px);
+    margin: 0 auto;
+    gap: 14px;
+  }
+}
+@media (max-width: 1099px) {
+  :root[data-layout='focus'] .app-layout.focus-activity {
+    padding: 0 24px calc(124px + env(safe-area-inset-bottom));
+  }
+  :root[data-layout='focus'] .focus-activity .lesson {
+    gap: 10px;
+  }
+}
+@media (max-width: 699px) {
+  :root[data-layout='focus'] .app-layout.focus-activity {
+    padding: 0 12px calc(110px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ---------- top bar: back, rest, topic chip, stars, adult ---------- */
+.focus-bar {
+  display: grid;
+  /* Side groups never shrink; a long topic in the middle is cut with an ellipsis instead of covering them. */
+  grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr);
+  align-items: center;
+  column-gap: 16px;
+  height: 76px;
+}
+.focus-bar-start,
+.focus-bar-end {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.focus-bar-end {
+  justify-content: flex-end;
+}
+.focus-bar :is(.focus-back, .focus-rest, .focus-adult) {
+  height: 46px;
+  min-height: 0;
+  padding: 0 18px 0 16px;
+  gap: 8px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--icon);
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.focus-bar :is(.focus-back, .focus-rest, .focus-adult):hover {
+  background: var(--surface-2);
+}
+.focus-bar .focus-rest {
+  border-color: transparent;
+  background: none;
+}
+.focus-bar :is(.focus-back, .focus-rest, .focus-adult) > svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+.focus-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 10px 0 8px;
+  border-radius: 999px;
+  background: var(--star);
+  color: var(--star-ink);
+  font-size: 15px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.focus-stars svg {
+  width: 17px;
+  height: 17px;
+}
+.topic-compact {
+  position: relative;
+  min-width: 0;
+}
+.topic-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 54px;
+  padding: 0 6px;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+}
+.topic-chip:has([aria-expanded='true']) {
+  border-color: var(--primary);
+}
+.topic-chip .speak-button {
+  --size: 42px;
+  border-radius: 999px;
+}
+.topic-chip-open {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 0 12px 0 0;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--ink);
+  white-space: nowrap;
+}
+button.topic-chip-open:hover {
+  background: none;
+  color: var(--primary-ink);
+}
+.topic-chip-open small {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--ink-3);
+}
+.topic-chip-open strong {
+  overflow: hidden;
+  font-size: 19px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+}
+.topic-chip {
+  min-width: 0;
+  max-width: 100%;
+}
+.topic-chip-open small {
+  flex-shrink: 0;
+}
+.topic-chip-open svg {
+  flex-shrink: 0;
+  align-self: center;
+  color: var(--icon);
+}
+.topic-compact .topic-options {
+  left: 50%;
+  right: auto;
+  width: 640px;
+  max-width: calc(100vw / var(--zoom) - 24px);
+  transform: translateX(-50%);
+}
+@media (max-width: 1099px) {
+  .focus-bar {
+    grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+    grid-template-rows: 76px auto;
+    grid-template-areas:
+      'back . stars rest adult'
+      'chip chip chip chip chip';
+    column-gap: 8px;
+    height: auto;
+  }
+  .focus-bar-start,
+  .focus-bar-end {
+    display: contents;
+  }
+  .focus-back {
+    grid-area: back;
+  }
+  .focus-rest {
+    grid-area: rest;
+  }
+  .focus-stars {
+    grid-area: stars;
+  }
+  .focus-bar .focus-adult {
+    grid-area: adult;
+    border-color: transparent;
+    background: none;
+  }
+  .focus-bar > .topic-navigation {
+    grid-area: chip;
+    justify-self: center;
+  }
+}
+@media (max-width: 699px) {
+  .focus-bar {
+    grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+    grid-template-rows: 64px;
+    grid-template-areas: 'back chip stars rest adult';
+    column-gap: 6px;
+  }
+  .focus-bar > .topic-navigation {
+    justify-self: stretch;
+    min-width: 0;
+  }
+  .focus-bar :is(.focus-back, .focus-rest, .focus-adult) {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+  }
+  .focus-bar .focus-back {
+    width: 44px;
+    height: 44px;
+  }
+  .focus-bar :is(.focus-back, .focus-rest, .focus-adult) span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .focus-stars {
+    height: 36px;
+    font-size: 14px;
+  }
+  .topic-chip {
+    gap: 8px;
+    width: 100%;
+    height: 50px;
+    padding: 0 8px 0 5px;
+  }
+  .topic-chip .speak-button {
+    --size: 38px;
+  }
+  .topic-chip-open {
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+    line-height: 1.15;
+    position: relative;
+  }
+  .topic-chip-open small,
+  .topic-chip-open strong {
+    max-width: calc(100% - 20px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .topic-chip-open small {
+    font-size: 11px;
+  }
+  .topic-chip-open strong {
+    font-size: 16px;
+  }
+  .topic-chip-open svg {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    transform: translateY(-50%);
+  }
+  .topic-compact .topic-options {
+    position: fixed;
+    top: 64px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-width: none;
+    transform: none;
+  }
+}
+
+/* ---------- modes and settings ---------- */
+:root[data-layout='focus'] .lesson .lesson-controls {
+  justify-content: center;
+  gap: 8px;
+}
+:root[data-layout='focus'] .lesson .lesson-controls .practice-menu {
+  margin-left: 0;
+}
+:root[data-layout='focus'] .mode-list {
+  padding: 5px;
+  border-radius: 999px;
+}
+:root[data-layout='focus'] .mode-list button {
+  padding: 0 22px 0 18px;
+  border-radius: 999px;
+  font-size: 16px;
+}
+:root[data-layout='focus'] .mode-list button:not(:has(svg)) {
+  padding: 0 22px;
+}
+:root[data-layout='focus'] .practice-menu > summary {
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  padding: 0;
+  border-radius: 999px;
+}
+:root[data-layout='focus'] .practice-menu > summary span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+:root[data-layout='focus'] .practice-menu > summary svg {
+  width: 22px;
+  height: 22px;
+}
+@media (min-width: 700px) {
+  :root[data-layout='focus'] .practice-menu-panel {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* ---------- task sheet ---------- */
+:root[data-layout='focus'] .lesson .exercise {
+  gap: 14px;
+  padding: 24px 40px 12px;
+  border: 0;
+  border-radius: 32px 32px 0 0;
+  box-shadow: 0 20px 48px rgba(32, 60, 49, 0.07);
+}
+:root[data-layout='focus'] .lesson .exercise.success,
+:root[data-layout='focus'] .lesson .exercise.success + .lesson-actions {
+  --state: var(--ok-line);
+}
+:root[data-layout='focus'] .lesson .exercise.error,
+:root[data-layout='focus'] .lesson .exercise.error + .lesson-actions {
+  --state: var(--err-line);
+}
+:root[data-layout='focus'] [data-vision]:not([data-vision='off']) .lesson .exercise.success,
+:root[data-layout='focus'] [data-vision]:not([data-vision='off']) .lesson .exercise.success + .lesson-actions {
+  --state: var(--vision-first);
+}
+:root[data-layout='focus'] [data-vision]:not([data-vision='off']) .lesson .exercise.error,
+:root[data-layout='focus'] [data-vision]:not([data-vision='off']) .lesson .exercise.error + .lesson-actions {
+  --state: var(--vision-second);
+}
+:root[data-layout='focus'] .lesson .task-line h2 {
+  font-size: 30px;
+}
+:root[data-layout='focus'] .lesson .reading {
+  --size: 177px;
+}
+:root[data-layout='focus'] .lesson .reading:has(.reading-guide) {
+  --size: 151px;
+}
+:root[data-layout='focus'] .lesson .letter-display .reading {
+  --size: 156px;
+}
+:root[data-layout='focus'] .lesson .illustration-gallery {
+  width: min(100%, 276px);
+}
+:root[data-layout='focus'] .exercise-top {
+  justify-content: center;
+  align-self: center;
+  gap: 12px;
+  font-size: 14px;
+}
+:root[data-layout='focus'] .lesson-bars {
+  order: -1;
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+:root[data-layout='focus'] .lesson-bars i {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--line);
+}
+:root[data-layout='focus'] .lesson-bars i[data-state='done'] {
+  background: var(--bar-done);
+}
+:root[data-layout='focus'] .lesson-bars i[data-state='now'] {
+  width: 26px;
+  background: var(--primary);
+}
+:root[data-layout='focus'] .exercise-rest {
+  display: inline-block;
+  margin-left: -8px;
+}
+:root[data-layout='focus'] .exercise-rest svg {
+  display: none;
+}
+:root[data-layout='focus'] .exercise-count:has(~ .exercise-rest)::after {
+  content: ' ·';
+}
+:root[data-layout='focus'] .exercise-rest::first-letter {
+  text-transform: lowercase;
+}
+:root[data-layout='focus'] .lesson .adult-actions button {
+  border-radius: 999px;
+}
+
+@media (min-width: 1100px) {
+  :root[data-layout='focus'] .lesson .exercise:is(.success, .error) {
+    box-shadow:
+      inset 2px 0 0 var(--state),
+      inset -2px 0 0 var(--state),
+      inset 0 2px 0 var(--state),
+      0 20px 48px rgba(32, 60, 49, 0.07);
+  }
+  /* Main button between the two side buttons, links under a line. The top of the box shadow is clipped
+     so the second half of the sheet does not shade the first. */
+  :root[data-layout='focus'] .lesson .lesson-actions {
+    /* Overlaps the first half by 1px so no seam shows between the two boxes. */
+    margin-top: -15px;
+    grid-template-columns: minmax(0, 1fr) auto auto auto minmax(0, 1fr);
+    column-gap: 14px;
+    padding: 9px 40px 20px;
+    border: 0;
+    border-radius: 0 0 32px 32px;
+    box-shadow:
+      0 1px 0 var(--line),
+      0 20px 48px rgba(32, 60, 49, 0.07);
+    clip-path: inset(0 -60px -80px -60px);
+  }
+  :root[data-layout='focus'] .lesson .exercise:is(.success, .error) + .lesson-actions {
+    box-shadow:
+      inset 2px 0 0 var(--state),
+      inset -2px 0 0 var(--state),
+      inset 0 -2px 0 var(--state),
+      0 20px 48px rgba(32, 60, 49, 0.07);
+  }
+  :root[data-layout='focus'] .lesson-actions::before {
+    margin-top: 6px;
+  }
+  :root[data-layout='focus'] .lesson .lesson-actions:not(:has(.lesson-links))::before {
+    content: none;
+  }
+  :root[data-layout='focus'] .lesson-actions :is(.dock-left, .dock-right, .primary) {
+    grid-row: 1;
+    margin-top: 0;
+  }
+  :root[data-layout='focus'] .lesson-actions .dock-left {
+    grid-column: 2;
+    justify-self: end;
+  }
+  :root[data-layout='focus'] .lesson-actions .primary {
+    grid-column: 3;
+  }
+  :root[data-layout='focus'] .lesson-actions .dock-right {
+    grid-column: 4;
+    justify-self: start;
+  }
+  :root[data-layout='focus'] .lesson-links > * {
+    margin-top: 19px;
+  }
+  :root[data-layout='focus'] .lesson-links .adult-check {
+    grid-column: 1 / 3;
+    justify-self: start;
+  }
+  :root[data-layout='focus'] .lesson-links .skip-link {
+    grid-column: 4 / -1;
+    justify-self: end;
+  }
+  :root[data-layout='focus'] .lesson .lesson-actions .dock-side {
+    height: 64px;
+    padding: 0 20px;
+    border-radius: 22px;
+    font-size: 16px;
+  }
+  :root[data-layout='focus'] .lesson .lesson-actions .dock-side > svg {
+    width: 20px;
+    height: 20px;
+  }
+  :root[data-layout='focus'] .lesson .lesson-actions .primary {
+    height: 72px;
+    min-width: 0;
+    padding: 0 32px;
+    border-radius: 24px;
+    font-size: 20px;
+  }
+  :root[data-layout='focus'] .lesson .lesson-actions .primary > svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (max-width: 1099px) {
+  :root[data-layout='focus'] .lesson .exercise {
+    padding: 28px 36px;
+    border-radius: 32px;
+    box-shadow:
+      0 1px 0 var(--line),
+      0 20px 48px rgba(32, 60, 49, 0.07);
+  }
+  :root[data-layout='focus'] .lesson .exercise:is(.success, .error) {
+    box-shadow:
+      inset 0 0 0 2px var(--state),
+      0 20px 48px rgba(32, 60, 49, 0.07);
+  }
+  :root[data-layout='focus'] .lesson-dock {
+    border-top: 0;
+    background: var(--ground);
+  }
+  :root[data-layout='focus'] .lesson .lesson-dock .dock-side {
+    border-radius: 22px;
+  }
+  :root[data-layout='focus'] .lesson .lesson-dock .primary {
+    border-radius: 24px;
+  }
+  :root[data-layout='focus'] .lesson-links {
+    padding: 0 12px;
+  }
+}
+
+@media (min-width: 700px) and (max-width: 1099px) {
+  :root[data-layout='focus'] .lesson .reading {
+    --size: 225px;
+  }
+  :root[data-layout='focus'] .lesson .reading:has(.reading-guide) {
+    --size: 173px;
+  }
+  :root[data-layout='focus'] .lesson .letter-display .reading {
+    --size: 196px;
+  }
+  :root[data-layout='focus'] .lesson .illustration-gallery {
+    width: min(100%, 345px);
+  }
+  :root[data-layout='focus'] .exercise-top {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 699px) {
+  :root[data-layout='focus'] .lesson .lesson-controls {
+    justify-content: stretch;
+  }
+  :root[data-layout='focus'] .lesson .mode-list {
+    padding: 3px;
+  }
+  :root[data-layout='focus'] .lesson .mode-list button {
+    padding: 0 6px;
+    font-size: 14px;
+  }
+  :root[data-layout='focus'] .practice-menu > summary {
+    width: 48px;
+    height: 48px;
+  }
+  :root[data-layout='focus'] .lesson .exercise {
+    padding: 16px 16px 18px;
+    border-radius: 28px;
+  }
+  :root[data-layout='focus'] .lesson .task-line h2 {
+    font-size: 22px;
+  }
+  :root[data-layout='focus'] .lesson .reading {
+    --size: 125px;
+  }
+  :root[data-layout='focus'] .lesson .reading:has(.reading-guide) {
+    --size: 86px;
+  }
+  :root[data-layout='focus'] .lesson .letter-display .reading {
+    --size: 110px;
+  }
+  :root[data-layout='focus'] .lesson .illustration-gallery {
+    width: min(100%, 230px);
+  }
+  :root[data-layout='focus'] .exercise-top {
+    gap: 10px;
+    font-size: 13px;
+  }
+  :root[data-layout='focus'] .lesson-bars {
+    gap: 5px;
+  }
+  :root[data-layout='focus'] .lesson-bars i {
+    width: 9px;
+    height: 9px;
+  }
+  :root[data-layout='focus'] .lesson-bars i[data-state='now'] {
+    width: 22px;
+  }
+  :root[data-layout='focus'] .exercise-rest {
+    display: none;
+  }
+  :root[data-layout='focus'] .exercise-count:has(~ .exercise-rest)::after {
+    content: none;
+  }
+  :root[data-layout='focus'] .lesson-links {
+    padding: 0 6px;
+  }
+}

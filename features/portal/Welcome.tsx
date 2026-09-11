@@ -6,9 +6,13 @@ import type { Profile } from './profile';
 export default function Welcome({
   profile,
   onSave,
+  voice,
+  onVoiceChange,
   onCancel,
 }: {
   profile: Profile | null;
+  voice: 'female' | 'male';
+  onVoiceChange: (voice: 'female' | 'male') => void;
   onSave: (p: Profile) => void;
   onCancel?: () => void;
 }) {
@@ -64,6 +68,19 @@ export default function Welcome({
             </select>
           </label>
         </div>
+        <fieldset>
+          <legend>Каким голосом озвучивать?</legend>
+          <div className="start-options">
+            {(['female', 'male'] as const).map((value) => (
+              <label key={value} className={voice === value ? 'chosen' : ''}>
+                <input type="radio" name="voice" checked={voice === value}
+                  onChange={() => onVoiceChange(value)} />
+                {value === 'female' ? 'Женский' : 'Мужской'}
+              </label>
+            ))}
+          </div>
+          <p>Позже голос можно поменять в настройках.</p>
+        </fieldset>
         <fieldset>
           <legend>С чего хочешь начать?</legend>
           <div className="start-options">

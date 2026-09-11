@@ -46,6 +46,7 @@ export function restoreLessonProgress({
           s.autoAdvanceSeconds <= 30
             ? s.autoAdvanceSeconds
             : 3,
+        voice: s.voice === 'male' ? 'male' : 'female',
         colorVision: parseVision(s.colorVision),
         pictureMode: s.pictureMode === 'letters' ? 'letters' : 'free',
         wordMode: s.wordMode === 'parts' ? 'parts' : 'whole',

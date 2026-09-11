@@ -79,6 +79,14 @@ export default function ParentSettings({
           </DialogDescription>
           <AutoAdvanceSettings model={model} />
           <div className="setting">
+            <label htmlFor="narrator-voice">Голос озвучки</label>
+            <select id="narrator-voice" value={settings.voice}
+              onChange={(e) => update('voice', e.target.value as 'female' | 'male')}>
+              <option value="female">Женский</option>
+              <option value="male">Мужской</option>
+            </select>
+          </div>
+          <div className="setting">
             <label>Материал</label>
             <Select
               value={String(settings.unit)}

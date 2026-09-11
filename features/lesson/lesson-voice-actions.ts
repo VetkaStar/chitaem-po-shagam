@@ -1,4 +1,5 @@
 import type { SpeechController } from './lesson-speech-types';
+import { selectNarratorVoice } from '@/lib/narrator-voice';
 import { Settings } from './config';
 import type { Dispatch, SetStateAction, RefObject } from 'react';
 
@@ -34,7 +35,7 @@ export function createVoiceHandler(context: {
     }
     speechSynthesis.cancel();
     const voices = speechSynthesis.getVoices(),
-      voice = voices.find((v) => v.lang.toLowerCase().startsWith('ru'));
+      voice = selectNarratorVoice(voices, settings.voice);
     if (voices.length && !voice) {
       releaseSoon();
       return;

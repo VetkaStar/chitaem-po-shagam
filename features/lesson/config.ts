@@ -22,6 +22,7 @@ export type Settings = {
   flySpeed: number;
   motion: boolean;
   sound: boolean;
+  voice: 'female' | 'male';
   autoSpeech: boolean;
   partsThenWhole: boolean;
   autoAdvance: boolean;
@@ -57,6 +58,7 @@ export const defaults: Settings = {
   flySpeed: 1,
   motion: true,
   sound: true,
+  voice: 'female',
   autoSpeech: false,
   partsThenWhole: false,
   autoAdvance: false,

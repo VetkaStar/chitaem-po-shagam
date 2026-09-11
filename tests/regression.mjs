@@ -654,3 +654,10 @@ assert(quietGuide.includes('Читать: ХА'));
 console.log(
   'PASS reading guide: word/syllable reconstruction, uncovered prefix, adjacent vowels and optional highlighting',
 );
+
+const { selectNarratorVoice } = load('narrator-voice');
+const narrators = [{lang: 'en-US', name: 'Pavel'}, {lang: 'ru-RU', name: 'Irina'}, {lang: 'ru-RU', name: 'Pavel'}];
+assert.equal(selectNarratorVoice(narrators, 'male'), narrators[2]);
+assert.equal(selectNarratorVoice(narrators, 'female'), narrators[1]);
+assert.equal(selectNarratorVoice([narrators[1]], 'male'), narrators[1]);
+assert.equal(selectNarratorVoice([], 'female'), undefined);

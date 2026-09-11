@@ -2,12 +2,12 @@
 
 Бесплатный тренажёр чтения by Vetka_Star. Для всех детей, с особым вниманием к детям с аутизмом, СДВГ и ЗПР.
 
-Рабочая версия исходников: **reading-app-v4**. [Приложение](https://vetkastar.github.io/chitaem-po-shagam/).
+Рабочая папка: **C:\work\app\reading-app**. [Приложение](https://vetkastar.github.io/chitaem-po-shagam/).
 
 ## Разработка
 
 Node.js >=22.13.0. В отдельной установке: `pnpm install --frozen-lockfile`, затем `pnpm dev`.
-Локальная v4 использует ссылку на существующие зависимости: не обновлять пакеты через неё.
+Локальная v4 содержит собственные зависимости и Node.js. [Запуск и состав рабочей папки](docs/LOCAL-WORKSPACE.md).
 
 - `pnpm test` — учебная логика и сценарии.
 - `pnpm run typecheck` — типы.
@@ -18,11 +18,13 @@ Push в main автоматически запускает тесты, пров�
 
 ## Документация
 
+- [Общие требования к иллюстрациям](docs/ILLUSTRATION-REQUIREMENTS.md)
+
 - [Модули и связи](docs/ARCHITECTURE.md)
 - [Карта стилей](docs/STYLES.md)
 - [Упорядочивание и резервная копия](docs/REFACTOR-V4.md)
 - [Распознавание и проверка чтения](docs/READING.md)
-- [План наполнения](docs/CONTENT-PLAN.md)
+- [Учебная программа — основной документ](docs/CONTENT-PLAN.md)
 - [Список иллюстраций](docs/IMAGE-BRIEF.csv)
 - [История изменений](docs/CHANGELOG.md)
 

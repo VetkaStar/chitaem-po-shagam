@@ -97,6 +97,8 @@ export default function AppPortal({
           ) : !profile || view === 'edit' ? (
             <Welcome
               profile={profile}
+              voice={model.settings.voice}
+              onVoiceChange={(voice) => model.update('voice', voice)}
               onSave={save}
               onCancel={profile ? () => go('cabinet') : undefined}
             />

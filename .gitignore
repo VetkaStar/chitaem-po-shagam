@@ -38,3 +38,8 @@ next-env.d.ts
 /work/
 *.tsbuildinfo
 /dist-pages/
+
+# Local source documents, portable tools and publication credentials
+/materials/
+/.local/
+/node_modules.standalone/

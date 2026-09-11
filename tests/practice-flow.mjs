@@ -8,16 +8,15 @@ const require = createRequire(import.meta.url),
   ts = require('typescript'),
   root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 // Small hook host: run the real lesson coordinator, not a duplicate of its rules.
-let slots = [],
-  cursor = 0,
+const slots = [];
+let cursor = 0,
   pending = [],
   dirty = false,
   model,
   now = 0;
 const events = new Map();
 const intervals = new Map(),
-  storage = new Map(),
-  cleanups = [];
+  storage = new Map();
 const React = {
   useState(initial) {
     const i = cursor++;
@@ -136,12 +135,16 @@ function load(file) {
 const useLesson = load(
   path.join(root, 'features/lesson/use-lesson.ts'),
 ).useLesson;
+// Named like a component, so the hook rules see a regular hook call.
+function LessonHost() {
+  return useLesson();
+}
 function render() {
   let safety = 0;
   do {
     dirty = false;
     cursor = 0;
-    model = useLesson();
+    model = LessonHost();
     const effects = pending;
     pending = [];
     effects.forEach((f) => f());

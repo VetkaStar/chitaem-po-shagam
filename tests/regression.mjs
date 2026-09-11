@@ -81,11 +81,11 @@ assert.equal(c('я люблю котика', 0.99, 'УМ', candidates).kind, 'ig
 assert.equal(c('нет я не хочу', 0.95, 'УМ', candidates).kind, 'rest');
 assert.equal(c('мама сказала ум', 0.95, 'УМ', candidates).kind, 'ignore');
 assert.equal(c('[unk]', 0.99, 'УМ', candidates).kind, 'ignore');
-let recs = [],
-  streams = 0,
-  stopped = 0,
-  closed = 0,
+const recs = [],
   results = [];
+let streams = 0,
+  stopped = 0,
+  closed = 0;
 class Rec {
   constructor() {
     this.handlers = {};
@@ -547,7 +547,7 @@ for (const amount of [2, 3, 4, 6, 8]) {
 
 const { advanceTextReading, readingLetters, checkTextWriting } =
   load('text-practice');
-let textProgress = advanceTextReading('Кот спит.', 0, 'кот', 0.9);
+const textProgress = advanceTextReading('Кот спит.', 0, 'кот', 0.9);
 assert.equal(textProgress, 3);
 assert.equal(
   advanceTextReading('Кот спит.', textProgress, 'я хочу играть', 0.9),

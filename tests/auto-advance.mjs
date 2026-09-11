@@ -8,8 +8,8 @@ let slots = [],
   dirty = false,
   tree,
   props,
-  timers = new Set(),
   calls = 0;
+const timers = new Set();
 const listeners = {};
 const doc = {
   hidden: false,

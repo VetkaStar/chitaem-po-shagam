@@ -229,7 +229,7 @@ const item = {
   answer: 'Спит',
   hint: 'Посмотри на строку.',
 };
-let awards = [];
+const awards = [];
 const model = {
   stop() {},
   update() {},

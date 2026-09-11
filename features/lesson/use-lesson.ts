@@ -804,7 +804,16 @@ export function useLesson() {
   }
   const exportReport = createReportExporter({ history });
   useEffect(() => {
-    const context = (document as any).modelContext;
+    const context = (
+      document as Document & {
+        modelContext?: {
+          registerTool?: (
+            tool: object,
+            options: { signal: AbortSignal },
+          ) => unknown;
+        };
+      }
+    ).modelContext;
     if (!context?.registerTool) return;
     const controller = new AbortController();
     try {

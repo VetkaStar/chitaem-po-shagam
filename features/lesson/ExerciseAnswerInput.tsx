@@ -98,10 +98,6 @@ export default function ExerciseAnswerInput({
       ) : (
         <form
           className="answer-form"
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && (e.repeat || e.nativeEvent.isComposing))
-              e.preventDefault();
-          }}
           onSubmit={(e) => {
             e.preventDefault();
             submit();
@@ -111,6 +107,10 @@ export default function ExerciseAnswerInput({
             ref={input}
             aria-label="Твой ответ"
             value={answer}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && (e.repeat || e.nativeEvent.isComposing))
+                e.preventDefault();
+            }}
             onChange={(e) => {
               if (typo) {
                 setTypo(null);

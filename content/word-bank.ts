@@ -539,7 +539,7 @@ export function freshWordDeck(
   if (result.length > 1 && result[0] === recent.at(-1))
     [result[0], result[1]] = [result[1], result[0]];
   while (result.length < length && unique.length) {
-    let batch = [...unique];
+    const batch = [...unique];
     for (let i = batch.length - 1; i > 0; i--) {
       const j = Math.floor(random() * (i + 1));
       [batch[i], batch[j]] = [batch[j], batch[i]];

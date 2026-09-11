@@ -35,7 +35,7 @@ export function findTypo(
       return {
         kind: 'replace',
         message: `Почти! Вместо «${a[index]}» нужна «${b[index]}». Исправь выделенную букву.`,
-        cells: cells([...a], [...b], [index]),
+        cells: cells(Array.from(a), Array.from(b), [index]),
       };
     if (
       differences.length === 2 &&
@@ -46,31 +46,31 @@ export function findTypo(
       return {
         kind: 'swap',
         message: `Почти! Две буквы поменялись местами. Напиши «${b.slice(index, index + 2)}» в выделенном месте.`,
-        cells: cells([...a], [...b], [index, index + 1]),
+        cells: cells(Array.from(a), Array.from(b), [index, index + 1]),
       };
   }
   if (
     a.length + 1 === b.length &&
     a === b.slice(0, index) + b.slice(index + 1)
   ) {
-    const before = [...a];
+    const before = Array.from(a);
     before.splice(index, 0, '');
     return {
       kind: 'missing',
       message: `Почти! Пропущена буква «${b[index]}». Добавь её в отмеченное место.`,
-      cells: cells(before, [...b], [index]),
+      cells: cells(before, Array.from(b), [index]),
     };
   }
   if (
     a.length === b.length + 1 &&
     b === a.slice(0, index) + a.slice(index + 1)
   ) {
-    const after = [...b];
+    const after = Array.from(b);
     after.splice(index, 0, '');
     return {
       kind: 'extra',
       message: `Почти! Здесь лишняя буква «${a[index]}». Убери выделенную букву.`,
-      cells: cells([...a], after, [index]),
+      cells: cells(Array.from(a), after, [index]),
     };
   }
   return null;

@@ -112,14 +112,14 @@ export default function ParentSettings({
             </select>
           </div>
           <div className="setting">
-            <label>Материал</label>
+            <label htmlFor="setting-unit">Материал</label>
             <Select
               value={String(settings.unit)}
               onValueChange={(v) => {
                 if (v !== null) update('unit', Number(v));
               }}
             >
-              <SelectTrigger aria-label="Материал занятия">
+              <SelectTrigger id="setting-unit" aria-label="Материал занятия">
                 <SelectValue>{levels[settings.unit].name}</SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -132,14 +132,17 @@ export default function ParentSettings({
             </Select>
           </div>
           <div className="setting">
-            <label>Длина занятия</label>
+            <label htmlFor="setting-length">Длина занятия</label>
             <Select
               value={String(settings.length)}
               onValueChange={(v) => {
                 if (v !== null) update('length', Number(v));
               }}
             >
-              <SelectTrigger aria-label="Количество заданий">
+              <SelectTrigger
+                id="setting-length"
+                aria-label="Количество заданий"
+              >
                 <SelectValue>{settings.length} заданий</SelectValue>
               </SelectTrigger>
               <SelectContent>
@@ -152,7 +155,7 @@ export default function ParentSettings({
             </Select>
           </div>
           <div className="setting">
-            <label>
+            <label htmlFor="setting-breaks">
               <b>Как часто предлагать отдых</b>
               <small>
                 Можно выбрать задания или минуты. По времени — после текущего
@@ -160,6 +163,7 @@ export default function ParentSettings({
               </small>
             </label>
             <select
+              id="setting-breaks"
               aria-label="Частота разминок"
               value={
                 settings.breakMinutes

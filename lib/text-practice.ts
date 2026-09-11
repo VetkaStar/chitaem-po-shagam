@@ -39,7 +39,7 @@ export function checkTextWriting(
   const a = textWords(value),
     b = textWords(target);
   if (
-    /^[а-яё\s.,!?:;—–«»()\-]+$/iu.test(value) &&
+    /^[а-яё\s.,!?:;—–«»()-]+$/iu.test(value) &&
     a.length &&
     a.join(' ') === b.join(' ')
   )

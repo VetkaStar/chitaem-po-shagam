@@ -1,5 +1,10 @@
-import { Star, Shirt, Cat, UserRound } from 'lucide-react';
+import { Star, Shirt, Cat, UserRound, type LucideIcon } from 'lucide-react';
 import type { Profile } from './profile';
+const upcoming: [LucideIcon, string, string][] = [
+  [UserRound, 'Твой персонаж', 'Выбери героя и придумай ему образ.'],
+  [Shirt, 'Костюмчики', 'Наряды и аксессуары за учебные звёзды.'],
+  [Cat, 'Питомец', 'Маленький друг, который будет рядом.'],
+];
 export default function Cabinet({
   profile,
   stars,
@@ -23,11 +28,7 @@ export default function Cabinet({
         украшения для твоего мира. Звёзды уже копятся; магазин ещё не открыт.
       </p>
       <div className="portal-grid">
-        {[
-          [UserRound, 'Твой персонаж', 'Выбери героя и придумай ему образ.'],
-          [Shirt, 'Костюмчики', 'Наряды и аксессуары за учебные звёзды.'],
-          [Cat, 'Питомец', 'Маленький друг, который будет рядом.'],
-        ].map(([Icon, title, text]: any) => (
+        {upcoming.map(([Icon, title, text]) => (
           <div className="portal-card" key={title}>
             <Icon size={32} />
             <b>{title}</b>

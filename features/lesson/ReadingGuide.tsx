@@ -41,7 +41,7 @@ export default function ReadingGuide({
             onClick={() => onSelect(part.start, part.text)}
           >
             {color
-              ? [...part.text].map((c, j) => (
+              ? Array.from(part.text).map((c, j) => (
                   <span
                     key={j}
                     className={

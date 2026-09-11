@@ -1,13 +1,34 @@
 /* Local speech engine: microphone samples stay on this device. */
 type VoskResult = { text?: string; result?: { conf: number; word: string }[] };
+type RecognizerMessage = { result?: VoskResult & { partial?: string } };
+type Recognizer = {
+  setWords: (words: boolean) => void;
+  acceptWaveform: (buffer: AudioBuffer) => void;
+  on: (
+    event: 'result' | 'partialresult' | 'error',
+    handler: (message: RecognizerMessage) => void,
+  ) => void;
+  remove: () => void;
+};
 type Model = {
-  KaldiRecognizer: new (rate: number, grammar?: string) => any;
+  KaldiRecognizer: new (rate: number, grammar?: string) => Recognizer;
+  on: (
+    event: 'load' | 'error',
+    handler: (message: { result?: boolean }) => void,
+  ) => void;
   terminate: () => void;
 };
+/** The global that speech/vosk.js defines once it has loaded. */
+const vosk = () =>
+  (
+    window as Window & {
+      Vosk?: { Model: new (url: string, logLevel: number) => Model };
+    }
+  ).Vosk;
 let cachedModel: Promise<Model> | undefined;
 let scriptPromise: Promise<void> | undefined;
 function loadScript() {
-  if ((window as any).Vosk) return Promise.resolve();
+  if (vosk()) return Promise.resolve();
   if (!scriptPromise)
     scriptPromise = new Promise<void>((resolve, reject) => {
       const s = document.createElement('script');
@@ -68,7 +89,8 @@ function loadLocalModel(progress: (text: string) => void = () => {}) {
     const url = URL.createObjectURL(
       new Blob(chunks as BlobPart[], { type: 'application/gzip' }),
     );
-    const model = new (window as any).Vosk.Model(url, -1);
+    const Vosk = vosk()!;
+    const model = new Vosk.Model(url, -1);
     try {
       return await new Promise<Model>((resolve, reject) => {
         const timeout = setTimeout(() => {
@@ -79,7 +101,7 @@ function loadLocalModel(progress: (text: string) => void = () => {}) {
             ),
           );
         }, 90000);
-        model.on('load', (m: any) => {
+        model.on('load', (m) => {
           clearTimeout(timeout);
           if (m.result) resolve(model);
           else {
@@ -121,7 +143,7 @@ export function startLocalSpeech(callbacks: SpeechCallbacks) {
     context: AudioContext | undefined,
     source: MediaStreamAudioSourceNode | undefined,
     node: ScriptProcessorNode | undefined,
-    recognizer: any,
+    recognizer: Recognizer | undefined,
     model: Model | undefined,
     frame = 0,
     generation = 0,
@@ -170,23 +192,27 @@ export function startLocalSpeech(callbacks: SpeechCallbacks) {
         : undefined,
     );
     recognizer.setWords(true);
-    recognizer.on('result', (m: any) => {
+    recognizer.on('result', (m) => {
+      const result = m.result;
       if (
         !closed &&
         enabled &&
         current === generation &&
-        m.result?.text?.trim()
+        result &&
+        result.text?.trim()
       )
-        callbacks.onResult(m.result);
+        callbacks.onResult(result);
     });
-    recognizer.on('partialresult', (m: any) => {
+    recognizer.on('partialresult', (m) => {
+      const partial = m.result?.partial;
       if (
         !closed &&
         enabled &&
         current === generation &&
-        m.result?.partial?.trim()
+        partial &&
+        partial.trim()
       )
-        callbacks.onPartial(m.result.partial);
+        callbacks.onPartial(partial);
     });
     recognizer.on('error', () => {
       if (current === generation)

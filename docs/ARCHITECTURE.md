@@ -4,7 +4,7 @@
 
 | Задача | Файл | Ответственность |
 | --- | --- | --- |
-| Точка входа | app/page.tsx | Только подключение ReadingApp |
+| Точка входа | static-entry/main.tsx | Подключение ReadingApp и глобальных стилей |
 | Компоновка страницы | features/lesson/ReadingApp.tsx | Сборка интерфейса из компонентов |
 | Состояние занятия | features/lesson/use-lesson.ts | Переходы, счёт, сохранение, координация микрофона и озвучки |
 | Типы и настройки по умолчанию | features/lesson/config.ts | Stage, Mode, Settings, Entry, названия букв |

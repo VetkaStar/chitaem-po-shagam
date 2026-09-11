@@ -3,7 +3,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/postcss';
 
-// Separate static entry; the existing Sites deployment keeps its original build.
+// The app's only build: a static site for GitHub Pages.
 export default defineConfig({
   root: fileURLToPath(new URL('./static-entry', import.meta.url)),
   base: './',

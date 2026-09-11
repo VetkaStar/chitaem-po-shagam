@@ -12,7 +12,6 @@ Node.js >=22.13.0. В отдельной установке: `pnpm install --fro
 - `pnpm test` — учебная логика и сценарии.
 - `pnpm run typecheck` — типы.
 - `pnpm run build:pages` — GitHub Pages.
-- `pnpm run build` — Vinext.
 
 Push в main автоматически запускает тесты, проверку типов, сборку и публикацию.
 

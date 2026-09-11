@@ -39,7 +39,7 @@
   right: 0;
   top: calc(100% + 8px);
   width: min(440px, calc(100vw - 48px));
-  max-height: 65vh;
+  max-height: calc(65vh / var(--zoom));
   overflow: auto;
   padding: 20px;
   background: #fffefa;
@@ -86,7 +86,7 @@
   border-radius: 20px;
   background: #fffefa;
   box-shadow: 0 12px 36px #223a2824;
-  max-height: 65vh;
+  max-height: calc(65vh / var(--zoom));
   overflow: auto;
 }
 .hint-space {
@@ -120,8 +120,6 @@ html { overflow-anchor: none; scrollbar-gutter: stable; }
 .auto-offer { margin: 20px auto 0; max-width: 480px; padding: 12px; background: #f0f4ea; border-radius: 16px; }
 .auto-offer .auto-settings { justify-content: center; }
 @media (max-width: 1280px) {
-  header { height: 76px; }
-  .shell { margin-top: 24px; gap: 28px; }
   .lesson-top { margin-bottom: 18px; }
   .lesson-controls { margin: 12px 0; }
   .exercise { padding: 20px 24px; min-height: 0; }

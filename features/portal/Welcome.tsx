@@ -2,17 +2,22 @@
 import { useState } from 'react';
 import { stages } from '../lesson/config';
 import { textLabels } from '@/content/reading-library';
+import StylePicker, { type StyleValue } from './StylePicker';
 import type { Profile } from './profile';
 export default function Welcome({
   profile,
   onSave,
   voice,
   onVoiceChange,
+  style,
+  onStyleChange,
   onCancel,
 }: {
   profile: Profile | null;
   voice: 'female' | 'male';
   onVoiceChange: (voice: 'female' | 'male') => void;
+  style: StyleValue;
+  onStyleChange: (next: StyleValue) => void;
   onSave: (p: Profile) => void;
   onCancel?: () => void;
 }) {
@@ -68,6 +73,13 @@ export default function Welcome({
             </select>
           </label>
         </div>
+        <fieldset>
+          <legend>Какой вид удобнее ребёнку?</legend>
+          <p className="fieldset-note">
+            Выберите вместе. Потом можно поменять в «Для взрослого».
+          </p>
+          <StylePicker value={style} onChange={onStyleChange} name="welcome-style" />
+        </fieldset>
         <fieldset>
           <legend>Каким голосом озвучивать?</legend>
           <div className="start-options">

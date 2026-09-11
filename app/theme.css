@@ -1,0 +1,92 @@
+/* Design tokens. The document root carries data-layout (order | focus), data-look (plain | notebook)
+   and data-paper (main | blue), so dialogs rendered outside the app get the same values. */
+:root {
+  /* Page scale on big screens, see app/shell.css. Viewport units are zoomed too, so divide them by it. */
+  --zoom: 1;
+  --font-ui: 'Nunito', 'Segoe UI', Arial, sans-serif;
+  --font-reading: 'Andika', 'Nunito', Arial, sans-serif;
+
+  --ground: #f7f8f2;
+  --surface: #fffefb;
+  --surface-2: #f3f6ee;
+  --panel: #edf3e6;
+  --line: #dce3d6;
+  --line-strong: #d3dccb;
+  --line-soft: #edf0e6;
+  --header-line: #e1e5db;
+
+  --ink: #203c31;
+  --ink-2: #4f6356;
+  --ink-3: #66746b;
+  --ink-4: #788476;
+
+  --primary: #377c60;
+  --primary-edge: #275d48;
+  --primary-soft: #e5edda;
+  --primary-ink: #1f4a35;
+  --icon: #315c40;
+  --focus: #b68035;
+
+  --speaker: #e9f0e2;
+  --track: #eaf0e4;
+  --chip: #edf3e6;
+  --brand-tile: #e8efdf;
+
+  --star: #fbefd6;
+  --star-ink: #876524;
+  --star-line: #ecd6a6;
+  --star-fill: #efd075;
+  --star-stroke: #c39234;
+
+  --vowel: #b66145;
+  --consonant: #345d4c;
+
+  --ok-bg: #e7f3e8;
+  --ok-ink: #27613f;
+  --ok-line: #9dbfa4;
+  --warn-bg: #fff1db;
+  --warn-ink: #8a5d22;
+  --err-bg: #f9e8e5;
+  --err-ink: #a0493c;
+  --err-line: #d9afa7;
+  --mark: #f3e8c9;
+  --mark-line: #c9b978;
+  --listen: #9d6738;
+  --listen-edge: #774d27;
+
+  --bar-done: #8caa78;
+  --bar-now: #b9cfae;
+  --bar-todo: #e6ebdf;
+  --scrim: rgba(32, 60, 49, 0.34);
+
+  --grid: #e6eadc;
+  --margin: #e3a59a;
+  --press: #d3dccb;
+}
+
+:root[data-look='notebook'][data-paper='blue'] {
+  --ground: #eef2f4;
+  --surface: #fdfefe;
+  --surface-2: #eef3f6;
+  --panel: #e9f0f4;
+  --line: #d5e0e8;
+  --line-strong: #c7d4de;
+  --line-soft: #dfe7ed;
+  --header-line: #d5e0e8;
+  --ink: #1f3550;
+  --ink-2: #4a5d72;
+  --ink-3: #6f7f8f;
+  --ink-4: #7a8a99;
+  --primary-soft: #e3efe7;
+  --primary-ink: #1f3550;
+  --icon: #2b4a6b;
+  --speaker: #fdfefe;
+  --track: #e2e9ee;
+  --chip: #e9f0f4;
+  --brand-tile: #fdfefe;
+  --bar-todo: #e2e9ee;
+  --scrim: rgba(31, 53, 80, 0.34);
+  --grid: #e3ecf2;
+  --margin: #eaa3a3;
+  --press: #c7d4de;
+}

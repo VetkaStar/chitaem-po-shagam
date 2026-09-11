@@ -1,6 +1,9 @@
 import type { VisionMode } from '@/lib/vision';
 export type Stage = 'letters' | 'syllables' | 'words' | 'pictures';
 export type Mode = 'read' | 'fly' | 'type';
+export type Layout = 'order' | 'focus';
+export type Look = 'plain' | 'notebook';
+export type Paper = 'main' | 'blue';
 export type Feedback = {
   kind: 'neutral' | 'success' | 'uncertain' | 'error';
   text: string;
@@ -32,6 +35,10 @@ export type Settings = {
   colorVision: VisionMode;
   micConsent: boolean;
   micDevice: string;
+  layout: Layout;
+  look: Look;
+  paper: Paper;
+  styleChosen: boolean;
 };
 export type Entry = {
   at: string;
@@ -68,6 +75,10 @@ export const defaults: Settings = {
   colorVision: 'off',
   micConsent: false,
   micDevice: '',
+  layout: 'order',
+  look: 'plain',
+  paper: 'main',
+  styleChosen: false,
 };
 export const stages: { id: Stage; name: string; title: string }[] = [
   { id: 'letters', name: 'Буквы', title: 'Знакомимся с буквами' },

@@ -1,6 +1,7 @@
 'use client';
 import AutoAdvanceSettings from '@/components/auto-advance-settings';
 import VisionSettings from './VisionSettings';
+import StylePicker from '../portal/StylePicker';
 import { visionStyle } from '@/lib/vision';
 import { Mic, MicOff, ArrowRight, Download } from 'lucide-react';
 import {
@@ -77,6 +78,20 @@ export default function ParentSettings({
             Настройки и результаты сохраняются только в этом браузере на этом
             устройстве.
           </DialogDescription>
+          <section className="settings-style" aria-labelledby="settings-style-title">
+            <h3 id="settings-style-title">Вид приложения</h3>
+            <p>Меняется сразу, прогресс и настройки занятия сохраняются.</p>
+            <StylePicker
+              value={{ layout: settings.layout, look: settings.look, paper: settings.paper }}
+              onChange={(next) => {
+                update('layout', next.layout);
+                update('look', next.look);
+                update('paper', next.paper);
+                update('styleChosen', true);
+              }}
+              name="settings-style"
+            />
+          </section>
           <AutoAdvanceSettings model={model} />
           <div className="setting">
             <label htmlFor="narrator-voice">Голос озвучки</label>

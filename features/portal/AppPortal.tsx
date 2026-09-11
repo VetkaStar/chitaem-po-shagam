@@ -12,8 +12,36 @@ import { textLabels, type TextKind } from '@/content/reading-library';
 import Welcome from './Welcome';
 import Cabinet from './Cabinet';
 import About from './About';
+import StylePicker, { type StyleValue } from './StylePicker';
 import TextLibrary from '../library/TextLibrary';
 import { parseProfile, profileKey, type Profile } from './profile';
+
+/** Shown once to children who already had a profile before the look could be chosen. */
+function StyleChoice({
+  value,
+  onChange,
+  onDone,
+}: {
+  value: StyleValue;
+  onChange: (next: StyleValue) => void;
+  onDone: () => void;
+}) {
+  return (
+    <section className="portal-panel style-choice">
+      <p className="eyebrow">ЧИТАЕМ ПО ШАГАМ</p>
+      <h1>Какой вид удобнее?</h1>
+      <p>
+        Появился выбор вида приложения. Выберите вместе с ребёнком. Поменять
+        можно в любой момент в «Для взрослого».
+      </p>
+      <StylePicker value={value} onChange={onChange} name="first-style" />
+      <button className="primary" onClick={onDone}>
+        Продолжить →
+      </button>
+    </section>
+  );
+}
+
 export default function AppPortal({
   model,
   children,
@@ -24,13 +52,35 @@ export default function AppPortal({
   const [profile, setProfile] = useState<Profile | null>(null),
     [loaded, setLoaded] = useState(false),
     [view, setView] = useState('home'),
+    [menuOpen, setMenuOpen] = useState(false),
     [warning, setWarning] = useState('');
+  const { layout, look, paper } = model.settings;
+  const style: StyleValue = { layout, look, paper };
   useEffect(() => {
     try {
       setProfile(parseProfile(localStorage.getItem(profileKey)));
     } catch {}
     setLoaded(true);
   }, []);
+  useEffect(() => {
+    const root = document.documentElement;
+    root.dataset.layout = layout;
+    root.dataset.look = look;
+    root.dataset.paper = paper;
+  }, [layout, look, paper]);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const close = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    window.addEventListener('keydown', close);
+    return () => window.removeEventListener('keydown', close);
+  }, [menuOpen]);
+  function changeStyle(next: StyleValue) {
+    model.update('layout', next.layout);
+    model.update('look', next.look);
+    model.update('paper', next.paper);
+  }
   function go(v: string) {
     model.setLessonActive(v === 'lesson');
     model.stop();
@@ -38,6 +88,7 @@ export default function AppPortal({
     model.setPaused(false);
     model.setRest(false);
     model.setParent(false);
+    setMenuOpen(false);
     setView(v);
     window.scrollTo({ top: 0, behavior: 'instant' });
   }
@@ -49,6 +100,7 @@ export default function AppPortal({
   }
   function save(p: Profile) {
     setProfile(p);
+    model.update('styleChosen', true);
     try {
       localStorage.setItem(profileKey, JSON.stringify(p));
       setWarning('');
@@ -65,25 +117,31 @@ export default function AppPortal({
         <p>Готовим твоё место…</p>
       </main>
     );
+  const askStyle = !!profile && !model.settings.styleChosen && view !== 'about' && view !== 'edit';
   return (
     <div
       data-vision={model.settings.colorVision}
       data-audio={model.settings.sound ? 'on' : 'off'}
       style={visionStyle(model.settings.colorVision)}
-      className={model.settings.motion ? 'motion' : 'calm'}
+      className={'app-root ' + (model.settings.motion ? 'motion' : 'calm')}
     >
       <LessonHeader
         model={model}
         onHome={() => go('home')}
         onCabinet={() => go('cabinet')}
+        onMenu={() => setMenuOpen(true)}
+        active={view}
         hasProfile={!!profile}
       />
-      <main data-version="v3" className="shell app-shell">
+      <main className="app-layout">
         <LessonSidebar
           model={model}
           active={view === 'lesson' ? model.stage : view}
           onSelect={start}
           onAbout={() => go('about')}
+          onCabinet={() => go('cabinet')}
+          onClose={() => setMenuOpen(false)}
+          open={menuOpen}
           disabled={!profile}
         />
         <div className="app-content">
@@ -99,8 +157,16 @@ export default function AppPortal({
               profile={profile}
               voice={model.settings.voice}
               onVoiceChange={(voice) => model.update('voice', voice)}
+              style={style}
+              onStyleChange={changeStyle}
               onSave={save}
               onCancel={profile ? () => go('cabinet') : undefined}
+            />
+          ) : askStyle ? (
+            <StyleChoice
+              value={style}
+              onChange={changeStyle}
+              onDone={() => model.update('styleChosen', true)}
             />
           ) : view === 'lesson' ? (
             children

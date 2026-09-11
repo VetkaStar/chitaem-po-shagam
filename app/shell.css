@@ -1,0 +1,452 @@
+/* App frame: header, section menu and page grid.
+   Desktop: sidebar and content share one grid with the header, so header buttons end on the panel edge.
+   Tablet (below 1100px): sections become a row under the header. Phone (below 700px): sections open in a sheet. */
+.app-root {
+  min-height: calc(100vh / var(--zoom));
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-ui);
+}
+
+.app-bar {
+  position: relative;
+  z-index: 30;
+  display: block;
+  height: auto;
+  padding: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--header-line);
+}
+.app-bar-inner {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 860px);
+  column-gap: 64px;
+  align-items: center;
+  max-width: 1250px;
+  height: 72px;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+.app-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  width: max-content;
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.app-brand-mark {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--brand-tile);
+  color: var(--icon);
+}
+.app-brand-name {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.app-brand-name span {
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.app-bar-actions {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.app-bar-button {
+  height: 44px;
+  min-height: 44px;
+  padding: 0 16px 0 14px;
+  gap: 8px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--icon);
+  font-size: 15px;
+  font-weight: 700;
+}
+.app-bar-button:hover {
+  background: var(--surface-2);
+}
+.app-bar-button.selected {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+}
+.app-bar-button span,
+.app-bar-stars span {
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+.app-bar-stars {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 14px 0 12px;
+  border-radius: 999px;
+  background: var(--star);
+  color: var(--star-ink);
+  font-size: 15px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.app-bar-menu {
+  display: none;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--icon);
+}
+
+.app-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 860px);
+  column-gap: 64px;
+  align-items: start;
+  max-width: 1250px;
+  margin: 24px auto 0;
+  padding: 0 30px 40px;
+}
+
+.app-nav {
+  display: block;
+}
+.app-nav-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 6px;
+}
+.app-nav-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.app-nav-title {
+  margin: 0;
+  padding: 0 14px 8px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+.app-nav-close,
+.app-nav-account,
+.app-nav-backdrop {
+  display: none;
+}
+.app-nav nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+}
+.app-nav-item {
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  padding: 0 14px;
+  gap: 14px;
+  justify-content: flex-start;
+  text-align: left;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 17px;
+  font-weight: 700;
+}
+.app-nav-item b {
+  width: 18px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ink-4);
+  font-variant-numeric: tabular-nums;
+}
+.app-nav-item:hover,
+.app-nav-quiet:hover {
+  background: var(--surface-2);
+}
+.app-nav-item.selected {
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+  font-weight: 800;
+}
+.app-nav-item.selected b {
+  color: var(--primary);
+}
+.app-nav-extra {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.app-nav-quiet {
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 14px;
+  gap: 12px;
+  justify-content: flex-start;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--ink-2);
+  font-size: 15px;
+  font-weight: 700;
+}
+.app-nav-quiet.selected {
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+}
+
+/* Big screens keep the laptop layout, only larger, as in the approved mockups.
+   CSS zoom does not change media queries, so there is no feedback loop. */
+html {
+  zoom: var(--zoom);
+}
+@media (min-width: 1800px) and (min-height: 900px) {
+  :root {
+    --zoom: 1.2;
+  }
+}
+@media (min-width: 2400px) and (min-height: 1200px) {
+  :root {
+    --zoom: 1.6;
+  }
+}
+
+@media (max-width: 1099px) {
+  .app-bar-inner {
+    display: flex;
+    gap: 10px;
+    max-width: none;
+    height: 64px;
+    padding: 0 24px;
+  }
+  .app-bar-actions {
+    margin-left: auto;
+  }
+  .app-bar-stars {
+    display: inline-flex;
+  }
+  .app-layout {
+    display: block;
+    max-width: none;
+    margin: 0;
+    padding: 0 24px 40px;
+  }
+  .app-nav {
+    margin: 0 -24px 16px;
+    padding: 10px 24px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .app-nav-panel {
+    flex-direction: row;
+    align-items: center;
+    padding: 0;
+  }
+  .app-nav nav,
+  .app-nav-extra,
+  .app-nav-item,
+  .app-nav-quiet {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .app-nav-head {
+    display: none;
+  }
+  .app-nav nav {
+    flex-direction: row;
+  }
+  .app-nav-item {
+    width: auto;
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: 12px;
+    font-size: 15px;
+  }
+  .app-nav-item b {
+    display: none;
+  }
+  .app-nav-extra {
+    flex-direction: row;
+    margin: 0 0 0 auto;
+    padding: 0;
+    border: 0;
+  }
+  .app-nav-quiet {
+    width: auto;
+    padding: 0 10px;
+  }
+  .app-nav-extra .about-link span {
+    display: none;
+  }
+  .lesson-top .pill {
+    display: none;
+  }
+}
+/* Narrow tablets: the section row tightens, and scrolls sideways if it still does not fit.
+   The padding keeps focus outlines visible inside the scroll box. */
+@media (min-width: 700px) and (max-width: 1099px) {
+  .app-nav-panel {
+    margin: -8px;
+    padding: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .app-nav-panel::-webkit-scrollbar {
+    display: none;
+  }
+}
+@media (min-width: 700px) and (max-width: 900px) {
+  .app-nav nav {
+    gap: 2px;
+  }
+  .app-nav-item {
+    padding: 0 9px;
+    font-size: 14px;
+  }
+  .app-nav-quiet {
+    padding: 0 8px;
+  }
+}
+
+@media (max-width: 699px) {
+  .app-bar-inner {
+    height: 56px;
+    padding: 0 12px 0 16px;
+  }
+  .app-brand {
+    gap: 10px;
+  }
+  .app-brand-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+  .app-brand-name {
+    font-size: 17px;
+  }
+  .app-bar-button {
+    display: none;
+  }
+  .app-bar-stars {
+    height: 34px;
+    padding: 0 10px 0 8px;
+    font-size: 14px;
+  }
+  .app-bar-menu {
+    display: inline-flex;
+  }
+  .app-layout {
+    padding: 12px 16px 32px;
+  }
+  .app-nav {
+    display: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .app-nav[data-open] {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: block;
+  }
+  .app-nav-backdrop {
+    position: absolute;
+    inset: 0;
+    display: block;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: var(--scrim);
+  }
+  .app-nav-backdrop:hover {
+    background: var(--scrim);
+  }
+  .app-nav-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    width: min(320px, 86vw);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 12px 12px 24px;
+    overflow-y: auto;
+    background: var(--surface);
+    box-shadow: -12px 0 36px rgba(20, 40, 30, 0.18);
+  }
+  .app-nav-head {
+    display: flex;
+    padding-bottom: 8px;
+  }
+  .app-nav-title {
+    padding: 0 6px;
+  }
+  .app-nav-close {
+    display: inline-flex;
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--icon);
+  }
+  .app-nav nav {
+    flex-direction: column;
+  }
+  .app-nav-item {
+    width: 100%;
+    font-size: 17px;
+  }
+  .app-nav-item b {
+    display: inline;
+  }
+  .app-nav-extra,
+  .app-nav-account {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 10px 0 0;
+    padding: 10px 0 0;
+    border-top: 1px solid var(--line);
+  }
+  .app-nav-quiet {
+    width: 100%;
+  }
+  .app-nav-extra .about-link span {
+    display: inline;
+  }
+}
+@media (max-width: 359px) {
+  .app-bar-inner {
+    padding: 0 10px 0 12px;
+  }
+  .app-bar-actions {
+    gap: 6px;
+  }
+}

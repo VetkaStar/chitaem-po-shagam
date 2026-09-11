@@ -1,8 +1,8 @@
 /* One viewport-bounded frame for every rest activity and difficulty. */
 .rest-dialog.hub-dialog {
-  width: min(610px, calc(100vw - 28px));
-  height: min(900px, calc(100dvh - 32px));
-  max-height: calc(100dvh - 32px);
+  width: min(610px, calc(100vw / var(--zoom) - 28px));
+  height: min(900px, calc(100dvh / var(--zoom) - 32px));
+  max-height: calc(100dvh / var(--zoom) - 32px);
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
   overflow: hidden;

@@ -32,7 +32,11 @@ export default function LessonSidebar({
       <div className="app-nav-panel">
         <div className="app-nav-head">
           <p className="app-nav-title">Моя тропинка</p>
-          <button className="app-nav-close" aria-label="Закрыть меню" onClick={onClose}>
+          <button
+            className="app-nav-close"
+            aria-label="Закрыть меню"
+            onClick={onClose}
+          >
             <X size={20} />
           </button>
         </div>
@@ -63,7 +67,10 @@ export default function LessonSidebar({
             <span>Разминка</span>
           </button>
           <button
-            className={'app-nav-quiet about-link' + (active === 'about' ? ' selected' : '')}
+            className={
+              'app-nav-quiet about-link' +
+              (active === 'about' ? ' selected' : '')
+            }
             aria-label="О проекте"
             title="О проекте"
             onClick={onAbout}
@@ -73,7 +80,11 @@ export default function LessonSidebar({
           </button>
         </div>
         <div className="app-nav-account">
-          <button className="app-nav-quiet" onClick={onCabinet} disabled={disabled}>
+          <button
+            className="app-nav-quiet"
+            onClick={onCabinet}
+            disabled={disabled}
+          >
             <UserRound size={18} />
             <span>Мой кабинет</span>
           </button>
@@ -90,7 +101,12 @@ export default function LessonSidebar({
           </button>
         </div>
       </div>
-      <button className="app-nav-backdrop" aria-label="Закрыть меню" tabIndex={-1} onClick={onClose} />
+      <button
+        className="app-nav-backdrop"
+        aria-label="Закрыть меню"
+        tabIndex={-1}
+        onClick={onClose}
+      />
     </aside>
   );
 }

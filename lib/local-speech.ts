@@ -28,7 +28,9 @@ function loadLocalModel(progress: (text: string) => void = () => {}) {
   if (cachedModel) return cachedModel;
   cachedModel = (async () => {
     await loadScript();
-    const response = await fetch(new URL('speech/model.json', document.baseURI).href);
+    const response = await fetch(
+      new URL('speech/model.json', document.baseURI).href,
+    );
     if (!response.ok) throw Error('Не удалось загрузить описание модели.');
     const manifest = (await response.json()) as {
       bytes: number;
@@ -37,7 +39,9 @@ function loadLocalModel(progress: (text: string) => void = () => {}) {
     const chunks: Uint8Array[] = [];
     let bytes = 0;
     for (const part of manifest.parts) {
-      const r = await fetch(new URL('speech/' + part.file, document.baseURI).href);
+      const r = await fetch(
+        new URL('speech/' + part.file, document.baseURI).href,
+      );
       if (!r.ok)
         throw Error(
           'Не удалось скачать русскую модель. Проверь интернет и повтори.',

@@ -107,12 +107,22 @@ export default function ExerciseActions({
     { selected: hint },
   );
   const skip = (
-    <button type="button" className="link-button skip-link" onClick={() => next(true)}>
+    <button
+      type="button"
+      className="link-button skip-link"
+      onClick={() => next(true)}
+    >
       Пропустить <ArrowRight />
     </button>
   );
   let primary: ReactNode;
-  let left: ReactNode = side('left', <RotateCcw />, 'Повторить задание', 'Повторить', onRepeat);
+  let left: ReactNode = side(
+    'left',
+    <RotateCcw />,
+    'Повторить задание',
+    'Повторить',
+    onRepeat,
+  );
   let right: ReactNode = null;
   let links: ReactNode = null;
   let note: ReactNode = null;
@@ -123,10 +133,17 @@ export default function ExerciseActions({
       </button>
     );
     left = null;
-    right = side('right', <ArrowRight />, 'Следующее занятие', 'Дальше', onContinue, {
-      after: true,
-      extra: continueCountdown,
-    });
+    right = side(
+      'right',
+      <ArrowRight />,
+      'Следующее занятие',
+      'Дальше',
+      onContinue,
+      {
+        after: true,
+        extra: continueCountdown,
+      },
+    );
   } else if (feedback.kind === 'success') {
     primary = (
       <button
@@ -208,7 +225,13 @@ export default function ExerciseActions({
     );
     right =
       mode === 'fly'
-        ? side('right', <RefreshCw />, 'Другие карточки', 'Другие', onOtherCards)
+        ? side(
+            'right',
+            <RefreshCw />,
+            'Другие карточки',
+            'Другие',
+            onOtherCards,
+          )
         : hintToggle;
     links = mode === 'fly' ? null : skip;
   }
@@ -217,7 +240,9 @@ export default function ExerciseActions({
       <div className="lesson-dock">
         {primary}
         {left ?? <span className="dock-spacer dock-left" aria-hidden="true" />}
-        {right ?? <span className="dock-spacer dock-right" aria-hidden="true" />}
+        {right ?? (
+          <span className="dock-spacer dock-right" aria-hidden="true" />
+        )}
       </div>
       {autoAdvanceStop}
       {links && <div className="lesson-links">{links}</div>}

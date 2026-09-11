@@ -64,15 +64,34 @@ export default function AutoAdvance({
     };
   }, [enabled, blocked, seconds, cancelled, stopped]);
   if (!enabled) return null;
-  if (inline) return (
-    <span className="countdown" role="timer" aria-label={stopped ? 'Автопереход остановлен' : blocked ? 'Отсчёт на паузе' : `Переход через ${remaining} с`}>
-      <svg viewBox="0 0 36 36" aria-hidden="true">
-        <circle className="countdown-track" cx="18" cy="18" r="15" />
-        <circle className="countdown-progress" cx="18" cy="18" r="15" pathLength="100" strokeDasharray="100" strokeDashoffset={100 * (1 - remaining / seconds)} />
-      </svg>
-      <span>{stopped || blocked ? 'Ⅱ' : remaining}</span>
-    </span>
-  );
+  if (inline)
+    return (
+      <span
+        className="countdown"
+        role="timer"
+        aria-label={
+          stopped
+            ? 'Автопереход остановлен'
+            : blocked
+              ? 'Отсчёт на паузе'
+              : `Переход через ${remaining} с`
+        }
+      >
+        <svg viewBox="0 0 36 36" aria-hidden="true">
+          <circle className="countdown-track" cx="18" cy="18" r="15" />
+          <circle
+            className="countdown-progress"
+            cx="18"
+            cy="18"
+            r="15"
+            pathLength="100"
+            strokeDasharray="100"
+            strokeDashoffset={100 * (1 - remaining / seconds)}
+          />
+        </svg>
+        <span>{stopped || blocked ? 'Ⅱ' : remaining}</span>
+      </span>
+    );
   return (
     <div className="auto-advance" role="status">
       {cancelled || stopped

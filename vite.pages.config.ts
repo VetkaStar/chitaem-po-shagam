@@ -13,4 +13,3 @@ export default defineConfig({
   css: { postcss: { plugins: [tailwindcss()] } },
   build: { outDir: '../dist-pages', emptyOutDir: true },
 });
-

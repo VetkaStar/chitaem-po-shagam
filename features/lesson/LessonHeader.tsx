@@ -48,7 +48,9 @@ export default function LessonHeader({
             </span>
           )}
           <button
-            className={'app-bar-button' + (active === 'cabinet' ? ' selected' : '')}
+            className={
+              'app-bar-button' + (active === 'cabinet' ? ' selected' : '')
+            }
             onClick={onCabinet}
             disabled={!hasProfile}
           >
@@ -65,7 +67,11 @@ export default function LessonHeader({
             <Settings2 size={18} />
             <span>Для взрослого</span>
           </button>
-          <button className="app-bar-menu" aria-label="Открыть меню" onClick={onMenu}>
+          <button
+            className="app-bar-menu"
+            aria-label="Открыть меню"
+            onClick={onMenu}
+          >
             <Menu size={20} />
           </button>
         </div>

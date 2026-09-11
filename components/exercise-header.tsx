@@ -37,7 +37,9 @@ export default function ExerciseHeader({
         {Array.from({ length: total }, (_, i) => (
           <i
             key={i}
-            data-state={i < completed ? 'done' : i === completed ? 'now' : 'todo'}
+            data-state={
+              i < completed ? 'done' : i === completed ? 'now' : 'todo'
+            }
           />
         ))}
       </div>

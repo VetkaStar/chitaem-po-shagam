@@ -4,7 +4,6 @@ import PracticeMenu from '@/components/practice-menu';
 import ReadingGuideControls from './ReadingGuideControls';
 import type { LessonModel } from './use-lesson';
 export default function PracticeControls({ model: m }: { model: LessonModel }) {
-
   return (
     <PracticeMenu>
       <AutoAdvanceSettings model={m} />

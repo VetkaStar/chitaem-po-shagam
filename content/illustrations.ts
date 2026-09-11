@@ -921,587 +921,586 @@ export const illustrations = {
     },
   },
 
-  "word-23": {
-    "target": "вода",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-23-main.webp",
-        "alt": "Вода.",
-        "width": 320,
-        "height": 320
+  'word-23': {
+    target: 'вода',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-23-main.webp',
+        alt: 'Вода.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-23-alternate.webp",
-        "alt": "Вода.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-23-alternate.webp',
+        alt: 'Вода.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-23-context.webp",
-        "alt": "Вода в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-23-context.webp',
+        alt: 'Вода в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-24": {
-    "target": "сом",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-24-main.webp",
-        "alt": "Сом.",
-        "width": 320,
-        "height": 320
+  'word-24': {
+    target: 'сом',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-24-main.webp',
+        alt: 'Сом.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-24-alternate.webp",
-        "alt": "Сом.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-24-alternate.webp',
+        alt: 'Сом.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-24-context.webp",
-        "alt": "Сом в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-24-context.webp',
+        alt: 'Сом в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-25": {
-    "target": "шар",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-25-main.webp",
-        "alt": "Шар.",
-        "width": 320,
-        "height": 320
+  'word-25': {
+    target: 'шар',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-25-main.webp',
+        alt: 'Шар.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-25-alternate.webp",
-        "alt": "Шар.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-25-alternate.webp',
+        alt: 'Шар.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-25-context.webp",
-        "alt": "Шар в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-25-context.webp',
+        alt: 'Шар в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-26": {
-    "target": "дуб",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-26-main.webp",
-        "alt": "Дуб.",
-        "width": 320,
-        "height": 320
+  'word-26': {
+    target: 'дуб',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-26-main.webp',
+        alt: 'Дуб.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-26-alternate.webp",
-        "alt": "Дуб.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-26-alternate.webp',
+        alt: 'Дуб.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-26-context.webp",
-        "alt": "Дуб в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-26-context.webp',
+        alt: 'Дуб в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-27": {
-    "target": "суп",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-27-main.webp",
-        "alt": "Суп.",
-        "width": 320,
-        "height": 320
+  'word-27': {
+    target: 'суп',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-27-main.webp',
+        alt: 'Суп.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-27-alternate.webp",
-        "alt": "Суп.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-27-alternate.webp',
+        alt: 'Суп.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-27-context.webp",
-        "alt": "Суп в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-27-context.webp',
+        alt: 'Суп в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-28": {
-    "target": "мяч",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-28-main.webp",
-        "alt": "Мяч.",
-        "width": 320,
-        "height": 320
+  'word-28': {
+    target: 'мяч',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-28-main.webp',
+        alt: 'Мяч.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-28-alternate.webp",
-        "alt": "Мяч.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-28-alternate.webp',
+        alt: 'Мяч.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-28-context.webp",
-        "alt": "Мяч в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-28-context.webp',
+        alt: 'Мяч в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-29": {
-    "target": "снег",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-29-main.webp",
-        "alt": "Снег.",
-        "width": 320,
-        "height": 320
+  'word-29': {
+    target: 'снег',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-29-main.webp',
+        alt: 'Снег.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-29-alternate.webp",
-        "alt": "Снег.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-29-alternate.webp',
+        alt: 'Снег.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-29-context.webp",
-        "alt": "Снег в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-29-context.webp',
+        alt: 'Снег в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-30": {
-    "target": "лес",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-30-main.webp",
-        "alt": "Лес.",
-        "width": 320,
-        "height": 320
+  'word-30': {
+    target: 'лес',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-30-main.webp',
+        alt: 'Лес.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-30-alternate.webp",
-        "alt": "Лес.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-30-alternate.webp',
+        alt: 'Лес.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-30-context.webp",
-        "alt": "Лес в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-30-context.webp',
+        alt: 'Лес в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-31": {
-    "target": "лист",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-31-main.webp",
-        "alt": "Лист.",
-        "width": 320,
-        "height": 320
+  'word-31': {
+    target: 'лист',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-31-main.webp',
+        alt: 'Лист.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-31-alternate.webp",
-        "alt": "Лист.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-31-alternate.webp',
+        alt: 'Лист.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-31-context.webp",
-        "alt": "Лист в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-31-context.webp',
+        alt: 'Лист в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-32": {
-    "target": "мост",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-32-main.webp",
-        "alt": "Мост.",
-        "width": 320,
-        "height": 320
+  'word-32': {
+    target: 'мост',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-32-main.webp',
+        alt: 'Мост.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-32-alternate.webp",
-        "alt": "Мост.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-32-alternate.webp',
+        alt: 'Мост.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-32-context.webp",
-        "alt": "Мост в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-32-context.webp',
+        alt: 'Мост в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-33": {
-    "target": "зонт",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-33-main.webp",
-        "alt": "Зонт.",
-        "width": 320,
-        "height": 320
+  'word-33': {
+    target: 'зонт',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-33-main.webp',
+        alt: 'Зонт.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-33-alternate.webp",
-        "alt": "Зонт.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-33-alternate.webp',
+        alt: 'Зонт.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-33-context.webp",
-        "alt": "Зонт в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-33-context.webp',
+        alt: 'Зонт в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-34": {
-    "target": "хлеб",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-34-main.webp",
-        "alt": "Хлеб.",
-        "width": 320,
-        "height": 320
+  'word-34': {
+    target: 'хлеб',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-34-main.webp',
+        alt: 'Хлеб.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-34-alternate.webp",
-        "alt": "Хлеб.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-34-alternate.webp',
+        alt: 'Хлеб.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-34-context.webp",
-        "alt": "Хлеб в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-34-context.webp',
+        alt: 'Хлеб в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-35": {
-    "target": "море",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-35-main.webp",
-        "alt": "Море.",
-        "width": 320,
-        "height": 320
+  'word-35': {
+    target: 'море',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-35-main.webp',
+        alt: 'Море.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-35-alternate.webp",
-        "alt": "Море.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-35-alternate.webp',
+        alt: 'Море.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-35-context.webp",
-        "alt": "Море в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-35-context.webp',
+        alt: 'Море в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-36": {
-    "target": "гора",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-36-main.webp",
-        "alt": "Гора.",
-        "width": 320,
-        "height": 320
+  'word-36': {
+    target: 'гора',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-36-main.webp',
+        alt: 'Гора.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-36-alternate.webp",
-        "alt": "Гора.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-36-alternate.webp',
+        alt: 'Гора.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-36-context.webp",
-        "alt": "Гора в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-36-context.webp',
+        alt: 'Гора в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-37": {
-    "target": "нога",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-37-main.webp",
-        "alt": "Нога.",
-        "width": 320,
-        "height": 320
+  'word-37': {
+    target: 'нога',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-37-main.webp',
+        alt: 'Нога.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-37-alternate.webp",
-        "alt": "Нога.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-37-alternate.webp',
+        alt: 'Нога.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-37-context.webp",
-        "alt": "Нога в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-37-context.webp',
+        alt: 'Нога в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-38": {
-    "target": "роза",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-38-main.webp",
-        "alt": "Роза.",
-        "width": 320,
-        "height": 320
+  'word-38': {
+    target: 'роза',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-38-main.webp',
+        alt: 'Роза.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-38-alternate.webp",
-        "alt": "Роза.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-38-alternate.webp',
+        alt: 'Роза.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-38-context.webp",
-        "alt": "Роза в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-38-context.webp',
+        alt: 'Роза в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-39": {
-    "target": "ваза",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-39-main.webp",
-        "alt": "Ваза.",
-        "width": 320,
-        "height": 320
+  'word-39': {
+    target: 'ваза',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-39-main.webp',
+        alt: 'Ваза.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-39-alternate.webp",
-        "alt": "Ваза.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-39-alternate.webp',
+        alt: 'Ваза.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-39-context.webp",
-        "alt": "Ваза в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-39-context.webp',
+        alt: 'Ваза в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-40": {
-    "target": "каша",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-40-main.webp",
-        "alt": "Каша.",
-        "width": 320,
-        "height": 320
+  'word-40': {
+    target: 'каша',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-40-main.webp',
+        alt: 'Каша.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-40-alternate.webp",
-        "alt": "Каша.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-40-alternate.webp',
+        alt: 'Каша.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-40-context.webp",
-        "alt": "Каша в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-40-context.webp',
+        alt: 'Каша в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-41": {
-    "target": "чашка",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-41-main.webp",
-        "alt": "Чашка.",
-        "width": 320,
-        "height": 320
+  'word-41': {
+    target: 'чашка',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-41-main.webp',
+        alt: 'Чашка.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-41-alternate.webp",
-        "alt": "Чашка.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-41-alternate.webp',
+        alt: 'Чашка.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-41-context.webp",
-        "alt": "Чашка в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-41-context.webp',
+        alt: 'Чашка в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-42": {
-    "target": "ложка",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-42-main.webp",
-        "alt": "Ложка.",
-        "width": 320,
-        "height": 320
+  'word-42': {
+    target: 'ложка',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-42-main.webp',
+        alt: 'Ложка.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-42-alternate.webp",
-        "alt": "Ложка.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-42-alternate.webp',
+        alt: 'Ложка.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-42-context.webp",
-        "alt": "Ложка в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-42-context.webp',
+        alt: 'Ложка в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-43": {
-    "target": "лодка",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-43-main.webp",
-        "alt": "Лодка.",
-        "width": 320,
-        "height": 320
+  'word-43': {
+    target: 'лодка',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-43-main.webp',
+        alt: 'Лодка.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-43-alternate.webp",
-        "alt": "Лодка.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-43-alternate.webp',
+        alt: 'Лодка.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-43-context.webp",
-        "alt": "Лодка в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-43-context.webp',
+        alt: 'Лодка в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-44": {
-    "target": "ухо",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-44-main.webp",
-        "alt": "Ухо.",
-        "width": 320,
-        "height": 320
+  'word-44': {
+    target: 'ухо',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-44-main.webp',
+        alt: 'Ухо.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-44-alternate.webp",
-        "alt": "Ухо.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-44-alternate.webp',
+        alt: 'Ухо.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-44-context.webp",
-        "alt": "Ухо в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-44-context.webp',
+        alt: 'Ухо в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-45": {
-    "target": "пол",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-45-main.webp",
-        "alt": "Пол.",
-        "width": 320,
-        "height": 320
+  'word-45': {
+    target: 'пол',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-45-main.webp',
+        alt: 'Пол.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-45-alternate.webp",
-        "alt": "Пол.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-45-alternate.webp',
+        alt: 'Пол.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-45-context.webp",
-        "alt": "Пол в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
+      context: {
+        src: 'illustrations/words-23-46/word-45-context.webp',
+        alt: 'Пол в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
   },
-  "word-46": {
-    "target": "роса",
-    "variants": {
-      "main": {
-        "src": "illustrations/words-23-46/word-46-main.webp",
-        "alt": "Роса.",
-        "width": 320,
-        "height": 320
+  'word-46': {
+    target: 'роса',
+    variants: {
+      main: {
+        src: 'illustrations/words-23-46/word-46-main.webp',
+        alt: 'Роса.',
+        width: 320,
+        height: 320,
       },
-      "alternate": {
-        "src": "illustrations/words-23-46/word-46-alternate.webp",
-        "alt": "Роса.",
-        "width": 320,
-        "height": 320
+      alternate: {
+        src: 'illustrations/words-23-46/word-46-alternate.webp',
+        alt: 'Роса.',
+        width: 320,
+        height: 320,
       },
-      "context": {
-        "src": "illustrations/words-23-46/word-46-context.webp",
-        "alt": "Роса в окружении.",
-        "width": 320,
-        "height": 320
-      }
-    }
-  }
-
+      context: {
+        src: 'illustrations/words-23-46/word-46-context.webp',
+        alt: 'Роса в окружении.',
+        width: 320,
+        height: 320,
+      },
+    },
+  },
 } as const;
 export type IllustrationId = keyof typeof illustrations;
 export type IllustrationVariant = 'main' | 'alternate' | 'context';
 export const wordIllustrations: Record<string, IllustrationId> = {
-  'ВОДА': 'word-23',
-  'СОМ': 'word-24',
-  'ШАР': 'word-25',
-  'ДУБ': 'word-26',
-  'СУП': 'word-27',
-  'МЯЧ': 'word-28',
-  'СНЕГ': 'word-29',
-  'ЛЕС': 'word-30',
-  'ЛИСТ': 'word-31',
-  'МОСТ': 'word-32',
-  'ЗОНТ': 'word-33',
-  'ХЛЕБ': 'word-34',
-  'МОРЕ': 'word-35',
-  'ГОРА': 'word-36',
-  'НОГА': 'word-37',
-  'РОЗА': 'word-38',
-  'ВАЗА': 'word-39',
-  'КАША': 'word-40',
-  'ЧАШКА': 'word-41',
-  'ЛОЖКА': 'word-42',
-  'ЛОДКА': 'word-43',
-  'УХО': 'word-44',
-  'ПОЛ': 'word-45',
-  'РОСА': 'word-46',
+  ВОДА: 'word-23',
+  СОМ: 'word-24',
+  ШАР: 'word-25',
+  ДУБ: 'word-26',
+  СУП: 'word-27',
+  МЯЧ: 'word-28',
+  СНЕГ: 'word-29',
+  ЛЕС: 'word-30',
+  ЛИСТ: 'word-31',
+  МОСТ: 'word-32',
+  ЗОНТ: 'word-33',
+  ХЛЕБ: 'word-34',
+  МОРЕ: 'word-35',
+  ГОРА: 'word-36',
+  НОГА: 'word-37',
+  РОЗА: 'word-38',
+  ВАЗА: 'word-39',
+  КАША: 'word-40',
+  ЧАШКА: 'word-41',
+  ЛОЖКА: 'word-42',
+  ЛОДКА: 'word-43',
+  УХО: 'word-44',
+  ПОЛ: 'word-45',
+  РОСА: 'word-46',
 
   ДОМ: 'picture-01',
   КОТ: 'picture-02',

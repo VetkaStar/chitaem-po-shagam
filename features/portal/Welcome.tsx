@@ -78,15 +78,23 @@ export default function Welcome({
           <p className="fieldset-note">
             Выберите вместе. Потом можно поменять в «Для взрослого».
           </p>
-          <StylePicker value={style} onChange={onStyleChange} name="welcome-style" />
+          <StylePicker
+            value={style}
+            onChange={onStyleChange}
+            name="welcome-style"
+          />
         </fieldset>
         <fieldset>
           <legend>Каким голосом озвучивать?</legend>
           <div className="start-options">
             {(['female', 'male'] as const).map((value) => (
               <label key={value} className={voice === value ? 'chosen' : ''}>
-                <input type="radio" name="voice" checked={voice === value}
-                  onChange={() => onVoiceChange(value)} />
+                <input
+                  type="radio"
+                  name="voice"
+                  checked={voice === value}
+                  onChange={() => onVoiceChange(value)}
+                />
                 {value === 'female' ? 'Женский' : 'Мужской'}
               </label>
             ))}

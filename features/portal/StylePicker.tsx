@@ -5,12 +5,24 @@ import type { Layout, Look, Paper } from '../lesson/config';
 export type StyleValue = { layout: Layout; look: Look; paper: Paper };
 
 const layouts = [
-  { id: 'order', name: 'Порядок', text: 'Меню разделов всегда рядом, всё на своих местах.' },
-  { id: 'focus', name: 'Фокус', text: 'Во время задания на экране только задание и крупные кнопки.' },
+  {
+    id: 'order',
+    name: 'Порядок',
+    text: 'Меню разделов всегда рядом, всё на своих местах.',
+  },
+  {
+    id: 'focus',
+    name: 'Фокус',
+    text: 'Во время задания на экране только задание и крупные кнопки.',
+  },
 ] as const;
 const looks = [
   { id: 'plain', name: 'Обычное', text: 'Белый лист задания без рисунка.' },
-  { id: 'notebook', name: 'Тетрадь', text: 'Лист в клетку с полями, как в школьной тетради.' },
+  {
+    id: 'notebook',
+    name: 'Тетрадь',
+    text: 'Лист в клетку с полями, как в школьной тетради.',
+  },
 ] as const;
 const papers = [
   { id: 'main', name: 'Основной' },
@@ -67,7 +79,10 @@ function Preview({ kind, blue }: { kind: Layout | Look; blue: boolean }) {
       </span>
     );
   return (
-    <span className={'pv pv-notebook' + (blue ? ' pv-blue' : '')} aria-hidden="true">
+    <span
+      className={'pv pv-notebook' + (blue ? ' pv-blue' : '')}
+      aria-hidden="true"
+    >
       <Letters />
       <i className="pv-btn" />
     </span>
@@ -91,7 +106,13 @@ export default function StylePicker({
     select: () => void,
   ) => (
     <label key={item.id} className={'style-option' + (on ? ' chosen' : '')}>
-      <input type="radio" name={`${name}-${group}`} value={item.id} checked={on} onChange={select} />
+      <input
+        type="radio"
+        name={`${name}-${group}`}
+        value={item.id}
+        checked={on}
+        onChange={select}
+      />
       <Preview kind={item.id} blue={value.paper === 'blue'} />
       <span className="style-body">
         <span className="style-label">
@@ -107,13 +128,21 @@ export default function StylePicker({
       <fieldset className="style-group">
         <legend>Раскладка</legend>
         <div className="style-options">
-          {layouts.map((item) => option('layout', item, value.layout === item.id, () => onChange({ ...value, layout: item.id })))}
+          {layouts.map((item) =>
+            option('layout', item, value.layout === item.id, () =>
+              onChange({ ...value, layout: item.id }),
+            ),
+          )}
         </div>
       </fieldset>
       <fieldset className="style-group">
         <legend>Оформление</legend>
         <div className="style-options">
-          {looks.map((item) => option('look', item, value.look === item.id, () => onChange({ ...value, look: item.id })))}
+          {looks.map((item) =>
+            option('look', item, value.look === item.id, () =>
+              onChange({ ...value, look: item.id }),
+            ),
+          )}
         </div>
       </fieldset>
       {value.look === 'notebook' && (
@@ -121,9 +150,25 @@ export default function StylePicker({
           <legend>Цвет страницы</legend>
           <div className="style-swatches">
             {papers.map((item) => (
-              <label key={item.id} className={'style-swatch' + (value.paper === item.id ? ' chosen' : '')}>
-                <input type="radio" name={`${name}-paper`} value={item.id} checked={value.paper === item.id} onChange={() => onChange({ ...value, paper: item.id })} />
-                <span className={'style-swatch-dot' + (item.id === 'blue' ? ' blue' : '')} aria-hidden="true" />
+              <label
+                key={item.id}
+                className={
+                  'style-swatch' + (value.paper === item.id ? ' chosen' : '')
+                }
+              >
+                <input
+                  type="radio"
+                  name={`${name}-paper`}
+                  value={item.id}
+                  checked={value.paper === item.id}
+                  onChange={() => onChange({ ...value, paper: item.id })}
+                />
+                <span
+                  className={
+                    'style-swatch-dot' + (item.id === 'blue' ? ' blue' : '')
+                  }
+                  aria-hidden="true"
+                />
                 {item.name}
               </label>
             ))}

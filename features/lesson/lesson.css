@@ -65,7 +65,8 @@
 .mode-list button:hover {
   background: rgba(255, 255, 255, 0.55);
 }
-.mode-list button:is([data-active], [aria-selected='true'], [aria-pressed='true']) {
+.mode-list
+  button:is([data-active], [aria-selected='true'], [aria-pressed='true']) {
   background: var(--surface);
   box-shadow: 0 1px 3px rgba(37, 54, 32, 0.16);
   color: var(--primary-ink);
@@ -1024,11 +1025,22 @@ section.lesson > * {
 .lesson .adult-check > summary::-webkit-details-marker {
   display: none;
 }
-.lesson :is(.link-button, .adult-check > summary, .illustration-navigation .text-button):hover {
+.lesson
+  :is(
+    .link-button,
+    .adult-check > summary,
+    .illustration-navigation .text-button
+  ):hover {
   background: none;
   color: var(--primary-ink);
 }
-.lesson :is(.link-button, .adult-check > summary, .illustration-navigation .text-button) svg {
+.lesson
+  :is(
+    .link-button,
+    .adult-check > summary,
+    .illustration-navigation .text-button
+  )
+  svg {
   flex-shrink: 0;
   width: 16px;
   height: 16px;
@@ -1189,14 +1201,22 @@ section.lesson > * {
     grid-column: 1 / -1;
     margin-top: 8px;
   }
-  [data-vision]:not([data-vision='off']) .lesson .exercise:is(.success, .error) {
+  [data-vision]:not([data-vision='off'])
+    .lesson
+    .exercise:is(.success, .error) {
     border-bottom-width: 0;
   }
-  [data-vision]:not([data-vision='off']) .lesson .exercise.success + .lesson-actions {
+  [data-vision]:not([data-vision='off'])
+    .lesson
+    .exercise.success
+    + .lesson-actions {
     border: 3px solid var(--vision-first);
     border-top: 0;
   }
-  [data-vision]:not([data-vision='off']) .lesson .exercise.error + .lesson-actions {
+  [data-vision]:not([data-vision='off'])
+    .lesson
+    .exercise.error
+    + .lesson-actions {
     border: 3px dashed var(--vision-second);
     border-top: 0;
   }

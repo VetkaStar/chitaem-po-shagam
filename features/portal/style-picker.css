@@ -217,7 +217,9 @@
   gap: 7px;
   border-color: #d3dccb;
   background-color: #fffefb;
-  background-image: linear-gradient(#e6eadc 1px, transparent 1px), linear-gradient(90deg, #e6eadc 1px, transparent 1px);
+  background-image:
+    linear-gradient(#e6eadc 1px, transparent 1px),
+    linear-gradient(90deg, #e6eadc 1px, transparent 1px);
   background-size: 9px 9px;
 }
 .style-picker .pv-notebook::before {
@@ -235,7 +237,9 @@
 .style-picker .pv-notebook.pv-blue {
   border-color: #c7d4de;
   background-color: #fdfefe;
-  background-image: linear-gradient(#e3ecf2 1px, transparent 1px), linear-gradient(90deg, #e3ecf2 1px, transparent 1px);
+  background-image:
+    linear-gradient(#e3ecf2 1px, transparent 1px),
+    linear-gradient(90deg, #e3ecf2 1px, transparent 1px);
 }
 .style-picker .pv-notebook.pv-blue::before {
   background: #eaa3a3;
@@ -272,13 +276,17 @@
   border: 1.5px solid #d3dccb;
   border-radius: 50%;
   background-color: #fffefb;
-  background-image: linear-gradient(#e6eadc 1px, transparent 1px), linear-gradient(90deg, #e6eadc 1px, transparent 1px);
+  background-image:
+    linear-gradient(#e6eadc 1px, transparent 1px),
+    linear-gradient(90deg, #e6eadc 1px, transparent 1px);
   background-size: 6px 6px;
 }
 .style-picker .style-swatch-dot.blue {
   border-color: #c7d4de;
   background-color: #fdfefe;
-  background-image: linear-gradient(#e3ecf2 1px, transparent 1px), linear-gradient(90deg, #e3ecf2 1px, transparent 1px);
+  background-image:
+    linear-gradient(#e3ecf2 1px, transparent 1px),
+    linear-gradient(90deg, #e3ecf2 1px, transparent 1px);
 }
 
 @container (max-width: 480px) {

@@ -76,11 +76,18 @@ export default function ParentSettings({
             Настройки и результаты сохраняются только в этом браузере на этом
             устройстве.
           </DialogDescription>
-          <section className="settings-style" aria-labelledby="settings-style-title">
+          <section
+            className="settings-style"
+            aria-labelledby="settings-style-title"
+          >
             <h3 id="settings-style-title">Вид приложения</h3>
             <p>Меняется сразу, прогресс и настройки занятия сохраняются.</p>
             <StylePicker
-              value={{ layout: settings.layout, look: settings.look, paper: settings.paper }}
+              value={{
+                layout: settings.layout,
+                look: settings.look,
+                paper: settings.paper,
+              }}
               onChange={(next) => {
                 update('layout', next.layout);
                 update('look', next.look);
@@ -93,8 +100,13 @@ export default function ParentSettings({
           <AutoAdvanceSettings model={model} />
           <div className="setting">
             <label htmlFor="narrator-voice">Голос озвучки</label>
-            <select id="narrator-voice" value={settings.voice}
-              onChange={(e) => update('voice', e.target.value as 'female' | 'male')}>
+            <select
+              id="narrator-voice"
+              value={settings.voice}
+              onChange={(e) =>
+                update('voice', e.target.value as 'female' | 'male')
+              }
+            >
               <option value="female">Женский</option>
               <option value="male">Мужской</option>
             </select>

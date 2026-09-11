@@ -1,19 +1,16 @@
 'use client';
 import { illustrationSources } from '@/content/illustration-sources';
-import { illustrationSizes, useIllustrationPreload } from '@/components/use-illustration-preload';
+import {
+  illustrationSizes,
+  useIllustrationPreload,
+} from '@/components/use-illustration-preload';
 import ExerciseHeader from '@/components/exercise-header';
 import PracticeMenu from '@/components/practice-menu';
 import type { ReactNode } from 'react';
 import AutoAdvanceSettings from '@/components/auto-advance-settings';
 import AutoAdvance from '@/components/auto-advance';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Mic,
-  MessageCircle,
-  Keyboard,
-  Volume2,
-  RotateCcw,
-} from 'lucide-react';
+import { Mic, MessageCircle, Keyboard, Volume2, RotateCcw } from 'lucide-react';
 import type { ReadingText } from '@/content/reading-library';
 import type { LessonModel } from '../lesson/use-lesson';
 import { shuffled } from '@/lib/session';
@@ -64,7 +61,7 @@ export default function TextExercise({
     [message, setMessage] = useState(''),
     [mic, setMicState] = useState(micSession?.current ?? false);
   function setMic(value: boolean | ((previous: boolean) => boolean)) {
-    setMicState(previous => {
+    setMicState((previous) => {
       const next = typeof value === 'function' ? value(previous) : value;
       if (micSession) micSession.current = next;
       return next;
@@ -324,8 +321,7 @@ export default function TextExercise({
         </div>
         {textPicker}
         <PracticeMenu>
-          <AutoAdvanceSettings model={model} />
-          {' '}
+          <AutoAdvanceSettings model={model} />{' '}
           {mode === 'read' && (
             <label className="text-question-option">
               <input
@@ -699,7 +695,22 @@ export default function TextExercise({
                     : mode === 'read' && ask
                       ? 'Ответить на вопрос →'
                       : 'Завершить →'}
-                  <AutoAdvance key={`${line}-${question}`} inline enabled={model.settings.autoAdvance && (mode !== 'read' || model.settings.textFlow !== 'auto')} seconds={model.settings.autoAdvanceSeconds} blocked={model.parent || model.paused || model.rest || model.speaking} onNext={next} />
+                  <AutoAdvance
+                    key={`${line}-${question}`}
+                    inline
+                    enabled={
+                      model.settings.autoAdvance &&
+                      (mode !== 'read' || model.settings.textFlow !== 'auto')
+                    }
+                    seconds={model.settings.autoAdvanceSeconds}
+                    blocked={
+                      model.parent ||
+                      model.paused ||
+                      model.rest ||
+                      model.speaking
+                    }
+                    onNext={next}
+                  />
                 </button>
               )}
             </>
@@ -722,11 +733,24 @@ export default function TextExercise({
             Пропустить →
           </button>
         </div>
-        {done && completedTasks >= taskTotal && !model.settings.autoAdvance && <div className="auto-offer"><p>Продолжать автоматически?</p><AutoAdvanceSettings model={model} /></div>}
+        {done && completedTasks >= taskTotal && !model.settings.autoAdvance && (
+          <div className="auto-offer">
+            <p>Продолжать автоматически?</p>
+            <AutoAdvanceSettings model={model} />
+          </div>
+        )}
         {done && (
           <button className="primary" onClick={onNext ?? onBack}>
             Следующий текст →
-            <AutoAdvance inline enabled={model.settings.autoAdvance} seconds={model.settings.autoAdvanceSeconds} blocked={model.parent || model.paused || model.rest || model.speaking} onNext={onNext ?? onBack} />
+            <AutoAdvance
+              inline
+              enabled={model.settings.autoAdvance}
+              seconds={model.settings.autoAdvanceSeconds}
+              blocked={
+                model.parent || model.paused || model.rest || model.speaking
+              }
+              onNext={onNext ?? onBack}
+            />
           </button>
         )}
       </div>

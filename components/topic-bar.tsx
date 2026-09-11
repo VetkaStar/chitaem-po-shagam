@@ -81,7 +81,9 @@ export default function TopicBar({
   if (compact)
     return (
       <nav
-        className={'topic-navigation topic-compact' + (done ? ' topic-completed' : '')}
+        className={
+          'topic-navigation topic-compact' + (done ? ' topic-completed' : '')
+        }
         aria-label="Темы занятия"
       >
         <div className="topic-chip">

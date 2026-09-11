@@ -86,9 +86,14 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
   const displayWord = model.showParts ? parts.join('·') : target;
   const wordRead = stage === 'words' && mode === 'read';
   const nextButton = useRef<HTMLButtonElement>(null);
-  const showBridge = stage === 'syllables' && feedback.kind === 'success' &&
-    (count + 1) % 2 === 0 && availableBridges(levels[settings.unit].letters).length > 0;
-  const advanceSeconds = showBridge ? Math.max(15, settings.autoAdvanceSeconds) : settings.autoAdvanceSeconds;
+  const showBridge =
+    stage === 'syllables' &&
+    feedback.kind === 'success' &&
+    (count + 1) % 2 === 0 &&
+    availableBridges(levels[settings.unit].letters).length > 0;
+  const advanceSeconds = showBridge
+    ? Math.max(15, settings.autoAdvanceSeconds)
+    : settings.autoAdvanceSeconds;
   const activityKey = `${stage}-${mode}-${target}-${index}-${model.repeatEpoch}-${done}`;
   const [stoppedActivity, setStoppedActivity] = useState<string | null>(null);
   const autoStopped = stoppedActivity === activityKey;
@@ -98,7 +103,11 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
   const advanceStop = (place: 'only-wide' | 'only-narrow') =>
     settings.autoAdvance && (done || feedback.kind === 'success') ? (
       <div className={'auto-stop ' + place}>
-        <button className="link-button" onClick={stopAdvance} disabled={autoStopped}>
+        <button
+          className="link-button"
+          onClick={stopAdvance}
+          disabled={autoStopped}
+        >
           <X size={16} />
           {autoStopped ? 'Автопереход остановлен' : 'Не переходить'}
         </button>
@@ -206,7 +215,11 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
               )}
               <h2>{task}</h2>
             </div>
-            <TaskInstruction text={instruction} sound={settings.sound} speak={speak} />
+            <TaskInstruction
+              text={instruction}
+              sound={settings.sound}
+              speak={speak}
+            />
             {wordRead &&
               showWordPicture &&
               (wordIllustrations[target] ? (
@@ -371,14 +384,39 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
       <ExerciseActions
         done={done}
         autoAdvanceStop={advanceStop('only-wide')}
-        countdown={<AutoAdvance key={`${index}-${model.repeatEpoch}`} inline stopped={autoStopped} enabled={settings.autoAdvance} seconds={advanceSeconds} blocked={blocked} onNext={() => next()} />}
-        continueCountdown={<AutoAdvance inline stopped={autoStopped} enabled={settings.autoAdvance} seconds={advanceSeconds} blocked={blocked} onNext={model.continueLesson} />}
+        countdown={
+          <AutoAdvance
+            key={`${index}-${model.repeatEpoch}`}
+            inline
+            stopped={autoStopped}
+            enabled={settings.autoAdvance}
+            seconds={advanceSeconds}
+            blocked={blocked}
+            onNext={() => next()}
+          />
+        }
+        continueCountdown={
+          <AutoAdvance
+            inline
+            stopped={autoStopped}
+            enabled={settings.autoAdvance}
+            seconds={advanceSeconds}
+            blocked={blocked}
+            onNext={model.continueLesson}
+          />
+        }
         feedback={feedback}
         nextButton={nextButton}
         next={next}
         mode={mode}
         hint={hint}
-        canSubmit={!!answer.trim() && feedback.kind !== 'success' && !paused && !parent && !rest}
+        canSubmit={
+          !!answer.trim() &&
+          feedback.kind !== 'success' &&
+          !paused &&
+          !parent &&
+          !rest
+        }
         submit={submit}
         listening={listening}
         listen={listen}

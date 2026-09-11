@@ -34,7 +34,6 @@ export default function TextLibrary({
         </span>
       </div>
       <TopicBar
-        
         unit={model.settings.unit}
         current={topicNames[model.settings.unit]}
         nextLabel={topicNames[(model.settings.unit + 1) % topicNames.length]}

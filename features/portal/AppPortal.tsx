@@ -118,9 +118,14 @@ export default function AppPortal({
         <p>Готовим твоё место…</p>
       </main>
     );
-  const askStyle = !!profile && !model.settings.styleChosen && view !== 'about' && view !== 'edit';
+  const askStyle =
+    !!profile &&
+    !model.settings.styleChosen &&
+    view !== 'about' &&
+    view !== 'edit';
   // «Фокус» shows a task without the app header and the section menu; the task has its own bar.
-  const focusActivity = layout === 'focus' && view === 'lesson' && !!profile && !askStyle;
+  const focusActivity =
+    layout === 'focus' && view === 'lesson' && !!profile && !askStyle;
   return (
     <div
       data-vision={model.settings.colorVision}
@@ -139,112 +144,117 @@ export default function AppPortal({
         />
       )}
       <PortalContext.Provider value={{ home: () => go('home') }}>
-      <main className={'app-layout' + (focusActivity ? ' focus-activity' : '')}>
-        <LessonSidebar
-          model={model}
-          active={view === 'lesson' ? model.stage : view}
-          onSelect={start}
-          onAbout={() => go('about')}
-          onCabinet={() => go('cabinet')}
-          onClose={() => setMenuOpen(false)}
-          open={menuOpen}
-          disabled={!profile}
-        />
-        <div className="app-content">
-          {warning && (
-            <p role="alert" className="storage-note">
-              {warning}
-            </p>
-          )}
-          {view === 'about' ? (
-            <About />
-          ) : !profile || view === 'edit' ? (
-            <Welcome
-              profile={profile}
-              voice={model.settings.voice}
-              onVoiceChange={(voice) => model.update('voice', voice)}
-              style={style}
-              onStyleChange={changeStyle}
-              onSave={save}
-              onCancel={profile ? () => go('cabinet') : undefined}
-            />
-          ) : askStyle ? (
-            <StyleChoice
-              value={style}
-              onChange={changeStyle}
-              onDone={() => model.update('styleChosen', true)}
-            />
-          ) : view === 'lesson' ? (
-            children
-          ) : view === 'cabinet' ? (
-            <Cabinet
-              profile={profile}
-              stars={model.stars}
-              onEdit={() => go('edit')}
-            />
-          ) : view in textLabels ? (
-            <TextLibrary key={view} kind={view as TextKind} model={model} />
-          ) : (
-            <section className="portal-panel">
-              <p className="eyebrow">ЧИТАЕМ ПО ШАГАМ · by Vetka_Star</p>
-              <h1>Привет, {profile.name}!</h1>
-              <p className="welcome-note">
-                Для всех детей. Создаём с особым вниманием к детям с аутизмом,
-                СДВГ и ЗПР. Здесь вам рады.
+        <main
+          className={'app-layout' + (focusActivity ? ' focus-activity' : '')}
+        >
+          <LessonSidebar
+            model={model}
+            active={view === 'lesson' ? model.stage : view}
+            onSelect={start}
+            onAbout={() => go('about')}
+            onCabinet={() => go('cabinet')}
+            onClose={() => setMenuOpen(false)}
+            open={menuOpen}
+            disabled={!profile}
+          />
+          <div className="app-content">
+            {warning && (
+              <p role="alert" className="storage-note">
+                {warning}
               </p>
-              <p>
-                Сегодня можно сделать один маленький шаг. Выбери, что тебе
-                интересно.
-              </p>
-              <button className="primary" onClick={() => start(profile.start)}>
-                Начать занятие →
+            )}
+            {view === 'about' ? (
+              <About />
+            ) : !profile || view === 'edit' ? (
+              <Welcome
+                profile={profile}
+                voice={model.settings.voice}
+                onVoiceChange={(voice) => model.update('voice', voice)}
+                style={style}
+                onStyleChange={changeStyle}
+                onSave={save}
+                onCancel={profile ? () => go('cabinet') : undefined}
+              />
+            ) : askStyle ? (
+              <StyleChoice
+                value={style}
+                onChange={changeStyle}
+                onDone={() => model.update('styleChosen', true)}
+              />
+            ) : view === 'lesson' ? (
+              children
+            ) : view === 'cabinet' ? (
+              <Cabinet
+                profile={profile}
+                stars={model.stars}
+                onEdit={() => go('edit')}
+              />
+            ) : view in textLabels ? (
+              <TextLibrary key={view} kind={view as TextKind} model={model} />
+            ) : (
+              <section className="portal-panel">
+                <p className="eyebrow">ЧИТАЕМ ПО ШАГАМ · by Vetka_Star</p>
+                <h1>Привет, {profile.name}!</h1>
+                <p className="welcome-note">
+                  Для всех детей. Создаём с особым вниманием к детям с аутизмом,
+                  СДВГ и ЗПР. Здесь вам рады.
+                </p>
+                <p>
+                  Сегодня можно сделать один маленький шаг. Выбери, что тебе
+                  интересно.
+                </p>
+                <button
+                  className="primary"
+                  onClick={() => start(profile.start)}
+                >
+                  Начать занятие →
+                </button>
+                <h2>Твоя тропинка чтения</h2>
+                <div className="portal-grid">
+                  {[
+                    ...stages.map((s) => ({ id: s.id, name: s.name })),
+                    ...Object.entries(textLabels).map(([id, name]) => ({
+                      id,
+                      name,
+                    })),
+                  ].map((s, i) => (
+                    <button
+                      className="portal-card"
+                      key={s.id}
+                      onClick={() => start(s.id)}
+                    >
+                      <small>ШАГ {i + 1}</small>
+                      <b>{s.name}</b>
+                      <span>
+                        {
+                          [
+                            'Узнаём буквы',
+                            'Соединяем звуки и собираем слова',
+                            'Читаем целое слово',
+                            'Называем то, что видим',
+                            'Слова дружат друг с другом',
+                            'Читаем и понимаем',
+                            'Слушаем ритм и читаем',
+                          ][i]
+                        }
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                <p className="storage-note">
+                  Прогресс сохраняется в этом браузере. Перенос на другие
+                  устройства добавим позже.
+                </p>
+              </section>
+            )}
+            <footer className="portal-footer">
+              <span>by Vetka_Star</span>
+              <button className="footer-about" onClick={() => go('about')}>
+                О проекте
               </button>
-              <h2>Твоя тропинка чтения</h2>
-              <div className="portal-grid">
-                {[
-                  ...stages.map((s) => ({ id: s.id, name: s.name })),
-                  ...Object.entries(textLabels).map(([id, name]) => ({
-                    id,
-                    name,
-                  })),
-                ].map((s, i) => (
-                  <button
-                    className="portal-card"
-                    key={s.id}
-                    onClick={() => start(s.id)}
-                  >
-                    <small>ШАГ {i + 1}</small>
-                    <b>{s.name}</b>
-                    <span>
-                      {
-                        [
-                          'Узнаём буквы',
-                          'Соединяем звуки и собираем слова',
-                          'Читаем целое слово',
-                          'Называем то, что видим',
-                          'Слова дружат друг с другом',
-                          'Читаем и понимаем',
-                          'Слушаем ритм и читаем',
-                        ][i]
-                      }
-                    </span>
-                  </button>
-                ))}
-              </div>
-              <p className="storage-note">
-                Прогресс сохраняется в этом браузере. Перенос на другие
-                устройства добавим позже.
-              </p>
-            </section>
-          )}
-          <footer className="portal-footer">
-            <span>by Vetka_Star</span>
-            <button className="footer-about" onClick={() => go('about')}>
-              О проекте
-            </button>
-          </footer>
-        </div>
-      </main>
+            </footer>
+          </div>
+        </main>
       </PortalContext.Provider>
       <ParentSettings model={model} />
       <RestDialog model={model} />

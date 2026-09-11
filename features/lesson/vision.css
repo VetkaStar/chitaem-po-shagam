@@ -168,13 +168,7 @@
 }
 
 [data-vision]:not([data-vision='off'])
-  :is(
-    .feedback.neutral,
-    .sample,
-    .text-button,
-    .heard,
-    .muted
-  ) {
+  :is(.feedback.neutral, .sample, .text-button, .heard, .muted) {
   color: #333;
 }
 [data-vision]:not([data-vision='off']) .slow-progress .heard-letter {
@@ -246,7 +240,7 @@
   color: var(--vision-second);
   border: 4px dashed var(--vision-second);
 }
-@media (max-width:380px) {
+@media (max-width: 380px) {
   .vision-settings .vision-preview {
     gap: 8px;
     padding: 8px;

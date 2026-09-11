@@ -33,14 +33,22 @@ export default function WordBridge({
   if (!item) return null;
   const done = chosen.length === item.parts.length;
   return (
-    <section className="word-bridge" aria-label="Из слогов в слово" onClickCapture={onInteract}>
+    <section
+      className="word-bridge"
+      aria-label="Из слогов в слово"
+      onClickCapture={onInteract}
+    >
       <h3>Смотри, слоги умеют дружить!</h3>
       <div className="task-instruction">
         {sound && (
           <button
             className="speak-button"
             aria-label="Послушать задание со слогами"
-            onClick={() => speak(`Смотри, слоги умеют дружить! Собери слово по порядку: ${item.parts.join(', ')}.`)}
+            onClick={() =>
+              speak(
+                `Смотри, слоги умеют дружить! Собери слово по порядку: ${item.parts.join(', ')}.`,
+              )
+            }
           >
             <Volume2 size={18} />
           </button>

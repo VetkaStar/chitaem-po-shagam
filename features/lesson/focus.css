@@ -110,7 +110,10 @@
 .focus-bar {
   display: grid;
   /* Side groups never shrink; a long topic in the middle is cut with an ellipsis instead of covering them. */
-  grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr);
+  grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(
+      max-content,
+      1fr
+    );
   align-items: center;
   column-gap: 16px;
   height: 76px;
@@ -411,12 +414,26 @@ button.topic-chip-open:hover {
 :root[data-layout='focus'] .lesson .exercise.error + .lesson-actions {
   --state: var(--err-line);
 }
-:root[data-layout='focus'] [data-vision]:not([data-vision='off']) .lesson .exercise.success,
-:root[data-layout='focus'] [data-vision]:not([data-vision='off']) .lesson .exercise.success + .lesson-actions {
+:root[data-layout='focus']
+  [data-vision]:not([data-vision='off'])
+  .lesson
+  .exercise.success,
+:root[data-layout='focus']
+  [data-vision]:not([data-vision='off'])
+  .lesson
+  .exercise.success
+  + .lesson-actions {
   --state: var(--vision-first);
 }
-:root[data-layout='focus'] [data-vision]:not([data-vision='off']) .lesson .exercise.error,
-:root[data-layout='focus'] [data-vision]:not([data-vision='off']) .lesson .exercise.error + .lesson-actions {
+:root[data-layout='focus']
+  [data-vision]:not([data-vision='off'])
+  .lesson
+  .exercise.error,
+:root[data-layout='focus']
+  [data-vision]:not([data-vision='off'])
+  .lesson
+  .exercise.error
+  + .lesson-actions {
   --state: var(--vision-second);
 }
 :root[data-layout='focus'] .lesson .task-line h2 {
@@ -501,7 +518,10 @@ button.topic-chip-open:hover {
       0 20px 48px rgba(32, 60, 49, 0.07);
     clip-path: inset(0 -60px -80px -60px);
   }
-  :root[data-layout='focus'] .lesson .exercise:is(.success, .error) + .lesson-actions {
+  :root[data-layout='focus']
+    .lesson
+    .exercise:is(.success, .error)
+    + .lesson-actions {
     box-shadow:
       inset 2px 0 0 var(--state),
       inset -2px 0 0 var(--state),
@@ -511,10 +531,14 @@ button.topic-chip-open:hover {
   :root[data-layout='focus'] .lesson-actions::before {
     margin-top: 6px;
   }
-  :root[data-layout='focus'] .lesson .lesson-actions:not(:has(.lesson-links))::before {
+  :root[data-layout='focus']
+    .lesson
+    .lesson-actions:not(:has(.lesson-links))::before {
     content: none;
   }
-  :root[data-layout='focus'] .lesson-actions :is(.dock-left, .dock-right, .primary) {
+  :root[data-layout='focus']
+    .lesson-actions
+    :is(.dock-left, .dock-right, .primary) {
     grid-row: 1;
     margin-top: 0;
   }

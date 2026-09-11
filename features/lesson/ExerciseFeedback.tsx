@@ -146,7 +146,10 @@ export default function ExerciseFeedback({
                 <p className="hint-word">
                   Слово: <b>{target}</b>
                 </p>
-                <button className="pill-button sample" onClick={() => speak(target)}>
+                <button
+                  className="pill-button sample"
+                  onClick={() => speak(target)}
+                >
                   <Volume2 size={16} /> Послушать слово
                 </button>
               </>

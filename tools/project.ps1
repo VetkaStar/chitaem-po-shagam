@@ -20,8 +20,9 @@ switch ($Action) {
   $key=(Join-Path $projectRoot '.local/publish-auth/topic-key').Replace('\','/')
   $hosts=(Join-Path $projectRoot '.local/publish-auth/known_hosts').Replace('\','/')
   $env:GIT_SSH_COMMAND="ssh -i `"$key`" -o IdentitiesOnly=yes -o UserKnownHostsFile=`"$hosts`" -o StrictHostKeyChecking=yes -o BatchMode=yes"
-  git push origin codex/new-design
+  git push origin new-design
   if ($LASTEXITCODE) { throw 'Publication failed' }
  }
 }
+
 

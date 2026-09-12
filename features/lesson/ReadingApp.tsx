@@ -16,6 +16,8 @@ import FocusBar from './FocusBar';
 // After the other lesson styles. app/globals.css still loads later (static-entry/main.tsx), so lesson.css scopes its rules to .lesson.
 import './lesson.css';
 import './focus.css';
+// The «Тетрадь» look goes last, over both layouts.
+import './notebook.css';
 export default function ReadingApp() {
   const model = useLesson();
   const { settings, stage, currentStage, stars } = model;

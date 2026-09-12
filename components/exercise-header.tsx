@@ -22,7 +22,7 @@ export default function ExerciseHeader({
   onSpeak?: () => void;
 }) {
   return (
-    <div className="exercise-top">
+    <div className="exercise-top" data-number={number}>
       <span className="exercise-count">
         {label ?? `Задание ${number} из ${total}`}
       </span>

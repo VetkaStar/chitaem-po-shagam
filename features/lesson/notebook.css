@@ -1,0 +1,244 @@
+/* «Тетрадь»: the same layouts drawn as a school notebook, as in the approved mockups.
+   Colours come from the paper tokens in app/theme.css (main and blue paper); this file adds the squared sheet
+   with a margin line, the task number in the margin, square progress cells and «pressed» buttons with a 2px edge.
+   It is imported after lesson.css and focus.css and every rule starts with :root[data-look='notebook'],
+   so it outranks both layouts. Home, cabinet, «О проекте», rest and dialogs get the look with their redesign. */
+
+/* ---------- header and section menu ---------- */
+:root[data-look='notebook'] .app-brand-mark {
+  border: 1.5px solid var(--press);
+  border-radius: 10px;
+  box-shadow: 0 2px 0 var(--press);
+}
+:root[data-look='notebook'] :is(.app-bar-button, .practice-menu > summary) {
+  border-radius: 12px;
+  box-shadow: 0 2px 0 var(--press);
+}
+:root[data-look='notebook'] :is(.app-bar-stars, .lesson-top .pill) {
+  border: 1.5px solid var(--star-line);
+  box-shadow: 0 2px 0 var(--star-line);
+}
+:root[data-look='notebook'] .app-nav-item {
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+}
+:root[data-look='notebook'] .app-nav-item.selected {
+  border-color: var(--press);
+  background: var(--surface);
+  box-shadow: 0 2px 0 var(--press);
+}
+
+/* ---------- topic bar, modes, buttons on the page ---------- */
+:root[data-look='notebook'] .topic-bar {
+  border-color: var(--press);
+  box-shadow: 0 2px 0 var(--press);
+}
+:root[data-look='notebook']
+  .mode-list
+  button:is([data-active], [aria-selected='true'], [aria-pressed='true']) {
+  box-shadow: 0 2px 0 var(--press);
+}
+:root[data-look='notebook'] .speak-button {
+  border: 1.5px solid var(--press);
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: 0 2px 0 var(--press);
+}
+:root[data-look='notebook'] .speak-button:hover {
+  background: var(--primary-soft);
+}
+:root[data-look='notebook'] .lesson .pill-button {
+  border: 1.5px solid var(--press);
+  background: var(--surface);
+  box-shadow: 0 2px 0 var(--press);
+}
+:root[data-look='notebook'] .lesson .pill-button:hover {
+  background: var(--primary-soft);
+}
+:root[data-look='notebook'] .lesson .pill-button[aria-pressed='true'] {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+:root[data-look='notebook']
+  .lesson
+  :is(.word-help, .hint-box, .typo-help, .word-bridge, .auto-offer) {
+  border: 1.5px solid var(--press);
+  background: var(--surface);
+  box-shadow: 0 2px 0 var(--press);
+}
+:root[data-look='notebook'] .lesson .dock-side {
+  border-radius: 12px;
+  box-shadow: 0 2px 0 var(--press);
+}
+:root[data-look='notebook'] .lesson .lesson-actions .primary {
+  border-radius: 12px;
+}
+
+/* ---------- task sheet: squares, margin line, task number ---------- */
+:root[data-look='notebook'] .lesson .exercise {
+  position: relative;
+  padding: 16px 24px 8px 94px;
+  border-width: 1.5px;
+  border-color: var(--press);
+  border-radius: 6px 22px 0 0;
+  background-color: var(--surface);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  /* On laptop the squares run from the bottom edge, so they meet the second half of the sheet. */
+  background-position: 0 100%;
+  box-shadow: none;
+}
+:root[data-look='notebook'] .lesson .exercise:is(.success, .error) {
+  box-shadow: none;
+}
+/* A checked answer keeps the 2px frame of the plain look. */
+:root[data-look='notebook'] .lesson .exercise:is(.success, .error),
+:root[data-look='notebook']
+  .lesson
+  .exercise:is(.success, .error)
+  + .lesson-actions {
+  border-width: 2px;
+}
+:root[data-look='notebook'] .lesson .exercise.success,
+:root[data-look='notebook'] .lesson .exercise.success + .lesson-actions {
+  border-color: var(--ok-line);
+}
+:root[data-look='notebook'] .lesson .exercise.error,
+:root[data-look='notebook'] .lesson .exercise.error + .lesson-actions {
+  border-color: var(--err-line);
+}
+:root[data-look='notebook'] .lesson .exercise::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 70px;
+  width: 2px;
+  background: var(--margin);
+}
+:root[data-look='notebook'] .lesson .exercise-top::before {
+  content: '№ ' attr(data-number);
+  position: absolute;
+  top: 58px;
+  left: 0;
+  width: 70px;
+  color: var(--ink-3);
+  font-size: 15px;
+  font-weight: 800;
+  text-align: center;
+}
+
+/* Progress as squares of a notebook. */
+:root[data-look='notebook'] .exercise-top {
+  gap: 12px;
+}
+:root[data-look='notebook'] .lesson-bars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+:root[data-look='notebook'] .lesson-bars i {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--press);
+  border-radius: 3px;
+  background: var(--surface);
+}
+:root[data-look='notebook'] .lesson-bars i[data-state='done'] {
+  border-color: var(--primary);
+  background: var(--bar-done);
+}
+:root[data-look='notebook'] .lesson-bars i[data-state='now'] {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+
+@media (min-width: 1100px) {
+  /* Second half of the sheet: the squares continue from the first half, which it overlaps by 12px. */
+  :root[data-look='notebook'] .lesson .lesson-actions {
+    position: relative;
+    padding-right: 24px;
+    padding-left: 94px;
+    border-width: 0 1.5px 1.5px;
+    border-color: var(--press);
+    border-radius: 0 0 22px 6px;
+    background-color: var(--surface);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: 0 12px;
+    box-shadow: 0 2px 0 var(--press);
+  }
+  :root[data-look='notebook'][data-layout='focus'] .lesson .lesson-actions {
+    background-position: 0 15px;
+  }
+  /* A sheet with no actions under it (texts) is closed on its own. */
+  :root[data-look='notebook'] .lesson .exercise:not(:has(+ .lesson-actions)) {
+    padding-bottom: 14px;
+    border-bottom: 1.5px solid var(--press);
+    border-radius: 6px 22px 22px 6px;
+    background-position: 0 0;
+    box-shadow: 0 2px 0 var(--press);
+  }
+  :root[data-look='notebook'] .lesson .lesson-actions::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 70px;
+    width: 2px;
+    background: var(--margin);
+  }
+  :root[data-look='notebook'] .lesson-actions::before {
+    height: 0;
+    border-top: 1.5px dashed var(--press);
+    background: none;
+  }
+}
+
+@media (max-width: 1099px) {
+  :root[data-look='notebook'] .lesson .exercise {
+    padding: 20px 28px 24px 84px;
+    border-bottom-width: 1.5px;
+    border-style: solid;
+    border-radius: 6px 22px 22px 6px;
+    background-position: 0 0;
+    box-shadow: 0 2px 0 var(--press);
+  }
+  :root[data-look='notebook'] .lesson .exercise:is(.success, .error) {
+    box-shadow: 0 2px 0 var(--press);
+  }
+  :root[data-look='notebook'] .lesson .exercise::before {
+    left: 60px;
+  }
+  :root[data-look='notebook'] .lesson .exercise-top::before {
+    top: 66px;
+    width: 60px;
+  }
+  :root[data-look='notebook'] .lesson .lesson-dock :is(.primary, .dock-side) {
+    border-radius: 14px;
+  }
+}
+
+@media (max-width: 699px) {
+  :root[data-look='notebook'] .lesson .exercise {
+    padding: 14px 14px 16px 46px;
+    border-radius: 5px 18px 18px 5px;
+    background-size: 22px 22px;
+  }
+  :root[data-look='notebook'] .lesson .exercise::before {
+    left: 34px;
+  }
+  /* No room for the number in the narrow phone margin. */
+  :root[data-look='notebook'] .lesson .exercise-top::before {
+    content: none;
+  }
+  :root[data-look='notebook'] .lesson-bars i {
+    width: 15px;
+    height: 15px;
+  }
+}

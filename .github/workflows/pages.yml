@@ -1,7 +1,7 @@
 name: Publish reading app to GitHub Pages
 on:
   push:
-    branches: [main]
+    branches: [codex/new-design]
   workflow_dispatch:
 permissions:
   contents: read
@@ -40,3 +40,4 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+

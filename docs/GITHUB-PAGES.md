@@ -16,3 +16,6 @@ Workflow: .github/workflows/pages.yml. После подключения реп�
 
 Документация GitHub: https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages
 
+
+## Публикация редизайна — 12.09.2026
+Рабочая папка: C:\work\app\reading-app-design. Ветка: codex/new-design. Workflow этой ветки публикует редизайн на существующий GitHub Pages https://vetkastar.github.io/chitaem-po-shagam/. main остаётся без изменений; запуск старого workflow из main может заменить сайт прежней версией.

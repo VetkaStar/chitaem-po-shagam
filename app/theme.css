@@ -1,7 +1,7 @@
 /* Design tokens. The document root carries data-layout (order | focus), data-look (plain | notebook)
    and data-paper (main | blue), so dialogs rendered outside the app get the same values. */
 :root {
-  /* Page scale on big screens, see app/shell.css. Viewport units are zoomed too, so divide them by it. */
+  /* Default scale; shell.css applies the saved choice on large viewports only. */
   --zoom: 1;
   --radius: 0.8rem;
   color-scheme: light;

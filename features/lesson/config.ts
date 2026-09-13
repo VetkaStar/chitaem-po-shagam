@@ -38,6 +38,7 @@ export type Settings = {
   layout: Layout;
   look: Look;
   paper: Paper;
+  interfaceScale: 100 | 120 | 140 | 160;
   styleChosen: boolean;
 };
 export type Entry = {
@@ -78,6 +79,7 @@ export const defaults: Settings = {
   layout: 'order',
   look: 'plain',
   paper: 'main',
+  interfaceScale: 100,
   styleChosen: false,
 };
 export const stages: { id: Stage; name: string; title: string }[] = [

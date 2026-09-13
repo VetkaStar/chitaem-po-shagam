@@ -60,7 +60,7 @@ export default function AppPortal({
     [view, setView] = useState('home'),
     [menuOpen, setMenuOpen] = useState(false),
     [warning, setWarning] = useState('');
-  const { layout, look, paper } = model.settings;
+  const { layout, look, paper, interfaceScale } = model.settings;
   const style: StyleValue = { layout, look, paper };
   useEffect(() => {
     const root = document.documentElement;
@@ -68,6 +68,15 @@ export default function AppPortal({
     root.dataset.look = look;
     root.dataset.paper = paper;
   }, [layout, look, paper]);
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      '--preferred-zoom',
+      String(interfaceScale / 100),
+    );
+    return () => {
+      document.documentElement.style.removeProperty('--preferred-zoom');
+    };
+  }, [interfaceScale]);
   useEffect(() => {
     if (!menuOpen) return;
     const close = (e: KeyboardEvent) => {

@@ -97,6 +97,23 @@ export default function ParentSettings({
               name="settings-style"
             />
           </section>
+          <div className="setting interface-scale-setting">
+            <label htmlFor="interface-scale">Размер интерфейса</label>
+            <select
+              id="interface-scale"
+              value={settings.interfaceScale}
+              onChange={(e) =>
+                update(
+                  'interfaceScale',
+                  Number(e.target.value) as typeof settings.interfaceScale,
+                )
+              }
+            >
+              {[100, 120, 140, 160].map((scale) => (
+                <option key={scale} value={scale}>{scale}%</option>
+              ))}
+            </select>
+          </div>
           <AutoAdvanceSettings model={model} />
           <div className="setting">
             <label htmlFor="narrator-voice">Голос озвучки</label>

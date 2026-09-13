@@ -216,22 +216,24 @@
   color: var(--primary-ink);
 }
 
-/* Big screens keep the laptop layout, only larger, as in the approved mockups.
-   CSS zoom does not change media queries, so there is no feedback loop. */
+/* Larger interface sizes are opt-in and apply only to a large viewport. */
 html {
   /* Expanding help grows the page down without moving what is above it. */
   overflow-anchor: none;
   scrollbar-gutter: stable;
   zoom: var(--zoom);
 }
+/* The same viewport rule controls availability and application.
+   CSS zoom does not change media-query dimensions. */
+.parent-dialog .interface-scale-setting {
+  display: none;
+}
 @media (min-width: 1800px) and (min-height: 900px) {
   :root {
-    --zoom: 1.2;
+    --zoom: var(--preferred-zoom, 1);
   }
-}
-@media (min-width: 2400px) and (min-height: 1200px) {
-  :root {
-    --zoom: 1.6;
+  .parent-dialog .interface-scale-setting {
+    display: flex;
   }
 }
 

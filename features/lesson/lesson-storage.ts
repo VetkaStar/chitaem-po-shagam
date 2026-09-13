@@ -50,6 +50,9 @@ export function restoreLessonProgress({
         layout: s.layout === 'focus' ? 'focus' : 'order',
         look: s.look === 'notebook' ? 'notebook' : 'plain',
         paper: s.paper === 'blue' ? 'blue' : 'main',
+        interfaceScale: [100, 120, 140, 160].includes(s.interfaceScale)
+          ? s.interfaceScale
+          : 100,
         styleChosen: s.styleChosen === true,
         colorVision: parseVision(s.colorVision),
         pictureMode: s.pictureMode === 'letters' ? 'letters' : 'free',

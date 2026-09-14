@@ -2,7 +2,6 @@
 import AutoAdvanceSettings from '@/components/auto-advance-settings';
 import VisionSettings from './VisionSettings';
 import StylePicker from '../portal/StylePicker';
-import { visionStyle } from '@/lib/vision';
 import { Mic, MicOff, ArrowRight, Download } from 'lucide-react';
 import {
   Dialog,
@@ -69,7 +68,6 @@ export default function ParentSettings({
         <DialogContent
           className="parent-dialog"
           data-vision={settings.colorVision}
-          style={visionStyle(settings.colorVision)}
         >
           <DialogTitle className="dialog-heading">Настроим занятие</DialogTitle>
           <DialogDescription>

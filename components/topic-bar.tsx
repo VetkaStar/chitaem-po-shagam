@@ -10,7 +10,6 @@ import {
   Volume2,
 } from 'lucide-react';
 import { topicNames } from '@/lib/topics';
-import './topic-bar.css';
 
 /** Topic of the lesson. Full row: speaker, current topic, list of topics, previous and next topic.
  *  Compact chip for the «Фокус» bar: speaker and the current topic, which opens the list. */

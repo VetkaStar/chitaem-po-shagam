@@ -1,5 +1,4 @@
 'use client';
-import './style-picker.css';
 import type { Layout, Look, Paper } from '../lesson/config';
 
 export type StyleValue = { layout: Layout; look: Look; paper: Paper };

@@ -46,11 +46,12 @@ export default function ExerciseVoiceMonitor({
             }
           >
             {spectrum.map((v, i) => (
-              <i
+              <svg
                 key={i}
-                style={{
-                  height: `${8 + (speaking || cooldown || feedback.kind === 'success' ? 0 : v) * 48}px`,
-                }}
+                className="equalizer-bar"
+                aria-hidden="true"
+                width={7}
+                height={8 + (speaking || cooldown || feedback.kind === 'success' ? 0 : v) * 48}
               />
             ))}
           </div>

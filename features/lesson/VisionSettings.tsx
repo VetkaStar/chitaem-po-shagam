@@ -1,5 +1,5 @@
 'use client';
-import { visionProfiles, visionStyle, type VisionMode } from '@/lib/vision';
+import { visionProfiles, type VisionMode } from '@/lib/vision';
 export default function VisionSettings({
   value,
   onChange,
@@ -37,7 +37,6 @@ export default function VisionSettings({
             className="vision-preview"
             aria-label="Образец подсказок"
             data-vision={value}
-            style={visionStyle(value)}
           >
             <div className="vision-example vision-example-vowel">
               <strong aria-hidden="true">А</strong>

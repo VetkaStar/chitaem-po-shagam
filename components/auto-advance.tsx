@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import './auto-advance.css';
 export default function AutoAdvance({
   enabled,
   inline = false,

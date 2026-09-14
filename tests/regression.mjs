@@ -450,6 +450,19 @@ console.log(
 );
 
 const { visionProfiles, parseVision, bubbleSymbols } = load('vision');
+const stylesheet = fs.readFileSync(root + '/app/globals.css', 'utf8');
+const compactStylesheet = stylesheet.replace(/\s+/g, '');
+
+// Every current material length has an exact CSS value, including a separator after each letter.
+for (let unit = 0; unit < curriculum.length; unit++) {
+  for (const material of [...wordPool(unit), ...curriculum[unit].syllables]) {
+    assert(Array.from(material).length * 2 - 1 <= 64, 'Extend CSS letter-count table for ' + material);
+  }
+}
+for (let letters = 0; letters <= 64; letters++)
+  assert(compactStylesheet.includes(`[data-letters='${letters}']{--letters:${letters};}`));
+for (const mode of Object.keys(visionProfiles))
+  assert(compactStylesheet.includes(`[data-vision='${mode}']{--vision-first:`), 'Missing CSS palette: ' + mode);
 assert.equal(parseVision('unknown'), 'off');
 assert.equal(parseVision('__proto__'), 'off');
 assert.equal(parseVision(null), 'off');
@@ -471,7 +484,9 @@ const VisionSettings = loadView('features/lesson/VisionSettings.tsx').default,
   Bubbles = loadView('components/color-bubbles.tsx').default;
 for (const mode of ['protan', 'deutan', 'tritan', 'mono']) {
   assert.equal(parseVision(mode), mode);
-  for (const ink of [visionProfiles[mode].first, visionProfiles[mode].second])
+  for (const ink of [...stylesheet.matchAll(/\[data-vision='([^']+)'\]\s*\{\s*--vision-first:\s*(#[0-9a-fA-F]+);\s*--vision-second:\s*(#[0-9a-fA-F]+);/g)]
+    .filter((match) => match[1] === mode)
+    .flatMap((match) => [match[2], match[3]]))
     for (const bg of ['#ffffff', '#fffefb', '#f7f8f2'])
       assert(contrast(ink, bg) >= 4.5, `${mode} ${ink} contrast on ${bg}`);
   const preview = renderToStaticMarkup(

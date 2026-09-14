@@ -1,6 +1,5 @@
 'use client';
 import type { LessonModel } from '@/features/lesson/use-lesson';
-import './auto-advance.css';
 export default function AutoAdvanceSettings({
   model,
 }: {

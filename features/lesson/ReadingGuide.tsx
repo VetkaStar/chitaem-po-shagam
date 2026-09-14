@@ -3,7 +3,6 @@ import {
   letterOffset,
   type ReadingFocus,
 } from '@/lib/reading-guide';
-import './reading-guide.css';
 export default function ReadingGuide({
   text,
   focus,

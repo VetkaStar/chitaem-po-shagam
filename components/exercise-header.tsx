@@ -1,5 +1,4 @@
 import { Leaf, Volume2 } from 'lucide-react';
-import './exercise-header.css';
 
 /** Task counter, one bar per task and the rest reminder. */
 export default function ExerciseHeader({

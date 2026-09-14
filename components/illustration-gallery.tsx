@@ -8,7 +8,6 @@ import {
   type IllustrationId,
   type IllustrationVariant,
 } from '@/content/illustrations';
-import './illustration-gallery.css';
 
 const variants: IllustrationVariant[] = ['main', 'alternate', 'context'];
 

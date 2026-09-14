@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useState, type ReactNode } from 'react';
-import { visionStyle } from '@/lib/vision';
 import LessonHeader from '../lesson/LessonHeader';
 import LessonSidebar from '../lesson/LessonSidebar';
 import ParentSettings from '../lesson/ParentSettings';
@@ -69,12 +68,9 @@ export default function AppPortal({
     root.dataset.paper = paper;
   }, [layout, look, paper]);
   useEffect(() => {
-    document.documentElement.style.setProperty(
-      '--preferred-zoom',
-      String(interfaceScale / 100),
-    );
+    document.documentElement.dataset.interfaceScale = String(interfaceScale);
     return () => {
-      document.documentElement.style.removeProperty('--preferred-zoom');
+      delete document.documentElement.dataset.interfaceScale;
     };
   }, [interfaceScale]);
   useEffect(() => {
@@ -139,7 +135,6 @@ export default function AppPortal({
     <div
       data-vision={model.settings.colorVision}
       data-audio={model.settings.sound ? 'on' : 'off'}
-      style={visionStyle(model.settings.colorVision)}
       className={'app-root ' + (model.settings.motion ? 'motion' : 'calm')}
     >
       {!focusActivity && (

@@ -1,0 +1,5 @@
+# Supplied bytes are checksummed; Windows checkout must not rewrite their line endings.
+content/curriculum/*.json -text
+lib/curriculum/vendor/**/*.mjs -text
+lib/curriculum/contracts.ts -text
+tests/upstream-curriculum/* -text

@@ -7,7 +7,7 @@ import { Check } from 'lucide-react';
 import IllustrationGallery from '@/components/illustration-gallery';
 import { wordIllustrations } from '@/content/illustrations';
 
-import type { CSSProperties, Dispatch, SetStateAction } from 'react';
+import type { Dispatch, SetStateAction } from 'react';
 import type { Stage, Mode, Settings, Feedback } from './config';
 
 import type { ExerciseModel } from './exercise-types';
@@ -69,12 +69,9 @@ export default function ExerciseMaterial({
                 key={card.id}
                 className={'catch-token ' + (card.caught ? 'caught' : '')}
                 data-token={card.text}
-                style={{
-                  animationDuration: `${(22 + lane * 5) / settings.flySpeed}s`,
-                  animationDelay: `-${lane * 5}s`,
-                  animationPlayState:
-                    paused || parent || rest || done ? 'paused' : 'running',
-                }}
+                data-lane={lane}
+                data-speed={settings.flySpeed}
+                data-paused={paused || parent || rest || done}
               >
                 {stage === 'letters' ? (
                   <LetterDisplay letter={card.text} settings={settings} />
@@ -97,7 +94,7 @@ export default function ExerciseMaterial({
       ) : stage === 'words' && mode === 'read' ? (
         <div
           className="reading"
-          style={{ '--letters': Array.from(target).length } as CSSProperties}
+          data-letters={Array.from(target).length}
         >
           <ReadingGuide
             text={target}
@@ -135,19 +132,8 @@ export default function ExerciseMaterial({
         <div
           className="reading"
           key={target + '-' + index}
-          style={
-            {
-              '--letters': Array.from(displayWord).length,
-              animationPlayState:
-                paused ||
-                parent ||
-                rest ||
-                listening ||
-                feedback.kind === 'success'
-                  ? 'paused'
-                  : 'running',
-            } as CSSProperties
-          }
+          data-letters={Array.from(displayWord).length}
+          data-paused={paused || parent || rest || listening || feedback.kind === 'success'}
           aria-label={target}
         >
           {Array.from(displayWord).map((char, i) => (

@@ -1,7 +1,6 @@
 'use client';
 import CompletionCelebration from './completion-celebration';
 import { useState, useEffect, useRef } from 'react';
-import type { CSSProperties } from 'react';
 import { pairDeck, pairGrid } from '@/lib/rest-games';
 
 export default function MatchPairs({ motion = true }: { motion?: boolean }) {
@@ -103,12 +102,8 @@ export default function MatchPairs({ motion = true }: { motion?: boolean }) {
       </p>
       <div
         className="pair-grid pair-expanded"
-        style={
-          {
-            '--pair-columns': grid.columns,
-            '--pair-rows': grid.rows,
-          } as CSSProperties
-        }
+        data-columns={grid.columns}
+        data-rows={grid.rows}
       >
         {cards.map((c, i) => {
           const visible =

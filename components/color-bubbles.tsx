@@ -1,14 +1,14 @@
 'use client';
 import CompletionCelebration from './completion-celebration';
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { bubbleSymbols, type VisionMode } from '@/lib/vision';
 import { bubbleRound, bubbleChoice, bubbleGrid } from '@/lib/rest-games';
 const colors = [
-  { name: 'розовые', single: 'розовый', fill: '#ee92bb' },
-  { name: 'зелёные', single: 'зелёный', fill: '#85c994' },
-  { name: 'синие', single: 'синий', fill: '#75a5ec' },
-  { name: 'жёлтые', single: 'жёлтый', fill: '#f0d269' },
-  { name: 'красные', single: 'красный', fill: '#f07c71' },
+  { name: 'розовые', single: 'розовый' },
+  { name: 'зелёные', single: 'зелёный' },
+  { name: 'синие', single: 'синий' },
+  { name: 'жёлтые', single: 'жёлтый' },
+  { name: 'красные', single: 'красный' },
 ];
 export default function ColorBubbles({
   motion,
@@ -183,7 +183,7 @@ export default function ColorBubbles({
         ) : (
           <span
             className="color-swatch"
-            style={{ background: color.fill }}
+            data-color={order[Math.min(step, order.length - 1)] ?? 0}
             aria-hidden
           />
         )}
@@ -204,7 +204,7 @@ export default function ColorBubbles({
               <span
                 key={i}
                 className={i === step ? 'current' : i < step ? 'finished' : ''}
-                style={{ background: colors[c].fill }}
+                data-color={c}
               >
                 {i + 1}.{' '}
                 {symbols
@@ -228,12 +228,9 @@ export default function ColorBubbles({
           'color-bubble-field dense ' +
           (moving && motion ? 'bubble-moving' : 'bubble-static')
         }
-        style={
-          {
-            '--bubble-columns': grid.columns,
-            '--bubble-rows': grid.rows,
-          } as CSSProperties
-        }
+        data-columns={grid.columns}
+        data-rows={grid.rows}
+        data-speed={speed}
       >
         {board.map((c, i) => (
           <div className="color-bubble-slot" key={round + '-' + mode + '-' + i}>
@@ -241,11 +238,8 @@ export default function ColorBubbles({
               className={
                 'color-bubble ' + (popped.includes(i) ? 'bubble-popped' : '')
               }
-              style={{
-                background: colors[c].fill,
-                animationDelay: `-${i * 1.7}s`,
-                animationDuration: `${(9 + (i % 3) * 2) / speed}s`,
-              }}
+              data-color={c}
+              data-index={i}
               aria-label={
                 symbols
                   ? `Пузырь ${bubbleSymbols[c].with} ${i + 1}`

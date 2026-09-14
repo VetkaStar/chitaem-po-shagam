@@ -12,8 +12,9 @@ switch ($Action) {
  'dev' { Run-Node @('node_modules/vite/bin/vite.js','--config','vite.pages.config.ts','--host','127.0.0.1','--port','3024') }
  'build' { Run-Node @('node_modules/vite/bin/vite.js','build','--config','vite.pages.config.ts') }
  'check' {
+  Run-Node @('tools/verify-curriculum.mjs')
   Run-Node @('node_modules/typescript/bin/tsc','--noEmit')
-  foreach ($test in @('regression','practice-flow','text-practice-flow','illustrations','auto-advance')) { Run-Node @("tests/$test.mjs") }
+  foreach ($test in @('regression','practice-flow','text-practice-flow','illustrations','auto-advance','curriculum')) { Run-Node @("tests/$test.mjs") }
   Run-Node @('node_modules/vite/bin/vite.js','build','--config','vite.pages.config.ts')
  }
  'publish' {

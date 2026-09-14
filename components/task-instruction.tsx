@@ -1,6 +1,5 @@
 'use client';
 import { Volume2 } from 'lucide-react';
-import './task-instruction.css';
 export default function TaskInstruction({
   text,
   sound,

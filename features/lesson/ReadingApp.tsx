@@ -1,8 +1,4 @@
 'use client';
-import './practice.css';
-import './vision.css';
-import './bubble-layout.css';
-import './rest-layout.css';
 import AppPortal from '../portal/AppPortal';
 import { Star } from 'lucide-react';
 import { plural } from '@/lib/plural';
@@ -13,11 +9,6 @@ import ExerciseCard from './ExerciseCard';
 import PracticeControls from './PracticeControls';
 import TopicNavigation from './TopicNavigation';
 import FocusBar from './FocusBar';
-// After the other lesson styles. app/globals.css still loads later (static-entry/main.tsx), so lesson.css scopes its rules to .lesson.
-import './lesson.css';
-import './focus.css';
-// The «Тетрадь» look goes last, over both layouts.
-import './notebook.css';
 export default function ReadingApp() {
   const model = useLesson();
   const { settings, stage, currentStage, stars } = model;

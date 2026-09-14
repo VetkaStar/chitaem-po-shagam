@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import './completion-celebration.css';
 
 /** A brief, non-blocking reward; completion text remains in the game. */
 export default function CompletionCelebration({

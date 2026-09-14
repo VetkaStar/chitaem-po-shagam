@@ -21,7 +21,6 @@ import { letterOffset, firstUnreadSource } from '@/lib/reading-guide';
 import { useTextMicrophone } from './use-text-microphone';
 import TaskInstruction from '@/components/task-instruction';
 import { guideParts } from '@/lib/reading-guide';
-import './text-practice.css';
 import IllustrationGallery from '@/components/illustration-gallery';
 import { textIllustrations } from '@/content/illustrations';
 type Mode = 'read' | 'questions' | 'write';

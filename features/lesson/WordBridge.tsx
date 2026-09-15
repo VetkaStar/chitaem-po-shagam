@@ -1,6 +1,6 @@
 'use client';
 import { FreeExposureFrame } from '../free-practice/FreeExposureFrame';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Volume2 } from 'lucide-react';
 import { availableBridges } from '@/content/word-bridges';
 import { levels } from '@/lib/learning';
@@ -12,12 +12,14 @@ export default function WordBridge({
   speak,
   sound,
   onInteract,
+  onComplete,
 }: {
   unit: number;
   target: string;
   speak: (s: string) => void;
   sound: boolean;
   onInteract?: () => void;
+  onComplete?: () => void;
 }) {
   // Picked once: ExerciseCard mounts a new bridge for every task and topic.
   const [item] = useState(() => {
@@ -41,6 +43,13 @@ export default function WordBridge({
       : [],
     promptedTexts: item && done ? [item.word] : [],
   });
+  const completionReported = useRef(false);
+  useEffect(() => {
+    if (done && exposure.ready && !completionReported.current) {
+      completionReported.current = true;
+      onComplete?.();
+    }
+  }, [done, exposure.ready, onComplete]);
   if (!item) return null;
 
   return (

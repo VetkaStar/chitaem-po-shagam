@@ -14,7 +14,7 @@ switch ($Action) {
  'check' {
   Run-Node @('tools/verify-curriculum.mjs')
   Run-Node @('node_modules/typescript/bin/tsc','--noEmit')
-  foreach ($test in @('regression','practice-flow','text-practice-flow','illustrations','auto-advance','curriculum','curriculum-presentation','curriculum-execution','curriculum-demonstrations','curriculum-onboarding','curriculum-roadmap','curriculum-free-practice','free-audio-flow')) { Run-Node @("tests/$test.mjs") }
+  foreach ($test in @('regression','practice-flow','text-practice-flow','illustrations','auto-advance','curriculum','curriculum-presentation','curriculum-execution','curriculum-demonstrations','curriculum-onboarding','curriculum-roadmap','curriculum-free-practice','free-audio-flow','curriculum-completeness','curriculum-media')) { Run-Node @("tests/$test.mjs") }
   Run-Node @('node_modules/vite/bin/vite.js','build','--config','vite.pages.config.ts')
  }
  'publish' {

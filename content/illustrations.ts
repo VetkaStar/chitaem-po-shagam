@@ -1,5 +1,7 @@
 // Imported from the user-reviewed archive. Paths are relative for GitHub Pages.
+import { nextIllustrations, nextWordIllustrations } from './next-illustrations';
 export const illustrations = {
+  ...nextIllustrations,
   'picture-01': {
     target: 'дом',
     variants: {
@@ -1477,6 +1479,7 @@ export const illustrations = {
 export type IllustrationId = keyof typeof illustrations;
 export type IllustrationVariant = 'main' | 'alternate' | 'context';
 export const wordIllustrations: Record<string, IllustrationId> = {
+  ...nextWordIllustrations,
   ВОДА: 'word-23',
   СОМ: 'word-24',
   ШАР: 'word-25',

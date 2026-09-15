@@ -27,6 +27,9 @@ import { park, logSource, launchFreeProfile } from './state-transitions.js';
 import { applyAnswer, applyReading, applyReveal } from './task-transitions.js';
 import { preparePresentation } from './token-order.js';
 import { presentation } from './presentation.js';
+import { optionAudio } from './option-audio.js';
+import { illustrationMatch } from './illustration-match.js';
+import type { RuntimeInstance } from '../../lib/curriculum/types.js';
 import {
   currentDemo,
   demoEpisode,
@@ -489,6 +492,57 @@ export class CurriculumController extends EntryCommands {
       logSource(s, 'info', null);
       await this.save(s);
       return texts.join(' ');
+    });
+  }
+  illustration(
+    instanceId: string,
+    variant: 'main' | 'alternate' | 'context' = 'main',
+  ) {
+    return this.serial(async () => {
+      const s = this.snapshot(),
+        active = s.profile.activeInstance;
+      if (!active || active.instanceId !== instanceId)
+        throw new Error('STALE_INSTANCE');
+      const asset = illustrationMatch(
+        this.supply.curriculum.items[active.itemId],
+      );
+      if (
+        !asset ||
+        !['main', 'alternate', 'context'].includes(variant) ||
+        (asset.kind === 'story' && variant !== 'main')
+      )
+        throw new Error('INVALID_ILLUSTRATION');
+      s.profile = engine.requestHelp(s.profile, this.supply.curriculum, {
+        level: 1,
+      });
+      (s.profile.activeInstance as RuntimeInstance).illustrationVariant =
+        variant;
+      const shown = presentation(s.profile, this.supply);
+      if (shown?.kind === 'task' && shown.hints.length)
+        s.profile = engine.commitExposure(s.profile, { texts: shown.hints });
+      logSource(s, 'help', instanceId);
+      await this.save(s);
+      return this.visible();
+    });
+  }
+  optionAudio(
+    instanceId: string,
+    questionId: string | null,
+    optionId: string | null,
+  ) {
+    return this.serial(async () => {
+      const s = this.snapshot();
+      const audio = optionAudio(
+        s.profile,
+        this.supply,
+        instanceId,
+        questionId,
+        optionId,
+      );
+      s.profile = audio.profile;
+      logSource(s, 'options', instanceId);
+      await this.save(s);
+      return audio.text;
     });
   }
   recordReading(instanceId: string, reading?: ReadingProof) {

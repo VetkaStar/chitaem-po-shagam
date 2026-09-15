@@ -2,6 +2,7 @@ import type { CurriculumController } from './controller.js';
 import type { Presentation } from './presentation.js';
 import type { Outcome } from '../../lib/curriculum/contracts.js';
 import { TaskRenderer } from './TaskRenderer.js';
+import { CurriculumIllustration } from './CurriculumIllustration.js';
 interface Props {
   view: Presentation;
   controller: CurriculumController;
@@ -115,8 +116,38 @@ export function CurriculumStep({
           run(() => controller.recordReading(view.instanceId, reading))
         }
         onReveal={() => run(() => controller.revealOptions())}
+        onSpeak={
+          sound
+            ? (questionId, optionId) =>
+                act(async () => {
+                  const text = await controller.optionAudio(
+                    view.instanceId,
+                    questionId,
+                    optionId,
+                  );
+                  speak(text);
+                })
+            : undefined
+        }
       />
       <div className="curriculum-help">
+        {view.canShowIllustration && !view.illustration && (
+          <button
+            disabled={busy}
+            onClick={() => act(() => controller.illustration(view.instanceId))}
+          >
+            Показать картинку-подсказку
+          </button>
+        )}
+        {view.illustration && (
+          <CurriculumIllustration
+            asset={view.illustration}
+            busy={busy}
+            onVariant={(variant) =>
+              act(() => controller.illustration(view.instanceId, variant))
+            }
+          />
+        )}
         {sound && (
           <button
             disabled={busy}

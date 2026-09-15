@@ -1,6 +1,6 @@
 'use client';
 import type { ReactNode } from 'react';
-import { useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -47,7 +47,34 @@ export default function TopicBar({
   done?: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const optionsRef = useRef<HTMLDivElement>(null);
   const id = useId();
+  useEffect(() => {
+    if (!open) return;
+    const inside = (target: EventTarget | null) =>
+      target instanceof Node &&
+      (triggerRef.current?.contains(target) ||
+        optionsRef.current?.contains(target));
+    const dismissOutside = (event: Event) => {
+      if (!inside(event.target)) setOpen(false);
+    };
+    const dismissEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || event.defaultPrevented) return;
+      event.preventDefault();
+      setOpen(false);
+      if (inside(document.activeElement))
+        triggerRef.current?.focus({ preventScroll: true });
+    };
+    document.addEventListener('pointerdown', dismissOutside, true);
+    document.addEventListener('focusin', dismissOutside);
+    document.addEventListener('keydown', dismissEscape);
+    return () => {
+      document.removeEventListener('pointerdown', dismissOutside, true);
+      document.removeEventListener('focusin', dismissOutside);
+      document.removeEventListener('keydown', dismissEscape);
+    };
+  }, [open]);
   const speaker = (
     <button
       className="speak-button"
@@ -59,7 +86,7 @@ export default function TopicBar({
     </button>
   );
   const options = open && onSelect && (
-    <div className="topic-grid topic-options" id={id}>
+    <div ref={optionsRef} className="topic-grid topic-options" id={id}>
       {topicNames.map((name, i) => (
         <button
           key={name}
@@ -90,6 +117,7 @@ export default function TopicBar({
           {onSelect ? (
             <button
               className="topic-chip-open"
+              ref={triggerRef}
               aria-label={`Выбрать другую тему. Сейчас: ${current}`}
               title="Выбрать другую тему"
               aria-expanded={open}
@@ -124,6 +152,7 @@ export default function TopicBar({
         {onSelect && (
           <button
             className="topic-list"
+            ref={triggerRef}
             aria-label="Выбрать другую тему"
             title="Выбрать другую тему"
             aria-expanded={open}

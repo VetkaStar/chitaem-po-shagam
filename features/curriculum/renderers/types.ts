@@ -9,4 +9,5 @@ export interface TaskRendererProps {
   onSubmit: (response: RawResponse) => Promise<void>;
   onReading: (reading?: ReadingProof) => Promise<void>;
   onReveal: () => Promise<void>;
+  onSpeak?: (questionId: string | null, optionId: string | null) => void;
 }

@@ -1,4 +1,7 @@
+import { nextIllustrationSources, nextStorySources } from './next-illustration-sources';
 export const illustrationSources: Record<string, string> = {
+  ...nextIllustrationSources,
+  ...nextStorySources,
   'illustrations/reviewed-120/picture-01-alternate.webp':
     'illustrations/reviewed-120/picture-01-alternate.webp?v=2 320w, illustrations/reviewed-120/picture-01-alternate-640w.webp?v=2 640w',
   'illustrations/reviewed-120/picture-01-context.webp':

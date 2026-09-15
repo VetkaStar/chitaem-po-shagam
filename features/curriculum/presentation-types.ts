@@ -29,6 +29,12 @@ export interface TaskPresentation {
   helpLevel: number;
   hints: string[];
   canRequestHint: boolean;
+  canShowIllustration?: boolean;
+  illustration?: {
+    kind: 'word' | 'story';
+    id: string;
+    variant: 'main' | 'alternate' | 'context';
+  };
   functionCheck: null | { capabilityId: string; criterion: string };
 }
 export interface InfoPresentation {

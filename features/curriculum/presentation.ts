@@ -3,6 +3,8 @@ import type { Supply } from '../../lib/curriculum/types.js';
 import type { Presentation } from './presentation-types.js';
 import { informationPresentation } from './information-presentation.js';
 import { tokenOrder } from './token-order.js';
+import { illustrationMatch } from './illustration-match.js';
+import type { RuntimeInstance } from '../../lib/curriculum/types.js';
 export type {
   Presentation,
   TaskPresentation,
@@ -19,6 +21,8 @@ export function presentation(
   if (!a) return informationPresentation(profile, supply);
   const t = supply.curriculum.items[a.itemId];
   const optionsVisible = a.optionsRevealed === true;
+  const asset = illustrationMatch(t);
+  const variant = (a as RuntimeInstance).illustrationVariant;
   const ordered = (key: string, options: { id: string; text: string }[]) =>
     (a.optionOrder[key] ?? []).map((id) => {
       const option = options.find((o) => o.id === id);
@@ -75,6 +79,9 @@ export function presentation(
         : null,
     selectedAnswers: structuredClone(a.answers),
     helpLevel: a.helpLevel,
+    canShowIllustration: asset !== null,
+    illustration:
+      asset && variant && a.helpLevel >= 1 ? { ...asset, variant } : undefined,
     canRequestHint: t.hints.some(
       (_, i) => (t.hintLevels?.[i] ?? (i === 0 ? 1 : 4)) > a.helpLevel,
     ),

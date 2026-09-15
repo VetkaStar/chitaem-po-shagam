@@ -3575,6 +3575,7 @@ button.topic-chip-open:hover {
 }
 @media (max-width: 1099px) {
   .focus-bar {
+    position: relative;
     grid-template-columns: auto minmax(0, 1fr) auto auto auto;
     grid-template-rows: 76px auto;
     grid-template-areas:
@@ -3678,12 +3679,22 @@ button.topic-chip-open:hover {
     transform: translateY(-50%);
   }
   .topic-compact .topic-options {
-    position: fixed;
-    top: 64px;
-    left: 12px;
-    right: 12px;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    right: auto;
+    width: calc(100vw / var(--zoom) - 24px);
+    max-width: calc(100vw / var(--zoom) - 24px);
+    transform: translateX(-50%);
+  }
+  .focus-bar .topic-compact {
+    position: static;
+  }
+  .focus-bar .topic-compact .topic-options {
+    left: 0;
+    right: 0;
     width: auto;
-    max-width: none;
+    max-width: 100%;
     transform: none;
   }
 }
@@ -6520,6 +6531,32 @@ meter::-webkit-meter-optimum-value {
   flex-wrap: wrap;
   gap: 12px;
   margin: 12px 0;
+}
+.curriculum-option-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.curriculum-illustration {
+  width: 100%;
+}
+.curriculum-illustration-frames {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+.curriculum-illustration-frames img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  object-fit: contain;
+}
+.curriculum-option-row .curriculum-option {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .curriculum-help {
   margin: 20px 0;

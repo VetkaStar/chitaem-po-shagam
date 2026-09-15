@@ -431,6 +431,10 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
               <WordBridge
                 key={`${index}-${target}-${settings.unit}`}
                 onInteract={stopAdvance}
+                onComplete={() => {
+                  if (!done && !paused && !parent && !rest)
+                    nextButton.current?.focus({ preventScroll: true });
+                }}
                 unit={settings.unit}
                 target={target}
                 speak={speak}

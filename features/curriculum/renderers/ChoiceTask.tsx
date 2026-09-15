@@ -3,7 +3,7 @@ import type { TaskRendererProps } from './types.js';
 import { OptionButtons } from './OptionButtons.js';
 import { ReadingStage } from './ReadingStage.js';
 export function ChoiceTask(props: TaskRendererProps) {
-  const { task, busy, onSubmit, onReveal } = props;
+  const { task, busy, onSubmit, onReveal, onSpeak } = props;
   const [selected, setSelected] = useState<string[]>([]);
   if (
     task.taskKind === 'read_meaning' &&
@@ -35,6 +35,7 @@ export function ChoiceTask(props: TaskRendererProps) {
           selected={selected}
           busy={busy}
           onChange={setSelected}
+          onSpeak={onSpeak ? (optionId) => onSpeak(null, optionId) : undefined}
         />
         {task.answerKind === 'ordered_ids' && (
           <ol className="curriculum-selection">

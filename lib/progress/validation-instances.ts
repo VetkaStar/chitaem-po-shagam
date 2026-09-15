@@ -1,5 +1,6 @@
 import type { Profile } from '../curriculum/contracts.js';
 import type { Curriculum } from '../curriculum/types.js';
+import { illustrationMatch } from '../../features/curriculum/illustration-match.js';
 import { demand, object, strings, natural, own } from '../curriculum/loader.js';
 import {
   catalogChecks,
@@ -69,6 +70,18 @@ export function instanceValidator(p: Profile, c: Curriculum) {
     for (const key of ['readingStageFinished', 'optionsRevealed'])
       if (key in v) demand(typeof v[key] === 'boolean', key);
     if (v.reading !== undefined) proof(v.reading);
+    if ('illustrationVariant' in v) {
+      const asset = illustrationMatch(t);
+      demand(
+        asset &&
+          ['main', 'alternate', 'context'].includes(
+            v.illustrationVariant as string,
+          ) &&
+          (v.helpLevel as number) >= 1 &&
+          (asset.kind !== 'story' || v.illustrationVariant === 'main'),
+        'illustration without saved help',
+      );
+    }
     if (
       ['passage', 'read_meaning'].includes(t.kind) &&
       v.optionsRevealed === true

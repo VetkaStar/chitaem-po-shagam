@@ -39,6 +39,7 @@ export interface Supply {
   registry: EntryRegistry;
 }
 export interface RuntimeInstance extends TaskInstance {
+  illustrationVariant?: 'main' | 'alternate' | 'context';
   optionsRevealed?: boolean;
   promptFreeAtPresentation: boolean;
 }

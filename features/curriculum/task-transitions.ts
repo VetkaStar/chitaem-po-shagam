@@ -11,6 +11,8 @@ export function applyAnswer(
   submission: Submission,
 ) {
   const active = s.profile.activeInstance;
+  if (!active || active.instanceId !== submission.instanceId)
+    throw new Error('STALE_INSTANCE');
   if (
     active &&
     !submission.disposition &&
@@ -23,6 +25,35 @@ export function applyAnswer(
       !(active as typeof active & { optionsRevealed?: boolean }).optionsRevealed
     )
       throw new Error('READING_AND_OPTIONS_STAGES_REQUIRED');
+  }
+  if (
+    active &&
+    !submission.disposition &&
+    supply.curriculum.items[active.itemId].kind === 'transform' &&
+    active.context === 'free' &&
+    (
+      supply.curriculum.items[active.itemId] as {
+        requiresFollowupReading?: boolean;
+      }
+    ).requiresFollowupReading
+  ) {
+    const draft = active as typeof active & { transformText?: string };
+    if (draft.transformText === undefined) {
+      if (
+        typeof submission.response?.text !== 'string' ||
+        !submission.response.text.trim()
+      )
+        throw new Error('TRANSFORM_TEXT_REQUIRED');
+      draft.transformText = submission.response.text;
+      s.profile.revision++;
+      return;
+    }
+    if (
+      submission.response?.text !== draft.transformText ||
+      submission.response.reading?.verifier !== 'companion' ||
+      typeof submission.response.reading.correct !== 'boolean'
+    )
+      throw new Error('TRANSFORM_READING_REQUIRED');
   }
   s.profile = routeEngine.answerAction(
     s.profile,

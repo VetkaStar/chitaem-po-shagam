@@ -1,7 +1,7 @@
 import { loadSupply } from './loader.js';
 import type { Supply } from './types.js';
 let pending: Promise<Supply> | undefined;
-/** Lazy: free trainers do not need to load the curriculum or open a profile. */
+/** Loaded on entering a curriculum screen or before the first free-material exposure. */
 export function loadBundledSupply(): Promise<Supply> {
   return pending ??= Promise.all([
     import('../../content/curriculum/curriculum.json?raw'),

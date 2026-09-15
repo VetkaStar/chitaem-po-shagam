@@ -1,4 +1,5 @@
 'use client';
+import { FreeExposureFrame } from '../free-practice/FreeExposureFrame';
 import { useEffect, useRef, useState } from 'react';
 import { Image as ImageIcon, Star, Volume2, X } from 'lucide-react';
 import { useIllustrationPreload } from '@/components/use-illustration-preload';
@@ -12,6 +13,7 @@ import { wordIllustrations } from '@/content/illustrations';
 import { wordEntry, wordParts } from '@/content/word-bank';
 import { availableBridges } from '@/content/word-bridges';
 import { levels } from '@/lib/learning';
+import { useFreeExposure } from '@/features/free-practice/use-free-exposure';
 import { plural } from '@/lib/plural';
 import ExerciseVoiceMonitor from './ExerciseVoiceMonitor';
 import ExerciseFeedback from './ExerciseFeedback';
@@ -100,7 +102,7 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
   const [stoppedActivity, setStoppedActivity] = useState<string | null>(null);
   const autoStopped = stoppedActivity === activityKey;
   const stopAdvance = () => setStoppedActivity(activityKey);
-  const blocked = parent || paused || rest || speaking;
+
   // Shown under the main button on laptop and under the feedback on tablet and phone.
   const advanceStop = (place: 'only-wide' | 'only-narrow') =>
     settings.autoAdvance && (done || feedback.kind === 'success') ? (
@@ -144,10 +146,63 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
     );
     setFlyInputStatus('Лови новые!');
   }
+  // Only exposed material counts: a concealed picture does not reveal its word.
+  const shownHint = hint && mode !== 'fly';
+  const supportChoices =
+    shownHint && !picture && mistakes >= 3
+      ? [Array.from(target).reverse().join('')]
+      : [];
+  const visibleTexts = done
+    ? []
+    : [
+        ...(mode === 'fly'
+          ? flyCards.map((card) => card.text)
+          : picture
+            ? []
+            : [target]),
+        ...(wordRead && model.showParts ? parts : []),
+        ...(shownHint
+          ? [target, ...(picture ? [picture.hint] : supportChoices)]
+          : []),
+        ...(picture &&
+        mode !== 'read' &&
+        settings.pictureMode === 'letters' &&
+        mistakes >= 3
+          ? [target[0]]
+          : []),
+        ...(typo ? [typo.cells.map((cell) => cell.after).join('')] : []),
+        ...(heard && mode === 'read' ? [target] : []),
+        mode === 'fly' ? flyInputStatus : feedback.text,
+      ];
+  const prompted =
+    !done &&
+    (picture ||
+      (wordRead && showWordPicture) ||
+      shownHint ||
+      typo ||
+      (wordRead && (model.showParts || settings.readingFocus === 'syllable')) ||
+      (settings.color && mode !== 'fly'));
+  const exposure = useFreeExposure({
+    texts: visibleTexts,
+    promptedTexts:
+      mode === 'fly' && !done && stage === 'letters' && settings.color
+        ? flyCards.map((card) => card.text)
+        : prompted
+          ? [target]
+          : [],
+  });
   useEffect(() => {
-    if (feedback.kind === 'success' && !done && !paused && !parent && !rest)
+    if (
+      exposure.ready &&
+      feedback.kind === 'success' &&
+      !done &&
+      !paused &&
+      !parent &&
+      !rest
+    )
       nextButton.current?.focus({ preventScroll: true });
-  }, [feedback.kind, done, paused, parent, rest]);
+  }, [exposure.ready, feedback.kind, done, paused, parent, rest]);
+  const blocked = parent || paused || rest || speaking || !exposure.ready;
   const answerInput = (
     <ExerciseAnswerInput
       mode={mode}
@@ -164,7 +219,7 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
       submit={submit}
       mistakes={mistakes}
       feedback={feedback}
-      paused={paused}
+      paused={paused || !exposure.ready}
       parent={parent}
       rest={rest}
       input={input}
@@ -173,7 +228,7 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
     />
   );
   return (
-    <>
+    <FreeExposureFrame ready={exposure.ready} blocker={exposure.blocker}>
       <CompletionCelebration done={done} motion={settings.motion} />
       <div className={'exercise ' + feedback.kind}>
         <ExerciseHeader
@@ -238,7 +293,7 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
               mode={mode}
               settings={settings}
               flyCards={flyCards}
-              paused={paused}
+              paused={paused || !exposure.ready}
               parent={parent}
               rest={rest}
               done={done}
@@ -443,6 +498,6 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
         }}
         onContinue={model.continueLesson}
       />
-    </>
+    </FreeExposureFrame>
   );
 }

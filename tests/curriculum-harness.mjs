@@ -5,7 +5,7 @@ const require = createRequire(import.meta.url), ts = require('typescript');
 export const root = path.resolve(import.meta.dirname,'..');
 export const output = path.join(root,'.local','curriculum-tests');
 export function compileCurriculum() {
-  for (const dir of ['lib/curriculum','lib/progress','features/curriculum']) {
+  for (const dir of ['lib/curriculum','lib/progress','features/curriculum','features/onboarding','features/roadmap']) {
     const copy = (relative) => {
       for (const entry of fs.readdirSync(path.join(root,relative),{withFileTypes:true})) {
         const source = path.join(relative,entry.name);

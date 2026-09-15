@@ -9,13 +9,17 @@
     "dev": "vite --config vite.pages.config.ts",
     "lint": "oxlint",
     "format": "oxfmt",
-    "test": "node tests/regression.mjs && node tests/practice-flow.mjs && node tests/text-practice-flow.mjs && node tests/illustrations.mjs && node tests/auto-advance.mjs && node tests/curriculum.mjs && node tools/verify-curriculum.mjs",
+    "test": "node tests/regression.mjs && node tests/practice-flow.mjs && node tests/text-practice-flow.mjs && node tests/illustrations.mjs && node tests/auto-advance.mjs && node tests/curriculum.mjs && node tests/curriculum-presentation.mjs && node tests/curriculum-execution.mjs && node tests/curriculum-demonstrations.mjs && node tests/curriculum-onboarding.mjs && node tests/curriculum-roadmap.mjs && node tests/curriculum-free-practice.mjs && node tests/free-audio-flow.mjs && node tools/verify-curriculum.mjs",
     "typecheck": "tsc --noEmit",
     "build:pages": "vite build --config vite.pages.config.ts",
     "build": "vite build --config vite.pages.config.ts",
     "test:curriculum": "node tests/curriculum.mjs",
     "test:curriculum:browser": "node tests/curriculum-browser.mjs",
-    "test:curriculum:supply": "node tools/verify-curriculum.mjs --run-tests"
+    "test:curriculum:supply": "node tools/verify-curriculum.mjs --run-tests",
+    "test:curriculum:onboarding": "node tests/curriculum-onboarding-browser.mjs",
+    "test:curriculum:executors": "node tests/curriculum-executors-browser.mjs",
+    "test:curriculum:roadmap": "node tests/curriculum-roadmap-browser.mjs",
+    "test:curriculum:free": "node tests/curriculum-free-browser.mjs && node tests/curriculum-free-app-browser.mjs"
   },
   "dependencies": {
     "react": "19.2.6",

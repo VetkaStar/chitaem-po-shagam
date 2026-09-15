@@ -94,6 +94,27 @@ export function instanceValidator(p: Profile, c: Curriculum) {
         'optionOrder permutation',
       );
     }
+    if ('transformText' in v)
+      demand(
+        t.kind === 'transform' &&
+          v.context === 'free' &&
+          (t as typeof t & { requiresFollowupReading?: boolean })
+            .requiresFollowupReading === true &&
+          typeof v.transformText === 'string' &&
+          v.transformText.trim().length > 0,
+        'transform reading stage',
+      );
+    if ('tokenOrder' in v) {
+      const ids = (t.partTokens ?? []).map((token) => token.tokenId);
+      demand(
+        t.kind === 'compose' &&
+          strings(v.tokenOrder) &&
+          v.tokenOrder.length === ids.length &&
+          new Set(v.tokenOrder).size === ids.length &&
+          v.tokenOrder.every((id) => ids.includes(id)),
+        'tokenOrder permutation',
+      );
+    }
     optionAnswers(v.answers, t.id);
     if (v.episodeId !== null) {
       demand(

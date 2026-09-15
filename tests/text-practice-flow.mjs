@@ -80,6 +80,7 @@ function load(file) {
         removeEventListener() {},
       },
       require(p) {
+        if (p.includes('use-free-exposure')) return { useFreeExposure: () => ({ready: true, blocker: null}) };
         if (p === 'react') return React;
         if (p === 'react/jsx-runtime')
           return {

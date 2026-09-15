@@ -6371,3 +6371,192 @@ meter::-webkit-meter-optimum-value {
     @apply relative inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-1.5 py-0.5 text-sm font-medium whitespace-nowrap text-foreground/60 transition-all group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50 has-data-[icon=inline-end]:pr-1 has-data-[icon=inline-start]:pl-1 aria-disabled:pointer-events-none aria-disabled:opacity-50 dark:text-muted-foreground dark:hover:text-foreground group-data-[variant=default]/tabs-list:data-active:shadow-sm group-data-[variant=line]/tabs-list:data-active:shadow-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-active:bg-transparent dark:group-data-[variant=line]/tabs-list:data-active:border-transparent dark:group-data-[variant=line]/tabs-list:data-active:bg-transparent data-active:bg-background data-active:text-foreground dark:data-active:border-input dark:data-active:bg-input/30 dark:data-active:text-foreground after:absolute after:bg-foreground after:opacity-0 after:transition-opacity group-data-horizontal/tabs:after:inset-x-0 group-data-horizontal/tabs:after:bottom-[-5px] group-data-horizontal/tabs:after:h-0.5 group-data-vertical/tabs:after:inset-y-0 group-data-vertical/tabs:after:-right-1 group-data-vertical/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-active:after:opacity-100;
   }
 }
+
+/* ===== Curriculum: common executor, independent from free trainers ===== */
+.curriculum-session {
+  width: min(100%, 1040px);
+  margin: 0 auto;
+  color: var(--ink);
+}
+.curriculum-session-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  min-height: 100px;
+}
+.curriculum-session-header h1 {
+  margin: 0;
+  font-size: clamp(24px, 3vw, 34px);
+  flex: 1;
+}
+.curriculum-session label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.curriculum-session select {
+  max-width: 100%;
+  padding: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font: inherit;
+}
+.curriculum-session-progress {
+  min-height: 40px;
+  padding: 8px 0;
+  font-size: 16px;
+  color: var(--ink-3);
+}
+.curriculum-step {
+  padding: clamp(18px, 3vw, 36px);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+}
+.curriculum-instruction {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.curriculum-instruction p {
+  margin: 0;
+  font-size: 20px;
+}
+.curriculum-task-instruction {
+  color: var(--ink-3);
+}
+.curriculum-material {
+  margin: 24px 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: clamp(26px, 4vw, 44px);
+  line-height: 1.5;
+}
+.curriculum-material p {
+  margin: 12px 0;
+}
+.curriculum-actions,
+.curriculum-options,
+.curriculum-token-bank,
+.curriculum-selection,
+.curriculum-session-start {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+.curriculum-answer-form,
+.curriculum-questions,
+.curriculum-question {
+  display: grid;
+  gap: 14px;
+  margin: 16px 0;
+}
+.curriculum-text-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 26px;
+}
+.curriculum-session button {
+  min-height: 44px;
+}
+.curriculum-session button[aria-pressed='true'] {
+  background: var(--primary);
+  color: var(--color-primary-foreground, #fff);
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.curriculum-session button:focus-visible,
+.curriculum-session input:focus-visible,
+.curriculum-session select:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+.curriculum-composition {
+  min-height: 64px;
+  padding: 14px;
+  border: 1px dashed var(--line-strong);
+  border-radius: 12px;
+  font-size: 28px;
+}
+.curriculum-boundaries,
+.curriculum-span-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.curriculum-boundary-unit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 32px;
+}
+.curriculum-boundary-button {
+  min-width: 44px;
+  padding: 8px;
+}
+.curriculum-span-lines {
+  display: grid;
+  gap: 18px;
+}
+.curriculum-character {
+  min-width: 44px;
+  padding: 8px;
+  font-size: 26px;
+}
+.curriculum-range-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 12px 0;
+}
+.curriculum-help {
+  margin: 20px 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.curriculum-help button {
+  margin: 4px 8px 4px 0;
+}
+.curriculum-save-error {
+  padding: 14px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+}
+.curriculum-session-transition {
+  padding: 24px 0;
+}
+.curriculum-saved-answer {
+  font-weight: 700;
+}
+@media (max-width: 600px) {
+  .curriculum-session-header {
+    align-items: flex-start;
+  }
+  .curriculum-session-header h1 {
+    flex-basis: 100%;
+  }
+  .curriculum-instruction {
+    align-items: flex-start;
+  }
+  .curriculum-actions button {
+    flex: 1 1 160px;
+  }
+}
+
+/* Durable material presentation: retain layout and nested exercise state. */
+.free-material { position: relative; }
+.free-material.is-pending > .free-material-content,
+.free-material.is-pending > .free-material-content * { visibility: hidden !important; }
+.free-material-notice { position: absolute; inset: 0; display: flex; align-items: flex-start; justify-content: center; }

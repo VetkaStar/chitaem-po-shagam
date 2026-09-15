@@ -53,6 +53,10 @@ export function validateSourceOwnership(state: ProgressState) {
     const route = state.customRoutes[state.route!.routeId];
     demand(route.suspendedInstance === null, 'custom route already suspended');
     checkCustom(route, active);
-  } else if (state.studyMode === 'free') checkOrigin(active, 'free');
+  } else if (state.studyMode === 'entry')
+    demand(active.context === 'free', 'entry source');
+  else if (state.studyMode === 'demonstration')
+    demand(active.context === 'demo', 'demonstration ownership');
+  else if (state.studyMode === 'free') checkOrigin(active, 'free');
   else demand(active.context === 'route', 'recommended instance ownership');
 }

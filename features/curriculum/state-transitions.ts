@@ -9,6 +9,10 @@ export function park(s: ProgressState) {
     s.profile.programs[a.programId].suspendedInstance = a;
   else if (s.studyMode === 'custom' && s.route)
     s.customRoutes[s.route.routeId].suspendedInstance = a;
+  else if (s.studyMode === 'demonstration' && s.route)
+    s.demonstrationRuns![s.route.routeId as 'p1' | 'p2']!.suspendedInstance = a;
+  else if (s.studyMode === 'entry' && s.onboarding.entry)
+    s.onboarding.entry.suspendedInstance = a;
   else s.suspendedFreeInstance = a;
   s.profile.activeInstance = null;
   s.profile.revision++;

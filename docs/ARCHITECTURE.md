@@ -131,3 +131,24 @@ content/curriculum — проверенный снимок двух програ
 Все стили приложения, включая базовые UI-компоненты, находятся в app/globals.css; расположение секций и передача состояния через атрибуты описаны в STYLES.md. Исходные vendor-модули учебной поставки неизменны.
 
 lib/progress/validation.ts координирует validation-helpers, validation-instances, validation-programs, validation-evidence, validation-platform и validation-sources. features/curriculum/controller.ts остаётся единственным владельцем очереди, состояния и записи; state-transitions и task-transitions работают только с его черновиком.
+
+## Исполнители учебных программ
+
+CurriculumSession и use-curriculum-session связывают React с единственным CurriculumController. CurriculumStep собирает информационные шаги, помощь и TaskRenderer; renderers/ содержит отдельные исполнители восьми видов. presentation и information-presentation отдают только разрешённые данные. Подробные контракты, границы подключения и проверки: [CURRICULUM-EXECUTORS.md](CURRICULUM-EXECUTORS.md). Все стили — app/globals.css.
+
+## Демонстрации методов
+
+lib/curriculum/demonstrations.ts выбирает неизменённый авторский эпизод; features/curriculum/demonstration.ts выполняет отдельную последовательность через общий контроллер и исполнители. DemoControls отвечает за выбор и явное впечатление. lib/progress/validation-demonstrations.ts сверяет позицию, экземпляр и журнал completed steps. Подробности: [CURRICULUM-DEMONSTRATIONS.md](CURRICULUM-DEMONSTRATIONS.md).
+
+## Добровольный первый вход
+
+AppPortal лениво открывает features/onboarding/CurriculumPortal. OnboardingRoot собирает отдельные формы, UI_ACCESS, EntryWorkspace и EntryReport. entry-state/actions/execution выполняют переходы в черновике CurriculumController; базовый EntryCommands не владеет состоянием или хранилищем. lib/progress/validation-entry проверяет metadata и наблюдения. Подробнее: [CURRICULUM-ONBOARDING.md](CURRICULUM-ONBOARDING.md).
+
+
+## Дорожка и свободные показы (этап 5)
+
+features/roadmap — чистая проекция целей/отчёта и компоненты дорожки. OnboardingRoot соединяет её с входом и CurriculumSession; отдельный CurriculumEntry загружает экран по запросу. Интересы сохраняет controller.updateInterests, без изменения позиции.
+
+features/free-practice — единый сервис свободных показов, FreeExposureFrame и useFreeExposure. Сервис читает свежую revision и передаёт запись контроллеру. lib/curriculum/free-exposure сопоставляет фактический текст с ID/семействами поставки. UI сохраняет состояние и геометрию, пока новый материал скрыт и inert. material-ready блокирует принятие речи; audio и lesson-voice-actions записывают помощь до воспроизведения. Все стили остаются в app/globals.css.
+
+Подробности и границы: [CURRICULUM-ROADMAP.md](CURRICULUM-ROADMAP.md).

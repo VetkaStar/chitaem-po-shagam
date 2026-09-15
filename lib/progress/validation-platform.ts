@@ -45,7 +45,9 @@ export function validatePlatform(
       'legacy raw',
     );
   demand(
-    ['free', 'recommended', 'custom'].includes(s.studyMode as string),
+    ['free', 'recommended', 'custom', 'demonstration', 'entry'].includes(
+      s.studyMode as string,
+    ),
     'study mode',
   );
   demand(object(s.customRoutes), 'custom routes');
@@ -87,7 +89,9 @@ export function validatePlatform(
   if (s.route !== null) {
     demand(
       object(s.route) &&
-        ['recommended', 'custom'].includes(s.route.source as string) &&
+        ['recommended', 'custom', 'demonstration', 'entry'].includes(
+          s.route.source as string,
+        ) &&
         isText(s.route.routeId) &&
         natural(s.route.version) &&
         s.route.version > 0,
@@ -100,6 +104,17 @@ export function validatePlatform(
           s.route.routeId === p.currentProgramId,
           'selected program mismatch',
         );
+    } else if (s.route.source === 'entry') {
+      demand(
+        s.route.routeId === 'onboarding' && s.route.version === 1,
+        'entry route',
+      );
+    } else if (s.route.source === 'demonstration') {
+      demand(
+        ['p1', 'p2'].includes(s.route.routeId as string) &&
+          s.route.version === 1,
+        'demo route',
+      );
     } else {
       const r = s.customRoutes[s.route.routeId] as
         | { version: number }
@@ -119,7 +134,9 @@ export function validatePlatform(
       object(e) &&
         isText(e.id) &&
         !eventIds.has(e.id) &&
-        ['free', 'custom', 'recommended'].includes(e.source as string) &&
+        ['free', 'custom', 'recommended', 'demonstration', 'entry'].includes(
+          e.source as string,
+        ) &&
         [
           'launch',
           'answer',
@@ -128,6 +145,7 @@ export function validatePlatform(
           'options',
           'info',
           'free_exposure',
+          'demonstration_step',
         ].includes(e.kind as string) &&
         nullableText(e.routeId) &&
         nullableText(e.instanceId) &&
@@ -144,6 +162,43 @@ export function validatePlatform(
         : e.customStepId === null,
       'source event custom step',
     );
+    if (e.source === 'demonstration')
+      demand(
+        ['p1', 'p2'].includes(e.routeId as string) && e.routeVersion === 1,
+        'demo event route',
+      );
+    if (e.demoStepId !== undefined)
+      demand(
+        e.source === 'demonstration' && isText(e.demoStepId),
+        'demo event step',
+      );
+    if (e.kind === 'demonstration_step')
+      demand(
+        e.source === 'demonstration' && isText(e.demoStepId),
+        'demo completion event',
+      );
+    if (e.demoPlanId !== undefined)
+      demand(
+        e.source === 'demonstration' && isText(e.demoPlanId),
+        'demo information plan',
+      );
+    if (e.source === 'entry')
+      demand(
+        e.routeId === 'onboarding' && e.routeVersion === 1,
+        'entry event route',
+      );
+    if (e.entryCheckpointId !== undefined)
+      demand(
+        e.source === 'entry' && isText(e.entryCheckpointId),
+        'entry event checkpoint',
+      );
+    if (e.entryPracticeId !== undefined)
+      demand(
+        e.source === 'entry' &&
+          isText(e.entryPracticeId) &&
+          natural(e.entryPosition),
+        'entry event practice',
+      );
     eventIds.add(e.id);
   }
   const o = s.onboarding;
@@ -226,4 +281,46 @@ export function validatePlatform(
     'questionnaire budget',
   );
   demand(strings(q.interests), 'interests');
+  for (const key of [
+    'onlyMemorisedWords',
+    'instructionsReadable',
+    'audioUsable',
+    'visualTextUsable',
+    'canUseButtons',
+    'canUseKeyboard',
+    'companionCanSelect',
+  ])
+    if (q[key] !== undefined)
+      demand(booleanOrNull(q[key]), 'questionnaire ' + key);
+  if (q.presentation !== undefined)
+    demand(
+      [null, 'school', 'neutral'].includes(q.presentation as string | null),
+      'presentation',
+    );
+  if (q.letterPairs !== undefined)
+    demand(
+      strings(q.letterPairs) &&
+        q.letterPairs.every((x) => ['LP', 'MS', 'OTHER', 'NONE'].includes(x)),
+      'letter pairs',
+    );
+  for (const key of ['otherLetterPair', 'interestDetails'])
+    if (q[key] !== undefined)
+      demand(typeof q[key] === 'string', 'questionnaire ' + key);
+  for (const key of ['goal', 'responseMode'])
+    if (q[key] !== undefined)
+      demand(nullableText(q[key]), 'questionnaire ' + key);
+  if (q.motionAllowed !== undefined)
+    demand(typeof q.motionAllowed === 'boolean', 'motion');
+  if (q.instructionAudio !== undefined)
+    demand(
+      ['button', 'always', 'off'].includes(q.instructionAudio as string),
+      'instruction audio',
+    );
+  if (q.listeningEasier !== undefined)
+    demand(
+      [null, 'yes', 'no', 'sometimes'].includes(
+        q.listeningEasier as string | null,
+      ),
+      'listening report',
+    );
 }

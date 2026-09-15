@@ -5,6 +5,7 @@ import type {
   Action,
   CustomRoute,
   Questionnaire,
+  DemoMethod,
 } from '../../lib/curriculum/types.js';
 import type {
   ReadingProof,
@@ -24,21 +25,43 @@ import {
 } from './action-source.js';
 import { park, logSource, launchFreeProfile } from './state-transitions.js';
 import { applyAnswer, applyReading, applyReveal } from './task-transitions.js';
+import { preparePresentation } from './token-order.js';
 import { presentation } from './presentation.js';
+import {
+  currentDemo,
+  demoEpisode,
+  demoInformation,
+  planDemonstration,
+  launchDemonstration,
+  acknowledgeDemonstration,
+} from './demonstration.js';
+import { ensureEntry, checkpoint } from '../onboarding/entry-state.js';
+import {
+  planEntry,
+  launchEntry,
+  recordEntryCompletion,
+} from '../onboarding/entry-execution.js';
+import {
+  exposureInput,
+  type FreeExposure,
+} from '../../lib/curriculum/free-exposure.js';
+import { EntryCommands } from '../onboarding/entry-commands.js';
 export interface PlanToken {
   storageRevision: number;
   kind: string;
   planId: string | null;
 }
-export class CurriculumController {
+export class CurriculumController extends EntryCommands {
   private tail: Promise<unknown> = Promise.resolve();
   private pending: { token: PlanToken; action: Action } | null = null;
   private constructor(
-    private supply: Supply,
+    protected supply: Supply,
     private store: ProgressStore,
     private state: ProgressState,
     private sources: Record<'recommended' | 'custom', ActionSource>,
-  ) {}
+  ) {
+    super();
+  }
   static async open(
     supply: Supply,
     store: ProgressStore,
@@ -54,6 +77,10 @@ export class CurriculumController {
     return structuredClone(this.state);
   }
   visible() {
+    if (this.state.studyMode === 'demonstration')
+      return this.state.profile.activeInstance
+        ? presentation(this.state.profile, this.supply)
+        : demoInformation(this.state, this.supply);
     // A deferred route cannot accidentally show the active informational screen of a parked course.
     if (
       this.state.studyMode !== 'recommended' &&
@@ -62,12 +89,27 @@ export class CurriculumController {
       return null;
     return presentation(this.state.profile, this.supply);
   }
+  demonstrationComplete() {
+    return (
+      this.state.studyMode === 'demonstration' &&
+      !currentDemo(this.state, this.supply).step
+    );
+  }
+  protected changeEntry(fn: (s: ProgressState) => void) {
+    return this.serial(async () => {
+      const s = this.snapshot();
+      if (s.studyMode !== 'entry') throw new Error('NOT_ENTRY_MODE');
+      fn(s);
+      return this.save(s);
+    });
+  }
   private serial<T>(fn: () => Promise<T>): Promise<T> {
     const result = this.tail.then(fn);
     this.tail = result.catch(() => undefined);
     return result;
   }
   private async save(next: ProgressState, backup = false) {
+    preparePresentation(next.profile, this.supply);
     validateState(next, this.supply);
     const saved = await this.store.commit(
       next,
@@ -112,6 +154,11 @@ export class CurriculumController {
       park(s);
       s.studyMode = 'free';
       s.onboarding.setupStatus = 'in_progress';
+      s.studyMode = 'entry';
+      s.route = { source: 'entry', routeId: 'onboarding', version: 1 };
+      const flow = ensureEntry(s);
+      s.profile.activeInstance = flow.suspendedInstance;
+      flow.suspendedInstance = null;
       await this.save(s);
       return { screen: s.onboarding.screen };
     });
@@ -124,6 +171,38 @@ export class CurriculumController {
       const s = this.snapshot();
       s.onboarding.questionnaire = structuredClone(questionnaire);
       s.onboarding.questionnaireStep = step;
+      return this.save(s);
+    });
+  }
+  selectDemonstration(method: DemoMethod) {
+    return this.serial(async () => {
+      demoEpisode(this.supply, method);
+      const s = this.snapshot();
+      park(s);
+      s.demonstrationRuns ??= {};
+      const run = (s.demonstrationRuns[method] ??= {
+        position: 0,
+        activeInfo: null,
+        suspendedInstance: null,
+        comfort: null,
+      });
+      s.studyMode = 'demonstration';
+      s.route = { source: 'demonstration', routeId: method, version: 1 };
+      s.profile.activeInstance = run.suspendedInstance;
+      run.suspendedInstance = null;
+      s.profile.revision++;
+      return this.save(s);
+    });
+  }
+  saveDemoComfort(comfort: 'comfortable' | 'needs_help' | 'unsure') {
+    return this.serial(async () => {
+      if (!['comfortable', 'needs_help', 'unsure'].includes(comfort))
+        throw new Error('INVALID_COMFORT');
+      const s = this.snapshot(),
+        { run, episode } = currentDemo(s, this.supply);
+      if (run.position !== episode.steps.length)
+        throw new Error('DEMONSTRATION_UNFINISHED');
+      run.comfort = comfort;
       return this.save(s);
     });
   }
@@ -199,7 +278,11 @@ export class CurriculumController {
       const s = this.snapshot(),
         p = s.profile;
       let selected: { profile: typeof p; action: Action };
-      if (s.studyMode === 'custom' && p.activeInstance)
+      if (s.studyMode === 'entry')
+        selected = { profile: p, action: planEntry(s, this.supply) };
+      else if (s.studyMode === 'demonstration')
+        selected = { profile: p, action: planDemonstration(s, this.supply) };
+      else if (s.studyMode === 'custom' && p.activeInstance)
         selected = { profile: p, action: { kind: 'active_task' } };
       else if (s.studyMode === 'custom' && !p.currentVisit)
         selected = { profile: p, action: { kind: 'begin_visit' } };
@@ -224,7 +307,11 @@ export class CurriculumController {
       return { ...token };
     });
   }
-  launch(token: PlanToken, instanceId = crypto.randomUUID()) {
+  launch(
+    token: PlanToken,
+    instanceId: string = crypto.randomUUID(),
+    companionObserved = false,
+  ) {
     return this.serial(async () => {
       const pending = this.pending;
       if (
@@ -243,7 +330,11 @@ export class CurriculumController {
         s.profile.currentVisit.actions >= s.profile.currentVisit.budget
       )
         throw new Error('VISIT_OR_BUDGET');
-      if (a.kind === 'custom_task')
+      if (s.studyMode === 'entry')
+        launchEntry(s, this.supply, a, instanceId, companionObserved);
+      else if (s.studyMode === 'demonstration')
+        launchDemonstration(s, this.supply, a, instanceId);
+      else if (a.kind === 'custom_task')
         s.profile = launchFreeProfile(
           s,
           this.supply,
@@ -263,6 +354,21 @@ export class CurriculumController {
         a.kind.endsWith('_info') ? 'info' : 'launch',
         s.profile.activeInstance?.instanceId ?? null,
       );
+      if (s.studyMode === 'entry') {
+        const flow = ensureEntry(s),
+          event = s.sourceEvents.at(-1)!;
+        if (flow.practice) {
+          event.entryPracticeId = flow.practice.id;
+          event.entryPosition = flow.practice.position;
+        } else event.entryCheckpointId = checkpoint(s).id;
+      }
+      if (s.studyMode === 'demonstration') {
+        s.sourceEvents.at(-1)!.demoStepId = currentDemo(
+          s,
+          this.supply,
+        ).step!.id;
+        s.sourceEvents.at(-1)!.demoPlanId = a.planId!;
+      }
       await this.save(s);
       return this.visible();
     });
@@ -270,7 +376,7 @@ export class CurriculumController {
   launchFree(
     itemId: string,
     mode: 'read' | 'listen' | 'shared',
-    instanceId = crypto.randomUUID(),
+    instanceId: string = crypto.randomUUID(),
   ) {
     return this.serial(async () => {
       const s = this.snapshot();
@@ -299,21 +405,47 @@ export class CurriculumController {
     return this.serial(async () => {
       const s = this.snapshot();
       if (s.profile.receipts[submission.instanceId]) return this.snapshot(); // no second receipt, reward or route movement
-      applyAnswer(s, this.supply, submission);
+      if (s.studyMode === 'entry') {
+        // Use shared raw-answer staging without reconciling any parked official route.
+        const program = s.profile.currentProgramId;
+        s.profile.currentProgramId = null;
+        applyAnswer(s, this.supply, submission);
+        s.profile.currentProgramId = program;
+        recordEntryCompletion(s, this.supply, submission.instanceId);
+      } else if (s.studyMode === 'demonstration') {
+        const { run, step } = currentDemo(s, this.supply);
+        s.profile = engine.recordAttempt(
+          s.profile,
+          this.supply.curriculum,
+          submission,
+        );
+        if (s.profile.receipts[submission.instanceId]) {
+          logSource(s, 'demonstration_step', submission.instanceId);
+          s.sourceEvents.at(-1)!.demoStepId = step!.id;
+          run.position++;
+        }
+      } else applyAnswer(s, this.supply, submission);
       logSource(s, 'answer', submission.instanceId);
       return this.save(s);
     });
   }
   acknowledge(planId: string) {
     return this.serial(async () => {
-      if (this.state.studyMode !== 'recommended')
+      if (!['recommended', 'demonstration'].includes(this.state.studyMode))
         throw new Error('NOT_RECOMMENDED_ROUTE');
       const s = this.snapshot();
-      s.profile = routeEngine.acknowledgeInfo(
-        s.profile,
-        this.supply.curriculum,
-        planId,
-      );
+      if (s.studyMode === 'demonstration') {
+        const step = currentDemo(s, this.supply).step!;
+        acknowledgeDemonstration(s, this.supply, planId);
+        logSource(s, 'demonstration_step', null);
+        s.sourceEvents.at(-1)!.demoStepId = step.id;
+        s.sourceEvents.at(-1)!.demoPlanId = planId;
+      } else
+        s.profile = routeEngine.acknowledgeInfo(
+          s.profile,
+          this.supply.curriculum,
+          planId,
+        );
       logSource(s, 'info', null);
       return this.save(s);
     });
@@ -330,9 +462,33 @@ export class CurriculumController {
         this.supply.curriculum,
         options,
       );
+      const shown = presentation(s.profile, this.supply);
+      if (shown?.kind === 'task' && shown.hints.length)
+        s.profile = engine.commitExposure(s.profile, { texts: shown.hints });
       logSource(s, 'help', s.profile.activeInstance!.instanceId);
       await this.save(s);
       return this.visible();
+    });
+  }
+  hint(index: number) {
+    return this.serial(async () => {
+      const s = this.snapshot();
+      s.profile = engine.applyHint(s.profile, this.supply.curriculum, index);
+      logSource(s, 'help', s.profile.activeInstance!.instanceId);
+      await this.save(s);
+      return this.visible();
+    });
+  }
+  informationAudio() {
+    return this.serial(async () => {
+      const view = this.visible();
+      if (view?.kind !== 'info') throw new Error('NO_ACTIVE_INFORMATION');
+      const texts = view.spokenTexts.length ? view.spokenTexts : view.texts;
+      const s = this.snapshot();
+      s.profile = engine.commitExposure(s.profile, { texts });
+      logSource(s, 'info', null);
+      await this.save(s);
+      return texts.join(' ');
     });
   }
   recordReading(instanceId: string, reading?: ReadingProof) {
@@ -352,12 +508,30 @@ export class CurriculumController {
       return this.visible();
     });
   }
-  recordFreeExposure(texts: string[]) {
+  updateInterests(tags: string[]) {
     return this.serial(async () => {
-      if (!Array.isArray(texts) || !texts.every((x) => typeof x === 'string'))
-        throw new Error('INVALID_EXPOSURE');
+      const known = new Set(
+        Object.values(this.supply.curriculum.items).flatMap(
+          (item) => item.interestTags,
+        ),
+      );
+      if (!Array.isArray(tags) || tags.some((tag) => !known.has(tag)))
+        throw new Error('INVALID_INTERESTS');
       const s = this.snapshot();
-      s.profile = engine.commitExposure(s.profile, { texts });
+      s.profile.interests = [...new Set(tags)];
+      s.onboarding.questionnaire.interests = [...s.profile.interests];
+      s.profile.revision++;
+      return this.save(s);
+    });
+  }
+  recordFreeExposure(input: string[] | FreeExposure) {
+    return this.serial(async () => {
+      const exposure = exposureInput(
+        this.supply,
+        Array.isArray(input) ? { texts: input } : input,
+      );
+      const s = this.snapshot();
+      s.profile = engine.commitExposure(s.profile, exposure);
       s.sourceEvents.push({
         id: crypto.randomUUID(),
         source: 'free',

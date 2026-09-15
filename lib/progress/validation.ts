@@ -14,6 +14,8 @@ import { validatePrograms } from './validation-programs.js';
 import { validateEvidence } from './validation-evidence.js';
 import { validateSourceOwnership } from './validation-sources.js';
 import { validatePlatform } from './validation-platform.js';
+import { validateDemonstrations } from './validation-demonstrations.js';
+import { validateEntry } from './validation-entry.js';
 export { LEGACY_KEYS } from './validation-helpers.js';
 export function validateState(
   value: unknown,
@@ -71,5 +73,7 @@ export function validateState(
   validatePrograms(p, c, active);
   validateEvidence(p, c, instance);
   validatePlatform(s, supply, active);
+  validateDemonstrations(s as unknown as ProgressState, supply, active);
+  validateEntry(s as unknown as ProgressState, supply, active);
   validateSourceOwnership(s as unknown as ProgressState);
 }

@@ -6,7 +6,7 @@ import { LEGACY_KEYS, validateState } from './validation.js';
 export function createState(
   supply: Supply,
   legacyStorage: Pick<Storage, 'getItem'>,
-  id = crypto.randomUUID(),
+  id: string = crypto.randomUUID(),
 ): ProgressState {
   const values: Record<string, string | null> = {};
   // A blocked localStorage is not an empty profile. Let the caller report the failure.

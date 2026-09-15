@@ -1,3 +1,4 @@
+import { beforeFreeSpeech } from '../free-practice/audio';
 import type { SpeechController } from './lesson-speech-types';
 import { selectNarratorVoice } from '@/lib/narrator-voice';
 import { Settings } from './config';
@@ -11,6 +12,7 @@ export function createVoiceHandler(context: {
   settings: Settings;
   releaseSoon: (delay?: number) => void;
   setSpeaking: Dispatch<SetStateAction<boolean>>;
+  onExposureError?: () => void;
 }) {
   const {
     setCooldown,
@@ -20,7 +22,7 @@ export function createVoiceHandler(context: {
     releaseSoon,
     setSpeaking,
   } = context;
-  return function speak(text: string) {
+  return function speak(text: string, target?: string) {
     setCooldown(true);
     recognition.current?.setEnabled?.(false);
     speechEpoch.current++;
@@ -51,6 +53,19 @@ export function createVoiceHandler(context: {
       setCooldown(true);
       releaseSoon(450);
     };
-    speechSynthesis.speak(u);
+    const pending = beforeFreeSpeech(text, target);
+    if (!pending) speechSynthesis.speak(u);
+    else
+      void pending
+        .then(() => {
+          if (speechEpoch.current === token) speechSynthesis.speak(u);
+        })
+        .catch(() => {
+          if (speechEpoch.current === token) {
+            setSpeaking(false);
+            releaseSoon();
+            context.onExposureError?.();
+          }
+        });
   };
 }

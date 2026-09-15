@@ -1,9 +1,11 @@
 'use client';
+import { FreeExposureFrame } from '../free-practice/FreeExposureFrame';
 import { useMemo, useState } from 'react';
 import { Volume2 } from 'lucide-react';
 import { availableBridges } from '@/content/word-bridges';
 import { levels } from '@/lib/learning';
 import { shuffled } from '@/lib/session';
+import { useFreeExposure } from '@/features/free-practice/use-free-exposure';
 export default function WordBridge({
   unit,
   target,
@@ -31,65 +33,75 @@ export default function WordBridge({
   );
   const [chosen, setChosen] = useState<number[]>([]),
     [message, setMessage] = useState('');
+  const done = !!item && chosen.length === item.parts.length;
+  // The whole word and explanation become visible only after assembly.
+  const exposure = useFreeExposure({
+    texts: item
+      ? [...item.parts, ...(done ? [item.word, item.meaning] : [message])]
+      : [],
+    promptedTexts: item && done ? [item.word] : [],
+  });
   if (!item) return null;
-  const done = chosen.length === item.parts.length;
+
   return (
-    <section
-      className="word-bridge"
-      aria-label="Из слогов в слово"
-      onClickCapture={onInteract}
-    >
-      <h3>Смотри, слоги умеют дружить!</h3>
-      <div className="task-instruction">
-        {sound && (
-          <button
-            className="speak-button"
-            aria-label="Послушать задание со слогами"
-            onClick={() =>
-              speak(
-                `Смотри, слоги умеют дружить! Собери слово по порядку: ${item.parts.join(', ')}.`,
-              )
-            }
-          >
-            <Volume2 size={18} />
+    <FreeExposureFrame ready={exposure.ready} blocker={exposure.blocker}>
+      <section
+        className="word-bridge"
+        aria-label="Из слогов в слово"
+        onClickCapture={onInteract}
+      >
+        <h3>Смотри, слоги умеют дружить!</h3>
+        <div className="task-instruction">
+          {sound && (
+            <button
+              className="speak-button"
+              aria-label="Послушать задание со слогами"
+              onClick={() =>
+                speak(
+                  `Смотри, слоги умеют дружить! Собери слово по порядку: ${item.parts.join(', ')}.`,
+                )
+              }
+            >
+              <Volume2 size={18} />
+            </button>
+          )}
+          <p>
+            Собери слово по порядку: <b>{item.parts.join(' · ')}</b>
+          </p>
+        </div>
+        <div className="bridge-slots" aria-label="Собранные слоги">
+          {item.parts.map((p, i) => (
+            <span key={i}>{i < chosen.length ? p : '…'}</span>
+          ))}
+        </div>
+        <div className="portal-actions">
+          {cards.map((c) => (
+            <button
+              key={c.id}
+              disabled={chosen.includes(c.id) || done}
+              onClick={() => {
+                if (c.text === item.parts[chosen.length]) {
+                  setChosen((v) => [...v, c.id]);
+                  setMessage('Получается!');
+                } else
+                  setMessage(
+                    'Найди слог ' +
+                      item.parts[chosen.length] +
+                      '. Он идёт следующим.',
+                  );
+              }}
+            >
+              {c.text}
+            </button>
+          ))}
+        </div>
+        <p role="status">{done ? `${item.word}! ${item.meaning}` : message}</p>
+        {done && sound && (
+          <button className="text-button" onClick={() => speak(item.word)}>
+            <Volume2 size={18} /> Послушать слово
           </button>
         )}
-        <p>
-          Собери слово по порядку: <b>{item.parts.join(' · ')}</b>
-        </p>
-      </div>
-      <div className="bridge-slots" aria-label="Собранные слоги">
-        {item.parts.map((p, i) => (
-          <span key={i}>{i < chosen.length ? p : '…'}</span>
-        ))}
-      </div>
-      <div className="portal-actions">
-        {cards.map((c) => (
-          <button
-            key={c.id}
-            disabled={chosen.includes(c.id) || done}
-            onClick={() => {
-              if (c.text === item.parts[chosen.length]) {
-                setChosen((v) => [...v, c.id]);
-                setMessage('Получается!');
-              } else
-                setMessage(
-                  'Найди слог ' +
-                    item.parts[chosen.length] +
-                    '. Он идёт следующим.',
-                );
-            }}
-          >
-            {c.text}
-          </button>
-        ))}
-      </div>
-      <p role="status">{done ? `${item.word}! ${item.meaning}` : message}</p>
-      {done && sound && (
-        <button className="text-button" onClick={() => speak(item.word)}>
-          <Volume2 size={18} /> Послушать слово
-        </button>
-      )}
-    </section>
+      </section>
+    </FreeExposureFrame>
   );
 }

@@ -4,23 +4,65 @@ import type { Profile, Submission, ReadingProof } from './contracts.js';
 import type { Curriculum, Action } from './types.js';
 // The upstream modules remain byte-identical. This boundary supplies the declared public types.
 interface Engine {
+  presentTask(
+    p: Profile,
+    c: Curriculum,
+    args: {
+      instanceId: string;
+      itemId: string;
+      nodeId: null;
+      phase: 'demo';
+      context: 'demo';
+      episodeId: string;
+      stepId: string;
+      mode: string;
+    },
+  ): Profile;
+  wasTargetPromptedThisVisit(p: Profile, text: string): boolean;
+  recordAttempt(p: Profile, c: Curriculum, s: Submission): Profile;
   createProfile(id?: string): Profile;
   beginVisit(p: Profile, id: string, options: { budget: number }): Profile;
   endVisit(p: Profile): Profile;
   switchProgram(p: Profile, id: string, c: Curriculum): Profile;
   validateProfile(p: unknown, c: Curriculum): string[];
-  nodeEvidenceStatus(p: Profile, c: Curriculum, nodeId: string): { status: string; [key:string]: unknown };
-  requestHelp(p: Profile, c: Curriculum, options: { level?: number; targetAudio?: boolean; revealAnswer?: boolean }): Profile;
-  recordReadingStage(p: Profile, c: Curriculum, input: { instanceId: string; reading?: ReadingProof }): Profile;
+  nodeEvidenceStatus(
+    p: Profile,
+    c: Curriculum,
+    nodeId: string,
+  ): { status: string; [key: string]: unknown };
+  applyHint(p: Profile, c: Curriculum, index: number): Profile;
+  requestHelp(
+    p: Profile,
+    c: Curriculum,
+    options: { level?: number; targetAudio?: boolean; revealAnswer?: boolean },
+  ): Profile;
+  recordReadingStage(
+    p: Profile,
+    c: Curriculum,
+    input: { instanceId: string; reading?: ReadingProof },
+  ): Profile;
   revealOptions(p: Profile, c: Curriculum): Profile;
-  commitExposure(p: Profile, input: { texts: string[] }): Profile;
+  commitExposure(
+    p: Profile,
+    input: { texts: string[]; promptedTexts?: string[]; heardPassages?: string[]; itemIds?: string[]; familyIds?: string[] },
+  ): Profile;
 }
 interface Route {
   nextAction(p: Profile, c: Curriculum): { profile: Profile; action: Action };
-  launchAction(p: Profile, c: Curriculum, a: Action, options: { instanceId: string }): Profile;
+  launchAction(
+    p: Profile,
+    c: Curriculum,
+    a: Action,
+    options: { instanceId: string },
+  ): Profile;
   acknowledgeInfo(p: Profile, c: Curriculum, planId: string): Profile;
   answerAction(p: Profile, c: Curriculum, s: Submission): Profile;
-  launchFree(p: Profile, c: Curriculum, itemId: string, options: { mode: string; instanceId: string }): Profile;
+  launchFree(
+    p: Profile,
+    c: Curriculum,
+    itemId: string,
+    options: { mode: string; instanceId: string },
+  ): Profile;
 }
 export const engine = engineModule as unknown as Engine;
 export const routeEngine = routeModule as unknown as Route;

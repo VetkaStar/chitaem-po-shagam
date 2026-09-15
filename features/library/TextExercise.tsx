@@ -1,4 +1,5 @@
 'use client';
+import { FreeExposureFrame } from '../free-practice/FreeExposureFrame';
 import { illustrationSources } from '@/content/illustration-sources';
 import {
   illustrationSizes,
@@ -23,6 +24,7 @@ import TaskInstruction from '@/components/task-instruction';
 import { guideParts } from '@/lib/reading-guide';
 import IllustrationGallery from '@/components/illustration-gallery';
 import { textIllustrations } from '@/content/illustrations';
+import { useFreeExposure } from '@/features/free-practice/use-free-exposure';
 type Mode = 'read' | 'questions' | 'write';
 export default function TextExercise({
   micSession,
@@ -75,6 +77,7 @@ export default function TextExercise({
   const awarded = useRef(new Set<string>()),
     nextButton = useRef<HTMLButtonElement>(null),
     input = useRef<HTMLTextAreaElement>(null);
+  const [pictureOpen, setPictureOpen] = useState(false);
   const options = useMemo(() => shuffled(item.options), [item]);
   useEffect(() => {
     try {
@@ -107,10 +110,6 @@ export default function TextExercise({
       model.stop();
     };
   }, []);
-  useEffect(() => {
-    if (accepted) nextButton.current?.focus({ preventScroll: true });
-    else if (mode === 'write') input.current?.focus({ preventScroll: true });
-  }, [accepted, mode, line]);
   function finish() {
     setDone(true);
     onComplete?.();
@@ -120,10 +119,50 @@ export default function TextExercise({
       model.awardReadingText(item.id + ':' + mode, item.title, mode);
     }
   }
+  const showQuestion = mode === 'questions' || question;
+  // Hidden lines and unanswered-question hints are absent from this snapshot.
+  const visibleLines =
+    showQuestion || model.settings.showFullText !== false
+      ? item.lines
+      : [item.lines[line]];
+  const readingHelp =
+    !showQuestion &&
+    mode === 'read' &&
+    (model.settings.color || model.settings.readingFocus === 'syllable');
+  const questionHint =
+    !done && message.startsWith('Давай найдём ответ в тексте. ');
+  const exposure = useFreeExposure(
+    loaded
+      ? {
+          texts: [
+            item.title,
+            ...visibleLines,
+            ...(visibleLines.length === item.lines.length
+              ? [item.lines.join('\n')]
+              : []),
+            ...(!done && showQuestion ? [item.question, ...options] : []),
+            ...(!done ? [message] : []),
+            ...(!done && !showQuestion && mode === 'write' && hint
+              ? [hint.cells.map((cell) => cell.after || cell.before).join('')]
+              : []),
+          ],
+          promptedTexts: [
+            ...(pictureOpen ? visibleLines : []),
+            ...(readingHelp ||
+            (!done && !showQuestion && mode === 'write' && hint)
+              ? [item.lines[line]]
+              : []),
+            ...(questionHint ? [item.hint] : []),
+          ],
+        }
+      : {},
+  );
   const speech = useTextMicrophone(
     item.lines[line].slice(readStart),
     readStart + ':' + selectionEpoch + ':' + item.id + ':' + mode + ':' + line,
-    mic &&
+    exposure.ready &&
+      loaded &&
+      mic &&
       mode === 'read' &&
       !accepted &&
       !question &&
@@ -154,7 +193,20 @@ export default function TextExercise({
       model.setPaused(true);
     },
   );
+  const helpExposure = useFreeExposure({
+    promptedTexts:
+      mode === 'read' && !showQuestion && speech.needsHelp && !accepted
+        ? [item.lines[line]]
+        : [],
+  });
+  const ready = exposure.ready && helpExposure.ready && loaded;
   useEffect(() => {
+    if (!ready) return;
+    if (accepted) nextButton.current?.focus({ preventScroll: true });
+    else if (mode === 'write') input.current?.focus({ preventScroll: true });
+  }, [ready, accepted, mode, line]);
+  useEffect(() => {
+    if (!ready) return;
     const start = letterOffset(item.lines[line], readStart);
     for (let i = start; i < start + speech.progress; i++)
       covered.current.add(i);
@@ -167,9 +219,10 @@ export default function TextExercise({
       setReadLines((v) => [...new Set([...v, line])]);
       setMessage('Строка прочитана!');
     }
-  }, [speech.progress, line, readStart, accepted]);
+  }, [ready, speech.progress, line, readStart, accepted]);
   useEffect(() => {
     if (
+      !ready ||
       model.settings.textFlow !== 'auto' ||
       mode !== 'read' ||
       !accepted ||
@@ -196,6 +249,7 @@ export default function TextExercise({
       document.removeEventListener('visibilitychange', arm);
     };
   }, [
+    ready,
     accepted,
     done,
     question,
@@ -285,9 +339,13 @@ export default function TextExercise({
     setHint(result.hint);
     if (result.correct) setAccepted(true);
   }
-  const showQuestion = mode === 'questions' || question;
+
+  if (!loaded) return null;
   return (
-    <>
+    <FreeExposureFrame
+      ready={ready}
+      blocker={!exposure.ready ? exposure.blocker : helpExposure.blocker}
+    >
       <div className="lesson-controls">
         <div
           className="mode-list text-mode-list"
@@ -417,25 +475,33 @@ export default function TextExercise({
         />
 
         {(textIllustrations[item.id] || item.lineIllustrations?.length) && (
-          <details className="text-illustration" key={item.id}>
+          <details
+            className="text-illustration"
+            key={item.id}
+            open={pictureOpen}
+            onToggle={(event) => setPictureOpen(event.currentTarget.open)}
+          >
             <summary>Показать картинку к тексту</summary>
-            {item.lineIllustrations?.[line] ? (
-              <div className="illustration-gallery illustration-landscape">
-                <img
-                  className="reviewed-illustration"
-                  src={item.lineIllustrations[line].src + '?v=2'}
-                  srcSet={illustrationSources[item.lineIllustrations[line].src]}
-                  sizes={illustrationSizes('scene-story')}
-                  loading="eager"
-                  decoding="async"
-                  alt={item.lineIllustrations[line].alt}
-                  width={560}
-                  height={315}
-                />
-              </div>
-            ) : (
-              <IllustrationGallery assetId={textIllustrations[item.id]} />
-            )}
+            {pictureOpen &&
+              (item.lineIllustrations?.[line] ? (
+                <div className="illustration-gallery illustration-landscape">
+                  <img
+                    className="reviewed-illustration"
+                    src={item.lineIllustrations[line].src + '?v=2'}
+                    srcSet={
+                      illustrationSources[item.lineIllustrations[line].src]
+                    }
+                    sizes={illustrationSizes('scene-story')}
+                    loading="eager"
+                    decoding="async"
+                    alt={item.lineIllustrations[line].alt}
+                    width={560}
+                    height={315}
+                  />
+                </div>
+              ) : (
+                <IllustrationGallery assetId={textIllustrations[item.id]} />
+              ))}
           </details>
         )}
         {showQuestion ? (
@@ -746,13 +812,17 @@ export default function TextExercise({
               enabled={model.settings.autoAdvance}
               seconds={model.settings.autoAdvanceSeconds}
               blocked={
-                model.parent || model.paused || model.rest || model.speaking
+                !ready ||
+                model.parent ||
+                model.paused ||
+                model.rest ||
+                model.speaking
               }
               onNext={onNext ?? onBack}
             />
           </button>
         )}
       </div>
-    </>
+    </FreeExposureFrame>
   );
 }

@@ -1,4 +1,8 @@
 'use client';
+import {
+  freeMaterialReady,
+  subscribeMaterialReady,
+} from '../free-practice/material-ready';
 import type { SpeechController } from './lesson-speech-types';
 import { restoreLessonProgress } from './lesson-storage';
 
@@ -30,6 +34,12 @@ import {
   names,
 } from './config';
 export function useLesson() {
+  const [materialReady, setMaterialReady] = useState(freeMaterialReady);
+  useEffect(
+    () => subscribeMaterialReady(() => setMaterialReady(freeMaterialReady())),
+    [],
+  );
+
   const [stage, setStage] = useState<Stage>('syllables'),
     [mode, setMode] = useState<Mode>('read'),
     [settings, setSettings] = useState(defaults),
@@ -342,6 +352,11 @@ export function useLesson() {
     settings,
     releaseSoon,
     setSpeaking,
+    onExposureError: () =>
+      setFeedback({
+        kind: 'uncertain',
+        text: 'Не удалось сохранить прослушивание. Нажми кнопку ещё раз.',
+      }),
   });
   function wrongResponse(value: string, via: string) {
     if (awarded.current || helpLock.current) return;
@@ -426,7 +441,9 @@ export function useLesson() {
       );
     }
   };
-  resultSink.current = handleSpeech;
+  resultSink.current = (...args) => {
+    if (freeMaterialReady()) handleSpeech(...args);
+  };
   function listen() {
     if (lessonMic) {
       setLessonMic(false);
@@ -555,7 +572,8 @@ export function useLesson() {
   ]);
   useEffect(() => {
     recognition.current?.setEnabled?.(
-      !speaking &&
+      materialReady &&
+        !speaking &&
         !cooldown &&
         feedback.kind !== 'success' &&
         !parent &&
@@ -564,6 +582,7 @@ export function useLesson() {
         !done,
     );
   }, [
+    materialReady,
     speaking,
     cooldown,
     feedback.kind,
@@ -896,7 +915,7 @@ export function useLesson() {
       'Читай с выбранного слога и продолжай дальше. Можно читать без пауз.',
     );
     recognition.current?.setEnabled?.(false);
-    recognition.current?.setEnabled?.(true);
+    recognition.current?.setEnabled?.(freeMaterialReady());
   }
   return {
     ready,

@@ -1,8 +1,8 @@
 'use client';
-import PracticeMenu from '@/components/practice-menu';
-import { useMemo, useRef, useState } from 'react';
+import { useFreeExposure } from '@/features/free-practice/use-free-exposure';
+import { useMemo, useRef, useState, type ReactNode } from 'react';
 import CompletionCelebration from '@/components/completion-celebration';
-import { Star } from 'lucide-react';
+import { Star, SlidersHorizontal } from 'lucide-react';
 import TopicBar from '@/components/topic-bar';
 import { textLabels, type TextKind } from '@/content/reading-library';
 import { topicNames } from '@/lib/topics';
@@ -117,7 +117,7 @@ function TopicTextSession({
         key={item.id + ':' + round}
         textPicker={
           <>
-            <PracticeMenu label="Выбрать текст">
+            <TextPickerMenu titles={deck.map((text) => text.title)}>
               <div className="portal-grid">
                 {deck.map((t, i) => (
                   <button
@@ -131,7 +131,7 @@ function TopicTextSession({
                   </button>
                 ))}
               </div>
-            </PracticeMenu>
+            </TextPickerMenu>
           </>
         }
         item={item}
@@ -148,5 +148,32 @@ function TopicTextSession({
         onNext={next}
       />
     </>
+  );
+}
+
+function TextPickerMenu({
+  titles,
+  children,
+}: {
+  titles: string[];
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+  // The closed native menu does not expose the catalogue titles.
+  const exposure = useFreeExposure({ texts: open ? titles : [] });
+  return (
+    <details
+      className="practice-menu"
+      open={open}
+      onToggle={(event) => setOpen(event.currentTarget.open)}
+    >
+      <summary>
+        <SlidersHorizontal size={17} />
+        <span>Выбрать текст</span>
+      </summary>
+      <div className="practice-menu-panel">
+        {open && (exposure.ready ? children : exposure.blocker)}
+      </div>
+    </details>
   );
 }

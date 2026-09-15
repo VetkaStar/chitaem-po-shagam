@@ -55,7 +55,7 @@ export interface Action {
   [key: string]: unknown;
 }
 export interface RouteReference {
-  source: 'recommended' | 'custom';
+  source: 'recommended' | 'custom' | 'demonstration' | 'entry';
   routeId: string;
   version: number;
 }
@@ -66,6 +66,22 @@ export interface CustomRoute extends RouteReference {
   suspendedInstance: TaskInstance | null;
 }
 export interface Questionnaire {
+  presentation?: 'school' | 'neutral' | null;
+  onlyMemorisedWords?: boolean | null;
+  goal?: string | null;
+  letterPairs?: string[];
+  otherLetterPair?: string;
+  responseMode?: string | null;
+  instructionsReadable?: boolean | null;
+  audioUsable?: boolean | null;
+  visualTextUsable?: boolean | null;
+  canUseButtons?: boolean | null;
+  canUseKeyboard?: boolean | null;
+  companionCanSelect?: boolean | null;
+  motionAllowed?: boolean;
+  instructionAudio?: 'button' | 'always' | 'off';
+  interestDetails?: string;
+  listeningEasier?: 'yes' | 'no' | 'sometimes' | null;
   respondent: 'learner' | 'adult' | 'together' | null;
   ageBand: 'under_6' | '6_7' | '8_12' | '13_17' | '18_plus' | null;
   reads:
@@ -85,6 +101,7 @@ export interface Questionnaire {
   interests: string[];
 }
 export interface Onboarding {
+  entry?: import('./entry-types.js').EntryRuntime;
   schemaVersion: 1;
   specVersion: 'onboarding-0.7.3';
   curriculumSha256: string;
@@ -107,7 +124,12 @@ export interface Onboarding {
 export interface SourceEvent {
   customStepId: string | null;
   id: string;
-  source: 'free' | 'recommended' | 'custom';
+  source: 'free' | 'recommended' | 'custom' | 'demonstration' | 'entry';
+  demoStepId?: string;
+  demoPlanId?: string;
+  entryCheckpointId?: string;
+  entryPracticeId?: string;
+  entryPosition?: number;
   routeId: string | null;
   routeVersion: number | null;
   instanceId: string | null;
@@ -118,7 +140,8 @@ export interface SourceEvent {
     | 'reading'
     | 'options'
     | 'info'
-    | 'free_exposure';
+    | 'free_exposure'
+    | 'demonstration_step';
 }
 export interface ProgressState {
   schemaVersion: 2;
@@ -130,12 +153,20 @@ export interface ProgressState {
   };
   profile: Profile;
   onboarding: Onboarding;
-  studyMode: 'free' | 'recommended' | 'custom';
+  studyMode: 'free' | 'recommended' | 'custom' | 'demonstration' | 'entry';
+  demonstrationRuns?: Partial<Record<DemoMethod, DemonstrationRun>>;
   route: RouteReference | null;
   customRoutes: Record<string, CustomRoute>;
   suspendedFreeInstance: TaskInstance | null;
   legacy: { capturedAt: string; values: Record<string, string | null> };
   sourceEvents: SourceEvent[];
+}
+export type DemoMethod = 'p1' | 'p2';
+export interface DemonstrationRun {
+  position: number;
+  activeInfo: string | null;
+  suspendedInstance: TaskInstance | null;
+  comfort: 'comfortable' | 'needs_help' | 'unsure' | null;
 }
 export interface ProgressStore {
   read(): Promise<ProgressState | null>;

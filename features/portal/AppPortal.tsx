@@ -1,5 +1,6 @@
 'use client';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
+import CurriculumEntry from '../onboarding/CurriculumEntry';
 import LessonHeader from '../lesson/LessonHeader';
 import LessonSidebar from '../lesson/LessonSidebar';
 import ParentSettings from '../lesson/ParentSettings';
@@ -9,12 +10,22 @@ import type { LessonModel } from '../lesson/use-lesson';
 import { stages, type Stage } from '../lesson/config';
 import { textLabels, type TextKind } from '@/content/reading-library';
 import Welcome from './Welcome';
+import {
+  FreeExposureContext,
+  type ExposureRecorder,
+} from '../free-practice/use-free-exposure';
+import { setFreeAudioRecorder } from '../free-practice/audio';
 import Cabinet from './Cabinet';
 import About from './About';
 import StylePicker, { type StyleValue } from './StylePicker';
 import { PortalContext } from './portal-context';
 import TextLibrary from '../library/TextLibrary';
 import { parseProfile, profileKey, type Profile } from './profile';
+
+const recordFree: ExposureRecorder = async (input) => {
+  const service = await import('../free-practice/service.js');
+  await service.recordFreeExposure(input);
+};
 
 /** Shown once to children who already had a profile before the look could be chosen. */
 function StyleChoice({
@@ -59,6 +70,11 @@ export default function AppPortal({
     [view, setView] = useState('home'),
     [menuOpen, setMenuOpen] = useState(false),
     [warning, setWarning] = useState('');
+  const freePractice = view === 'lesson' || view in textLabels;
+  useLayoutEffect(() => {
+    setFreeAudioRecorder(freePractice ? recordFree : null);
+    return () => setFreeAudioRecorder(null);
+  }, [freePractice]);
   const { layout, look, paper, interfaceScale } = model.settings;
   const style: StyleValue = { layout, look, paper };
   useEffect(() => {
@@ -185,8 +201,25 @@ export default function AppPortal({
                 onChange={changeStyle}
                 onDone={() => model.update('styleChosen', true)}
               />
+            ) : view === 'curriculum' ? (
+              <CurriculumEntry
+                sound={model.settings.sound}
+                speak={model.speak}
+                onPreferences={(q) => {
+                  if (q.motionAllowed !== undefined)
+                    model.update('motion', q.motionAllowed);
+                  if (q.audioUsable !== undefined && q.audioUsable !== null)
+                    model.update(
+                      'sound',
+                      q.audioUsable && q.instructionAudio !== 'off',
+                    );
+                }}
+                onExit={() => go('home')}
+              />
             ) : view === 'lesson' ? (
-              children
+              <FreeExposureContext.Provider value={recordFree}>
+                {children}
+              </FreeExposureContext.Provider>
             ) : view === 'cabinet' ? (
               <Cabinet
                 profile={profile}
@@ -194,7 +227,9 @@ export default function AppPortal({
                 onEdit={() => go('edit')}
               />
             ) : view in textLabels ? (
-              <TextLibrary key={view} kind={view as TextKind} model={model} />
+              <FreeExposureContext.Provider value={recordFree}>
+                <TextLibrary key={view} kind={view as TextKind} model={model} />
+              </FreeExposureContext.Provider>
             ) : (
               <section className="portal-panel">
                 <p className="eyebrow">ЧИТАЕМ ПО ШАГАМ · by Vetka_Star</p>
@@ -213,7 +248,12 @@ export default function AppPortal({
                 >
                   Начать занятие →
                 </button>
-                <h2>Твоя тропинка чтения</h2>
+                <div className="curriculum-actions">
+                  <button type="button" onClick={() => go('curriculum')}>
+                    Учебные программы
+                  </button>
+                </div>
+                <h2>Все тренажёры</h2>
                 <div className="portal-grid">
                   {[
                     ...stages.map((s) => ({ id: s.id, name: s.name })),

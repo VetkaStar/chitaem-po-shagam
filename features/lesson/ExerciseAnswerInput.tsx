@@ -35,7 +35,7 @@ export default function ExerciseAnswerInput({
   settings: Settings;
   target: string;
   setFeedback: Dispatch<SetStateAction<Feedback>>;
-  speak: (text: string) => void;
+  speak: (text: string, target?: string) => void;
   speaking: boolean;
   picture:
     | { word: string; icon: string; hint: string; accept?: undefined }
@@ -71,6 +71,7 @@ export default function ExerciseAnswerInput({
                   stage === 'letters' && settings.letterMode === 'alphabet'
                     ? names[target] || target
                     : target,
+                  target,
                 )
           }
           disabled={speaking}

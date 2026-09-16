@@ -676,3 +676,11 @@ assert.equal(selectNarratorVoice(narrators, 'male'), narrators[2]);
 assert.equal(selectNarratorVoice(narrators, 'female'), narrators[1]);
 assert.equal(selectNarratorVoice([narrators[1]], 'male'), narrators[1]);
 assert.equal(selectNarratorVoice([], 'female'), undefined);
+
+await import('./factory.mjs');
+
+await import('./sorting-yard.mjs');
+
+await import('./lemonade-live.mjs');
+
+await import('./trio-games.mjs');

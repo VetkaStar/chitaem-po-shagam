@@ -1,0 +1,140 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Лимонадная — живой завод</title><style>
+*{box-sizing:border-box}body{margin:0;background:#eeeadd;color:#293e36;font:14px 'Segoe UI',system-ui,sans-serif}button,select{font:inherit;cursor:pointer;touch-action:manipulation}button{border:1px solid #c9d1bd;border-radius:12px;background:#faf9ef;color:inherit;min-height:44px;padding:9px 14px}button:focus-visible,select:focus-visible{outline:3px solid #ba661f;outline-offset:3px}button[aria-pressed=true]{background:#2d624e;color:#fff8db;border-color:#2d624e}button:disabled{opacity:.45;cursor:default}.app{max-width:1310px;margin:auto;padding:24px 30px}header{display:flex;align-items:center;gap:18px;border-bottom:1px solid #cbd0bd;padding-bottom:18px}.logo{background:#e8c454;border:2px solid #344e3d;border-radius:13px;width:46px;height:46px;font-size:28px;text-align:center;line-height:40px}header b{display:block;letter-spacing:2px;font-size:12px}header small{color:#68796b}header a{margin-left:auto;color:#38644b;text-decoration:none;font-size:12px}.hero{display:flex;justify-content:space-between;gap:22px;align-items:center;margin:25px 0}h1{font-size:43px;letter-spacing:-1.5px;margin:0}h1 span{color:#b58825}.hero p{color:#697765;line-height:1.6;margin:7px 0 0}.stats{display:flex;gap:9px}.stat{background:#fffdf3;padding:12px 20px;border-radius:13px;border:1px solid #d0d6c2;white-space:nowrap}.stat small{display:block;font-size:10px;color:#697b66}.stat b{display:block;font-size:25px;margin-top:4px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 255px;gap:20px}.main{min-width:0}.toolbar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}.toolbar button{flex:1;font-size:12px;padding:9px 7px}.toolbar b{display:block;font-size:20px;margin-bottom:3px}.toolbar small{font-size:10px;display:block;opacity:.8;margin-top:3px}.boardwrap{overflow:auto;border:1px solid #9bab90;border-radius:16px;background:#d6dfc7;scrollbar-width:thin}.boardinner{width:100%;min-width:0}canvas{display:block;width:100%;aspect-ratio:12/8;touch-action:none;cursor:crosshair}.zoom .boardinner{width:200%}.below{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:12px}.below button{font-size:12px}.play{background:#2d624e;color:#fffbe8;border-color:#2d624e}.status{padding:13px 15px;background:#fcfaed;border-radius:10px;font-size:12px;line-height:1.5;margin-top:12px;min-height:45px;border-left:4px solid #81a971}.status.error{border-color:#be7351}.sidebar{display:flex;flex-direction:column;gap:13px}.panel{background:#fcfaf0;border:1px solid #d1d7c3;border-radius:16px;padding:20px}.panel h2{margin:5px 0 12px;font-size:21px}.eyebrow{font-size:9px;letter-spacing:1.5px;color:#71816a;font-weight:800}.order-icon{font-size:38px;margin:10px 0}.panel p{color:#687860;font-size:12px;line-height:1.6}.bar{height:10px;background:#e3e6d5;border-radius:20px;overflow:hidden}.bar i{display:block;background:#d3a530;height:100%;width:0;transition:width .2s}.order-numbers{display:flex;justify-content:space-between;font-size:11px;margin-top:8px}.recipe{display:flex;align-items:center;justify-content:center;gap:8px;font-size:22px;padding:12px 0;border-top:1px solid #e0e3d3}.recipe small{font-size:10px;color:#73846a}.panel label{display:block;font-size:11px;margin:12px 0 6px}.panel select{width:100%;min-height:44px;background:white;border:1px solid #cdd5bc;border-radius:9px;padding:8px;color:inherit}.panel button{width:100%;margin-top:9px;font-size:12px}.hint{margin:12px 0 0;font-size:11px;line-height:1.6;color:#6b7c65}.banner{padding:15px;background:#d8e9bd;border:1px solid #a9c588;border-radius:12px;margin-top:12px;font-size:14px}.banner[hidden]{display:none}.footer{display:flex;gap:15px;justify-content:space-between;margin:25px 0 0;font-size:10px;color:#71806b}details summary{cursor:pointer;font-size:12px;font-weight:700}details p{margin-bottom:0}#selection{font-size:12px;line-height:1.6;color:#556d52}.selected-tag{font-weight:700}#new{background:transparent}#confirm-new{border-color:#bb795b}.settings-row{display:flex;gap:7px}.settings-row button{font-size:12px}.intro-note{font-size:12px;padding:10px 0;line-height:1.6;color:#587054}@media(max-width:950px){.app{padding:20px}.layout{grid-template-columns:minmax(0,1fr) 225px;gap:15px}.panel{padding:15px}.hero h1{font-size:36px}.stat{padding:10px 13px}}@media(max-width:760px){.layout{display:flex;flex-direction:column}.sidebar{display:grid;grid-template-columns:1fr 1fr}.sidebar .help{grid-column:1/-1}.hero{align-items:start}.stats{flex-direction:column}.stat{padding:7px 14px}.stat b{font-size:19px}.hero p{font-size:12px}.toolbar button{font-size:11px}.toolbar small{font-size:9px}.toolbar b{font-size:20px}.hero h1{font-size:34px}}@media(max-width:440px){.app{padding:15px 10px}.hero{gap:8px;margin:20px 0}.hero h1{font-size:31px}.hero p{font-size:11px;max-width:225px}.logo{width:36px;height:36px;font-size:23px;line-height:31px}header{gap:9px}header b{font-size:9px;letter-spacing:1px}header small,header a{font-size:9px}.stats{gap:6px}.stat{padding:7px 10px}.stat small{font-size:8px}.stat b{font-size:17px}.toolbar{gap:4px}.toolbar button{padding:7px 3px;font-size:9px;border-radius:9px;min-width:0}.toolbar small{font-size:8px}.below button{font-size:11px;padding:8px 10px}.sidebar{gap:10px}.panel{padding:14px}.panel h2{font-size:18px}.panel p{font-size:11px}.recipe{font-size:19px;gap:5px}.footer{font-size:9px}.intro-note{font-size:11px}#selection{font-size:11px}.panel button{font-size:11px;padding:8px 5px}.banner{font-size:12px}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body><main class="app"><header><span class="logo">🍋</span><div><b>МАЛЕНЬКАЯ ФАБРИКА</b><small>Поток, который ты придумал</small></div><a href="sorting-yard/index.html">Грузовой узел ↗</a></header><section class="hero"><div><div class="eyebrow">ЖИВОЙ ЗАВОД · ВАРИАНТ 03</div><h1>Лимонадная<span>.</span></h1><p>Проведи линии. Смешай ингредиенты.<br>Пусть заказы выполняются сами.</p></div><div class="stats"><div class="stat"><small>МОНЕТЫ</small><b id="coins">0</b></div><div class="stat"><small>БУТЫЛОК ПРОДАНО</small><b id="sold">0</b></div></div></section><div class="layout"><section class="main"><div class="toolbar" id="tools"><button data-tool="belt" aria-pressed="true"><b>➜</b>Лента<small>1 монета</small></button><button data-tool="juicer" aria-pressed="false"><b>🍋</b>Пресс<small>12 монет</small></button><button data-tool="bottler" aria-pressed="false"><b>🧃</b>Розлив<small>18 монет</small></button><button data-tool="splitter" aria-pressed="false"><b>⑂</b>Фильтр<small>8 монет</small></button><button data-tool="select" aria-pressed="false"><b>☝</b>Выбрать<small>Настроить</small></button></div><div class="intro-note">Рисуй ленту пальцем или мышью: повороты появятся сами. Станок поставь нажатием.</div><div class="boardwrap" id="boardwrap"><div class="boardinner"><canvas id="board" width="960" height="640" tabindex="0" aria-label="Поле 12 на 8. Стрелки перемещают курсор, Enter ставит выбранную деталь, R поворачивает."></canvas></div></div><div class="below"><button id="pause" class="play">Ⅱ Пауза</button><button id="rotate">↻ Направление →</button><button id="undo" disabled>↶ Отмена</button><button id="erase" aria-pressed="false">⌫ Снести</button><button id="zoom">⊞ Приблизить</button><button id="speed">1×</button></div><div class="status" id="status" role="status" aria-live="polite">Соедини лимоны с прессом, затем сок и воду — с розливом. Бутылки отправляй в магазин.</div><div class="banner" id="banner" hidden role="status"></div></section><aside class="sidebar"><section class="panel"><div class="eyebrow" id="order-id">ЗАКАЗ 1 / 3</div><div class="order-icon">🚚</div><h2 id="order-title">Первый киоск</h2><p id="order-text"></p><div class="bar"><i id="order-bar"></i></div><div class="order-numbers"><span id="order-progress"></span><span id="bonus"></span></div><div class="recipe"><span>🍋</span><small>пресс →</small><span>🟠</span></div><div class="recipe"><span>🟠 + 💧</span><small>розлив →</small><span>🧃</span></div></section><section class="panel"><div class="eyebrow">МАСТЕРСКАЯ</div><h2 id="selection-title">Построй маршрут</h2><div id="selection">Выбери станок на поле, чтобы увидеть запас ингредиентов и ускорить производство.</div><label for="direction">Выход новой детали</label><select id="direction"><option value="0">↑ Вверх</option><option value="1" selected>→ Вправо</option><option value="2">↓ Вниз</option><option value="3">← Влево</option></select><div id="filter-box" hidden><label for="filter">Вбок направлять</label><select id="filter"><option value="water">💧 Воду</option><option value="fruit">🍋 Лимоны</option><option value="juice">🟠 Сок</option><option value="drink">🧃 Бутылки</option></select></div><button id="upgrade" disabled>Ускорить станок · 15 монет</button><button id="remove" disabled>Убрать блок · вернуть монеты</button></section><section class="panel help"><details><summary>Как запустить производство</summary><p>Два источника слева постоянно подают лимоны и воду. Пресс превращает лимон в сок. Розлив ждёт сок и воду, затем выпускает бутылку. Магазин справа платит за каждую бутылку.</p><p>Ленту можно рисовать непрерывно. Чтобы повернуть одну клетку, нажми на неё выбранной лентой. Выбор станка открывает его настройки. Линии можно перестраивать во время работы. Затор не завершает игру: груз ждёт.</p><p>R — поворот, стрелки — курсор, Enter — установка. На телефоне можно приблизить и прокрутить поле. Вкладка в фоне ставит завод на паузу.</p></details><label for="difficulty">Сложность новой фабрики</label><select id="difficulty"><option value="0">Лёгкая · спокойно строим</option><option value="1">Средняя · поток быстрее</option><option value="2">Сложная · тесный бюджет</option></select><button id="new">Новая фабрика</button><button id="confirm-new" hidden>Начать заново</button><p class="hint">Схема и монеты сохраняются автоматически.</p></section></aside></div><div class="footer"><span>Можно перестраивать. Можно экспериментировать.</span><span>Твой завод работает на тебя.</span></div></main>
+<script id="engine">
+(()=>{
+const W=12,H=8,D=[[0,-1],[1,0],[0,1],[-1,0]],PRICE={belt:1,juicer:12,bottler:18,splitter:8},GOODS=['fruit','water','juice','drink'];
+const fixed={12:{kind:'source',cargo:'fruit',dir:1},72:{kind:'source',cargo:'water',dir:1},47:{kind:'shop'}};
+function create(difficulty=0){return {version:1,difficulty,board:Array(96).fill(null),coins:[140,110,90][difficulty],sold:0,order:0,tick:0,next:0,tokens:[],notice:'',paused:false};}
+function value(p){return p?(PRICE[p.kind]+(p.level||0)*15):0;}
+function put(s,cell,kind,dir=1,filter='water'){
+ if(!Number.isInteger(cell)||cell<0||cell>=96||fixed[cell]||!(kind===null||Object.hasOwn(PRICE,kind)))return false;
+ if(!Number.isInteger(dir)||dir<0||dir>3||!GOODS.includes(filter))return false;
+ const old=s.board[cell],refund=value(old),cost=kind?PRICE[kind]:0;
+ if(old?.kind===kind){old.dir=dir;old.filter=filter;return true;}
+ if(s.coins+refund<cost)return false;
+ s.coins+=refund-cost;s.board[cell]=kind?{kind,dir,filter,level:0,store:{fruit:0,water:0,juice:0,drink:0},work:0}:null;return true;
+}
+function upgrade(s,cell){const p=s.board[cell];if(!p||!['juicer','bottler'].includes(p.kind)||p.level>=2||s.coins<15)return false;s.coins-=15;p.level++;return true;}
+function step(s){
+ if(s.paused)return;s.tick++;const occupied=new Set(s.tokens.map(t=>t.cell));
+ for(const t of s.tokens){
+  const p=fixed[t.cell]||s.board[t.cell];if(!p)continue;
+  let dir=p.dir;if(p.kind==='splitter'&&t.cargo===p.filter)dir=(dir+1)%4;
+  const [dx,dy]=D[dir],x=t.cell%W+dx,y=Math.floor(t.cell/W)+dy;if(x<0||x>=W||y<0||y>=H)continue;
+  const n=y*W+x,q=fixed[n]||s.board[n];if(!q||q.kind==='source')continue;
+  if(q.kind==='shop'){if(t.cargo==='drink'){t.done=true;occupied.delete(t.cell);s.sold++;s.coins+=3;}continue;}
+  if(q.kind==='juicer'||q.kind==='bottler'){
+   const allowed=q.kind==='juicer'?t.cargo==='fruit':t.cargo==='juice'||t.cargo==='water';
+   if(allowed&&q.store[t.cargo]<6){q.store[t.cargo]++;t.done=true;occupied.delete(t.cell);}continue;
+  }
+  if(occupied.has(n)||q.dir===(dir+2)%4)continue;
+  t.prev=t.cell;occupied.delete(t.cell);occupied.add(n);t.cell=n;
+ }
+ s.tokens=s.tokens.filter(t=>!t.done);
+ s.board.forEach((p,cell)=>{
+  if(!p||!['juicer','bottler'].includes(p.kind))return;
+  if(p.work>0)p.work--;
+  if(p.work===0&&p.output&&!occupied.has(cell)){s.tokens.push({id:s.next++,cargo:p.output,cell,prev:cell});occupied.add(cell);p.output=null;}
+  const ready=p.kind==='juicer'?p.store.fruit>0:p.store.juice>0&&p.store.water>0;
+  if(!p.work&&!p.output&&ready){if(p.kind==='juicer')p.store.fruit--;else{p.store.juice--;p.store.water--;}p.output=p.kind==='juicer'?'juice':'drink';p.work=Math.max(1,(p.kind==='juicer'?4:6)-p.level*2);}
+ });
+ if(s.tick%[10,6,3][s.difficulty]===1)for(const [cell,p]of Object.entries(fixed)){const c=Number(cell);if(p.kind==='source'&&!occupied.has(c)){s.tokens.push({id:s.next++,cargo:p.cargo,cell:c,prev:c});occupied.add(c);}}
+ const targets=[[4,10,18],[6,16,30],[8,24,45]][s.difficulty];
+ if(s.order<3&&s.sold>=targets[s.order]){const bonus=[15,25,40][s.order];s.coins+=bonus;s.notice=`Заказ выполнен! +${bonus} монет${s.order===2?' · Фабрика построена. Можно продолжать.':''}`;s.order++;}
+}
+function validate(s){return s&&s.version===1&&Number.isInteger(s.difficulty)&&s.difficulty>=0&&s.difficulty<=2&&Number.isFinite(s.coins)&&s.coins>=0&&Number.isInteger(s.sold)&&s.sold>=0&&Number.isInteger(s.order)&&s.order>=0&&s.order<=3&&Array.isArray(s.board)&&s.board.length===96&&s.board.every((p,i)=>p===null||(!fixed[i]&&Object.hasOwn(PRICE,p.kind)&&Number.isInteger(p.dir)&&p.dir>=0&&p.dir<4&&GOODS.includes(p.filter)&&Number.isInteger(p.level)&&p.level>=0&&p.level<=2));}
+function restore(raw){if(!validate(raw))return null;const s=create(raw.difficulty);s.coins=raw.coins;s.sold=raw.sold;s.order=raw.order;s.board=raw.board.map(p=>p?{kind:p.kind,dir:p.dir,filter:p.filter,level:p.level,store:{fruit:0,water:0,juice:0,drink:0},work:0}:null);s.paused=true;return s;}
+function reference(s){const b=(x,y,d=1)=>put(s,y*W+x,'belt',d);for(let x=1;x<5;x++)b(x,1);put(s,17,'juicer',1);b(6,1,2);b(6,2,2);b(6,3,1);b(7,3,1);put(s,44,'bottler',1);b(9,3);b(10,3);for(let x=1;x<8;x++)b(x,6);b(8,6,0);b(8,5,0);b(8,4,0);}
+window.LiveFactory={W,H,D,PRICE,GOODS,fixed,create,put,upgrade,value,step,restore,reference};
+})();
+</script>
+<script>
+(()=>{
+const F=LiveFactory,$=id=>document.getElementById(id),KEY='lemonade-live-v1',EMOJI={fruit:'🍋',water:'💧',juice:'🟠',drink:'🧃'},NAME={belt:'Лента',juicer:'Пресс',bottler:'Розлив',splitter:'Фильтр'},ARROW=['↑','→','↓','←'];
+let s;try{s=F.restore(JSON.parse(localStorage.getItem(KEY)));}catch{}s=s||F.create(0);
+let tool='belt',dir=1,filter='water',selected=null,cursor=13,history=[],gesture=null,speed=1,last=performance.now(),lastStep=last;
+const canvas=$('board'),ctx=canvas.getContext('2d');
+function save(){try{localStorage.setItem(KEY,JSON.stringify(s));}catch{}}
+function tell(text,error=false){$('status').textContent=text;$('status').classList.toggle('error',error);}
+function snapshot(){return s.board.map(p=>p?{kind:p.kind,dir:p.dir,filter:p.filter,level:p.level}:null);}
+function remember(){history.push(snapshot());if(history.length>40)history.shift();}
+function choose(t){tool=t;selected=null;canvas.style.touchAction=t==='pan'?'pan-x pan-y':'none';$('tools').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.tool===t)));$('erase').setAttribute('aria-pressed',String(t==='erase'));sync();}
+function edit(cell,kind,d=dir){const before=s.board[cell]?.kind;const ok=F.put(s,cell,kind,d,filter);if(!ok){tell(F.fixed[cell]?'Источники и магазин остаются на своих местах.':'Не хватает монет. Лишние детали можно снести с полным возвратом.',true);return false;}if(before!==kind)s.tokens=s.tokens.filter(t=>t.cell!==cell);save();return true;}
+function inspect(cell){selected=cell;const p=s.board[cell];if(p){dir=p.dir;filter=p.filter;}$('direction').value=dir;$('filter').value=filter;sync();}
+function sync(){
+ $('coins').textContent=s.coins;$('sold').textContent=s.sold;$('pause').textContent=s.paused?'▶ Запустить':'Ⅱ Пауза';$('rotate').textContent=`↻ Направление ${ARROW[dir]}`;$('undo').disabled=!history.length;
+ const targets=[[4,10,18],[6,16,30],[8,24,45]][s.difficulty],stage=Math.min(s.order,2),previous=stage?targets[stage-1]:0,target=targets[stage],done=s.order>=3;
+ $('order-id').textContent=done?'СВОБОДНОЕ ПРОИЗВОДСТВО':`ЗАКАЗ ${stage+1} / 3`;$('order-title').textContent=done?'Твоя лимонадная':['Первый киоск','Городской парк','Большой фестиваль'][stage];
+ $('order-text').textContent=done?'Все заказы выполнены. Расширяй завод и продолжай продавать лимонад.':`Продай ${target-previous} бутылок лимонада. Магазин справа принимает готовые напитки.`;
+ $('order-progress').textContent=done?'Все заказы готовы':`${Math.max(0,s.sold-previous)} / ${target-previous}`;$('order-bar').style.width=`${done?100:Math.min(100,(s.sold-previous)/(target-previous)*100)}%`;$('bonus').textContent=done?'✓':`Бонус +${[15,25,40][stage]}`;
+ const p=selected!==null?s.board[selected]:null;$('selection-title').textContent=p?NAME[p.kind]:'Построй маршрут';
+ $('selection').textContent=p?(['juicer','bottler'].includes(p.kind)?`Скорость: ${p.level+1}/3. Внутри: ${p.kind==='juicer'?`🍋 ${p.store.fruit}`:`🟠 ${p.store.juice} · 💧 ${p.store.water}`}. ${p.output?'Обработка / ожидание выхода.':'Ждём ингредиенты.'}`:p.kind==='splitter'?`Подходящий груз идёт вправо от стрелки, остальные — прямо.`:'Стрелка задаёт выход. Вход может быть сзади или сбоку.'):'Выбери станок на поле, чтобы увидеть запас ингредиентов и ускорить производство.';
+ $('upgrade').disabled=!p||!['juicer','bottler'].includes(p.kind)||p.level>=2||s.coins<15;$('remove').disabled=!p;$('filter-box').hidden=!(p?.kind==='splitter'||tool==='splitter');$('direction').value=dir;$('filter').value=filter;
+ if(s.notice){$('banner').textContent=s.notice;$('banner').hidden=false;}
+}
+function round(x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1.5;ctx.stroke();}}
+function text(t,x,y,size=15,color='#324b3e'){ctx.font=`600 ${size}px 'Segoe UI',sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=color;ctx.fillText(t,x,y);}
+function connections(cell,p){const ins=[];for(let d=0;d<4;d++){const [dx,dy]=F.D[d],x=cell%12+dx,y=Math.floor(cell/12)+dy;if(x<0||x>=12||y<0||y>=8)continue;const q=F.fixed[y*12+x]||s.board[y*12+x];if(q&&(q.dir===(d+2)%4||(q.kind==='splitter'&&(q.dir+1)%4===(d+2)%4))&&d!==p.dir)ins.push(d);}return ins.length?ins:[(p.dir+2)%4];}
+function draw(now){
+ ctx.clearRect(0,0,960,640);ctx.fillStyle='#d6dfc7';ctx.fillRect(0,0,960,640);
+ for(let cell=0;cell<96;cell++){
+  const x=(cell%12)*80,y=Math.floor(cell/12)*80,p=F.fixed[cell]||s.board[cell];
+  round(x+4,y+4,72,72,9,(cell+Math.floor(cell/12))%2?'#dce5cd':'#d2ddc4','#c2d0b5');
+  if(!p){ctx.fillStyle='#abbfa0';ctx.fillRect(x+39,y+39,2,2);continue;}
+  if(p.kind==='source'||p.kind==='shop'){
+   round(x+7,y+14,66,61,10,'#a8b398');round(x+7,y+7,66,61,10,p.kind==='shop'?'#e8c768':'#7baf83','#577859');text(p.kind==='shop'?'🏪':EMOJI[p.cargo],x+40,y+31,32);text(p.kind==='shop'?'МАГАЗИН':p.cargo==='fruit'?'ЛИМОНЫ →':'ВОДА →',x+40,y+59,10);continue;
+  }
+  if(p.kind==='belt'||p.kind==='splitter'){
+   round(x+6,y+11,68,65,9,'#a5af94');round(x+6,y+6,68,65,9,p.kind==='splitter'?'#b7a9d1':'#ece1be','#85917b');
+   ctx.lineWidth=23;ctx.strokeStyle=p.kind==='splitter'?'#635b78':'#74745d';ctx.lineCap='butt';
+   const paths=[...connections(cell,p),p.dir,...(p.kind==='splitter'?[(p.dir+1)%4]:[])];
+   for(const d of paths){ctx.beginPath();ctx.moveTo(x+40,y+40);ctx.lineTo(x+40+F.D[d][0]*35,y+40+F.D[d][1]*35);ctx.stroke();}
+   ctx.save();ctx.translate(x+40,y+40);ctx.rotate((p.dir-1)*Math.PI/2);ctx.strokeStyle='#f6e9b9';ctx.lineWidth=3;ctx.beginPath();for(let i=-23;i<30;i+=17){const k=i+(s.paused?0:(now/80)%17);ctx.moveTo(k-5,-8);ctx.lineTo(k+3,0);ctx.lineTo(k-5,8);}ctx.stroke();ctx.restore();
+   if(p.kind==='splitter'){round(x+45,y+5,27,25,7,'#f3eff9');text(EMOJI[p.filter],x+58,y+17,17);}
+  }else{
+   round(x+5,y+15,70,61,10,'#92a68b');round(x+5,y+5,70,62,10,p.kind==='juicer'?'#edc75d':'#82b4b0','#65846b');
+   round(x+13,y+13,54,33,7,'#f9f3d6');text(p.kind==='juicer'?'🍋':'🧃',x+40,y+29,28);text(`${p.kind==='juicer'?'ПРЕСС':'РОЗЛИВ'} ${ARROW[p.dir]}`,x+40,y+53,10);text('●'.repeat(p.level+1),x+40,y+64,8,'#476646');
+   if(p.work){round(x+12,y+70,56,4,2,'#e7edc6');round(x+12,y+70,56*(1-p.work/Math.max(1,(p.kind==='juicer'?4:6)-p.level*2)),4,2,'#538551');}
+  }
+  if(selected===cell)round(x+3,y+3,74,74,12,null,'#b86d22');
+ }
+ const mix=s.paused?1:Math.min(1,(now-lastStep)/(200/speed));
+ for(const t of s.tokens){const a=t.prev??t.cell,x=((a%12)*(1-mix)+(t.cell%12)*mix)*80+40,y=(Math.floor(a/12)*(1-mix)+Math.floor(t.cell/12)*mix)*80+35;round(x-16,y-15,32,32,9,'#85977b');round(x-16,y-19,32,32,9,'#fffae9','#b9b895');text(EMOJI[t.cargo],x,y-3,22);}
+ if(document.activeElement===canvas){const x=cursor%12*80,y=Math.floor(cursor/12)*80;ctx.setLineDash([5,4]);round(x+1,y+1,78,78,9,null,'#965d20');ctx.setLineDash([]);}
+}
+function cellAt(e){const r=canvas.getBoundingClientRect(),x=Math.floor((e.clientX-r.left)/r.width*12),y=Math.floor((e.clientY-r.top)/r.height*8);return x>=0&&x<12&&y>=0&&y<8?y*12+x:null;}
+function paintPath(a,b){let x=a%12,y=Math.floor(a/12),tx=b%12,ty=Math.floor(b/12);while(x!==tx||y!==ty){const d=x!==tx?(tx>x?1:3):(ty>y?2:0);if(!edit(y*12+x,'belt',d))break;x+=F.D[d][0];y+=F.D[d][1];if(!edit(y*12+x,'belt',d))break;}sync();}
+function action(cell){if(F.fixed[cell]){tell(F.fixed[cell].kind==='shop'?'Магазин принимает готовые бутылки 🧃.':'Источник работает постоянно. Продли ленту от выхода справа.');return;}if(tool==='select'){inspect(cell);return;}remember();if(tool==='erase'){edit(cell,null);selected=null;}else if(tool==='belt'&&s.board[cell]?.kind==='belt'){edit(cell,'belt',(s.board[cell].dir+1)%4);}else{edit(cell,tool);selected=tool==='belt'?null:cell;}sync();}
+canvas.addEventListener('pointerdown',e=>{if(tool==='pan'||e.button!==0)return;const cell=cellAt(e);if(cell===null)return;canvas.focus({preventScroll:true});cursor=cell;canvas.setPointerCapture(e.pointerId);gesture={id:e.pointerId,first:cell,last:cell,moved:false};if(tool==='belt'){remember();if(!s.board[cell]&&!F.fixed[cell])edit(cell,'belt');}else action(cell);sync();});
+canvas.addEventListener('pointermove',e=>{if(!gesture||gesture.id!==e.pointerId||tool!=='belt')return;const cell=cellAt(e);if(cell!==null&&cell!==gesture.last){gesture.moved=true;paintPath(gesture.last,cell);gesture.last=cell;}});
+canvas.addEventListener('pointerup',e=>{if(!gesture||gesture.id!==e.pointerId)return;if(tool==='belt'&&!gesture.moved){const before=history.at(-1)?.[gesture.first];if(before?.kind==='belt')edit(gesture.first,'belt',(before.dir+1)%4);}gesture=null;sync();save();});
+canvas.addEventListener('pointercancel',()=>{gesture=null;save();});
+canvas.addEventListener('keydown',e=>{const n={ArrowUp:-12,ArrowRight:1,ArrowDown:12,ArrowLeft:-1}[e.key];if(n){e.preventDefault();const next=cursor+n;if(next>=0&&next<96&&(Math.abs(n)!==1||Math.floor(next/12)===Math.floor(cursor/12)))cursor=next;}if(e.key==='Enter'||e.key===' '){e.preventDefault();action(cursor);}if(e.key.toLowerCase()==='r'){e.preventDefault();$('rotate').click();}});
+$('tools').addEventListener('click',e=>{const b=e.target.closest('[data-tool]');if(b){choose(b.dataset.tool);tell(b.dataset.tool==='belt'?'Рисуй ленту от источника к станку. Направление повторяет движение руки.':b.dataset.tool==='select'?'Нажми на станок или фильтр, чтобы настроить его.':'Нажми на свободную клетку. Выход показан стрелкой.');}});
+$('direction').addEventListener('change',e=>{dir=Number(e.target.value);if(selected!==null&&s.board[selected]){remember();s.board[selected].dir=dir;save();}sync();});
+$('filter').addEventListener('change',e=>{filter=e.target.value;if(selected!==null&&s.board[selected]?.kind==='splitter'){remember();s.board[selected].filter=filter;save();}sync();});
+$('rotate').addEventListener('click',()=>{dir=(dir+1)%4;if(selected!==null&&s.board[selected]){remember();s.board[selected].dir=dir;save();}sync();});
+$('erase').addEventListener('click',()=>choose(tool==='erase'?'belt':'erase'));
+$('remove').addEventListener('click',()=>{if(selected!==null){remember();edit(selected,null);selected=null;sync();}});
+$('upgrade').addEventListener('click',()=>{if(selected===null)return;remember();if(F.upgrade(s,selected)){save();tell('Станок ускорен. Он будет быстрее обрабатывать новые ингредиенты.');}sync();});
+$('undo').addEventListener('click',()=>{if(!history.length)return;const old=history.pop(),cost=s.board.reduce((n,p)=>n+F.value(p),0)-old.reduce((n,p)=>n+F.value(p),0);if(s.coins+cost<0){history.push(old);tell('Для возврата прежней схемы не хватает монет.',true);return;}s.coins+=cost;s.board=old.map(p=>p?{...p,store:{fruit:0,water:0,juice:0,drink:0},work:0}:null);s.tokens=[];selected=null;save();sync();tell('Предыдущее изменение отменено. Поток запускается заново.');});
+$('pause').addEventListener('click',()=>{s.paused=!s.paused;last=performance.now();lastStep=last;save();sync();});
+$('speed').addEventListener('click',()=>{speed=speed===1?2:speed===2?4:1;$('speed').textContent=`${speed}×`;});
+const pan=document.createElement('button');pan.id='pan';pan.textContent='✋ Двигать поле';pan.hidden=true;pan.addEventListener('click',()=>{choose(tool==='pan'?'belt':'pan');pan.setAttribute('aria-pressed',String(tool==='pan'));});$('zoom').after(pan);
+$('zoom').addEventListener('click',()=>{const z=$('boardwrap').classList.toggle('zoom');$('zoom').textContent=z?'⊞ Всё поле':'⊞ Приблизить';pan.hidden=!z;if(!z&&tool==='pan')choose('belt');});
+$('new').addEventListener('click',()=>{$('confirm-new').hidden=!$('confirm-new').hidden;});
+$('confirm-new').addEventListener('click',()=>{s=F.create(Number($('difficulty').value));history=[];selected=null;gesture=null;$('banner').hidden=true;$('confirm-new').hidden=true;choose('belt');save();sync();tell('Новая фабрика. Два источника ждут свои линии.');});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){s.paused=true;save();sync();}});
+// Touch controls remain responsive immediately after a drawing gesture.
+let buttonTouch=null,suppressNative=null;
+document.addEventListener('pointerdown',e=>{suppressNative=null;const b=e.target.closest('button');buttonTouch=e.pointerType==='touch'&&b?{b,id:e.pointerId,x:e.clientX,y:e.clientY}:null;});
+document.addEventListener('pointermove',e=>{if(buttonTouch&&Math.hypot(e.clientX-buttonTouch.x,e.clientY-buttonTouch.y)>10)buttonTouch=null;});
+document.addEventListener('pointercancel',()=>buttonTouch=null);
+document.addEventListener('pointerup',e=>{const t=buttonTouch;buttonTouch=null;if(!t||e.pointerId!==t.id||t.b.disabled)return;suppressNative=t.b;t.b.click();});
+document.addEventListener('click',e=>{if(e.isTrusted&&e.detail>0&&suppressNative&&e.target.closest('button')===suppressNative){e.preventDefault();e.stopImmediatePropagation();suppressNative=null;}},true);
+$('difficulty').value=s.difficulty;sync();
+function frame(now){if(!s.paused&&now-last>=200/speed){for(const t of s.tokens)t.prev=t.cell;F.step(s);last=now;lastStep=now;if(s.tick%20===0)save();sync();}draw(now);requestAnimationFrame(frame);}requestAnimationFrame(frame);
+})();
+</script></body></html>
+

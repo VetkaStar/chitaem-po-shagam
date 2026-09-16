@@ -1,0 +1,4 @@
+Original vector art and original synthesized compositions created for this project.
+Animation: HyperFrames 0.8.40 + GSAP 3.15.0, authored SVG, 24 frames per sprite, 12 fps.
+Music: three distinct 32-beat loops, mono 22050 Hz PCM. No external music samples.
+Research references and provenance: docs/TRIO-GAMES.md.

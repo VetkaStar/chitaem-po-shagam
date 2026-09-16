@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#18212c"><title>Грузовой узел — строй и сортируй</title><link rel="stylesheet" href="./style.css"></head>
+<body>
+<main class="app">
+  <header class="header"><div class="brand"><span class="brand-mark">⑂</span><div><b>ГРУЗОВОЙ УЗЕЛ</b><span>Мастерская маршрутов</span></div></div><a href="../factory/index.html">Простой завод ↗</a><span class="header-tag">СТРОЙ · ПРОБУЙ · ИСПРАВЛЯЙ</span></header>
+  <section class="mission-bar"><div><div class="eyebrow">КОНТРАКТ <span id="mission-id">01</span> / 09</div><h1 id="mission-title">Первые развилки</h1><p id="brief"></p></div><div class="mission-select"><div class="difficulties" id="difficulties" role="group" aria-label="Сложность"><button data-difficulty="0" aria-pressed="true">Старт</button><button data-difficulty="1" aria-pressed="false">Инженер</button><button data-difficulty="2" aria-pressed="false">Мастер</button></div><div class="mission-pages"><span>Миссии</span><nav id="missions" aria-label="Миссии"></nav><span id="completed"></span></div></div></section>
+  <div class="layout">
+    <section class="workspace" aria-label="Строительство завода">
+      <div class="parts-header"><h2>Детали</h2><span>Перетащи на поле или выбери и нажми клетку</span></div>
+      <div class="palette" id="palette" role="group" aria-label="Доступные детали">
+        <button class="part-card" data-part="belt" aria-pressed="true"><span class="part-art belt-art">»</span><span><b>Лента</b><small>Любой груз в упаковке</small></span><strong id="stock-belt">0</strong></button>
+        <button class="part-card" data-part="pipe" aria-pressed="false"><span class="part-art pipe-art">≈</span><span><b>Труба</b><small>Только жидкости</small></span><strong id="stock-pipe">0</strong></button>
+        <button class="part-card" data-part="splitter" aria-pressed="false"><span class="part-art splitter-art">⑂</span><span><b>Разветвитель</b><small>Два выхода + правило</small></span><strong id="stock-splitter">0</strong></button>
+      </div>
+      <div class="build-tools"><span id="tool-label">Лента →</span><button id="settings-shortcut" class="settings-shortcut">⚙ Настроить</button><div><button id="rotate" title="Повернуть выбранный блок (R)">↻ <span>Повернуть</span></button><button id="erase" aria-pressed="false" title="Удаление возвращает деталь на склад">⌫ <span>Убрать</span></button><button id="undo" title="Отменить последнее изменение">↶ <span>Отмена</span></button><button id="zoom" aria-pressed="false">⊞ <span>Всё поле</span></button></div></div>
+      <div class="board-viewport" id="viewport" tabindex="0" aria-label="Прокручиваемое поле завода"><div class="board" id="board" role="group" aria-label="Клетки завода"></div></div>
+      <div class="board-caption"><span><i class="key-dot"></i> Разгрузка</span><span>⚑ Склад / резервуар</span><span id="board-help">Стрелки показывают движение груза</span></div>
+      <div class="status" id="status" role="status" aria-live="polite">Начни с ленты рядом с разгрузкой.</div>
+      <div class="runbar"><button class="launch" id="run">▶ Запустить партию</button><button id="pause" disabled>Ⅱ Пауза</button><button id="step" title="Продвинуть груз на одну клетку">▹ Шаг</button><button id="speed" aria-label="Скорость симуляции">1×</button><button id="stop" disabled>■ Стоп</button><span class="delivered"><b id="delivered">0</b> / <span id="total">0</span></span></div>
+      <div class="success" id="success" hidden><div><span class="success-symbol">✦</span><h2>Всё по местам!</h2><p id="success-detail"></p></div><button id="next">Следующий контракт →</button></div>
+      <section class="manifest"><div class="parts-header"><h2>Прибывающая партия</h2><span>Нажми на груз, чтобы узнать его свойства</span></div><div id="cargo-list" class="cargo-list"></div><p id="cargo-info">Все грузы приезжают упакованными. Лента везёт и коробки, и канистры. К резервуару подведи трубу.</p><div class="queue" id="queue" aria-label="Очередь грузов"></div></section>
+    </section>
+    <aside class="sidebar">
+      <section class="panel destinations"><div class="eyebrow">ЗАКАЗЧИКИ</div><h2>Куда доставляем</h2><div id="destinations"></div></section>
+      <section class="panel inspector" id="inspector"><div class="eyebrow">НАСТРОЙКА БЛОКА</div><h2 id="inspector-title">Лента</h2><p id="selection-info">Настройки для новой детали.</p><label for="direction">Направление движения</label><select id="direction"><option value="0">↑ Вверх</option><option value="1">→ Вправо</option><option value="2">↓ Вниз</option><option value="3">← Влево</option></select><div id="filter-settings" hidden><label for="filter">На боковой выход ✓</label><select id="filter"></select><label for="branch">Боковой выход</label><select id="branch"><option value="1">Справа от стрелки</option><option value="-1">Слева от стрелки</option></select><div class="routing-preview" id="routing-preview"></div><p class="tip">Подходящие грузы уходят вбок. Остальные — прямо. Вход IN всегда сзади стрелки.</p></div><button class="delete-block" id="delete-block" disabled>Убрать выбранный блок</button><button id="back-to-board" class="back-to-board">Готово · к полю ↑</button></section>
+      <details class="panel help"><summary>Как устроен цех <span>＋</span></summary><ol><li>Перетащи детали. Нажми на установленный блок, чтобы выбрать его.</li><li>Задай направление. У разветвителя настрой, какой груз уходит вбок.</li><li>Соедини каждый маршрут с нужным складом. Жидкости поступают в резервуар по трубе.</li><li>Запусти партию. Пауза и шаг помогут найти ошибку.</li></ol><p>Перетаскивание работает мышью и пальцем. Можно также выбрать деталь и нажать клетку. Клавиатура: Tab, Enter, стрелки по полю, R — поворот, Delete — удаление.</p></details>
+      <button class="clear-plan" id="clear">Очистить схему</button>
+    </aside>
+  </div>
+  <footer><span>Не угадать ответ — придумать систему.</span><span>9 контрактов · 3 сложности</span></footer>
+</main>
+<div class="drag-ghost" id="drag-ghost" hidden aria-hidden="true"></div>
+<script type="module" src="./game.js"></script>
+</body></html>
+

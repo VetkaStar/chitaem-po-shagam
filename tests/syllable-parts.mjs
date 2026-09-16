@@ -217,6 +217,39 @@ await test('eight-task route crosses visit budget and completes all eight tasks 
     routeId,
   );
 });
+await test('completed latest route does not resurrect an older unfinished route', async () => {
+  const { controller, store } = await setup();
+  const older = await openSyllableParts(controller, supply, 'compose', 12, 5);
+  const oldInstance = controller.snapshot().profile.activeInstance.instanceId;
+  const latest = await openSyllableParts(
+    controller,
+    supply,
+    'compose',
+    12,
+    3,
+    true,
+  );
+  assert.notEqual(latest, older);
+  for (let position = 0; position < 3; position++) {
+    const instance = controller.snapshot().profile.activeInstance;
+    await controller.answer({
+      instanceId: instance.instanceId,
+      disposition: 'skipped',
+    });
+    await nextTrainerTask(controller, 7);
+  }
+  assert.equal(controller.snapshot().customRoutes[latest].position, 3);
+  const reopened = await CurriculumController.open(supply, store, legacy);
+  const fresh = await openSyllableParts(reopened, supply, 'compose', 12, 3);
+  assert.notEqual(fresh, older);
+  assert.notEqual(fresh, latest);
+  assert.equal(reopened.snapshot().customRoutes[older].position, 0);
+  assert.equal(
+    reopened.snapshot().customRoutes[older].suspendedInstance.instanceId,
+    oldInstance,
+  );
+  assert.equal(reopened.snapshot().customRoutes[fresh].position, 0);
+});
 await test('failed persistence neither advances nor fabricates a receipt', async () => {
   const { controller, store } = await setup();
   await openSyllableParts(controller, supply, 'compose', 12, 3);

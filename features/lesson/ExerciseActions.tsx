@@ -1,3 +1,4 @@
+import NextExerciseButton from '../../components/next-exercise-button';
 import type { ExerciseModel } from './exercise-types';
 
 import {
@@ -146,20 +147,11 @@ export default function ExerciseActions({
     );
   } else if (feedback.kind === 'success') {
     primary = (
-      <button
-        ref={nextButton}
-        className="primary"
-        onClick={() => next()}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' && e.repeat) e.preventDefault();
-        }}
-      >
-        <span>
-          Дальше<span className="key-hint"> · Enter</span>
-        </span>{' '}
-        <ArrowRight />
-        {countdown}
-      </button>
+      <NextExerciseButton
+        buttonRef={nextButton}
+        onNext={() => next()}
+        countdown={countdown}
+      />
     );
   } else if (mode === 'read') {
     primary = (

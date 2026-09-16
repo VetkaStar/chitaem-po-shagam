@@ -1,13 +1,7 @@
+import FeedbackMessage from '../../components/feedback-message';
 import type { ExerciseModel } from './exercise-types';
 
-import {
-  Volume2,
-  ArrowRight,
-  Leaf,
-  Check,
-  RotateCcw,
-  HelpCircle,
-} from 'lucide-react';
+import { Volume2, ArrowRight, Leaf } from 'lucide-react';
 
 export default function ExerciseFeedback({
   feedback,
@@ -107,31 +101,13 @@ export default function ExerciseFeedback({
           </div>
         </div>
       )}
-      <div
-        className={'feedback ' + feedback.kind}
-        role="status"
-        aria-live="polite"
-      >
-        {mode !== 'fly' && settings.sound && (
-          <button
-            className="speak-button"
-            aria-label="Озвучить объяснение"
-            title="Озвучить объяснение"
-            disabled={speaking}
-            onClick={() => speak(feedback.text)}
-          >
-            <Volume2 size={18} />
-          </button>
-        )}
-        {feedback.kind === 'success' ? (
-          <Check size={19} />
-        ) : feedback.kind === 'error' ? (
-          <RotateCcw size={19} />
-        ) : feedback.kind === 'uncertain' ? (
-          <HelpCircle size={19} />
-        ) : null}
-        <span>{mode === 'fly' ? flyInputStatus : feedback.text}</span>
-      </div>
+      <FeedbackMessage
+        kind={feedback.kind}
+        text={mode === 'fly' ? flyInputStatus : feedback.text}
+        sound={mode !== 'fly' && settings.sound}
+        speaking={speaking}
+        speak={speak}
+      />
       {mode !== 'fly' && (
         <div
           className="hint-space"

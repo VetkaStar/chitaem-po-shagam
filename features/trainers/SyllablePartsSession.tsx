@@ -1,3 +1,5 @@
+import type { TaskPresentation } from '../curriculum/presentation';
+import type { Outcome } from '../../lib/curriculum/contracts';
 import { useEffect, useRef, useState } from 'react';
 import ExerciseHeader from '../../components/exercise-header';
 import type { LessonModel } from '../lesson/use-lesson';
@@ -29,6 +31,13 @@ export default function SyllablePartsSession({
   const [routeId, setRouteId] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const initialized = useRef(false);
+  const [result, setResult] = useState<{
+    view: TaskPresentation;
+    position: number;
+    outcome: Outcome;
+    reward: boolean;
+  } | null>(null);
+  const [summary, setSummary] = useState(false);
   const nextButton = useRef<HTMLButtonElement>(null);
   const start = async (fresh = false) => {
     setRouteId(
@@ -41,6 +50,8 @@ export default function SyllablePartsSession({
         fresh,
       ),
     );
+    setResult(null);
+    setSummary(false);
     setReady(true);
   };
   useEffect(() => {
@@ -52,23 +63,46 @@ export default function SyllablePartsSession({
     onBusyChange?.(busy || (!ready && !error));
   }, [busy, ready, error, onBusyChange]);
   const route = routeId ? state.customRoutes[routeId] : undefined;
+  const offset = Number(route?.routeId.match(/:offset-(\d+):/)?.[1] ?? 0);
   const complete = !!route && route.position >= route.steps.length;
   const current =
     route && state.route?.routeId === routeId && view?.kind === 'task'
       ? view
       : null;
-  const blocked = busy || model.parent || model.rest || model.paused;
+  const blocked =
+    busy || model.parent || model.rest || model.paused || model.speaking;
   const preferences = state.onboarding.questionnaire;
   const sound = model.settings.sound && preferences.audioUsable !== false;
-  const receipt = route
-    ? state.sourceEvents
-        .filter((e) => e.routeId === routeId && e.kind === 'answer')
-        .map((e) => e.instanceId && state.profile.receipts[e.instanceId])
-        .filter(Boolean)
-        .at(-1)
-    : null;
-  const outcome =
-    receipt && typeof receipt === 'object' ? receipt.outcome : undefined;
+  const next = () =>
+    act(async () => {
+      if (complete) {
+        setResult(null);
+        setSummary(true);
+      } else {
+        await nextTrainerTask(controller, 7);
+        setResult(null);
+      }
+    });
+  const repeat = () =>
+    act(async () => {
+      if (!route || !result) return;
+      const id = `syllable-parts:${kind}:${model.settings.unit}:repeat-0:offset-${offset + result.position}:${crypto.randomUUID()}`;
+      const copy = {
+        ...route,
+        routeId: id,
+        position: 0,
+        suspendedInstance: null,
+        steps: route.steps.slice(result.position).map((step, index) => ({
+          ...step,
+          id: `${id}:${index}`,
+        })),
+      };
+      await controller.registerCustomRoute(copy);
+      await controller.selectCustomRoute(id);
+      await nextTrainerTask(controller, 7);
+      setRouteId(id);
+      setResult(null);
+    });
   useInstructionAudio(
     current,
     sound && !blocked && preferences.instructionAudio === 'always',
@@ -114,10 +148,14 @@ export default function SyllablePartsSession({
           </p>
         </div>
       )}
-      {current && route && (
+      {(current || result) && route && !summary && (
         <SyllablePartsCard
-          key={current.instanceId}
-          view={current}
+          key={(current ?? result!.view).instanceId}
+          view={current ?? result!.view}
+          result={result?.outcome}
+          rewarded={result?.reward}
+          onNext={next}
+          onRepeat={repeat}
           controller={controller}
           model={model}
           busy={blocked}
@@ -125,42 +163,48 @@ export default function SyllablePartsSession({
           instructionSound={sound && preferences.instructionAudio !== 'off'}
           speak={model.speak}
           run={run}
-          position={route.position}
-          total={route.steps.length}
-          onResult={() => {
+          position={offset + (result?.position ?? route.position)}
+          total={offset + route.steps.length}
+          onResult={(outcome) => {
+            if (!current) return;
+            const reward =
+              outcome === 'correct' &&
+              !route.routeId.includes(`:repeat-${route.position}:`);
+            if (reward) model.awardTrainer(current.instanceId);
+            setResult({
+              view: current,
+              position: route.position,
+              outcome,
+              reward,
+            });
             model.schedule.touch();
             if (
-              model.schedule.shouldRest(route.position + 1, route.steps.length)
+              model.schedule.shouldRest(
+                offset + route.position + 1,
+                offset + route.steps.length,
+              )
             )
               model.setRest(true);
           }}
         />
       )}
-      {route && !current && (
-        <div
-          className={
-            'exercise answer-result ' +
-            (outcome === 'correct' ? 'success' : 'neutral')
-          }
-        >
+      {route && !current && !result && (
+        <div className={'exercise answer-result neutral'}>
           <ExerciseHeader
-            number={Math.min(route.position + 1, route.steps.length)}
-            total={route.steps.length}
-            completed={route.position}
+            number={offset + Math.min(route.position + 1, route.steps.length)}
+            total={offset + route.steps.length}
+            completed={offset + route.position}
             label={complete ? 'Все задания пройдены' : undefined}
           />
           <div className="completion">
             <h2>
-              {complete
-                ? 'Ты позанимался. Здорово!'
-                : outcome === 'correct'
-                  ? 'Верно!'
-                  : outcome === 'skipped'
-                    ? 'Задание пропущено'
-                    : 'Можно потренироваться ещё'}
+              {complete ? 'Ты позанимался. Здорово!' : 'Занятие сохранено'}
             </h2>
             {complete && (
-              <p>Пройдено заданий: {route.position}. Теперь можно отдохнуть.</p>
+              <p>
+                Пройдено заданий: {offset + route.position}. Теперь можно
+                отдохнуть.
+              </p>
             )}
             <button
               ref={nextButton}

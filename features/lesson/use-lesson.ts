@@ -46,6 +46,7 @@ export function useLesson() {
     [settings, setSettings] = useState(defaults),
     [ready, setReady] = useState(false),
     [storageWarning, setStorageWarning] = useState('');
+  const trainerRewards = useRef(new Set<string>());
   const [lessonActive, setLessonActive] = useState(false);
   const [externalActivity, setExternalActivity] = useState(false);
   const [recentWords, setRecentWords] = useState<string[]>([]);
@@ -255,6 +256,9 @@ export function useLesson() {
       .then((d) => setMicDevices(d.filter((x) => x.kind === 'audioinput')))
       .catch(() => {});
     restoreLessonProgress({
+      setTrainerRewards: (ids) => {
+        trainerRewards.current = new Set(ids);
+      },
       setSettings,
       setRecentWords,
       setStars,
@@ -277,7 +281,13 @@ export function useLesson() {
     try {
       browserStorage.setItem(
         'reading-steps-v3',
-        JSON.stringify({ settings, stars, history, recentWords }),
+        JSON.stringify({
+          settings,
+          stars,
+          history,
+          recentWords,
+          trainerRewards: [...trainerRewards.current],
+        }),
       );
     } catch {
       setStorageWarning('Не удалось сохранить результаты на этом устройстве.');
@@ -875,6 +885,11 @@ export function useLesson() {
   }, [stage, mode, target, count, settings.length, paused, rest, parent, done]);
   const currentStage = stages.find((s) => s.id === stage)!;
 
+  function awardTrainer(instanceId: string) {
+    if (trainerRewards.current.has(instanceId)) return;
+    trainerRewards.current.add(instanceId);
+    setStars((n) => n + 1);
+  }
   function awardReadingText(
     id: string,
     title: string,
@@ -938,6 +953,7 @@ export function useLesson() {
     wholeAgain,
     setPartsHelp,
     awardReadingText,
+    awardTrainer,
     changeTopic,
     settings,
     stage,

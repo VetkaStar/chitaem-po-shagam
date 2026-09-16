@@ -2812,7 +2812,7 @@ section.lesson > * {
 .lesson .dock-spacer {
   display: none;
 }
-.lesson .lesson-actions .primary {
+.lesson :is(.lesson-actions .primary, .next-exercise-button) {
   height: 58px;
   min-height: 0;
   min-width: 240px;
@@ -2823,20 +2823,20 @@ section.lesson > * {
   font-size: 17px;
   font-weight: 800;
 }
-.lesson .lesson-actions .primary > svg {
+.lesson :is(.lesson-actions .primary, .next-exercise-button) > svg {
   flex-shrink: 0;
   width: 22px;
   height: 22px;
 }
-.lesson .lesson-actions .primary.listening {
+.lesson :is(.lesson-actions .primary, .next-exercise-button).listening {
   background: var(--listen);
   box-shadow: 0 4px 0 var(--listen-edge);
 }
-[data-vision]:not([data-vision='off']) .lesson .lesson-actions .primary {
+[data-vision]:not([data-vision='off']) .lesson :is(.lesson-actions .primary, .next-exercise-button) {
   background: var(--vision-first);
   box-shadow: 0 4px 0 #202020;
 }
-.lesson .lesson-actions .primary .countdown {
+.lesson :is(.lesson-actions .primary, .next-exercise-button) .countdown {
   margin-left: 4px;
 }
 .lesson .mic-unsupported {
@@ -3922,14 +3922,14 @@ button.topic-chip-open:hover {
     width: 20px;
     height: 20px;
   }
-  :root[data-layout='focus'] .lesson .lesson-actions .primary {
+  :root[data-layout='focus'] .lesson :is(.lesson-actions .primary, .next-exercise-button) {
     height: 72px;
     min-width: 0;
     padding: 0 32px;
     border-radius: 24px;
     font-size: 20px;
   }
-  :root[data-layout='focus'] .lesson .lesson-actions .primary > svg {
+  :root[data-layout='focus'] .lesson :is(.lesson-actions .primary, .next-exercise-button) > svg {
     width: 24px;
     height: 24px;
   }
@@ -4113,7 +4113,7 @@ button.topic-chip-open:hover {
   border-radius: 12px;
   box-shadow: 0 2px 0 var(--press);
 }
-:root[data-look='notebook'] .lesson .lesson-actions .primary {
+:root[data-look='notebook'] .lesson :is(.lesson-actions .primary, .next-exercise-button) {
   border-radius: 12px;
 }
 
@@ -6856,5 +6856,4 @@ meter::-webkit-meter-optimum-value {
 .free-material.is-pending > .free-material-content * { visibility: hidden !important; }
 .free-material-notice { position: absolute; inset: 0; display: flex; align-items: flex-start; justify-content: center; }
 
-.lesson-controls .syllable-parts-settings { min-height: 44px; height: 44px; padding: 0 16px; margin-left: auto; font-size: 14px; font-weight: 600; }
-@media (max-width: 600px) { .lesson-controls .syllable-parts-settings { width: 44px; padding: 0; } .syllable-parts-settings span { display: none; } }
+.syllable-parts-response { width: 100%; }

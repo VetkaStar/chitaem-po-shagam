@@ -13,7 +13,9 @@ export function restoreLessonProgress({
   setStars,
   setHistory,
   setStorageWarning,
+  setTrainerRewards,
 }: {
+  setTrainerRewards?: (ids: string[]) => void;
   setSettings: Dispatch<SetStateAction<Settings>>;
   setRecentWords: Dispatch<SetStateAction<string[]>>;
   setStars: Dispatch<SetStateAction<number>>;
@@ -21,8 +23,17 @@ export function restoreLessonProgress({
   setStorageWarning: Dispatch<SetStateAction<string>>;
 }) {
   try {
-    const raw = JSON.parse(browserStorage.getItem('reading-steps-v3') || 'null');
+    const raw = JSON.parse(
+      browserStorage.getItem('reading-steps-v3') || 'null',
+    );
     if (raw) {
+      setTrainerRewards?.(
+        Array.isArray(raw.trainerRewards)
+          ? raw.trainerRewards.filter(
+              (id: unknown): id is string => typeof id === 'string',
+            )
+          : [],
+      );
       const s = raw.settings || {};
       setSettings({
         ...defaults,

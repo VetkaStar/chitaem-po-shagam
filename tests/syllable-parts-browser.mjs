@@ -59,6 +59,7 @@ try {
         JSON.stringify({
           settings: {
             styleChosen: true,
+            autoAdvance: false,
             sound: false,
             layout: 'order',
             unit: 12,
@@ -290,13 +291,30 @@ try {
       routeId,
       'leaving the trainer preserves progress',
     );
-    await page.getByRole('button', { name: 'Настройки', exact: true }).click();
-    await page.getByRole('dialog').waitFor();
-    await page
-      .getByRole('heading', { name: 'Настроим занятие', exact: true })
-      .waitFor();
-    await page.keyboard.press('Escape');
-    await page.getByRole('dialog').waitFor({ state: 'hidden' });
+    await page.locator('.practice-menu > summary').click();
+    await page.locator('.practice-menu[open] .practice-menu-panel').waitFor();
+    assert.equal(
+      await page.getByRole('dialog').count(),
+      0,
+      'quick settings stay in the exercise',
+    );
+    assert.equal(
+      await page
+        .getByLabel('Автоматически переходить дальше', { exact: true })
+        .count(),
+      1,
+    );
+    assert.equal(
+      await page
+        .getByLabel('Задержка автоперехода в секундах', { exact: true })
+        .count(),
+      1,
+    );
+    assert.ok(
+      await page.locator('.practice-menu-panel select').count(),
+      'session length is available in exercise settings',
+    );
+    await page.locator('.practice-menu > summary').click();
     await ready();
     assert.equal(
       await page.evaluate(
@@ -305,6 +323,24 @@ try {
       true,
       width + ' overflow',
     );
+    if (width === 1920) {
+      await page
+        .locator('.app-bar')
+        .getByRole('button', { name: 'Для взрослого', exact: true })
+        .click();
+      await page
+        .getByRole('heading', { name: 'Настроим занятие', exact: true })
+        .waitFor();
+      assert.equal(
+        await page
+          .getByRole('dialog')
+          .getByLabel('Автоматически переходить дальше', { exact: true })
+          .count(),
+        1,
+      );
+      await page.keyboard.press('Escape');
+      await page.getByRole('dialog').waitFor({ state: 'hidden' });
+    }
     await page.locator('.topic-list').click();
     await page
       .getByRole('button', { name: '1. А, У и М', exact: true })
@@ -347,7 +383,18 @@ try {
     await page
       .locator('.syllable-parts-exercise button[type="submit"]')
       .click();
-    await page.getByRole('heading', { name: 'Верно!', exact: true }).waitFor();
+    await page.locator('.syllable-parts-exercise .feedback.success').waitFor();
+    await page
+      .getByRole('heading', { name: 'Собери слог', exact: true })
+      .waitFor();
+    assert.equal(
+      await page.locator('.syllable-parts-material').textContent(),
+      task.learnerText,
+    );
+    await page.screenshot({
+      path: path.join(output, width + '-success.png'),
+      fullPage: true,
+    });
     saved = await state();
     assert.equal(
       saved.customRoutes[routeId].position,
@@ -384,7 +431,16 @@ try {
     const legacy = await page.evaluate(() =>
       JSON.parse(localStorage.getItem('reading-steps-v3')),
     );
-    assert.equal(legacy.stars, 37, 'navigation does not award or erase stars');
+    assert.equal(
+      legacy.stars,
+      38,
+      'one correct task awards one star without duplicate navigation rewards',
+    );
+    assert.deepEqual(
+      legacy.trainerRewards,
+      [firstInstance.instanceId],
+      'reload preserves exactly one rewarded task receipt',
+    );
     assert.deepEqual(errors, [], width + ' browser errors');
     completed.push(
       width +
@@ -405,6 +461,7 @@ try {
       JSON.stringify({
         settings: {
           styleChosen: true,
+          autoAdvance: false,
           sound: false,
           layout: 'focus',
           look: 'notebook',
@@ -456,6 +513,217 @@ try {
   await focus.close();
   completed.push(
     '390 focus notebook: shared focusbar, hidden global header, topic switch and two modes, no overflow',
+  );
+  const auto = await browser.newPage({
+    viewport: { width: 1920, height: 1080 },
+  });
+  await auto.addInitScript(() => {
+    localStorage.setItem(
+      'reading-profile-v1',
+      JSON.stringify({ name: 'Переходы', age: '8', start: 'syllables' }),
+    );
+    localStorage.setItem(
+      'reading-steps-v3',
+      JSON.stringify({
+        settings: {
+          styleChosen: true,
+          sound: false,
+          layout: 'order',
+          unit: 12,
+          length: 3,
+          autoAdvance: true,
+          autoAdvanceSeconds: 1,
+          curriculumVersion: 2,
+        },
+        stars: 37,
+        history: [],
+      }),
+    );
+  });
+  await auto.goto(base);
+  await auto
+    .locator('.portal-grid')
+    .getByRole('button', { name: /ШАГ 2 Слоги/ })
+    .click();
+  await auto
+    .locator('.portal-grid')
+    .getByRole('button', { name: 'Состав слога', exact: true })
+    .click();
+  await auto.locator('.syllable-parts-exercise').waitFor();
+  const autoState = () =>
+    auto.evaluate(
+      () =>
+        new Promise((resolve, reject) => {
+          const request = indexedDB.open('reading-platform-v1');
+          request.onerror = () => reject(request.error);
+          request.onsuccess = () => {
+            const db = request.result;
+            const query = db
+              .transaction('state', 'readonly')
+              .objectStore('state')
+              .get('local');
+            query.onsuccess = () => {
+              resolve(query.result);
+              db.close();
+            };
+            query.onerror = () => reject(query.error);
+          };
+        }),
+    );
+  const solve = async () => {
+    const snapshot = await autoState();
+    const route = snapshot.customRoutes[snapshot.route.routeId];
+    const task = bank.items[route.steps[route.position].itemId];
+    const card = auto.locator('.syllable-parts-exercise');
+    await card.evaluate((element) => {
+      element.dataset.testIdentity = 'retained-card';
+    });
+    for (const part of task.partTokens) {
+      await card
+        .locator('.curriculum-token-bank button:not(:disabled)')
+        .filter({ hasText: new RegExp('^' + part.text + '$') })
+        .first()
+        .click();
+    }
+    await card.locator('button[type="submit"]').click();
+    await card.locator('.feedback.success').waitFor();
+    assert.equal(
+      await card.getAttribute('data-test-identity'),
+      'retained-card',
+      'success keeps the original card node',
+    );
+    assert.equal(
+      await card.locator('.syllable-parts-material').textContent(),
+      task.learnerText,
+    );
+    await card
+      .getByRole('heading', { name: 'Собери слог', exact: true })
+      .waitFor();
+    return task.learnerText;
+  };
+  const firstMaterial = await solve();
+  await auto.locator('.practice-menu > summary').click();
+  await auto
+    .getByLabel('Задержка автоперехода в секундах', { exact: true })
+    .waitFor();
+  assert.equal(
+    await auto
+      .getByLabel('Задержка автоперехода в секундах', { exact: true })
+      .inputValue(),
+    '1',
+  );
+  await auto.waitForTimeout(1300);
+  assert.equal(
+    await auto.locator('.syllable-parts-material').textContent(),
+    firstMaterial,
+    'open settings pause countdown',
+  );
+  assert.equal(await auto.locator('.feedback.success').count(), 1);
+  await auto.screenshot({
+    path: path.join(output, '1920-success-settings-paused.png'),
+    fullPage: true,
+  });
+  await auto.locator('.practice-menu > summary').click();
+  await auto
+    .locator('.feedback.success')
+    .waitFor({ state: 'detached', timeout: 5000 });
+  await auto
+    .locator('.syllable-parts-exercise button[type="submit"]')
+    .waitFor();
+  let snapshot = await autoState();
+  assert.equal(
+    snapshot.customRoutes[snapshot.route.routeId].position,
+    1,
+    'one-second automatic next opens second task',
+  );
+  assert.ok(snapshot.profile.activeInstance);
+  await auto.screenshot({
+    path: path.join(output, '1920-after-auto-next.png'),
+    fullPage: true,
+  });
+  const secondMaterial = await solve();
+  await auto
+    .getByRole('button', { name: 'Не переходить', exact: true })
+    .click();
+  await auto.waitForTimeout(1300);
+  assert.equal(
+    await auto.locator('.syllable-parts-material').textContent(),
+    secondMaterial,
+    'cancelled countdown retains successful task',
+  );
+  await auto.getByText('Автопереход остановлен', { exact: true }).waitFor();
+  const starsAfterSecond = await auto.evaluate(
+    () => JSON.parse(localStorage.getItem('reading-steps-v3')).stars,
+  );
+  assert.equal(starsAfterSecond, 39);
+  await auto
+    .getByRole('button', { name: 'Повторить задание', exact: true })
+    .click();
+  await auto.locator('.feedback.success').waitFor({ state: 'detached' });
+  assert.equal(
+    await auto.locator('.syllable-parts-material').textContent(),
+    secondMaterial,
+  );
+  await solve();
+  await auto
+    .getByRole('button', { name: 'Не переходить', exact: true })
+    .click();
+  assert.equal(
+    await auto.evaluate(
+      () => JSON.parse(localStorage.getItem('reading-steps-v3')).stars,
+    ),
+    starsAfterSecond,
+    'repeating second task does not award another star',
+  );
+  await auto.getByRole('button', { name: /Дальше/ }).focus();
+  await auto.keyboard.press('Enter');
+  await auto.locator('.feedback.success').waitFor({ state: 'detached' });
+  await auto.locator('.practice-menu > summary').click();
+  await auto
+    .getByLabel('Автоматически переходить дальше', { exact: true })
+    .uncheck();
+  await auto.locator('.practice-menu > summary').click();
+  await solve();
+  assert.equal(
+    await auto
+      .getByRole('heading', { name: 'Ты позанимался. Здорово!', exact: true })
+      .count(),
+    0,
+    'last success is shown before summary',
+  );
+  await auto.screenshot({
+    path: path.join(output, '1920-last-success.png'),
+    fullPage: true,
+  });
+  const starsAfterThree = await auto.evaluate(
+    () => JSON.parse(localStorage.getItem('reading-steps-v3')).stars,
+  );
+  assert.equal(
+    starsAfterThree,
+    40,
+    'three new correct tasks award three stars',
+  );
+  await auto
+    .getByRole('button', { name: 'Повторить задание', exact: true })
+    .click();
+  await auto.locator('.feedback.success').waitFor({ state: 'detached' });
+  await solve();
+  assert.equal(
+    await auto.evaluate(
+      () => JSON.parse(localStorage.getItem('reading-steps-v3')).stars,
+    ),
+    starsAfterThree,
+    'repeating a completed task does not award another star',
+  );
+  await auto.getByRole('button', { name: /Дальше/ }).focus();
+  await auto.keyboard.press('Enter');
+  await auto
+    .getByRole('heading', { name: 'Ты позанимался. Здорово!', exact: true })
+    .waitFor();
+  assert.equal(await auto.locator('.syllable-parts-exercise').count(), 0);
+  await auto.close();
+  completed.push(
+    'success: same card/material, quick settings pause 1s countdown, automatic next, cancellation, explicit final summary',
   );
   const report = { date: new Date().toISOString(), completed };
   fs.writeFileSync(

@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { SlidersHorizontal, Puzzle, Search } from 'lucide-react';
+import { Puzzle, Search } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import TopicBar from '../../components/topic-bar';
 import { topicNames } from '../../lib/topics';
 import LessonWorkspace from '../lesson/LessonWorkspace';
 import type { LessonModel } from '../lesson/use-lesson';
 import TrainerEntry from './TrainerEntry';
+import SyllablePartsSettings from './SyllablePartsSettings';
 export default function SyllablePartsWorkspace({
   model,
   onExit,
@@ -61,19 +62,7 @@ export default function SyllablePartsWorkspace({
           </Tabs>
         </div>
       }
-      controls={
-        <button
-          className="syllable-parts-settings"
-          aria-label="Настройки"
-          onClick={() => {
-            model.stop();
-            model.setParent(true);
-          }}
-        >
-          <SlidersHorizontal size={17} />
-          <span>Настройки</span>
-        </button>
-      }
+      controls={<SyllablePartsSettings model={model} />}
     >
       <TrainerEntry
         key={`${mode}:${unit}`}

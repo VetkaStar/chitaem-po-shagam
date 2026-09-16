@@ -34,10 +34,10 @@ export async function openSyllableParts(
           (route) =>
             (route.routeId.startsWith(prefix) ||
               route.routeId.startsWith(`trainer:${kind}:`)) &&
-            route.position < route.steps.length &&
             route.steps.every((step) => ids.has(step.itemId)),
         )
         .at(-1);
+  if (route && route.position >= route.steps.length) route = undefined;
   if (!route) {
     if (!pool.length) return null;
     for (let i = pool.length - 1; i > 0; i--) {

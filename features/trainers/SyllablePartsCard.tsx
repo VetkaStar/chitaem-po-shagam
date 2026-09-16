@@ -1,5 +1,15 @@
-import { useState } from 'react';
-import { ArrowRight, HelpCircle, RotateCcw, Volume2 } from 'lucide-react';
+import AutoAdvance from '../../components/auto-advance';
+import NextExerciseButton from '../../components/next-exercise-button';
+import FeedbackMessage from '../../components/feedback-message';
+import { useEffect, useRef, useState } from 'react';
+import {
+  ArrowRight,
+  HelpCircle,
+  RotateCcw,
+  Volume2,
+  Star,
+  X,
+} from 'lucide-react';
 import ExerciseHeader from '../../components/exercise-header';
 import TaskInstruction from '../../components/task-instruction';
 import { plural } from '../../lib/plural';
@@ -21,6 +31,10 @@ export interface SyllablePartsCardProps {
   model: LessonModel;
   position: number;
   total: number;
+  result?: Outcome;
+  rewarded?: boolean;
+  onNext: () => void;
+  onRepeat: () => void;
 }
 
 /** The familiar lesson frame; the shared controller remains the grading owner. */
@@ -36,7 +50,16 @@ export default function SyllablePartsCard({
   model,
   position,
   total,
+  result,
+  rewarded,
+  onNext,
+  onRepeat,
 }: SyllablePartsCardProps) {
+  const nextButton = useRef<HTMLButtonElement>(null);
+  const [stopped, setStopped] = useState(false);
+  useEffect(() => {
+    if (result && !busy) nextButton.current?.focus({ preventScroll: true });
+  }, [result, busy]);
   const [revision, setRevision] = useState(0);
   const title =
     view.taskKind === 'compose' ? 'Собери слог' : 'Найди часть слога';
@@ -63,6 +86,10 @@ export default function SyllablePartsCard({
     });
   const materialAudio = () =>
     act(async () => {
+      if (result) {
+        speak(view.text);
+        return;
+      }
       const current = await controller.help({
         level: view.mode === 'listen' ? 0 : 1,
         targetAudio: true,
@@ -71,7 +98,14 @@ export default function SyllablePartsCard({
     });
   return (
     <section
-      className="exercise syllable-parts-exercise"
+      className={
+        'exercise syllable-parts-exercise ' +
+        (result === 'correct'
+          ? 'success'
+          : result === 'incorrect'
+            ? 'error'
+            : 'neutral')
+      }
       aria-busy={busy}
       onPointerDownCapture={model.schedule.touch}
       onKeyDownCapture={model.schedule.touch}
@@ -135,62 +169,131 @@ export default function SyllablePartsCard({
           </button>
         </div>
       )}
-      <TaskRenderer
-        key={`${view.instanceId}:${revision}`}
-        task={view}
-        busy={busy}
-        compactAudio
-        compactControls
-        compositionPlaceholder="Здесь появится собранный слог"
-        submitLabel="Проверить · Enter"
-        onSubmit={submit}
-        onReading={(reading) =>
-          run(() => controller.recordReading(view.instanceId, reading))
-        }
-        onReveal={() => run(() => controller.revealOptions())}
-      />
-      {view.hints.length > 0 && (
+      <div className="syllable-parts-response" hidden={!!result}>
+        <TaskRenderer
+          key={`${view.instanceId}:${revision}`}
+          task={view}
+          busy={busy}
+          compactAudio
+          compactControls
+          compositionPlaceholder="Здесь появится собранный слог"
+          submitLabel="Проверить · Enter"
+          onSubmit={submit}
+          onReading={(reading) =>
+            run(() => controller.recordReading(view.instanceId, reading))
+          }
+          onReveal={() => run(() => controller.revealOptions())}
+        />
+      </div>
+      {!result && view.hints.length > 0 && (
         <div className="hint-box">
           {view.hints.map((text, index) => (
             <p key={index}>{text}</p>
           ))}
         </div>
       )}
+      {result && (
+        <>
+          {rewarded && (
+            <div className="success-badge" aria-hidden="true">
+              <Star />
+              <span>+1 звезда</span>
+              <Star />
+            </div>
+          )}
+          <FeedbackMessage
+            kind={
+              result === 'correct'
+                ? 'success'
+                : result === 'incorrect'
+                  ? 'error'
+                  : 'neutral'
+            }
+            text={
+              result === 'correct'
+                ? `Верно! ${view.text}. Получилось!`
+                : result === 'skipped'
+                  ? 'Задание пропущено.'
+                  : 'Попробуем ещё раз.'
+            }
+            sound={sound && instructionSound}
+            speaking={model.speaking}
+            speak={speak}
+          />
+          <NextExerciseButton
+            buttonRef={nextButton}
+            onNext={onNext}
+            disabled={busy}
+            countdown={
+              <AutoAdvance
+                inline
+                stopped={stopped}
+                enabled={settings.autoAdvance && result === 'correct'}
+                blocked={busy}
+                seconds={settings.autoAdvanceSeconds}
+                onNext={onNext}
+              />
+            }
+          />
+          {settings.autoAdvance && result === 'correct' && (
+            <div className="auto-stop">
+              <button
+                className="link-button"
+                disabled={stopped}
+                onClick={() => setStopped(true)}
+              >
+                <X size={16} />
+                {stopped ? 'Автопереход остановлен' : 'Не переходить'}
+              </button>
+            </div>
+          )}
+        </>
+      )}
       <div className="exercise-footer">
         <button
           type="button"
+          className="dock-side"
           disabled={busy}
           onClick={() => {
             model.stop();
+            if (result) {
+              onRepeat();
+              return;
+            }
             setRevision((value) => value + 1);
           }}
         >
           <RotateCcw size={16} /> Повторить задание
         </button>
-        <button
-          type="button"
-          disabled={busy || !view.canRequestHint}
-          onClick={() => act(() => controller.hint(view.hints.length))}
-        >
-          <HelpCircle size={16} /> Подсказка
-        </button>
-        <button
-          type="button"
-          className="text-button syllable-parts-skip"
-          disabled={busy}
-          onClick={() =>
-            act(async () => {
-              const saved = await controller.answer({
-                instanceId: view.instanceId,
-                disposition: 'skipped',
-              });
-              const receipt = saved.profile.receipts[view.instanceId];
-              if (receipt) onResult(receipt.outcome);
-            })
-          }
-        >
-          Пропустить <ArrowRight size={16} />
-        </button>
+        {!result && (
+          <button
+            type="button"
+            className="dock-side"
+            disabled={busy || !view.canRequestHint}
+            onClick={() => act(() => controller.hint(view.hints.length))}
+          >
+            <HelpCircle size={16} /> Подсказка
+          </button>
+        )}
+        {!result && (
+          <button
+            type="button"
+            className="link-button syllable-parts-skip"
+            disabled={busy}
+            onClick={() =>
+              act(async () => {
+                const saved = await controller.answer({
+                  instanceId: view.instanceId,
+                  disposition: 'skipped',
+                });
+                const receipt = saved.profile.receipts[view.instanceId];
+                if (receipt) onResult(receipt.outcome);
+              })
+            }
+          >
+            Пропустить <ArrowRight size={16} />
+          </button>
+        )}
       </div>
     </section>
   );

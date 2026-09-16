@@ -401,7 +401,13 @@ export default function AppPortal({
                     <button
                       className="portal-card"
                       key={s.id}
-                      onClick={() => go('section:' + s.id)}
+                      onClick={() => {
+                        const entry = sections.find(
+                          (section) => section.id === s.id,
+                        )!;
+                        if (entry.items.length === 1) start(entry.items[0].id);
+                        else go('section:' + s.id);
+                      }}
                     >
                       <small>ШАГ {i + 1}</small>
                       <b>{s.name}</b>

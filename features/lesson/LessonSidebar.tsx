@@ -51,7 +51,11 @@ export default function LessonSidebar({
   }, [expanded]);
   useEffect(() => {
     setExpanded(
-      sections.some((section) => section.id === active) ? active : null,
+      sections.some(
+        (section) => section.id === active && section.items.length > 1,
+      )
+        ? active
+        : null,
     );
   }, [active]);
   return (
@@ -78,42 +82,62 @@ export default function LessonSidebar({
                 className={
                   'app-nav-item' + (active === s.id ? ' selected' : '')
                 }
-                aria-current={active === s.id ? 'step' : undefined}
-                aria-expanded={expanded === s.id}
-                aria-controls={`${menuId}-${s.id}`}
-                disabled={disabled}
-                onClick={() =>
-                  setExpanded((current) => (current === s.id ? null : s.id))
+                aria-current={
+                  active === s.id
+                    ? s.items.length === 1
+                      ? 'page'
+                      : 'step'
+                    : undefined
                 }
+                aria-expanded={
+                  s.items.length > 1 ? expanded === s.id : undefined
+                }
+                aria-controls={
+                  s.items.length > 1 ? `${menuId}-${s.id}` : undefined
+                }
+                disabled={disabled}
+                onClick={() => {
+                  if (s.items.length === 1) {
+                    setExpanded(null);
+                    onSelect(s.items[0].id);
+                  } else
+                    setExpanded((current) => (current === s.id ? null : s.id));
+                }}
               >
                 <b>0{i + 1}</b>
                 <span>{s.name}</span>
-                <ChevronDown
-                  className="app-nav-chevron"
-                  size={16}
-                  aria-hidden="true"
-                />
+                {s.items.length > 1 && (
+                  <ChevronDown
+                    className="app-nav-chevron"
+                    size={16}
+                    aria-hidden="true"
+                  />
+                )}
               </button>
-              <div
-                id={`${menuId}-${s.id}`}
-                className="app-nav-submenu"
-                hidden={expanded !== s.id}
-              >
-                {s.items.map((item) => (
-                  <button
-                    key={item.id}
-                    className={
-                      'app-nav-child' +
-                      (selectedItem === item.id ? ' selected' : '')
-                    }
-                    aria-current={selectedItem === item.id ? 'page' : undefined}
-                    disabled={disabled}
-                    onClick={() => onSelect(item.id)}
-                  >
-                    {item.title}
-                  </button>
-                ))}
-              </div>
+              {s.items.length > 1 && (
+                <div
+                  id={`${menuId}-${s.id}`}
+                  className="app-nav-submenu"
+                  hidden={expanded !== s.id}
+                >
+                  {s.items.map((item) => (
+                    <button
+                      key={item.id}
+                      className={
+                        'app-nav-child' +
+                        (selectedItem === item.id ? ' selected' : '')
+                      }
+                      aria-current={
+                        selectedItem === item.id ? 'page' : undefined
+                      }
+                      disabled={disabled}
+                      onClick={() => onSelect(item.id)}
+                    >
+                      {item.title}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </nav>

@@ -442,7 +442,7 @@ for (const section of ['syllables', 'sentences', 'stories', 'poems']) {
     'Стихи',
   ])
     assert(html.includes(label));
-  assert.equal((html.match(/aria-current="step"/g) || []).length, 1);
+  assert.equal((html.match(/aria-current="(?:step|page)"/g) || []).length, 1);
   assert(html.indexOf('Разминка') < html.indexOf('О проекте'));
 }
 console.log(

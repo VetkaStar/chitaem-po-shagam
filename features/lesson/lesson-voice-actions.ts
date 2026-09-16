@@ -1,6 +1,6 @@
 import { beforeFreeSpeech } from '../free-practice/audio';
 import type { SpeechController } from './lesson-speech-types';
-import { selectNarratorVoice } from '@/lib/narrator-voice';
+import { narratorUtterance } from '../../lib/narrator-utterance';
 import { Settings } from './config';
 import type { Dispatch, SetStateAction, RefObject } from 'react';
 
@@ -36,16 +36,11 @@ export function createVoiceHandler(context: {
       return;
     }
     speechSynthesis.cancel();
-    const voices = speechSynthesis.getVoices(),
-      voice = selectNarratorVoice(voices, settings.voice);
-    if (voices.length && !voice) {
+    const u = narratorUtterance(text, settings);
+    if (!u) {
       releaseSoon();
       return;
     }
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'ru-RU';
-    if (voice) u.voice = voice;
-    u.rate = settings.slow ? 0.72 : 0.9;
     setSpeaking(true);
     u.onend = u.onerror = () => {
       if (speechEpoch.current !== token) return;

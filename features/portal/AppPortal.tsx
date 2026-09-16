@@ -301,6 +301,7 @@ export default function AppPortal({
               />
             ) : view === 'curriculum' ? (
               <CurriculumEntry
+                settings={model.settings}
                 sound={model.settings.sound}
                 speak={model.speak}
                 onPreferences={(q) => {

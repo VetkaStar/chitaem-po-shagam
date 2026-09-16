@@ -4,8 +4,9 @@ import { loadBundledSupply } from '../../lib/curriculum/bundled.js';
 import type { Supply } from '../../lib/curriculum/types.js';
 import { IndexedDbProgressStore } from '../../lib/progress/indexed-db.js';
 import { CurriculumController } from '../curriculum/controller.js';
-import OnboardingRoot from './OnboardingRoot.js';
+import EntryRoot from '../entry08/EntryRoot';
 export interface CurriculumPortalProps {
+  settings: import('../lesson/config').Settings;
   onPreferences?: (
     q: import('../../lib/curriculum/types.js').Questionnaire,
   ) => void;
@@ -29,6 +30,8 @@ export default function CurriculumPortal(props: CurriculumPortalProps) {
     const open = async () => {
       try {
         const supply = await loadBundledSupply();
+        const exposures = await import('../free-practice/service');
+        await exposures.waitForFreeExposure();
         if (cancelled) return;
         store = new IndexedDbProgressStore(supply);
         const controller = await CurriculumController.open(
@@ -50,7 +53,7 @@ export default function CurriculumPortal(props: CurriculumPortalProps) {
   }, [attempt]);
   if (ready)
     return (
-      <OnboardingRoot
+      <EntryRoot
         {...props}
         controller={ready.controller}
         supply={ready.supply}

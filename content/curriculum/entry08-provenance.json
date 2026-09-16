@@ -1,0 +1,20 @@
+{
+  "version": "0.8.1",
+  "source": "https://drive.google.com/file/d/1tx85B5jiCoq5bUuTRBRE-TDK8GaxbnQy/view",
+  "bankVersion": "0.8.0",
+  "curriculumVersion": "0.7.0",
+  "files": [
+    {
+      "path": "lib/entry08/vendor/lite-entry.mjs",
+      "sourcePath": "src/lite-entry.mjs",
+      "bytes": 30209,
+      "sha256": "bc3c62846b67d27695707c024f726e243b6a39c48303ee2b41805b2a01989785"
+    },
+    {
+      "path": "content/curriculum/lite-bank.json",
+      "sourcePath": "src/lite-bank.json",
+      "bytes": 40372,
+      "sha256": "941ca7e43cbaee0d23f33ad63f0fa2203f687624fe4c2a33ecdef6681ad78605"
+    }
+  ]
+}

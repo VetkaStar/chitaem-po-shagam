@@ -1,0 +1,1478 @@
+{
+  "version": "0.8.0",
+  "curriculumVersion": "0.7.0",
+  "sourceCurriculumSha256": "03c8a7b0d4af5c42d63ff7cb732c1489a04d89a5197f78b2c4c58c72d6440745",
+  "notice": "Learner instructions and first-entry policy are newly authored 0.8.0. Targets and question keys are retained from source. No child diagnosis or full skill mastery is inferred.",
+  "groups": {
+    "CV": {
+      "id": "CV",
+      "skillId": "blend.cv",
+      "label": "Соединяем буквы в слог",
+      "cardIds": [
+        "lite.CV.01",
+        "lite.CV.02",
+        "lite.CV.03",
+        "lite.CV.04"
+      ],
+      "nodeByProgram": {
+        "method_syllable_first": "p1.A01",
+        "method_word_first": "p2.W01"
+      },
+      "firstEpisodeByProgram": {
+        "method_syllable_first": "ep.p1.A01.01",
+        "method_word_first": "ep.p2.W01.01"
+      }
+    },
+    "VC": {
+      "id": "VC",
+      "skillId": "blend.vc",
+      "label": "Читаем обратные слоги",
+      "cardIds": [
+        "lite.VC.01",
+        "lite.VC.02",
+        "lite.VC.03",
+        "lite.VC.04"
+      ],
+      "nodeByProgram": {
+        "method_syllable_first": "p1.A02",
+        "method_word_first": "p2.W01"
+      },
+      "firstEpisodeByProgram": {
+        "method_syllable_first": "ep.p1.A02.01",
+        "method_word_first": "ep.p2.W01.01"
+      }
+    },
+    "CVC": {
+      "id": "CVC",
+      "skillId": "decode.cvc",
+      "label": "Читаем короткие слова",
+      "cardIds": [
+        "lite.CVC.01",
+        "lite.CVC.02",
+        "lite.CVC.03",
+        "lite.CVC.04"
+      ],
+      "nodeByProgram": {
+        "method_syllable_first": "p1.A03",
+        "method_word_first": "p2.W01"
+      },
+      "firstEpisodeByProgram": {
+        "method_syllable_first": "ep.p1.A03.01",
+        "method_word_first": "ep.p2.W01.01"
+      }
+    },
+    "CV2": {
+      "id": "CV2",
+      "skillId": "decode.cv_cv",
+      "label": "Соединяем слоги в слово",
+      "cardIds": [
+        "lite.CV2.01",
+        "lite.CV2.02",
+        "lite.CV2.03",
+        "lite.CV2.04"
+      ],
+      "nodeByProgram": {
+        "method_syllable_first": "p1.C01",
+        "method_word_first": "p2.W01"
+      },
+      "firstEpisodeByProgram": {
+        "method_syllable_first": "ep.p1.C01.01",
+        "method_word_first": "ep.p2.W01.01"
+      }
+    },
+    "LEN3": {
+      "id": "LEN3",
+      "skillId": "decode.cv_cv_cv",
+      "label": "Читаем более длинные слова",
+      "cardIds": [
+        "lite.LEN3.01",
+        "lite.LEN3.02",
+        "lite.LEN3.03",
+        "lite.LEN3.04"
+      ],
+      "nodeByProgram": {
+        "method_syllable_first": "p1.C04",
+        "method_word_first": "p2.BR03"
+      },
+      "firstEpisodeByProgram": {
+        "method_syllable_first": "ep.p1.C04.01",
+        "method_word_first": "ep.p2.BR03.01"
+      }
+    },
+    "MEDIAL": {
+      "id": "MEDIAL",
+      "skillId": "decode.internal_cluster",
+      "label": "Читаем слова с согласными внутри",
+      "cardIds": [
+        "lite.MEDIAL.01",
+        "lite.MEDIAL.02",
+        "lite.MEDIAL.03",
+        "lite.MEDIAL.04"
+      ],
+      "nodeByProgram": {
+        "method_syllable_first": "p1.C05",
+        "method_word_first": "p2.BR01"
+      },
+      "firstEpisodeByProgram": {
+        "method_syllable_first": "ep.p1.C05.01",
+        "method_word_first": "ep.p2.BR01.01"
+      }
+    },
+    "INITIAL": {
+      "id": "INITIAL",
+      "skillId": "decode.initial_cluster",
+      "label": "Читаем слова с согласными в начале",
+      "cardIds": [
+        "lite.INITIAL.01",
+        "lite.INITIAL.02",
+        "lite.INITIAL.03",
+        "lite.INITIAL.04"
+      ],
+      "nodeByProgram": {
+        "method_syllable_first": "p1.C06",
+        "method_word_first": "p2.BR02"
+      },
+      "firstEpisodeByProgram": {
+        "method_syllable_first": "ep.p1.C06.01",
+        "method_word_first": "ep.p2.BR02.01"
+      }
+    },
+    "SUBJECT": {
+      "id": "SUBJECT",
+      "skillId": "phrase.subject_action",
+      "label": "Понимаем короткие предложения",
+      "cardIds": [
+        "lite.SUBJECT.01",
+        "lite.SUBJECT.02",
+        "lite.SUBJECT.03",
+        "lite.SUBJECT.04"
+      ],
+      "nodeByProgram": {
+        "method_syllable_first": "p1.E01",
+        "method_word_first": "p2.S01"
+      },
+      "firstEpisodeByProgram": {
+        "method_syllable_first": "ep.p1.E01.01",
+        "method_word_first": "ep.p2.S01.01"
+      }
+    },
+    "LOCATE2": {
+      "id": "LOCATE2",
+      "skillId": "text.locate2",
+      "label": "Находим ответ в тексте",
+      "cardIds": [
+        "lite.LOCATE2.01",
+        "lite.LOCATE2.02",
+        "lite.LOCATE2.03",
+        "lite.LOCATE2.04"
+      ],
+      "nodeByProgram": {
+        "method_syllable_first": "p1.F02",
+        "method_word_first": "p2.R02"
+      },
+      "firstEpisodeByProgram": {
+        "method_syllable_first": "ep.p1.F02.01",
+        "method_word_first": "ep.p2.R02.01"
+      }
+    },
+    "FACTS3": {
+      "id": "FACTS3",
+      "skillId": "text.facts3",
+      "label": "Понимаем короткий рассказ",
+      "cardIds": [
+        "lite.FACTS3.01",
+        "lite.FACTS3.02",
+        "lite.FACTS3.03",
+        "lite.FACTS3.04"
+      ],
+      "nodeByProgram": {
+        "method_syllable_first": "p1.H01",
+        "method_word_first": "p2.R01"
+      },
+      "firstEpisodeByProgram": {
+        "method_syllable_first": "ep.p1.H01.01",
+        "method_word_first": "ep.p2.R01.01"
+      }
+    },
+    "SEQ2": {
+      "id": "SEQ2",
+      "skillId": "text.sequence2",
+      "label": "Разбираемся в порядке событий",
+      "cardIds": [
+        "lite.SEQ2.01",
+        "lite.SEQ2.02",
+        "lite.SEQ2.03",
+        "lite.SEQ2.04"
+      ],
+      "nodeByProgram": {
+        "method_syllable_first": "p1.F01",
+        "method_word_first": "p2.BR04"
+      },
+      "firstEpisodeByProgram": {
+        "method_syllable_first": "ep.p1.F01.01",
+        "method_word_first": "ep.p2.BR04.01"
+      }
+    },
+    "LISTEN": {
+      "id": "LISTEN",
+      "skillId": "listening.observation",
+      "label": "Слушаем и понимаем",
+      "cardIds": [
+        "lite.LISTEN.01",
+        "lite.LISTEN.02"
+      ],
+      "nodeByProgram": {
+        "method_syllable_first": "p1.E01",
+        "method_word_first": "p2.S01"
+      },
+      "firstEpisodeByProgram": {
+        "method_syllable_first": "ep.p1.E01.01",
+        "method_word_first": "ep.p2.S01.01"
+      }
+    }
+  },
+  "cards": {
+    "lite.CV.01": {
+      "id": "lite.CV.01",
+      "groupId": "CV",
+      "sourceTaskId": "task.41a973db156b",
+      "sourceHash": "b68113f7755cbb3d1c6c7d2a01d379964dbdb3ddb596cb7a30bf24ae03278353",
+      "target": "МА",
+      "type": "read",
+      "skillId": "blend.cv",
+      "instruction": "Прочитай слог.",
+      "parts": [
+        "М",
+        "А"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.CV.02": {
+      "id": "lite.CV.02",
+      "groupId": "CV",
+      "sourceTaskId": "task.399717abd1f9",
+      "sourceHash": "c4cbff2535de35f9f4e79147e8d05dfb86c5cb5be86152afed1e8ebfc4b18347",
+      "target": "МУ",
+      "type": "read",
+      "skillId": "blend.cv",
+      "instruction": "Прочитай слог.",
+      "parts": [
+        "М",
+        "У"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.CV.03": {
+      "id": "lite.CV.03",
+      "groupId": "CV",
+      "sourceTaskId": "task.e58fb291dac2",
+      "sourceHash": "31d25deb353c8e40a720bac93e37b1c6503fa0325affa684bbc7f56cf6d77842",
+      "target": "МО",
+      "type": "read",
+      "skillId": "blend.cv",
+      "instruction": "Прочитай слог.",
+      "parts": [
+        "М",
+        "О"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.CV.04": {
+      "id": "lite.CV.04",
+      "groupId": "CV",
+      "sourceTaskId": "task.a3ea1488fadf",
+      "sourceHash": "1e0920a50f62bc3bdf4a98578d83cb8117fbc8913e7cba874c35cfb77d29a19a",
+      "target": "ЛА",
+      "type": "read",
+      "skillId": "blend.cv",
+      "instruction": "Прочитай слог.",
+      "parts": [
+        "Л",
+        "А"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.VC.01": {
+      "id": "lite.VC.01",
+      "groupId": "VC",
+      "sourceTaskId": "task.7f4f58141fb4",
+      "sourceHash": "7ddc5943edf69ef5e125b76d12e511a79113f0564bcaefb6c50baa70919c6124",
+      "target": "АМ",
+      "type": "read",
+      "skillId": "blend.vc",
+      "instruction": "Прочитай слог.",
+      "parts": [
+        "А",
+        "М"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.VC.02": {
+      "id": "lite.VC.02",
+      "groupId": "VC",
+      "sourceTaskId": "task.e5a33ab94504",
+      "sourceHash": "efde3c9ca39dd7f9cdd82ac79dc51a2ee0e151a744011cbbca655897fb7d2097",
+      "target": "УМ",
+      "type": "read",
+      "skillId": "blend.vc",
+      "instruction": "Прочитай слог.",
+      "parts": [
+        "У",
+        "М"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.VC.03": {
+      "id": "lite.VC.03",
+      "groupId": "VC",
+      "sourceTaskId": "task.8769d37856e6",
+      "sourceHash": "2225a65c5b6cc4d4bf3f96d845a16531a9cccf8dc2b958458ef17af08c0de9fe",
+      "target": "ОМ",
+      "type": "read",
+      "skillId": "blend.vc",
+      "instruction": "Прочитай слог.",
+      "parts": [
+        "О",
+        "М"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.VC.04": {
+      "id": "lite.VC.04",
+      "groupId": "VC",
+      "sourceTaskId": "task.adf07515215d",
+      "sourceHash": "57c7c1cb98e3cd21f94810eb89bc6377fae1a76c71dcbb731234747631774760",
+      "target": "АН",
+      "type": "read",
+      "skillId": "blend.vc",
+      "instruction": "Прочитай слог.",
+      "parts": [
+        "А",
+        "Н"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.CVC.01": {
+      "id": "lite.CVC.01",
+      "groupId": "CVC",
+      "sourceTaskId": "task.da596b8cb7c9",
+      "sourceHash": "ad2a08ffd4a115175b537fa2b63a8f4b40bcc86e433d587c56a7afeadfc164c9",
+      "target": "КОТ",
+      "type": "read",
+      "skillId": "decode.cvc",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "КО",
+        "Т"
+      ],
+      "interestTags": [
+        "animals"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.CVC.02": {
+      "id": "lite.CVC.02",
+      "groupId": "CVC",
+      "sourceTaskId": "task.bf5f64068c04",
+      "sourceHash": "f1b071b9973266ea2d65bc00fccb8fa03de6bbba94810347cf3e5883053fc0e8",
+      "target": "РАК",
+      "type": "read",
+      "skillId": "decode.cvc",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "РА",
+        "К"
+      ],
+      "interestTags": [
+        "animals"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.CVC.03": {
+      "id": "lite.CVC.03",
+      "groupId": "CVC",
+      "sourceTaskId": "task.950ef01bb318",
+      "sourceHash": "99619c1f9f270df836f5b4c2ad898487856b9c4638c6d0426440e601bd1cb07f",
+      "target": "МАК",
+      "type": "read",
+      "skillId": "decode.cvc",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "МА",
+        "К"
+      ],
+      "interestTags": [
+        "nature"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.CVC.04": {
+      "id": "lite.CVC.04",
+      "groupId": "CVC",
+      "sourceTaskId": "task.88bdbf28bf9e",
+      "sourceHash": "b0ab911e6937eb7d447327109b49f2235649d457290b1abca343854eefa913af",
+      "target": "СОМ",
+      "type": "read",
+      "skillId": "decode.cvc",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "СО",
+        "М"
+      ],
+      "interestTags": [
+        "animals"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.CV2.01": {
+      "id": "lite.CV2.01",
+      "groupId": "CV2",
+      "sourceTaskId": "task.380f03bb4e44",
+      "sourceHash": "4f4d1e22f40aa437483dbdb9527f2c582d6a10750c439a066a4095d7377bd25d",
+      "target": "ЛУНА",
+      "type": "read",
+      "skillId": "decode.cv_cv",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "ЛУ",
+        "НА"
+      ],
+      "interestTags": [
+        "nature"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.CV2.02": {
+      "id": "lite.CV2.02",
+      "groupId": "CV2",
+      "sourceTaskId": "task.c6bb5f85a708",
+      "sourceHash": "c82bd869df78475535f76d54b896ced72d7e0ce77213737c12be045e4e12a572",
+      "target": "РАМА",
+      "type": "read",
+      "skillId": "decode.cv_cv",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "РА",
+        "МА"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.CV2.03": {
+      "id": "lite.CV2.03",
+      "groupId": "CV2",
+      "sourceTaskId": "task.0b7e54122557",
+      "sourceHash": "96fddf63e3c6106942b6e0a59ede25565bd5c9a243286c6265c48faefb68c7d5",
+      "target": "МАМА",
+      "type": "read",
+      "skillId": "decode.cv_cv",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "МА",
+        "МА"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.CV2.04": {
+      "id": "lite.CV2.04",
+      "groupId": "CV2",
+      "sourceTaskId": "task.f2f89d1e4470",
+      "sourceHash": "ec8b9d6b6c73fa3aa9581822781099224dfc48cca4ce515bfb828cf57b395ccf",
+      "target": "ПИЛА",
+      "type": "read",
+      "skillId": "decode.cv_cv",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "ПИ",
+        "ЛА"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.LEN3.01": {
+      "id": "lite.LEN3.01",
+      "groupId": "LEN3",
+      "sourceTaskId": "task.552ae961eb82",
+      "sourceHash": "858ef75d0294118c474379a084d3f97adb4efce5cbd6c0df789320e1b8db9db6",
+      "target": "МОЛОКО",
+      "type": "read",
+      "skillId": "decode.cv_cv_cv",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "МО",
+        "ЛО",
+        "КО"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.LEN3.02": {
+      "id": "lite.LEN3.02",
+      "groupId": "LEN3",
+      "sourceTaskId": "task.109044463c41",
+      "sourceHash": "09a60195e75bd68d340bf276be2fb0497e0acc7075bc556dbe44a40b27c3500c",
+      "target": "КОРОНА",
+      "type": "read",
+      "skillId": "decode.cv_cv_cv",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "КО",
+        "РО",
+        "НА"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.LEN3.03": {
+      "id": "lite.LEN3.03",
+      "groupId": "LEN3",
+      "sourceTaskId": "task.7641a05bd6ad",
+      "sourceHash": "924a95f454c19c41947fdcfed1b11876f45a63512e08168cf532223bd8f4fe8d",
+      "target": "МАЛИНА",
+      "type": "read",
+      "skillId": "decode.cv_cv_cv",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "МА",
+        "ЛИ",
+        "НА"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.LEN3.04": {
+      "id": "lite.LEN3.04",
+      "groupId": "LEN3",
+      "sourceTaskId": "task.9322167a2449",
+      "sourceHash": "9648c866effd530e64daa6b0658b26ef93bea17461ff61006255189cdc1adc2d",
+      "target": "МАШИНА",
+      "type": "read",
+      "skillId": "decode.cv_cv_cv",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "МА",
+        "ШИ",
+        "НА"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.MEDIAL.01": {
+      "id": "lite.MEDIAL.01",
+      "groupId": "MEDIAL",
+      "sourceTaskId": "task.7315e9feecfe",
+      "sourceHash": "236803291d424efd401f798965d1e8741af5395f1cf99192b79a60a9e996d32d",
+      "target": "СУМКА",
+      "type": "read",
+      "skillId": "decode.internal_cluster",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "СУМ",
+        "КА"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.MEDIAL.02": {
+      "id": "lite.MEDIAL.02",
+      "groupId": "MEDIAL",
+      "sourceTaskId": "task.087c2af19cbf",
+      "sourceHash": "8b4f2e05d6778b5272a265437b5cdcb187407f18b6ec05388862f96295afe513",
+      "target": "ЛАМПА",
+      "type": "read",
+      "skillId": "decode.internal_cluster",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "ЛАМ",
+        "ПА"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.MEDIAL.03": {
+      "id": "lite.MEDIAL.03",
+      "groupId": "MEDIAL",
+      "sourceTaskId": "task.ce9b3b7330c0",
+      "sourceHash": "d2bef804ee5ff77097fb65a77b74d35f7328ef5a0f1679e5b85b7d9d7403f8f1",
+      "target": "ПАЛКА",
+      "type": "read",
+      "skillId": "decode.internal_cluster",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "ПАЛ",
+        "КА"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.MEDIAL.04": {
+      "id": "lite.MEDIAL.04",
+      "groupId": "MEDIAL",
+      "sourceTaskId": "task.5e00d3d98949",
+      "sourceHash": "35d19b1e82a04a368796efdc581e24bf3e0f753e4544d6ac5bfd0eed84962b43",
+      "target": "ПОЛКА",
+      "type": "read",
+      "skillId": "decode.internal_cluster",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "ПОЛ",
+        "КА"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.INITIAL.01": {
+      "id": "lite.INITIAL.01",
+      "groupId": "INITIAL",
+      "sourceTaskId": "task.b43838ab024e",
+      "sourceHash": "6cc281ef069e8360712b4d4774c88fe9082456f75c17898fa7ac3eac8b9e7e63",
+      "target": "СТОЛ",
+      "type": "read",
+      "skillId": "decode.initial_cluster",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "СТО",
+        "Л"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.INITIAL.02": {
+      "id": "lite.INITIAL.02",
+      "groupId": "INITIAL",
+      "sourceTaskId": "task.9030307ac90f",
+      "sourceHash": "144780f2fdd7db14b5e441ce61c9a98f1888c7b5b93c9b2f68fc912a1b17b4f4",
+      "target": "СТУЛ",
+      "type": "read",
+      "skillId": "decode.initial_cluster",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "СТУ",
+        "Л"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.INITIAL.03": {
+      "id": "lite.INITIAL.03",
+      "groupId": "INITIAL",
+      "sourceTaskId": "task.fee59eedcc27",
+      "sourceHash": "f0efbff62d3ac808eba1865130435549f628f6e430fbadc30ca97ed5863ccfb6",
+      "target": "СЛОН",
+      "type": "read",
+      "skillId": "decode.initial_cluster",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "СЛО",
+        "Н"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.INITIAL.04": {
+      "id": "lite.INITIAL.04",
+      "groupId": "INITIAL",
+      "sourceTaskId": "task.8c663547e9d0",
+      "sourceHash": "f32b804f7c00e609fa2687a9bb36908390d82fb6ca896168ca454c905db20c2d",
+      "target": "КРОТ",
+      "type": "read",
+      "skillId": "decode.initial_cluster",
+      "instruction": "Прочитай слово.",
+      "parts": [
+        "КРО",
+        "Т"
+      ],
+      "interestTags": [
+        "neutral"
+      ],
+      "question": null,
+      "scoring": "placement_observation_only"
+    },
+    "lite.SUBJECT.01": {
+      "id": "lite.SUBJECT.01",
+      "groupId": "SUBJECT",
+      "sourceTaskId": "task.e5874fcf2645",
+      "sourceHash": "e7b439ef7bf364995367e4b0ab70a5f401739c3b2322b6edcd24215483f81184",
+      "target": "КОТ СПАЛ.",
+      "type": "passage",
+      "skillId": "phrase.subject_action",
+      "instruction": "Прочитай. Потом ответь на вопрос.",
+      "parts": [],
+      "interestTags": [
+        "animals"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Кто спал?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "Кот"
+          },
+          {
+            "id": "o2",
+            "text": "Рома"
+          },
+          {
+            "id": "o3",
+            "text": "Мама"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "phrase.subject_action"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    },
+    "lite.SUBJECT.02": {
+      "id": "lite.SUBJECT.02",
+      "groupId": "SUBJECT",
+      "sourceTaskId": "task.19e1c5ac1e67",
+      "sourceHash": "f8af26570dc95998966620da68a3306eaeda09ac95cdf29829018c0fdca9f0b9",
+      "target": "РОМА ИГРАЛ.",
+      "type": "passage",
+      "skillId": "phrase.subject_action",
+      "instruction": "Прочитай. Потом ответь на вопрос.",
+      "parts": [],
+      "interestTags": [
+        "everyday"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Что делал Рома?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "Играл"
+          },
+          {
+            "id": "o2",
+            "text": "Спал"
+          },
+          {
+            "id": "o3",
+            "text": "Мыл"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "phrase.subject_action"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    },
+    "lite.SUBJECT.03": {
+      "id": "lite.SUBJECT.03",
+      "groupId": "SUBJECT",
+      "sourceTaskId": "task.2b34b5d67623",
+      "sourceHash": "35d3dd5e5074f9a03f5095e43cd8f7a6bcfb5f596aa662003483f050e3b2b881",
+      "target": "БОТ ШАГАЛ.",
+      "type": "passage",
+      "skillId": "phrase.subject_action",
+      "instruction": "Прочитай. Потом ответь на вопрос.",
+      "parts": [],
+      "interestTags": [
+        "videogames"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Кто шагал?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "Бот"
+          },
+          {
+            "id": "o2",
+            "text": "Кот"
+          },
+          {
+            "id": "o3",
+            "text": "Мила"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "phrase.subject_action"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    },
+    "lite.SUBJECT.04": {
+      "id": "lite.SUBJECT.04",
+      "groupId": "SUBJECT",
+      "sourceTaskId": "task.26af5a2e6d9d",
+      "sourceHash": "d9f905d0893fb9f99ea70c6f240c6380af0686fb43891e915030f8b1bebfa1b2",
+      "target": "МАМА СПАЛА.",
+      "type": "passage",
+      "skillId": "phrase.subject_action",
+      "instruction": "Прочитай. Потом ответь на вопрос.",
+      "parts": [],
+      "interestTags": [
+        "everyday"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Что делала мама?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "Спала"
+          },
+          {
+            "id": "o2",
+            "text": "Играла"
+          },
+          {
+            "id": "o3",
+            "text": "Искала"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "phrase.subject_action"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    },
+    "lite.LOCATE2.01": {
+      "id": "lite.LOCATE2.01",
+      "groupId": "LOCATE2",
+      "sourceTaskId": "task.62f20c1ed0d7",
+      "sourceHash": "4b8fcec94464a0c799964b7b625ad7c89c8d374d316eeb9afd3a5756b0779ccb",
+      "target": "Рома искал кота. Кот спал у стола.",
+      "type": "passage",
+      "skillId": "text.locate2",
+      "instruction": "Прочитай. Потом ответь на вопрос.",
+      "parts": [],
+      "interestTags": [
+        "animals"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Где кот?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "У стола"
+          },
+          {
+            "id": "o2",
+            "text": "У окна"
+          },
+          {
+            "id": "o3",
+            "text": "На полке"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "text.locate2"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    },
+    "lite.LOCATE2.02": {
+      "id": "lite.LOCATE2.02",
+      "groupId": "LOCATE2",
+      "sourceTaskId": "task.01f5a24f08a0",
+      "sourceHash": "278fa6159ced5d87f4b1882dcc15c5a8fcb5b94ff745dc1e1384b7c49e683c28",
+      "target": "Мила искала лупу. Лупа была в сумке.",
+      "type": "passage",
+      "skillId": "text.locate2",
+      "instruction": "Прочитай. Потом ответь на вопрос.",
+      "parts": [],
+      "interestTags": [
+        "everyday"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Где лупа?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "В сумке"
+          },
+          {
+            "id": "o2",
+            "text": "В коробке"
+          },
+          {
+            "id": "o3",
+            "text": "На окне"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "text.locate2"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    },
+    "lite.LOCATE2.03": {
+      "id": "lite.LOCATE2.03",
+      "groupId": "LOCATE2",
+      "sourceTaskId": "task.af9339691328",
+      "sourceHash": "a4af1ec0569f02f66e0d5928aa456f49e43f7ea33c06d209653c55b0f87c299c",
+      "target": "Папа искал диск. Диск лежал на полке.",
+      "type": "passage",
+      "skillId": "text.locate2",
+      "instruction": "Прочитай. Потом ответь на вопрос.",
+      "parts": [],
+      "interestTags": [
+        "technology",
+        "retro_pc"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Где диск?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "На полке"
+          },
+          {
+            "id": "o2",
+            "text": "На стуле"
+          },
+          {
+            "id": "o3",
+            "text": "В сумке"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "text.locate2"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    },
+    "lite.LOCATE2.04": {
+      "id": "lite.LOCATE2.04",
+      "groupId": "LOCATE2",
+      "sourceTaskId": "task.362837d0459b",
+      "sourceHash": "8ebbd4d81a55ea13ad88f947bf9a40eccd1570797746636e44e2bd7f365bd47a",
+      "target": "Рома открыл карту. На карте был мост.",
+      "type": "passage",
+      "skillId": "text.locate2",
+      "instruction": "Прочитай. Потом ответь на вопрос.",
+      "parts": [],
+      "interestTags": [
+        "everyday"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Что было на карте?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "Мост"
+          },
+          {
+            "id": "o2",
+            "text": "Консоль"
+          },
+          {
+            "id": "o3",
+            "text": "Телефон"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "text.locate2"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    },
+    "lite.FACTS3.01": {
+      "id": "lite.FACTS3.01",
+      "groupId": "FACTS3",
+      "sourceTaskId": "task.8c02b149cff4",
+      "sourceHash": "647d4d36958890d0c3b979e7032434dbd1a5d8d3ddd0ca7c2c9b1ee9dd846817",
+      "target": "На столе диск. У диска карта. Рома взял карту.",
+      "type": "passage",
+      "skillId": "text.facts3",
+      "instruction": "Прочитай. Потом ответь на вопрос.",
+      "parts": [],
+      "interestTags": [
+        "technology",
+        "retro_pc"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Где диск?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "На столе"
+          },
+          {
+            "id": "o2",
+            "text": "В сумке"
+          },
+          {
+            "id": "o3",
+            "text": "На полке"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "text.facts3"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    },
+    "lite.FACTS3.02": {
+      "id": "lite.FACTS3.02",
+      "groupId": "FACTS3",
+      "sourceTaskId": "task.29a2956754dc",
+      "sourceHash": "f1dbf5f384b237c0445eefefacb694901115ef1302bfe24a9447527a8e9f0517",
+      "target": "У Милы консоль. Пульт в коробке. Мила взяла пульт.",
+      "type": "passage",
+      "skillId": "text.facts3",
+      "instruction": "Прочитай. Потом ответь на вопрос.",
+      "parts": [],
+      "interestTags": [
+        "technology",
+        "consoles"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Где был пульт?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "В коробке"
+          },
+          {
+            "id": "o2",
+            "text": "На полке"
+          },
+          {
+            "id": "o3",
+            "text": "У окна"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "text.facts3"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    },
+    "lite.FACTS3.03": {
+      "id": "lite.FACTS3.03",
+      "groupId": "FACTS3",
+      "sourceTaskId": "task.6f521af4e507",
+      "sourceHash": "b4818b06d7afa12a66189acc68a9ec9a7bc541456315bbcb3b91b35286edd6dc",
+      "target": "В игре стоит дом. У дома мост. На мосту бот.",
+      "type": "passage",
+      "skillId": "text.facts3",
+      "instruction": "Прочитай. Потом ответь на вопрос.",
+      "parts": [],
+      "interestTags": [
+        "videogames"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Что у дома?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "Мост"
+          },
+          {
+            "id": "o2",
+            "text": "Стол"
+          },
+          {
+            "id": "o3",
+            "text": "Консоль"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "text.facts3"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    },
+    "lite.FACTS3.04": {
+      "id": "lite.FACTS3.04",
+      "groupId": "FACTS3",
+      "sourceTaskId": "task.fb3928586641",
+      "sourceHash": "5e94bd4f5b716959d6473d18e03f64882a3ea5127543fca483945020c6e37ada",
+      "target": "Кот сидит у окна. Рома сел на стул. Лампа у стола.",
+      "type": "passage",
+      "skillId": "text.facts3",
+      "instruction": "Прочитай. Потом ответь на вопрос.",
+      "parts": [],
+      "interestTags": [
+        "animals"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Где кот?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "У окна"
+          },
+          {
+            "id": "o2",
+            "text": "У стола"
+          },
+          {
+            "id": "o3",
+            "text": "На стуле"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "text.facts3"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    },
+    "lite.SEQ2.01": {
+      "id": "lite.SEQ2.01",
+      "groupId": "SEQ2",
+      "sourceTaskId": "task.acdb3fb47605",
+      "sourceHash": "1671a29e2277a4088ce5d083dad46ec264fe31f7569713930f5921c12b85e1fd",
+      "target": "Рома взял карту. Потом Рома нашёл мост.",
+      "type": "passage",
+      "skillId": "text.sequence2",
+      "instruction": "Прочитай. Потом ответь на вопрос.",
+      "parts": [],
+      "interestTags": [
+        "everyday"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Что было сначала?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "Взял карту"
+          },
+          {
+            "id": "o2",
+            "text": "Нашёл мост"
+          },
+          {
+            "id": "o3",
+            "text": "Построил дом"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "text.sequence2"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    },
+    "lite.SEQ2.02": {
+      "id": "lite.SEQ2.02",
+      "groupId": "SEQ2",
+      "sourceTaskId": "task.363a7317946e",
+      "sourceHash": "9641162e8d55ef666232c5cebd1ad54ebc63abf77086117c1f9799158950ade9",
+      "target": "Мила взяла диск. Потом Мила убрала диск.",
+      "type": "passage",
+      "skillId": "text.sequence2",
+      "instruction": "Прочитай. Потом ответь на вопрос.",
+      "parts": [],
+      "interestTags": [
+        "technology",
+        "retro_pc"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Что было потом?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "Убрала диск"
+          },
+          {
+            "id": "o2",
+            "text": "Взяла диск"
+          },
+          {
+            "id": "o3",
+            "text": "Нашла карту"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "text.sequence2"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    },
+    "lite.SEQ2.03": {
+      "id": "lite.SEQ2.03",
+      "groupId": "SEQ2",
+      "sourceTaskId": "task.65a8a5715fd5",
+      "sourceHash": "b398774441b1843738c29c51591d919d681e3deec433b630149a2ba7184023a9",
+      "target": "Кот спал. Потом кот ел.",
+      "type": "passage",
+      "skillId": "text.sequence2",
+      "instruction": "Прочитай. Потом ответь на вопрос.",
+      "parts": [],
+      "interestTags": [
+        "animals"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Что было сначала?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "Спал"
+          },
+          {
+            "id": "o2",
+            "text": "Ел"
+          },
+          {
+            "id": "o3",
+            "text": "Играл"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "text.sequence2"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    },
+    "lite.SEQ2.04": {
+      "id": "lite.SEQ2.04",
+      "groupId": "SEQ2",
+      "sourceTaskId": "task.ea0050be8373",
+      "sourceHash": "1c170e2936612b749cd853e4a088e9f4af2e91f0eb09c52d9803b1cf9e80ccce",
+      "target": "Бот стоял. Потом бот шагал.",
+      "type": "passage",
+      "skillId": "text.sequence2",
+      "instruction": "Прочитай. Потом ответь на вопрос.",
+      "parts": [],
+      "interestTags": [
+        "videogames"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Что было потом?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "Шагал"
+          },
+          {
+            "id": "o2",
+            "text": "Стоял"
+          },
+          {
+            "id": "o3",
+            "text": "Летел"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "text.sequence2"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    },
+    "lite.LISTEN.01": {
+      "id": "lite.LISTEN.01",
+      "groupId": "LISTEN",
+      "sourceTaskId": "task.e5874fcf2645",
+      "sourceHash": "e7b439ef7bf364995367e4b0ab70a5f401739c3b2322b6edcd24215483f81184",
+      "target": "КОТ СПАЛ.",
+      "type": "listen",
+      "skillId": "listening.observation",
+      "instruction": "Послушай. Потом выбери ответ.",
+      "parts": [],
+      "interestTags": [
+        "animals"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Кто спал?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "Кот"
+          },
+          {
+            "id": "o2",
+            "text": "Рома"
+          },
+          {
+            "id": "o3",
+            "text": "Мама"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "phrase.subject_action"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    },
+    "lite.LISTEN.02": {
+      "id": "lite.LISTEN.02",
+      "groupId": "LISTEN",
+      "sourceTaskId": "task.19e1c5ac1e67",
+      "sourceHash": "f8af26570dc95998966620da68a3306eaeda09ac95cdf29829018c0fdca9f0b9",
+      "target": "РОМА ИГРАЛ.",
+      "type": "listen",
+      "skillId": "listening.observation",
+      "instruction": "Послушай. Потом выбери ответ.",
+      "parts": [],
+      "interestTags": [
+        "everyday"
+      ],
+      "question": {
+        "id": "q1",
+        "prompt": "Что делал Рома?",
+        "options": [
+          {
+            "id": "o1",
+            "text": "Играл"
+          },
+          {
+            "id": "o2",
+            "text": "Спал"
+          },
+          {
+            "id": "o3",
+            "text": "Мыл"
+          }
+        ],
+        "correctOptionIds": [
+          "o1"
+        ],
+        "sourceSkillIds": [
+          "phrase.subject_action"
+        ]
+      },
+      "scoring": "placement_observation_only"
+    }
+  }
+}

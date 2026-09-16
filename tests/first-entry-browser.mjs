@@ -43,7 +43,7 @@ try {
   await page.getByLabel('Сколько тебе лет?').selectOption('7');
   await page.getByRole('button', { name: 'Продолжить →', exact: true }).click();
   await page
-    .getByRole('button', { name: 'Настроить программу', exact: true })
+    .getByRole('heading', { name: 'Кто сейчас отвечает?', exact: true })
     .waitFor();
   assert.equal(
     await page.locator('.exercise').count(),
@@ -52,29 +52,39 @@ try {
   );
   await page.reload();
   await page
-    .getByRole('button', { name: 'Настроить программу', exact: true })
+    .getByRole('heading', { name: 'Кто сейчас отвечает?', exact: true })
     .waitFor();
   completed.push(
-    'new profile offers optional curriculum and resumes offer after reload',
+    'new profile opens short entry and resumes role screen after reload',
   );
   await page
-    .getByRole('button', { name: 'Настроить программу', exact: true })
+    .getByRole('button', { name: 'Взрослый о ребёнке', exact: true })
     .click();
-  const program = page.getByLabel('Какой способ хочешь попробовать?');
-  await program.selectOption('method_word_first');
-  await page.waitForFunction(
-    () =>
-      document
-        .querySelector('.curriculum-session')
-        ?.getAttribute('aria-busy') !== 'true',
+  await page
+    .getByRole('heading', {
+      name: 'Что уже получается читать самостоятельно?',
+      exact: true,
+    })
+    .waitFor();
+  assert.equal(
+    await page.getByRole('heading', { name: /Сколько.*лет/ }).count(),
+    0,
+    'known age must not be repeated',
   );
+  await page
+    .getByRole('button', { name: 'Короткие слова', exact: true })
+    .click();
+  await page
+    .getByRole('heading', { name: 'Что сейчас труднее всего?', exact: true })
+    .waitFor();
   await page.reload();
-  await program.waitFor();
-  assert.equal(await program.inputValue(), 'method_word_first');
-  completed.push('unfinished questionnaire and answer survive reload');
   await page
-    .getByRole('button', { name: 'Настроить позже', exact: true })
-    .click();
+    .getByRole('heading', { name: 'Что сейчас труднее всего?', exact: true })
+    .waitFor();
+  completed.push(
+    'known age skipped and short questionnaire answer survives reload',
+  );
+  await page.getByRole('button', { name: 'К тренажёрам', exact: true }).click();
   await page
     .getByRole('heading', { name: 'Все тренажёры', exact: true })
     .waitFor();
@@ -111,7 +121,7 @@ try {
     .waitFor();
   assert.equal(
     await page
-      .getByRole('button', { name: 'Настроить программу', exact: true })
+      .getByRole('heading', { name: 'Кто сейчас отвечает?', exact: true })
       .count(),
     0,
   );
@@ -124,15 +134,26 @@ try {
     .getByRole('button', { name: 'Учебные программы', exact: true })
     .click();
   await page
-    .getByRole('button', { name: 'Настроить программу', exact: true })
-    .click();
-  await program.waitFor();
+    .getByRole('heading', { name: 'Что сейчас труднее всего?', exact: true })
+    .waitFor();
   assert.equal(
-    await program.inputValue(),
-    'method_word_first',
-    'deferring or renaming must preserve questionnaire',
+    await page
+      .getByRole('heading', { name: 'Кто сейчас отвечает?', exact: true })
+      .count(),
+    0,
   );
-  completed.push('deferred answers remain available after profile edit');
+  assert.equal(
+    await page
+      .getByRole('heading', {
+        name: 'Что уже получается читать самостоятельно?',
+        exact: true,
+      })
+      .count(),
+    0,
+  );
+  completed.push(
+    'deferred short entry screen and answers remain available after profile edit',
+  );
   const failed = await browser.newPage();
   await failed.addInitScript(() => {
     const setItem = Storage.prototype.setItem;
@@ -158,7 +179,7 @@ try {
   );
   assert.equal(
     await failed
-      .getByRole('button', { name: 'Настроить программу', exact: true })
+      .getByRole('heading', { name: 'Кто сейчас отвечает?', exact: true })
       .count(),
     0,
   );
@@ -187,7 +208,7 @@ try {
     .waitFor();
   assert.equal(
     await legacy
-      .getByRole('button', { name: 'Настроить программу', exact: true })
+      .getByRole('heading', { name: 'Кто сейчас отвечает?', exact: true })
       .count(),
     0,
   );

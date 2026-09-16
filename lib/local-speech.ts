@@ -3,6 +3,7 @@ type VoskResult = { text?: string; result?: { conf: number; word: string }[] };
 type RecognizerMessage = { result?: VoskResult & { partial?: string } };
 type Recognizer = {
   setWords: (words: boolean) => void;
+  retrieveFinalResult: () => void;
   acceptWaveform: (buffer: AudioBuffer) => void;
   on: (
     event: 'result' | 'partialresult' | 'error',
@@ -134,7 +135,7 @@ export type SpeechCallbacks = {
   onActivity?: (phase: 'sound' | 'pause') => void;
   onPartial: (text: string) => void;
   onResult: (result: VoskResult) => void;
-  onError: (message: string) => void;
+  onError: (message: string, code?: string) => void;
 };
 export function startLocalSpeech(callbacks: SpeechCallbacks) {
   let closed = false,
@@ -151,6 +152,11 @@ export function startLocalSpeech(callbacks: SpeechCallbacks) {
     lastSound = 0,
     attemptActive = false,
     announced = false;
+  let finishing = false,
+    pendingChunks = 0;
+  let finishResolve: (() => void) | undefined;
+  let finishReject: ((error: Error) => void) | undefined;
+  let finishTimer: ReturnType<typeof setTimeout> | undefined;
   const removeRecognizer = () => {
     generation++;
     try {
@@ -161,6 +167,9 @@ export function startLocalSpeech(callbacks: SpeechCallbacks) {
   const cleanup = () => {
     if (closed) return;
     closed = true;
+    clearTimeout(finishTimer);
+    finishReject?.(new Error('ABORTED'));
+    finishReject = undefined;
     cancelAnimationFrame(frame);
     if (node) {
       node.onaudioprocess = null;
@@ -173,13 +182,23 @@ export function startLocalSpeech(callbacks: SpeechCallbacks) {
     callbacks.onLevel(0);
     callbacks.onSpectrum?.(Array(12).fill(0));
   };
-  const error = (message: string) => {
+  const error = (message: string, code = 'service_unavailable') => {
     if (closed) return;
     cleanup();
-    callbacks.onError(message);
+    callbacks.onError(message, code);
+  };
+  const receivedChunk = () => {
+    pendingChunks = Math.max(0, pendingChunks - 1);
+    if (finishing && pendingChunks === 0) {
+      const resolve = finishResolve;
+      finishReject = undefined;
+      cleanup();
+      resolve?.();
+    }
   };
   const createRecognizer = () => {
     removeRecognizer();
+    pendingChunks = 0;
     if (!enabled || !model || !context || closed) return;
     const current = generation;
     recognizer = new model.KaldiRecognizer(
@@ -202,6 +221,7 @@ export function startLocalSpeech(callbacks: SpeechCallbacks) {
         result.text?.trim()
       )
         callbacks.onResult(result);
+      if (!closed && current === generation) receivedChunk();
     });
     recognizer.on('partialresult', (m) => {
       const partial = m.result?.partial;
@@ -213,6 +233,7 @@ export function startLocalSpeech(callbacks: SpeechCallbacks) {
         partial.trim()
       )
         callbacks.onPartial(partial);
+      if (!closed && current === generation) receivedChunk();
     });
     recognizer.on('error', () => {
       if (current === generation)
@@ -315,8 +336,9 @@ export function startLocalSpeech(callbacks: SpeechCallbacks) {
       createRecognizer();
       node = context.createScriptProcessor(4096, 1, 1);
       node.onaudioprocess = (e) => {
-        if (!closed && enabled && recognizer) {
+        if (!closed && !finishing && enabled && recognizer) {
           try {
+            pendingChunks++;
             recognizer.acceptWaveform(e.inputBuffer);
           } catch {
             error('Не получилось прочитать сигнал микрофона.');
@@ -339,8 +361,37 @@ export function startLocalSpeech(callbacks: SpeechCallbacks) {
               : name === 'OverconstrainedError'
                 ? 'Выбранный микрофон отключён. Выбери другой.'
                 : (e as Error).message || 'Не удалось включить микрофон.',
+        name === 'NotAllowedError' || name === 'SecurityError'
+          ? 'not-allowed'
+          : [
+                'NotFoundError',
+                'NotReadableError',
+                'OverconstrainedError',
+              ].includes(name)
+            ? 'audio-capture'
+            : 'service_unavailable',
       );
     }
   })();
-  return { abort: cleanup, setEnabled };
+  const finish = () =>
+    new Promise<void>((resolve, reject) => {
+      if (closed || finishing || !recognizer) {
+        reject(new Error('not-ready'));
+        return;
+      }
+      finishing = true;
+      finishResolve = resolve;
+      finishReject = reject;
+      finishTimer = setTimeout(
+        () => error('Распознавание не завершилось.', 'service_unavailable'),
+        5000,
+      );
+      pendingChunks++;
+      try {
+        recognizer.retrieveFinalResult();
+      } catch {
+        error('Не получилось завершить распознавание.', 'service_unavailable');
+      }
+    });
+  return { abort: cleanup, setEnabled, finish };
 }

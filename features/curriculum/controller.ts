@@ -49,6 +49,9 @@ import {
   type FreeExposure,
 } from '../../lib/curriculum/free-exposure.js';
 import { EntryCommands } from '../onboarding/entry-commands.js';
+import { mergeEntry } from '../../lib/entry08/profile';
+import type { EntryState, EntryUi } from '../../lib/entry08/types';
+import type { PersonalRun } from '../../lib/entry08/personal';
 export interface PlanToken {
   storageRevision: number;
   kind: string;
@@ -78,6 +81,47 @@ export class CurriculumController extends EntryCommands {
   }
   snapshot() {
     return structuredClone(this.state);
+  }
+  saveEntry08(
+    expectedRevision: number,
+    update: { entry?: EntryState; ui: EntryUi; personal?: PersonalRun },
+  ) {
+    return this.serial(async () => {
+      if (this.state.storageRevision !== expectedRevision)
+        throw new Error('REVISION_CONFLICT');
+      const s = this.snapshot(),
+        backup = !s.profile.entry08Ui;
+      if (update.entry) s.profile = mergeEntry(s.profile, update.entry);
+      s.profile.entry08Ui = structuredClone(update.ui);
+      if (update.personal) {
+        if (
+          !s.profile.entry08 ||
+          update.personal.entryId !== s.profile.entry08.id
+        )
+          throw new Error('PERSONAL_ENTRY_MISMATCH');
+        s.profile.personalPath08 ??= {};
+        const old = s.profile.personalPath08[update.personal.entryId];
+        const shown = update.personal.exposedTaskIds.filter(
+          (id) => !old?.exposedTaskIds?.includes(id),
+        );
+        const prompted = update.personal.promptedTargets.filter(
+          (text) => !old?.promptedTargets?.includes(text),
+        );
+        if (shown.length || prompted.length)
+          s.profile = engine.commitExposure(s.profile, {
+            texts: shown
+              .map((id) => this.supply.curriculum.items[id]?.learnerText ?? '')
+              .filter(Boolean),
+            itemIds: shown,
+            promptedTexts: prompted,
+          });
+        s.profile.personalPath08 ??= {};
+        s.profile.personalPath08[update.personal.entryId] = structuredClone(
+          update.personal,
+        );
+      }
+      return this.save(s, backup);
+    });
   }
   visible() {
     if (this.state.studyMode === 'demonstration')

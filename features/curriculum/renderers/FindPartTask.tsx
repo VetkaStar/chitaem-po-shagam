@@ -95,14 +95,7 @@ export function FindPartTask({
       {anchor && (
         <p role="status">Выбрано начало. Нажми последнюю букву части.</p>
       )}
-      {compactControls ? (
-        <details className="curriculum-range-details">
-          <summary>Выбрать часть по буквам</summary>
-          <RangeInput lines={lines} busy={busy} onAdd={add} />
-        </details>
-      ) : (
-        <RangeInput lines={lines} busy={busy} onAdd={add} />
-      )}
+      {!compactControls && <RangeInput lines={lines} busy={busy} onAdd={add} />}
       <ul className="curriculum-selection">
         {segments.map((segment) => (
           <li key={key(segment)}>

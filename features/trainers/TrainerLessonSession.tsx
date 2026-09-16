@@ -7,23 +7,30 @@ import type { CurriculumController } from '../curriculum/controller';
 import type { Supply } from '../../lib/curriculum/types';
 import { useCurriculumSession } from '../curriculum/use-curriculum-session';
 import { useInstructionAudio } from '../curriculum/use-instruction-audio';
-import SyllablePartsCard from './SyllablePartsCard';
+import TrainerExerciseCard from './TrainerExerciseCard';
 import {
-  openSyllableParts,
-  type SyllablePartsKind,
-} from './syllable-parts-session';
+  openTrainerLesson,
+  trainerRoutePrefix,
+} from './trainer-lesson-session';
+import type { TrainerId } from './catalog';
+import type { TrainerSection } from './task-section';
+import type { Mode } from '../../lib/curriculum/contracts';
 import { nextTrainerTask } from './session-actions';
-export default function SyllablePartsSession({
+export default function TrainerLessonSession({
   controller,
   supply,
   model,
   kind,
+  section,
+  mode = 'read',
   onBusyChange,
 }: {
   controller: CurriculumController;
   supply: Supply;
   model: LessonModel;
-  kind: SyllablePartsKind;
+  kind: TrainerId;
+  section: TrainerSection;
+  mode?: Mode;
   onBusyChange?: (busy: boolean) => void;
 }) {
   const { state, view, busy, error, run, act } =
@@ -41,13 +48,15 @@ export default function SyllablePartsSession({
   const nextButton = useRef<HTMLButtonElement>(null);
   const start = async (fresh = false) => {
     setRouteId(
-      await openSyllableParts(
+      await openTrainerLesson(
         controller,
         supply,
         kind,
+        section,
         model.settings.unit,
         model.settings.length,
         fresh,
+        mode,
       ),
     );
     setResult(null);
@@ -86,7 +95,7 @@ export default function SyllablePartsSession({
   const repeat = () =>
     act(async () => {
       if (!route || !result) return;
-      const id = `syllable-parts:${kind}:${model.settings.unit}:repeat-0:offset-${offset + result.position}:${crypto.randomUUID()}`;
+      const id = `${trainerRoutePrefix(kind, section, model.settings.unit, mode)}repeat-0:offset-${offset + result.position}:${crypto.randomUUID()}`;
       const copy = {
         ...route,
         routeId: id,
@@ -149,7 +158,8 @@ export default function SyllablePartsSession({
         </div>
       )}
       {(current || result) && route && !summary && (
-        <SyllablePartsCard
+        <TrainerExerciseCard
+          section={section}
           key={(current ?? result!.view).instanceId}
           view={current ?? result!.view}
           result={result?.outcome}

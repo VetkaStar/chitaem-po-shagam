@@ -1,6 +1,11 @@
 import { useId, useState } from 'react';
 import type { TaskRendererProps } from './types.js';
-export function TransformTask({ task, busy, onSubmit }: TaskRendererProps) {
+export function TransformTask({
+  task,
+  busy,
+  onSubmit,
+  submitLabel,
+}: TaskRendererProps) {
   const [text, setText] = useState(''),
     id = useId();
   if (task.transformText !== undefined)
@@ -58,7 +63,7 @@ export function TransformTask({ task, busy, onSubmit }: TaskRendererProps) {
         spellCheck={false}
       />
       <button type="submit" disabled={busy || !text.trim()}>
-        Ответить
+        {submitLabel || 'Ответить'}
       </button>
     </form>
   );

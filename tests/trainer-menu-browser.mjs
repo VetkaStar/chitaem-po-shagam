@@ -51,7 +51,12 @@ try {
         localStorage.setItem(
           'reading-steps-v3',
           JSON.stringify({
-            settings: { styleChosen: true, sound: false, layout: 'order' },
+            settings: {
+              styleChosen: true,
+              sound: false,
+              layout: 'order',
+              unit: 12,
+            },
             stars: 37,
             history: [],
           }),
@@ -179,27 +184,23 @@ try {
     await words
       .getByRole('button', { name: 'Состав слова', exact: true })
       .click();
-    assert.deepEqual(await page.getByRole('tab').allTextContents(), [
-      'Собираем',
-      'Находим часть',
-      'Делим на части',
-      'Меняем',
-    ]);
-    await page.getByText('Доступно заданий: 63.', { exact: false }).waitFor();
+    assert.deepEqual(
+      (await page.getByRole('tab').allTextContents()).map((text) =>
+        text.trim(),
+      ),
+      ['Собираем', 'Находим часть', 'Делим на части', 'Меняем'],
+    );
+    await page.locator('.trainer-exercise').waitFor();
     assert.equal(
       await page.locator('.app-nav').getAttribute('data-open'),
       null,
     );
-    await page
-      .getByRole('button', { name: 'Начать занятие', exact: true })
-      .click();
-    await page.locator('.curriculum-material').waitFor();
-    const material = await page.locator('.curriculum-material').innerText();
+
+    await page.locator('.trainer-material').waitFor();
+    const material = await page.locator('.trainer-material').innerText();
     for (const mode of ['Находим часть', 'Делим на части', 'Меняем']) {
       await page.getByRole('tab', { name: mode, exact: true }).click();
-      await page
-        .getByRole('heading', { name: 'Новое занятие', exact: true })
-        .waitFor();
+      await page.locator('.trainer-exercise').waitFor();
       assert.equal(
         await page
           .getByRole('button', { name: 'Продолжить занятие', exact: true })
@@ -224,11 +225,8 @@ try {
       );
     }
     await page.getByRole('tab', { name: 'Собираем', exact: true }).click();
-    await page.locator('.curriculum-material').waitFor();
-    assert.equal(
-      await page.locator('.curriculum-material').innerText(),
-      material,
-    );
+    await page.locator('.trainer-material').waitFor();
+    assert.equal(await page.locator('.trainer-material').innerText(), material);
     const saved = await page.evaluate(() =>
       JSON.parse(localStorage.getItem('reading-steps-v3')),
     );
@@ -267,12 +265,7 @@ try {
         ),
         modes,
       );
-      if (section === 'Слоги')
-        await page.locator('.syllable-parts-exercise').waitFor();
-      else
-        await page
-          .getByRole('heading', { name: 'Новое занятие', exact: true })
-          .waitFor();
+      await page.locator('.trainer-exercise').waitFor();
     }
     for (const name of ['Буквы', 'Картинки', 'Стихи']) {
       await openMenu();
@@ -298,7 +291,7 @@ try {
     assert.deepEqual(errors, []);
     completed.push(
       width +
-        ': seven sections, three word trainers, core four modes, parts four modes with isolated setup and resume, other groups modes, saved stars and no overflow',
+        ': seven sections, three word trainers, core four modes, parts four modes with direct entry and resume, other groups modes, saved stars and no overflow',
     );
     await page.close();
   }

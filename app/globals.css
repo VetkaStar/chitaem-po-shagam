@@ -6558,52 +6558,52 @@ meter::-webkit-meter-optimum-value {
   font-size: clamp(24px, 4vw, 40px);
   line-height: 1.5;
 }
-.trainer-group .trainer-mode-list {
+.lesson .trainer-mode-list {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
   height: auto;
 }
-.lesson .syllable-parts-exercise {
+.lesson .trainer-exercise {
   border-bottom: 1px solid var(--line);
   border-radius: 24px;
   padding-bottom: 20px;
 }
-.lesson .syllable-parts-exercise .syllable-parts-material {
+.lesson .trainer-exercise .trainer-material {
   margin: 4px auto;
   text-align: center;
 }
-.lesson .syllable-parts-exercise .curriculum-task-renderer {
+.lesson .trainer-exercise .curriculum-task-renderer {
   width: 100%;
   max-width: 640px;
   margin: 0 auto;
   text-align: center;
 }
-.syllable-parts-exercise .curriculum-answer-form {
+.trainer-exercise .curriculum-answer-form {
   margin: 0;
   gap: 8px;
 }
-.syllable-parts-exercise :is(.curriculum-token-bank, .curriculum-actions) {
+.trainer-exercise :is(.curriculum-token-bank, .curriculum-actions) {
   margin: 8px 0;
 }
-.syllable-parts-exercise .curriculum-answer-form fieldset {
+.trainer-exercise .curriculum-answer-form fieldset {
   min-width: 0;
   border: 0;
   padding: 0;
 }
-.syllable-parts-exercise .curriculum-token-bank,
-.syllable-parts-exercise .curriculum-actions,
-.syllable-parts-exercise .curriculum-span-line,
-.syllable-parts-exercise .curriculum-selection {
+.trainer-exercise .curriculum-token-bank,
+.trainer-exercise .curriculum-actions,
+.trainer-exercise .curriculum-span-line,
+.trainer-exercise .curriculum-selection {
   justify-content: center;
 }
-.syllable-parts-exercise .curriculum-token-bank button {
+.trainer-exercise .curriculum-token-bank button {
   min-width: 64px;
   min-height: 64px;
   font-size: 32px;
   font-weight: 700;
 }
-.syllable-parts-exercise .curriculum-composition {
+.trainer-exercise .curriculum-composition {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -6611,7 +6611,7 @@ meter::-webkit-meter-optimum-value {
   padding: 8px;
   font-size: 24px;
 }
-.syllable-parts-exercise .curriculum-answer-form > button {
+.trainer-exercise .curriculum-answer-form > button {
   justify-self: center;
   min-width: 240px;
   min-height: 56px;
@@ -6620,45 +6620,65 @@ meter::-webkit-meter-optimum-value {
   font-weight: 800;
   box-shadow: 0 4px 0 var(--primary-edge);
 }
-.syllable-parts-exercise .curriculum-character[aria-pressed='true'] {
+.trainer-exercise .curriculum-character[aria-pressed='true'] {
   background: var(--primary);
   color: var(--color-primary-foreground, #fff);
   outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
-.syllable-parts-exercise .curriculum-range-details {
+.lesson .trainer-exercise .trainer-text-material {
+  display: block;
+  max-width: 100%;
+  font-size: clamp(22px, 3vw, 32px);
+  line-height: 1.5;
+  font-weight: 600;
+  letter-spacing: normal;
   text-align: left;
-  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
-.syllable-parts-exercise .curriculum-range-details summary {
-  cursor: pointer;
-  padding: 12px 0;
+.trainer-exercise .trainer-material {
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
-.syllable-parts-exercise .curriculum-range-input {
-  align-items: center;
+.trainer-exercise .curriculum-options,
+.trainer-exercise .curriculum-boundaries {
+  justify-content: center;
 }
-.syllable-parts-exercise .exercise-footer {
+.trainer-exercise .curriculum-option[aria-pressed='true'],
+.trainer-exercise .curriculum-boundary-button[aria-pressed='true'] {
+  background: var(--primary);
+  color: var(--color-primary-foreground, #fff);
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.trainer-exercise .curriculum-selection {
+  padding-left: 0;
+  list-style-position: inside;
+  overflow-wrap: anywhere;
+}
+.trainer-exercise .exercise-footer {
   width: 100%;
   flex-wrap: wrap;
 }
-.syllable-parts-exercise .syllable-parts-skip {
+.trainer-exercise .trainer-skip {
   margin-left: auto;
 }
 @media (max-width: 699px) {
-  .syllable-parts-exercise .curriculum-composition {
+  .trainer-exercise .curriculum-composition {
     font-size: 18px;
   }
-  .syllable-parts-exercise .exercise-footer {
+  .trainer-exercise .exercise-footer {
     justify-content: center;
   }
-  .syllable-parts-exercise .syllable-parts-skip {
+  .trainer-exercise .trainer-skip {
     margin-left: 0;
   }
 }
-.trainer-group .trainer-mode-list button {
+.lesson .trainer-mode-list button {
   flex: 1 1 auto;
   white-space: normal;
-  min-height: 44px;
+  min-height: 42px;
 }
 .trainer-group > .ui-tabs {
   margin-bottom: 16px;
@@ -6856,4 +6876,4 @@ meter::-webkit-meter-optimum-value {
 .free-material.is-pending > .free-material-content * { visibility: hidden !important; }
 .free-material-notice { position: absolute; inset: 0; display: flex; align-items: flex-start; justify-content: center; }
 
-.syllable-parts-response { width: 100%; }
+.trainer-response { width: 100%; }

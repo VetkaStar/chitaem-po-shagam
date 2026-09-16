@@ -388,7 +388,7 @@ try {
       .getByRole('heading', { name: 'Собери слог', exact: true })
       .waitFor();
     assert.equal(
-      await page.locator('.syllable-parts-material').textContent(),
+      await page.locator('.trainer-material').textContent(),
       task.learnerText,
     );
     await page.screenshot({
@@ -593,7 +593,7 @@ try {
       'success keeps the original card node',
     );
     assert.equal(
-      await card.locator('.syllable-parts-material').textContent(),
+      await card.locator('.trainer-material').textContent(),
       task.learnerText,
     );
     await card
@@ -614,7 +614,7 @@ try {
   );
   await auto.waitForTimeout(1300);
   assert.equal(
-    await auto.locator('.syllable-parts-material').textContent(),
+    await auto.locator('.trainer-material').textContent(),
     firstMaterial,
     'open settings pause countdown',
   );
@@ -647,7 +647,7 @@ try {
     .click();
   await auto.waitForTimeout(1300);
   assert.equal(
-    await auto.locator('.syllable-parts-material').textContent(),
+    await auto.locator('.trainer-material').textContent(),
     secondMaterial,
     'cancelled countdown retains successful task',
   );
@@ -661,7 +661,7 @@ try {
     .click();
   await auto.locator('.feedback.success').waitFor({ state: 'detached' });
   assert.equal(
-    await auto.locator('.syllable-parts-material').textContent(),
+    await auto.locator('.trainer-material').textContent(),
     secondMaterial,
   );
   await solve();

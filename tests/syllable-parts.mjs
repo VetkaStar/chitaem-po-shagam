@@ -8,6 +8,7 @@ import { compileCurriculum, root, supplyText } from './curriculum-harness.mjs';
 const output = compileCurriculum();
 for (const file of [
   'features/trainers/syllable-parts-session.ts',
+  'features/trainers/trainer-lesson-session.ts',
   'features/trainers/catalog.ts',
   'features/trainers/task-section.ts',
   'features/trainers/session-actions.ts',
@@ -40,6 +41,9 @@ const { syllablePartsItems, openSyllableParts } = await mod(
   'features/trainers/syllable-parts-session.js',
 );
 const { trainerItems } = await mod('features/trainers/catalog.js');
+const { lessonTrainerItems, openTrainerLesson } = await mod(
+  'features/trainers/trainer-lesson-session.js',
+);
 const { createTrainerRoute, nextTrainerTask } = await mod(
   'features/trainers/session-actions.js',
 );
@@ -264,6 +268,129 @@ await test('failed persistence neither advances nor fabricates a receipt', async
   );
   assert.deepEqual(controller.snapshot(), before);
   assert.deepEqual(await store.read(), before);
+});
+await test('all new trainer kinds launch only section, topic and mode eligible material', async () => {
+  const combinations = [
+    ['compose', 'words'],
+    ['find_part', 'words'],
+    ['boundary', 'words'],
+    ['transform', 'words'],
+    ['read_meaning', 'words'],
+    ['find_part', 'sentences'],
+    ['find_part', 'stories'],
+  ];
+  for (const [kind, section] of combinations) {
+    for (let unit = 0; unit < levels.length; unit++) {
+      for (const task of lessonTrainerItems(supply, kind, section, unit)) {
+        const text =
+          task.requiredLetters +
+          task.learnerText +
+          task.options.map((option) => option.text).join('');
+        assert.ok(
+          [...text.toUpperCase()].every(
+            (char) =>
+              !/[А-ЯЁ]/u.test(char) || levels[unit].letters.includes(char),
+          ),
+          `${kind}/${section}/${unit}: ${task.id}`,
+        );
+      }
+    }
+    const { controller } = await setup();
+    const pool = lessonTrainerItems(supply, kind, section, 12);
+    assert.ok(pool.length > 0, `${kind}/${section} has authored material`);
+    const ids = new Set(pool.map((task) => task.id));
+    const routeId = await openTrainerLesson(
+      controller,
+      supply,
+      kind,
+      section,
+      12,
+      8,
+    );
+    const route = controller.snapshot().customRoutes[routeId];
+    assert.equal(route.steps.length, Math.min(pool.length, 8));
+    assert.ok(
+      route.steps.every((step) => ids.has(step.itemId) && step.mode === 'read'),
+    );
+    assert.equal(
+      new Set(route.steps.map((step) => step.itemId)).size,
+      route.steps.length,
+    );
+    assert.ok(controller.snapshot().profile.activeInstance);
+  }
+});
+await test('find-part sections and comprehension modes preserve distinct instances across reload', async () => {
+  const { controller, store } = await setup();
+  const saved = [];
+  const combinations = [
+    ['find_part', 'syllables', 'read'],
+    ['find_part', 'words', 'read'],
+    ['find_part', 'sentences', 'read'],
+    ['find_part', 'stories', 'read'],
+    ['read_meaning', 'words', 'read'],
+    ['read_meaning', 'words', 'listen'],
+    ['read_meaning', 'words', 'shared'],
+  ];
+  for (const [kind, section, mode] of combinations) {
+    const routeId = await openTrainerLesson(
+      controller,
+      supply,
+      kind,
+      section,
+      12,
+      3,
+      false,
+      mode,
+    );
+    assert.ok(routeId, `${kind}/${section}/${mode}`);
+    const snapshot = controller.snapshot();
+    assert.ok(
+      snapshot.customRoutes[routeId].steps.every((step) => step.mode === mode),
+    );
+    saved.push({
+      kind,
+      section,
+      mode,
+      routeId,
+      instanceId: snapshot.profile.activeInstance.instanceId,
+    });
+  }
+  assert.equal(
+    new Set(saved.map((item) => item.routeId)).size,
+    combinations.length,
+  );
+  await controller.leaveSession();
+  const reopened = await CurriculumController.open(supply, store, legacy);
+  for (const entry of saved.reverse()) {
+    assert.equal(
+      await openTrainerLesson(
+        reopened,
+        supply,
+        entry.kind,
+        entry.section,
+        12,
+        8,
+        false,
+        entry.mode,
+      ),
+      entry.routeId,
+    );
+    assert.equal(
+      reopened.snapshot().profile.activeInstance.instanceId,
+      entry.instanceId,
+    );
+  }
+});
+await test('unsupported empty pools do not replace or mutate a saved active lesson', async () => {
+  const { controller } = await setup();
+  await openTrainerLesson(controller, supply, 'compose', 'words', 12, 3);
+  const before = controller.snapshot();
+  assert.equal(lessonTrainerItems(supply, 'compose', 'stories', 0).length, 0);
+  assert.equal(
+    await openTrainerLesson(controller, supply, 'compose', 'stories', 0, 3),
+    null,
+  );
+  assert.deepEqual(controller.snapshot(), before);
 });
 assert.equal(
   JSON.stringify(supply.curriculum.items),

@@ -2,7 +2,7 @@ import AutoAdvanceSettings from '../../components/auto-advance-settings';
 import PracticeMenu from '../../components/practice-menu';
 import type { LessonModel } from '../lesson/use-lesson';
 
-export default function SyllablePartsSettings({
+export default function TrainerPracticeSettings({
   model,
 }: {
   model: LessonModel;

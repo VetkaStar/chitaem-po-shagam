@@ -49,7 +49,7 @@ export function ChoiceTask(props: TaskRendererProps) {
         )}
       </fieldset>
       <button type="submit" disabled={busy || selected.length === 0}>
-        Ответить
+        {props.submitLabel || 'Ответить'}
       </button>
     </form>
   );

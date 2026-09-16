@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import type { TaskRendererProps } from './types.js';
 import { textPositions } from './text-positions.js';
-export function BoundaryTask({ task, busy, onSubmit }: TaskRendererProps) {
+export function BoundaryTask({
+  task,
+  busy,
+  onSubmit,
+  submitLabel,
+}: TaskRendererProps) {
   const [selected, setSelected] = useState<number[]>([]);
   return (
     <form
@@ -43,7 +48,7 @@ export function BoundaryTask({ task, busy, onSubmit }: TaskRendererProps) {
         </div>
       </fieldset>
       <button type="submit" disabled={busy}>
-        Ответить
+        {submitLabel || 'Ответить'}
       </button>
     </form>
   );

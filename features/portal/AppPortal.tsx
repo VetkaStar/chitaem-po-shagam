@@ -1,9 +1,8 @@
 'use client';
-import SyllablePartsWorkspace from '../trainers/SyllablePartsWorkspace';
+import TrainerWorkspace from '../trainers/TrainerWorkspace';
 import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
 import CurriculumEntry from '../onboarding/CurriculumEntry';
 import TrainerEntry from '../trainers/TrainerEntry';
-import TrainerGroup from '../trainers/TrainerGroup';
 import type { AnswerSection } from '../answers/types';
 import LessonWorkspace from '../lesson/LessonWorkspace';
 import AnswerEntry from '../answers/AnswerEntry';
@@ -241,7 +240,8 @@ export default function AppPortal({
     layout === 'focus' &&
     (view === 'lesson' ||
       view.startsWith('answer:') ||
-      view === 'group:parts:syllables') &&
+      view.startsWith('group:parts:') ||
+      view.startsWith('trainer:read_meaning:')) &&
     !!profile &&
     !askStyle;
   return (
@@ -335,20 +335,15 @@ export default function AppPortal({
                   section={view.split(':')[1] as AnswerSection}
                 />
               </LessonWorkspace>
-            ) : view === 'group:parts:syllables' ? (
-              <SyllablePartsWorkspace
-                model={model}
-                onExit={() => go('section:syllables')}
-              />
-            ) : selectedTrainer?.modes && section ? (
-              <TrainerGroup
-                key={view}
+            ) : selectedTrainer &&
+              section &&
+              (selectedTrainer.modes || trainerId === 'read_meaning') ? (
+              <TrainerWorkspace
+                key={selectedTrainer.id}
                 trainer={selectedTrainer}
                 section={section.id}
-                sound={model.settings.sound}
-                speak={model.speak}
-                onModeChange={model.stop}
-                onExit={() => go('section:' + section.id)}
+                model={model}
+                onExit={() => go(`section:${section.id}`)}
               />
             ) : view === 'cabinet' ? (
               <Cabinet

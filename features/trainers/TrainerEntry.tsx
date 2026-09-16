@@ -9,6 +9,7 @@ import { isTrainerId, trainerDefinitions } from './catalog.js';
 import type { TrainerSection } from './task-section';
 export interface TrainerEntryProps {
   trainerId: string;
+  presentationMode?: import('../../lib/curriculum/contracts').Mode;
   model?: LessonModel;
   sound: boolean;
   speak: (text: string) => void;
@@ -24,7 +25,7 @@ export default function TrainerEntry(props: TrainerEntryProps) {
     controller: CurriculumController;
     supply: Supply;
     Screen: typeof import('./TrainerSession.js').default;
-    PartsScreen: typeof import('./SyllablePartsSession').default;
+    PartsScreen: typeof import('./TrainerLessonSession').default;
   } | null>(null);
   const [error, setError] = useState(false),
     [attempt, setAttempt] = useState(0);
@@ -44,7 +45,7 @@ export default function TrainerEntry(props: TrainerEntryProps) {
             import('../../lib/progress/indexed-db.js'),
             import('../curriculum/controller.js'),
             import('./TrainerSession.js'),
-            import('./SyllablePartsSession'),
+            import('./TrainerLessonSession'),
           ]);
         const exposures = await import('../free-practice/service');
         await exposures.waitForFreeExposure();
@@ -81,18 +82,15 @@ export default function TrainerEntry(props: TrainerEntryProps) {
         </button>
       </section>
     );
-  if (
-    ready &&
-    props.model &&
-    props.section === 'syllables' &&
-    (props.trainerId === 'compose' || props.trainerId === 'find_part')
-  )
+  if (ready && props.model && props.section)
     return (
       <ready.PartsScreen
         controller={ready.controller}
         supply={ready.supply}
         model={props.model}
         kind={props.trainerId}
+        section={props.section}
+        mode={props.presentationMode}
         onBusyChange={props.onBusyChange}
       />
     );

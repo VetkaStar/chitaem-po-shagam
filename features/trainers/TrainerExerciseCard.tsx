@@ -9,6 +9,7 @@ import {
   Volume2,
   Star,
   X,
+  Image,
 } from 'lucide-react';
 import ExerciseHeader from '../../components/exercise-header';
 import TaskInstruction from '../../components/task-instruction';
@@ -18,8 +19,12 @@ import type { LessonModel } from '../lesson/use-lesson';
 import { TaskRenderer } from '../curriculum/TaskRenderer';
 import type { CurriculumController } from '../curriculum/controller';
 import type { TaskPresentation } from '../curriculum/presentation';
+import { CurriculumIllustration } from '../curriculum/CurriculumIllustration';
+import type { TrainerSection } from './task-section';
+import { exerciseLabels } from './exercise-labels';
 
-export interface SyllablePartsCardProps {
+export interface TrainerExerciseCardProps {
+  section: TrainerSection;
   view: TaskPresentation;
   controller: CurriculumController;
   busy: boolean;
@@ -38,7 +43,8 @@ export interface SyllablePartsCardProps {
 }
 
 /** The familiar lesson frame; the shared controller remains the grading owner. */
-export default function SyllablePartsCard({
+export default function TrainerExerciseCard({
+  section,
   view,
   controller,
   busy,
@@ -54,15 +60,17 @@ export default function SyllablePartsCard({
   rewarded,
   onNext,
   onRepeat,
-}: SyllablePartsCardProps) {
+}: TrainerExerciseCardProps) {
   const nextButton = useRef<HTMLButtonElement>(null);
   const [stopped, setStopped] = useState(false);
   useEffect(() => {
     if (result && !busy) nextButton.current?.focus({ preventScroll: true });
   }, [result, busy]);
   const [revision, setRevision] = useState(0);
-  const title =
-    view.taskKind === 'compose' ? 'Собери слог' : 'Найди часть слога';
+  const { title, placeholder, textMaterial } = exerciseLabels(
+    section,
+    view.taskKind,
+  );
   const settings = model.settings;
   const rest = settings.breakMinutes
     ? `Отдых через ${settings.breakMinutes} ${plural(settings.breakMinutes, ['минуту', 'минуты', 'минут'])}`
@@ -99,7 +107,8 @@ export default function SyllablePartsCard({
   return (
     <section
       className={
-        'exercise syllable-parts-exercise ' +
+        'exercise trainer-exercise ' +
+        (section === 'syllables' ? 'syllable-parts-exercise ' : '') +
         (result === 'correct'
           ? 'success'
           : result === 'incorrect'
@@ -132,30 +141,39 @@ export default function SyllablePartsCard({
       </div>
       <TaskInstruction
         text={
-          view.taskKind === 'compose'
+          view.taskKind === 'compose' && section === 'syllables'
             ? 'Собери слог из букв по порядку. Затем прочитай его.'
             : view.taskInstruction || view.instruction
         }
         sound={sound && instructionSound}
         speak={instructionAudio}
       />
-      <div className="reading syllable-parts-material" aria-label={view.text}>
-        {Array.from(view.text).map((char, index) => (
-          <span
-            key={index}
-            className={
-              settings.color
-                ? /[аеёиоуыэюя]/iu.test(char)
-                  ? 'vowel'
-                  : /[а-яё]/iu.test(char)
-                    ? 'consonant'
+      <div
+        className={
+          'reading trainer-material' +
+          (textMaterial ? ' trainer-text-material' : '')
+        }
+        aria-label={view.text}
+        data-letters={Array.from(view.text).length}
+      >
+        {textMaterial
+          ? view.text
+          : Array.from(view.text).map((char, index) => (
+              <span
+                key={index}
+                className={
+                  settings.color
+                    ? /[аеёиоуыэюя]/iu.test(char)
+                      ? 'vowel'
+                      : /[а-яё]/iu.test(char)
+                        ? 'consonant'
+                        : ''
                     : ''
-                : ''
-            }
-          >
-            {char}
-          </span>
-        ))}
+                }
+              >
+                {char}
+              </span>
+            ))}
       </div>
       {sound && (
         <div className="material-tools">
@@ -169,20 +187,54 @@ export default function SyllablePartsCard({
           </button>
         </div>
       )}
-      <div className="syllable-parts-response" hidden={!!result}>
+      {!result && view.canShowIllustration && !view.illustration && (
+        <div className="material-tools">
+          <button
+            type="button"
+            className="pill-button"
+            disabled={busy}
+            onClick={() => act(() => controller.illustration(view.instanceId))}
+          >
+            <Image size={16} /> Показать картинку
+          </button>
+        </div>
+      )}
+      {view.illustration && (
+        <CurriculumIllustration
+          asset={view.illustration}
+          busy={busy || !!result}
+          onVariant={(variant) =>
+            act(() => controller.illustration(view.instanceId, variant))
+          }
+        />
+      )}
+      <div className="trainer-response" hidden={!!result}>
         <TaskRenderer
           key={`${view.instanceId}:${revision}`}
           task={view}
           busy={busy}
           compactAudio
           compactControls
-          compositionPlaceholder="Здесь появится собранный слог"
+          compositionPlaceholder={placeholder}
           submitLabel="Проверить · Enter"
           onSubmit={submit}
           onReading={(reading) =>
             run(() => controller.recordReading(view.instanceId, reading))
           }
           onReveal={() => run(() => controller.revealOptions())}
+          onSpeak={
+            sound
+              ? (questionId, optionId) =>
+                  act(async () => {
+                    const text = await controller.optionAudio(
+                      view.instanceId,
+                      questionId,
+                      optionId,
+                    );
+                    speak(text);
+                  })
+              : undefined
+          }
         />
       </div>
       {!result && view.hints.length > 0 && (
@@ -211,7 +263,9 @@ export default function SyllablePartsCard({
             }
             text={
               result === 'correct'
-                ? `Верно! ${view.text}. Получилось!`
+                ? textMaterial
+                  ? 'Верно! Получилось!'
+                  : `Верно! ${view.transformText ?? view.text}. Получилось!`
                 : result === 'skipped'
                   ? 'Задание пропущено.'
                   : 'Попробуем ещё раз.'
@@ -278,7 +332,7 @@ export default function SyllablePartsCard({
         {!result && (
           <button
             type="button"
-            className="link-button syllable-parts-skip"
+            className="link-button trainer-skip"
             disabled={busy}
             onClick={() =>
               act(async () => {

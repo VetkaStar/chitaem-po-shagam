@@ -1,12 +1,18 @@
 'use client';
-import { useContext } from 'react';
+import { useContext, type ReactNode } from 'react';
 import { ArrowLeft, Leaf, Settings2, Star } from 'lucide-react';
 import { PortalContext } from '../portal/portal-context';
 import TopicNavigation from './TopicNavigation';
 import type { LessonModel } from './use-lesson';
 
 /** «Фокус» bar over a task: back to all sections, rest, the topic, stars and adult settings. */
-export default function FocusBar({ model }: { model: LessonModel }) {
+export default function FocusBar({
+  model,
+  topic,
+}: {
+  model: LessonModel;
+  topic?: ReactNode;
+}) {
   const { home } = useContext(PortalContext);
   const { stop, setRest, setParent, stars } = model;
   return (
@@ -27,7 +33,7 @@ export default function FocusBar({ model }: { model: LessonModel }) {
           <span>Разминка</span>
         </button>
       </div>
-      <TopicNavigation model={model} compact />
+      {topic ?? <TopicNavigation model={model} compact />}
       <div className="focus-bar-end">
         <span className="focus-stars" aria-label={`Звёзд: ${stars}`}>
           <Star size={17} />

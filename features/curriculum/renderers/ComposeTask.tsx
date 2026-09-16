@@ -1,6 +1,12 @@
 import { useState } from 'react';
 import type { TaskRendererProps } from './types.js';
-export function ComposeTask({ task, busy, onSubmit }: TaskRendererProps) {
+export function ComposeTask({
+  task,
+  busy,
+  onSubmit,
+  compositionPlaceholder,
+  submitLabel,
+}: TaskRendererProps) {
   const [ids, setIds] = useState<string[]>([]);
   const text = ids
     .map((id) => task.tokens.find((token) => token.tokenId === id)?.text ?? '')
@@ -36,7 +42,7 @@ export function ComposeTask({ task, busy, onSubmit }: TaskRendererProps) {
           ))}
         </div>
         <output className="curriculum-composition" aria-live="polite">
-          {text || 'Здесь появится собранное слово'}
+          {text || compositionPlaceholder || 'Здесь появится собранное слово'}
         </output>
         <div className="curriculum-actions">
           <button
@@ -59,7 +65,7 @@ export function ComposeTask({ task, busy, onSubmit }: TaskRendererProps) {
         type="submit"
         disabled={busy || !ids.length || ids.length !== task.tokens.length}
       >
-        Ответить
+        {submitLabel || 'Ответить'}
       </button>
     </form>
   );

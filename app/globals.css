@@ -6564,6 +6564,97 @@ meter::-webkit-meter-optimum-value {
   gap: 4px;
   height: auto;
 }
+.lesson .syllable-parts-exercise {
+  border-bottom: 1px solid var(--line);
+  border-radius: 24px;
+  padding-bottom: 20px;
+}
+.lesson .syllable-parts-exercise .syllable-parts-material {
+  margin: 4px auto;
+  text-align: center;
+}
+.lesson .syllable-parts-exercise .curriculum-task-renderer {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+.syllable-parts-exercise .curriculum-answer-form {
+  margin: 0;
+  gap: 8px;
+}
+.syllable-parts-exercise :is(.curriculum-token-bank, .curriculum-actions) {
+  margin: 8px 0;
+}
+.syllable-parts-exercise .curriculum-answer-form fieldset {
+  min-width: 0;
+  border: 0;
+  padding: 0;
+}
+.syllable-parts-exercise .curriculum-token-bank,
+.syllable-parts-exercise .curriculum-actions,
+.syllable-parts-exercise .curriculum-span-line,
+.syllable-parts-exercise .curriculum-selection {
+  justify-content: center;
+}
+.syllable-parts-exercise .curriculum-token-bank button {
+  min-width: 64px;
+  min-height: 64px;
+  font-size: 32px;
+  font-weight: 700;
+}
+.syllable-parts-exercise .curriculum-composition {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: 8px;
+  font-size: 24px;
+}
+.syllable-parts-exercise .curriculum-answer-form > button {
+  justify-self: center;
+  min-width: 240px;
+  min-height: 56px;
+  background: var(--primary);
+  color: var(--color-primary-foreground, #fff);
+  font-weight: 800;
+  box-shadow: 0 4px 0 var(--primary-edge);
+}
+.syllable-parts-exercise .curriculum-character[aria-pressed='true'] {
+  background: var(--primary);
+  color: var(--color-primary-foreground, #fff);
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.syllable-parts-exercise .curriculum-range-details {
+  text-align: left;
+  font-size: 14px;
+}
+.syllable-parts-exercise .curriculum-range-details summary {
+  cursor: pointer;
+  padding: 12px 0;
+}
+.syllable-parts-exercise .curriculum-range-input {
+  align-items: center;
+}
+.syllable-parts-exercise .exercise-footer {
+  width: 100%;
+  flex-wrap: wrap;
+}
+.syllable-parts-exercise .syllable-parts-skip {
+  margin-left: auto;
+}
+@media (max-width: 699px) {
+  .syllable-parts-exercise .curriculum-composition {
+    font-size: 18px;
+  }
+  .syllable-parts-exercise .exercise-footer {
+    justify-content: center;
+  }
+  .syllable-parts-exercise .syllable-parts-skip {
+    margin-left: 0;
+  }
+}
 .trainer-group .trainer-mode-list button {
   flex: 1 1 auto;
   white-space: normal;
@@ -6764,3 +6855,6 @@ meter::-webkit-meter-optimum-value {
 .free-material.is-pending > .free-material-content,
 .free-material.is-pending > .free-material-content * { visibility: hidden !important; }
 .free-material-notice { position: absolute; inset: 0; display: flex; align-items: flex-start; justify-content: center; }
+
+.lesson-controls .syllable-parts-settings { min-height: 44px; height: 44px; padding: 0 16px; margin-left: auto; font-size: 14px; font-weight: 600; }
+@media (max-width: 600px) { .lesson-controls .syllable-parts-settings { width: 44px; padding: 0; } .syllable-parts-settings span { display: none; } }

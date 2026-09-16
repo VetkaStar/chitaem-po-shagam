@@ -5,7 +5,13 @@ import { textPositions } from './text-positions.js';
 import { RangeInput } from './RangeInput.js';
 const key = (segment: Segment) =>
   [segment.line, segment.start, segment.end].join(':');
-export function FindPartTask({ task, busy, onSubmit }: TaskRendererProps) {
+export function FindPartTask({
+  task,
+  busy,
+  onSubmit,
+  compactControls,
+  submitLabel,
+}: TaskRendererProps) {
   const lines = task.lines.length ? task.lines : task.text.split('\n');
   const [segments, setSegments] = useState<Segment[]>([]),
     [anchor, setAnchor] = useState<Segment | null>(null);
@@ -89,7 +95,14 @@ export function FindPartTask({ task, busy, onSubmit }: TaskRendererProps) {
       {anchor && (
         <p role="status">Выбрано начало. Нажми последнюю букву части.</p>
       )}
-      <RangeInput lines={lines} busy={busy} onAdd={add} />
+      {compactControls ? (
+        <details className="curriculum-range-details">
+          <summary>Выбрать часть по буквам</summary>
+          <RangeInput lines={lines} busy={busy} onAdd={add} />
+        </details>
+      ) : (
+        <RangeInput lines={lines} busy={busy} onAdd={add} />
+      )}
       <ul className="curriculum-selection">
         {segments.map((segment) => (
           <li key={key(segment)}>
@@ -110,7 +123,7 @@ export function FindPartTask({ task, busy, onSubmit }: TaskRendererProps) {
         ))}
       </ul>
       <button type="submit" disabled={busy || !segments.length}>
-        Ответить
+        {submitLabel || 'Ответить'}
       </button>
     </form>
   );

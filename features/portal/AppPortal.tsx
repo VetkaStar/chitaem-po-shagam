@@ -1,4 +1,5 @@
 'use client';
+import SyllablePartsWorkspace from '../trainers/SyllablePartsWorkspace';
 import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
 import CurriculumEntry from '../onboarding/CurriculumEntry';
 import TrainerEntry from '../trainers/TrainerEntry';
@@ -238,7 +239,9 @@ export default function AppPortal({
   // «Фокус» shows a task without the app header and the section menu; the task has its own bar.
   const focusActivity =
     layout === 'focus' &&
-    (view === 'lesson' || view.startsWith('answer:')) &&
+    (view === 'lesson' ||
+      view.startsWith('answer:') ||
+      view === 'group:parts:syllables') &&
     !!profile &&
     !askStyle;
   return (
@@ -332,6 +335,11 @@ export default function AppPortal({
                   section={view.split(':')[1] as AnswerSection}
                 />
               </LessonWorkspace>
+            ) : view === 'group:parts:syllables' ? (
+              <SyllablePartsWorkspace
+                model={model}
+                onExit={() => go('section:syllables')}
+              />
             ) : selectedTrainer?.modes && section ? (
               <TrainerGroup
                 key={view}

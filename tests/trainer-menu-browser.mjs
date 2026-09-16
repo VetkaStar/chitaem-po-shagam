@@ -261,10 +261,18 @@ try {
         await group.locator('.app-nav-item').click();
       await group.getByRole('button', { name: trainer, exact: true }).click();
       await page.getByRole('heading', { name: trainer, exact: true }).waitFor();
-      assert.deepEqual(await page.getByRole('tab').allTextContents(), modes);
-      await page
-        .getByRole('heading', { name: 'Новое занятие', exact: true })
-        .waitFor();
+      assert.deepEqual(
+        (await page.getByRole('tab').allTextContents()).map((text) =>
+          text.trim(),
+        ),
+        modes,
+      );
+      if (section === 'Слоги')
+        await page.locator('.syllable-parts-exercise').waitFor();
+      else
+        await page
+          .getByRole('heading', { name: 'Новое занятие', exact: true })
+          .waitFor();
     }
     for (const name of ['Буквы', 'Картинки', 'Стихи']) {
       await openMenu();

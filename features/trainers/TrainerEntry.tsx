@@ -1,3 +1,4 @@
+import type { LessonModel } from '../lesson/use-lesson';
 import { useEffect, useState } from 'react';
 import { loadBundledSupply } from '../../lib/curriculum/bundled.js';
 import type { Supply } from '../../lib/curriculum/types.js';
@@ -8,6 +9,7 @@ import { isTrainerId, trainerDefinitions } from './catalog.js';
 import type { TrainerSection } from './task-section';
 export interface TrainerEntryProps {
   trainerId: string;
+  model?: LessonModel;
   sound: boolean;
   speak: (text: string) => void;
   onExit: () => void;
@@ -22,6 +24,7 @@ export default function TrainerEntry(props: TrainerEntryProps) {
     controller: CurriculumController;
     supply: Supply;
     Screen: typeof import('./TrainerSession.js').default;
+    PartsScreen: typeof import('./SyllablePartsSession').default;
   } | null>(null);
   const [error, setError] = useState(false),
     [attempt, setAttempt] = useState(0);
@@ -35,12 +38,14 @@ export default function TrainerEntry(props: TrainerEntryProps) {
     setError(false);
     void (async () => {
       try {
-        const [supply, storage, runtime, screen] = await Promise.all([
-          loadBundledSupply(),
-          import('../../lib/progress/indexed-db.js'),
-          import('../curriculum/controller.js'),
-          import('./TrainerSession.js'),
-        ]);
+        const [supply, storage, runtime, screen, partsScreen] =
+          await Promise.all([
+            loadBundledSupply(),
+            import('../../lib/progress/indexed-db.js'),
+            import('../curriculum/controller.js'),
+            import('./TrainerSession.js'),
+            import('./SyllablePartsSession'),
+          ]);
         const exposures = await import('../free-practice/service');
         await exposures.waitForFreeExposure();
         if (cancelled) return;
@@ -51,7 +56,12 @@ export default function TrainerEntry(props: TrainerEntryProps) {
           browserStorage,
         );
         if (!cancelled)
-          setReady({ controller, supply, Screen: screen.default });
+          setReady({
+            controller,
+            supply,
+            Screen: screen.default,
+            PartsScreen: partsScreen.default,
+          });
       } catch {
         if (!cancelled) setError(true);
         if (store) await store.close().catch(() => undefined);
@@ -70,6 +80,21 @@ export default function TrainerEntry(props: TrainerEntryProps) {
           {props.exitLabel ?? 'Все тренажёры'}
         </button>
       </section>
+    );
+  if (
+    ready &&
+    props.model &&
+    props.section === 'syllables' &&
+    (props.trainerId === 'compose' || props.trainerId === 'find_part')
+  )
+    return (
+      <ready.PartsScreen
+        controller={ready.controller}
+        supply={ready.supply}
+        model={props.model}
+        kind={props.trainerId}
+        onBusyChange={props.onBusyChange}
+      />
     );
   if (ready)
     return (

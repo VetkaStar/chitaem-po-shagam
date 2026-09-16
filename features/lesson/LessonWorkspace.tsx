@@ -16,6 +16,10 @@ export default function LessonWorkspace({
   onPractice,
   children,
   controls,
+  title,
+  label,
+  toolbar,
+  topic,
 }: {
   model: LessonModel;
   answer?: boolean;
@@ -23,28 +27,36 @@ export default function LessonWorkspace({
   onPractice?: (mode: Mode) => void;
   children?: ReactNode;
   controls?: ReactNode;
+  title?: string;
+  label?: string;
+  toolbar?: ReactNode;
+  topic?: (compact: boolean) => ReactNode;
 }) {
   const { settings, stage, currentStage, stars } = model;
   return (
     <section className="lesson">
       {settings.layout === 'focus' ? (
         <>
-          <h1 className="sr-only">{currentStage.title}</h1>
-          <FocusBar model={model} />
+          <h1 className="sr-only">{title ?? currentStage.title}</h1>
+          <FocusBar model={model} topic={topic?.(true)} />
         </>
       ) : (
         <>
           <div className="lesson-top">
             <div className="lesson-title">
               <small>
-                ШАГ {stages.findIndex((s) => s.id === stage) + 1} ·{' '}
-                {stage === 'pictures'
-                  ? 'НАЗЫВАЕМ ПРЕДМЕТЫ'
-                  : stage === 'words'
-                    ? 'ПЕРВЫЕ СЛОВА'
-                    : currentStage.name.toUpperCase()}
+                {label ?? (
+                  <>
+                    ШАГ {stages.findIndex((s) => s.id === stage) + 1} ·{' '}
+                    {stage === 'pictures'
+                      ? 'НАЗЫВАЕМ ПРЕДМЕТЫ'
+                      : stage === 'words'
+                        ? 'ПЕРВЫЕ СЛОВА'
+                        : currentStage.name.toUpperCase()}
+                  </>
+                )}
               </small>
-              <h1>{currentStage.title}</h1>
+              <h1>{title ?? currentStage.title}</h1>
             </div>
             <span className="pill">
               <Star size={17} />
@@ -54,16 +66,18 @@ export default function LessonWorkspace({
               </span>
             </span>
           </div>
-          <TopicNavigation model={model} />
+          {topic ? topic(false) : <TopicNavigation model={model} />}
         </>
       )}
       <div className="lesson-controls">
-        <LessonToolbar
-          model={model}
-          answer={answer}
-          onAnswer={onAnswer}
-          onPractice={onPractice}
-        />
+        {toolbar ?? (
+          <LessonToolbar
+            model={model}
+            answer={answer}
+            onAnswer={onAnswer}
+            onPractice={onPractice}
+          />
+        )}
         {controls === undefined ? <PracticeControls model={model} /> : controls}
       </div>
       {model.schedule.skips >= 2 && (

@@ -574,4 +574,76 @@ await test('side checks retain the root goal and allow only one insertion per vi
     /SIDE_CHECK_NOT_AVAILABLE/,
   );
 });
+async function completedEntry(controller) {
+  await probe(controller, 'leave-cv-1');
+  await probe(controller, 'leave-cv-2');
+  await controller.finishEntryGroup(true);
+  await controller.acceptPlacement();
+}
+for (const completed of [false, true]) {
+  await test(
+    'leaving custom session preserves ' +
+      (completed ? 'completed' : 'in-progress') +
+      ' onboarding and parked task',
+    async () => {
+      const { controller, store } = await setup();
+      await ready(controller, { reads: ['letters'] });
+      if (completed) await completedEntry(controller);
+      const onboarding = controller.snapshot().onboarding;
+      assert.equal(
+        onboarding.setupStatus,
+        completed ? 'completed' : 'in_progress',
+      );
+      const task = Object.values(curriculum.items).find(
+        (item) => item.kind === 'compose' && item.allowedModes.includes('read'),
+      );
+      const routeId = 'trainer:compose:leave-regression';
+      await controller.registerCustomRoute({
+        source: 'custom',
+        routeId,
+        version: 1,
+        position: 0,
+        suspendedInstance: null,
+        steps: [{ id: 'leave-step', itemId: task.id, mode: 'read' }],
+      });
+      await controller.selectCustomRoute(routeId);
+      await controller.launch(
+        await controller.planNext(),
+        'leave-custom-instance',
+      );
+      const before = controller.snapshot();
+      await controller.leaveSession();
+      const after = controller.snapshot();
+      assert.equal(after.studyMode, 'free');
+      assert.equal(after.profile.activeInstance, null);
+      assert.deepEqual(after.onboarding, onboarding);
+      assert.deepEqual(after.profile.programs, before.profile.programs);
+      assert.deepEqual(
+        after.customRoutes[routeId].suspendedInstance,
+        before.profile.activeInstance,
+      );
+      assert.equal(after.customRoutes[routeId].position, 0);
+      assert.deepEqual(after.profile.currentVisit, before.profile.currentVisit);
+      const reloaded = await CurriculumController.open(supply, store, legacy);
+      await reloaded.selectCustomRoute(routeId);
+      assert.deepEqual(
+        reloaded.snapshot().profile.activeInstance,
+        before.profile.activeInstance,
+      );
+      assert.deepEqual(reloaded.snapshot().onboarding, onboarding);
+    },
+  );
+}
+await test('deferring after completed placement never erases completed onboarding', async () => {
+  const { controller, store } = await setup();
+  await ready(controller, { reads: ['letters'] });
+  await completedEntry(controller);
+  const before = controller.snapshot().onboarding;
+  assert.equal(before.setupStatus, 'completed');
+  await controller.deferSetup();
+  assert.equal(controller.snapshot().studyMode, 'free');
+  assert.deepEqual(controller.snapshot().onboarding, before);
+  const reloaded = await CurriculumController.open(supply, store, legacy);
+  assert.deepEqual(reloaded.snapshot().onboarding, before);
+});
 console.log('Curriculum onboarding: ' + passed + ' scenarios passed');

@@ -146,9 +146,18 @@ export class CurriculumController extends EntryCommands {
       const s = this.snapshot();
       park(s);
       s.studyMode = 'free';
-      s.onboarding.setupStatus = 'deferred';
+      if (s.onboarding.setupStatus !== 'completed')
+        s.onboarding.setupStatus = 'deferred';
       await this.save(s);
       return { screen: 'catalog' as const };
+    });
+  }
+  leaveSession() {
+    return this.serial(async () => {
+      const s = this.snapshot();
+      park(s);
+      s.studyMode = 'free';
+      await this.save(s);
     });
   }
   resumeSetup() {

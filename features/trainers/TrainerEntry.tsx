@@ -1,0 +1,90 @@
+import { useEffect, useState } from 'react';
+import { loadBundledSupply } from '../../lib/curriculum/bundled.js';
+import type { Supply } from '../../lib/curriculum/types.js';
+import { browserStorage } from '../../lib/progress/profile-storage';
+import type { IndexedDbProgressStore } from '../../lib/progress/indexed-db.js';
+import type { CurriculumController } from '../curriculum/controller.js';
+import { isTrainerId, trainerDefinitions } from './catalog.js';
+export interface TrainerEntryProps {
+  trainerId: string;
+  sound: boolean;
+  speak: (text: string) => void;
+  onExit: () => void;
+}
+export default function TrainerEntry(props: TrainerEntryProps) {
+  const [ready, setReady] = useState<{
+    controller: CurriculumController;
+    supply: Supply;
+    Screen: typeof import('./TrainerSession.js').default;
+  } | null>(null);
+  const [error, setError] = useState(false),
+    [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    let cancelled = false;
+    let store: IndexedDbProgressStore | undefined;
+    setReady(null);
+    setError(false);
+    void (async () => {
+      try {
+        const [supply, storage, runtime, screen] = await Promise.all([
+          loadBundledSupply(),
+          import('../../lib/progress/indexed-db.js'),
+          import('../curriculum/controller.js'),
+          import('./TrainerSession.js'),
+        ]);
+        if (cancelled) return;
+        store = new storage.IndexedDbProgressStore(supply);
+        const controller = await runtime.CurriculumController.open(
+          supply,
+          store,
+          browserStorage,
+        );
+        if (!cancelled)
+          setReady({ controller, supply, Screen: screen.default });
+      } catch {
+        if (!cancelled) setError(true);
+        if (store) await store.close().catch(() => undefined);
+      }
+    })();
+    return () => {
+      cancelled = true;
+      if (store) void store.close().catch(() => undefined);
+    };
+  }, [attempt]);
+  if (!isTrainerId(props.trainerId))
+    return (
+      <section className="portal-panel">
+        <h1>Тренажёр не найден</h1>
+        <button onClick={props.onExit}>Все тренажёры</button>
+      </section>
+    );
+  if (ready)
+    return (
+      <ready.Screen
+        key={props.trainerId}
+        {...props}
+        trainerId={props.trainerId}
+        controller={ready.controller}
+        supply={ready.supply}
+      />
+    );
+  const title = trainerDefinitions.find(
+    (definition) => definition.id === props.trainerId,
+  )!.title;
+  return (
+    <section className="portal-panel" aria-label={title} aria-busy={!error}>
+      <h1>{title}</h1>
+      {error ? (
+        <div role="alert">
+          <p>Не удалось открыть тренажёр или сохранение.</p>
+          <button onClick={() => setAttempt((value) => value + 1)}>
+            Повторить попытку
+          </button>
+        </div>
+      ) : (
+        <p role="status">Готовим задания…</p>
+      )}
+      <button onClick={props.onExit}>Все тренажёры</button>
+    </section>
+  );
+}

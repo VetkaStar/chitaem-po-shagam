@@ -128,7 +128,7 @@ export default function Welcome({
           сохранения.
         </p>
         <button className="primary" disabled={!name.trim() || !age}>
-          Начать путешествие →
+          {profile ? 'Сохранить изменения' : 'Продолжить →'}
         </button>
         {onCancel && (
           <button type="button" className="text-button" onClick={onCancel}>

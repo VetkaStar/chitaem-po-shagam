@@ -83,6 +83,9 @@ export default function EntryWorkspace({
           controller={controller}
           busy={busy}
           sound={sound}
+          instructionSound={
+            state.onboarding.questionnaire.instructionAudio !== 'off'
+          }
           speak={speak}
           run={run}
           onResult={() => setStatus('')}

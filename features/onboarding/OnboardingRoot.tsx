@@ -56,10 +56,9 @@ export default function OnboardingRoot(props: Props) {
       await controller.deferSetup();
       onExit();
     });
-  const audio =
-    sound &&
-    state.onboarding.questionnaire.audioUsable === true &&
-    state.onboarding.questionnaire.instructionAudio !== 'off';
+  const audio = sound && state.onboarding.questionnaire.audioUsable === true;
+  const instructionAudio =
+    audio && state.onboarding.questionnaire.instructionAudio !== 'off';
   const programs = supply.curriculum.programs.map((p) => ({
     id: p.id,
     title: p.title,
@@ -113,6 +112,7 @@ export default function OnboardingRoot(props: Props) {
           controller={controller}
           programs={programs}
           sound={audio}
+          instructionSound={instructionAudio}
           autoInstruction={
             state.onboarding.questionnaire.instructionAudio === 'always'
           }

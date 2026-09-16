@@ -9,10 +9,12 @@ export default function Cabinet({
   profile,
   stars,
   onEdit,
+  onLogout,
 }: {
   profile: Profile;
   stars: number;
   onEdit: () => void;
+  onLogout?: () => void;
 }) {
   return (
     <section className="portal-panel">
@@ -22,6 +24,7 @@ export default function Cabinet({
         <Star /> {stars} звёзд
       </p>
       <button onClick={onEdit}>Изменить имя и возраст</button>
+      {onLogout && <button onClick={onLogout}>Выйти из профиля</button>}
       <h2>Скоро: твой маленький мир</h2>
       <p>
         За звёзды, которые ты получаешь в занятиях, планируем открывать

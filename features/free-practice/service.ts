@@ -1,4 +1,5 @@
 import { loadBundledSupply } from '../../lib/curriculum/bundled.js';
+import { browserStorage } from '../../lib/progress/profile-storage.js';
 import { IndexedDbProgressStore } from '../../lib/progress/indexed-db.js';
 import { CurriculumController } from '../curriculum/controller.js';
 import type { FreeExposure } from '../../lib/curriculum/free-exposure.js';
@@ -12,7 +13,7 @@ export function recordFreeExposure(input: FreeExposure): Promise<void> {
       const controller = await CurriculumController.open(
         supply,
         store,
-        localStorage,
+        browserStorage,
       );
       await controller.recordFreeExposure(input);
     } finally {

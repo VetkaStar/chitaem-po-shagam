@@ -1,4 +1,5 @@
 'use client';
+import { browserStorage } from '../../lib/progress/profile-storage';
 import { FreeExposureFrame } from '../free-practice/FreeExposureFrame';
 import { illustrationSources } from '@/content/illustration-sources';
 import {
@@ -82,7 +83,7 @@ export default function TextExercise({
   useEffect(() => {
     try {
       const saved = JSON.parse(
-        localStorage.getItem('reading-text-options-v1') || '{}',
+        browserStorage.getItem('reading-text-options-v1') || '{}',
       );
       if (['read', 'questions', 'write'].includes(saved.mode))
         setMode(saved.mode);
@@ -93,7 +94,7 @@ export default function TextExercise({
   useEffect(() => {
     if (loaded) {
       try {
-        localStorage.setItem(
+        browserStorage.setItem(
           'reading-text-options-v1',
           JSON.stringify({ mode, ask }),
         );

@@ -1,4 +1,5 @@
 'use client';
+import { browserStorage } from '../../lib/progress/profile-storage';
 import {
   freeMaterialReady,
   subscribeMaterialReady,
@@ -270,7 +271,7 @@ export function useLesson() {
   useEffect(() => {
     if (!ready) return;
     try {
-      localStorage.setItem(
+      browserStorage.setItem(
         'reading-steps-v3',
         JSON.stringify({ settings, stars, history, recentWords }),
       );

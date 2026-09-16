@@ -8,6 +8,7 @@ interface Props {
   controller: CurriculumController;
   busy: boolean;
   sound: boolean;
+  instructionSound?: boolean;
   speak: (text: string) => void;
   run: (action: () => Promise<unknown>) => Promise<void>;
   onResult: (outcome: Outcome) => void;
@@ -17,6 +18,7 @@ export function CurriculumStep({
   controller,
   busy,
   sound,
+  instructionSound = sound,
   speak,
   run,
   onResult,
@@ -26,7 +28,7 @@ export function CurriculumStep({
   };
   const instruction = (
     <div className="curriculum-instruction">
-      {sound && (
+      {sound && instructionSound && (
         <button
           disabled={busy}
           aria-label="Послушать инструкцию"

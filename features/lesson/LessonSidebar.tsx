@@ -2,6 +2,7 @@
 import { Info, Leaf, Settings2, UserRound, X } from 'lucide-react';
 import { textLabels } from '@/content/reading-library';
 import { stages } from './config';
+import { trainerDefinitions } from '../trainers/catalog';
 import type { LessonModel } from './use-lesson';
 export default function LessonSidebar({
   model,
@@ -31,7 +32,7 @@ export default function LessonSidebar({
     <aside className="app-nav" data-open={open ? '' : undefined}>
       <div className="app-nav-panel">
         <div className="app-nav-head">
-          <p className="app-nav-title">Моя тропинка</p>
+          <p className="app-nav-title">Тренажёры</p>
           <button
             className="app-nav-close"
             aria-label="Закрыть меню"
@@ -51,6 +52,24 @@ export default function LessonSidebar({
             >
               <b>0{i + 1}</b>
               <span>{s.name}</span>
+            </button>
+          ))}
+        </nav>
+        <nav aria-label="Дополнительные тренажёры">
+          {trainerDefinitions.map((trainer) => (
+            <button
+              key={trainer.id}
+              className={
+                'app-nav-item' +
+                (active === 'trainer:' + trainer.id ? ' selected' : '')
+              }
+              aria-current={
+                active === 'trainer:' + trainer.id ? 'page' : undefined
+              }
+              disabled={disabled}
+              onClick={() => onSelect('trainer:' + trainer.id)}
+            >
+              <span>{trainer.title}</span>
             </button>
           ))}
         </nav>

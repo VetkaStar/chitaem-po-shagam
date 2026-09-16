@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { browserStorage } from '../../lib/progress/profile-storage';
 import { loadBundledSupply } from '../../lib/curriculum/bundled.js';
 import type { Supply } from '../../lib/curriculum/types.js';
 import { IndexedDbProgressStore } from '../../lib/progress/indexed-db.js';
@@ -33,7 +34,7 @@ export default function CurriculumPortal(props: CurriculumPortalProps) {
         const controller = await CurriculumController.open(
           supply,
           store,
-          localStorage,
+          browserStorage,
         );
         if (!cancelled) setReady({ supply, controller });
       } catch {

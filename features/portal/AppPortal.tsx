@@ -1,6 +1,13 @@
 'use client';
 import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
 import CurriculumEntry from '../onboarding/CurriculumEntry';
+import TrainerEntry from '../trainers/TrainerEntry';
+import { trainerDefinitions, isTrainerId } from '../trainers/catalog';
+import {
+  browserStorage,
+  registerCurrentProfile,
+  logoutProfile,
+} from '../../lib/progress/profile-storage';
 import LessonHeader from '../lesson/LessonHeader';
 import LessonSidebar from '../lesson/LessonSidebar';
 import ParentSettings from '../lesson/ParentSettings';
@@ -26,6 +33,7 @@ const recordFree: ExposureRecorder = async (input) => {
   const service = await import('../free-practice/service.js');
   await service.recordFreeExposure(input);
 };
+const firstEntryKey = 'reading-first-entry-v1';
 
 /** Shown once to children who already had a profile before the look could be chosen. */
 function StyleChoice({
@@ -62,12 +70,21 @@ export default function AppPortal({
 }) {
   const [profile, setProfile] = useState<Profile | null>(() => {
       try {
-        return parseProfile(localStorage.getItem(profileKey));
+        return parseProfile(browserStorage.getItem(profileKey));
       } catch {
         return null;
       }
     }),
-    [view, setView] = useState('home'),
+    [view, setView] = useState(() => {
+      try {
+        return parseProfile(browserStorage.getItem(profileKey)) &&
+          browserStorage.getItem(firstEntryKey) === 'pending'
+          ? 'curriculum'
+          : 'home';
+      } catch {
+        return 'home';
+      }
+    }),
     [menuOpen, setMenuOpen] = useState(false),
     [warning, setWarning] = useState('');
   const freePractice = view === 'lesson' || view in textLabels;
@@ -103,6 +120,15 @@ export default function AppPortal({
     model.update('paper', next.paper);
   }
   function go(v: string) {
+    try {
+      if (v === 'curriculum') browserStorage.setItem(firstEntryKey, 'pending');
+      else if (view === 'curriculum')
+        browserStorage.setItem(firstEntryKey, 'deferred');
+    } catch {
+      setWarning(
+        'Не удалось сохранить место настройки. Прогресс заданий остаётся в сохранении.',
+      );
+    }
     model.setLessonActive(v === 'lesson');
     model.stop();
     model.setLessonMic(false);
@@ -120,18 +146,31 @@ export default function AppPortal({
     } else go(id);
   }
   function save(p: Profile) {
-    setProfile(p);
-    model.update('styleChosen', true);
+    const creating = !profile;
     try {
-      localStorage.setItem(profileKey, JSON.stringify(p));
+      if (creating) browserStorage.setItem(firstEntryKey, 'pending');
+      registerCurrentProfile(p);
+      setProfile(p);
+      model.update('styleChosen', true);
       setWarning('');
     } catch {
-      setWarning(
-        'Браузер не разрешил сохранить профиль. После закрытия страницы данные могут пропасть.',
-      );
+      setWarning('Браузер не разрешил сохранить профиль. Попробуйте ещё раз.');
+      return;
     }
-    start(p.start);
+    go(creating ? 'curriculum' : 'cabinet');
   }
+  function logout() {
+    model.stop();
+    model.setLessonMic(false);
+    try {
+      logoutProfile();
+    } catch {
+      setWarning('Не удалось выйти из профиля. Попробуйте ещё раз.');
+    }
+  }
+  const trainerId = view.startsWith('trainer:')
+    ? view.slice('trainer:'.length)
+    : '';
   // Settings and progress come from storage right after the first render; wait for them before choosing a screen.
   if (!model.ready)
     return (
@@ -209,10 +248,7 @@ export default function AppPortal({
                   if (q.motionAllowed !== undefined)
                     model.update('motion', q.motionAllowed);
                   if (q.audioUsable !== undefined && q.audioUsable !== null)
-                    model.update(
-                      'sound',
-                      q.audioUsable && q.instructionAudio !== 'off',
-                    );
+                    model.update('sound', q.audioUsable);
                 }}
                 onExit={() => go('home')}
               />
@@ -225,6 +261,15 @@ export default function AppPortal({
                 profile={profile}
                 stars={model.stars}
                 onEdit={() => go('edit')}
+                onLogout={logout}
+              />
+            ) : isTrainerId(trainerId) ? (
+              <TrainerEntry
+                key={trainerId}
+                trainerId={trainerId}
+                sound={model.settings.sound}
+                speak={model.speak}
+                onExit={() => go('home')}
               />
             ) : view in textLabels ? (
               <FreeExposureContext.Provider value={recordFree}>
@@ -282,6 +327,19 @@ export default function AppPortal({
                           ][i]
                         }
                       </span>
+                    </button>
+                  ))}
+                </div>
+                <h2>Ещё способы тренироваться</h2>
+                <div className="portal-grid">
+                  {trainerDefinitions.map((trainer) => (
+                    <button
+                      className="portal-card"
+                      key={trainer.id}
+                      onClick={() => go('trainer:' + trainer.id)}
+                    >
+                      <b>{trainer.title}</b>
+                      <span>{trainer.description}</span>
                     </button>
                   ))}
                 </div>

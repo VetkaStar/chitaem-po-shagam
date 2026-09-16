@@ -11,6 +11,7 @@ export interface CurriculumSessionProps {
   controller: CurriculumController;
   programs: { id: string; title: string }[];
   sound: boolean;
+  instructionSound?: boolean;
   speak: (text: string) => void;
   onExit: () => void;
   onRoadmap?: () => void;
@@ -28,6 +29,7 @@ export default function CurriculumSession({
   allowProgramSelection = true,
   programs,
   sound,
+  instructionSound = sound,
   speak,
   onExit,
   onRoadmap,
@@ -37,7 +39,11 @@ export default function CurriculumSession({
     session;
   const [budget, setBudget] = useState<3 | 5 | 7>(5),
     [feedback, setFeedback] = useState('');
-  useInstructionAudio(view, sound && autoInstruction, speak);
+  useInstructionAudio(
+    view,
+    sound && instructionSound && autoInstruction,
+    speak,
+  );
   const visit = state.profile.currentVisit;
   const demoMethod =
     state.studyMode === 'demonstration' &&
@@ -181,6 +187,7 @@ export default function CurriculumSession({
           controller={controller}
           busy={busy}
           sound={sound}
+          instructionSound={instructionSound}
           speak={speak}
           run={run}
           onResult={(outcome) => setFeedback(outcomes[outcome])}

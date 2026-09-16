@@ -4,6 +4,7 @@ import type {
   Supply,
 } from '../curriculum/types.js';
 import { validateState } from './validation.js';
+import { profileDatabaseName } from './profile-storage.js';
 export class RevisionConflict extends Error {
   constructor() {
     super(
@@ -17,7 +18,7 @@ export class IndexedDbProgressStore implements ProgressStore {
   constructor(
     private supply: Supply,
     private factory: IDBFactory = indexedDB,
-    private name = 'reading-platform-v1',
+    private name = profileDatabaseName(),
   ) {}
   private open(): Promise<IDBDatabase> {
     if (!this.connection)

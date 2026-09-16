@@ -1,4 +1,5 @@
 import { parseVision } from '@/lib/vision';
+import { browserStorage } from '../../lib/progress/profile-storage';
 
 import { levels } from '@/lib/learning';
 
@@ -20,7 +21,7 @@ export function restoreLessonProgress({
   setStorageWarning: Dispatch<SetStateAction<string>>;
 }) {
   try {
-    const raw = JSON.parse(localStorage.getItem('reading-steps-v3') || 'null');
+    const raw = JSON.parse(browserStorage.getItem('reading-steps-v3') || 'null');
     if (raw) {
       const s = raw.settings || {};
       setSettings({

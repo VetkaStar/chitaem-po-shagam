@@ -6538,6 +6538,48 @@ meter::-webkit-meter-optimum-value {
 .curriculum-material p {
   margin: 12px 0;
 }
+.lesson :is(.answer-exercise, .answer-result) {
+  border-bottom: 1px solid var(--line);
+  border-radius: 24px;
+  padding-bottom: 20px;
+}
+.lesson .answer-exercise .exercise-footer {
+  width: 100%;
+  justify-content: flex-end;
+}
+.lesson .answer-exercise .answer-material {
+  margin: 28px auto;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.answer-exercise .curriculum-answer-form {
+  width: 100%;
+  max-width: 640px;
+  margin: 24px auto;
+}
+.answer-exercise .curriculum-answer-form fieldset {
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  text-align: center;
+}
+.answer-exercise .curriculum-options {
+  justify-content: center;
+}
+.answer-exercise .curriculum-answer-form > button {
+  justify-self: center;
+  min-width: 180px;
+  background: var(--primary);
+  color: var(--color-primary-foreground, #fff);
+}
+.answer-exercise .answer-help {
+  margin: 16px auto;
+}
+@media (max-width: 699px) {
+  .lesson .mode-list:has([role='tab']:nth-child(4)) button svg {
+    display: none;
+  }
+}
 .curriculum-actions,
 .curriculum-options,
 .curriculum-token-bank,
@@ -6569,7 +6611,8 @@ meter::-webkit-meter-optimum-value {
 .curriculum-session button {
   min-height: 44px;
 }
-.curriculum-session button[aria-pressed='true'] {
+.curriculum-session button[aria-pressed='true'],
+.answer-exercise button[aria-pressed='true'] {
   background: var(--primary);
   color: var(--color-primary-foreground, #fff);
   outline: 2px solid var(--ink);

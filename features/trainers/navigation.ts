@@ -44,10 +44,10 @@ export const sections: TrainerMenuSection[] = [
       trainer('words', 'compose', 'Собираем слова'),
       trainer('words', 'find_part', 'Находим часть'),
       ...practice('words'),
+      { id: 'lesson:words:answer', title: 'Отвечаю' },
       trainer('words', 'boundary', 'Делим на части'),
       trainer('words', 'transform', 'Меняем слово'),
       trainer('words', 'read_meaning', 'Читаем и понимаем'),
-      trainer('words', 'choice', 'Выбираем ответ'),
     ],
   },
   {

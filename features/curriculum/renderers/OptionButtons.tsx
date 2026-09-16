@@ -1,4 +1,6 @@
+import { Volume2 } from 'lucide-react';
 interface Props {
+  compactAudio?: boolean;
   options: { id: string; text: string }[];
   selected: string[];
   busy: boolean;
@@ -13,6 +15,7 @@ export function OptionButtons({
   onChange,
   onSpeak,
   audioLabel = '',
+  compactAudio = false,
 }: Props) {
   return (
     <div className="curriculum-options">
@@ -21,7 +24,11 @@ export function OptionButtons({
           {onSpeak && (
             <button
               type="button"
-              className="curriculum-option-audio"
+              className={
+                compactAudio
+                  ? 'curriculum-option-audio speak-button'
+                  : 'curriculum-option-audio'
+              }
               disabled={busy}
               aria-label={
                 'Послушать вариант ' +
@@ -30,7 +37,7 @@ export function OptionButtons({
               }
               onClick={() => onSpeak(option.id)}
             >
-              Послушать
+              {compactAudio ? <Volume2 size={18} /> : 'Послушать'}
             </button>
           )}
           <button

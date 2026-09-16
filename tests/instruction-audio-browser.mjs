@@ -1,4 +1,4 @@
-/** Turning off instruction speech must not disable a listen-mode exercise. */
+/** Words answer mode keeps material and option speech when instructions are muted. */
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -81,19 +81,10 @@ try {
     .locator('.portal-grid')
     .getByRole('button', { name: /ШАГ 3 Слова/ })
     .click();
-  await page
-    .locator('.portal-grid')
-    .getByRole('button', { name: /^Выбираем ответ/ })
-    .click();
-  await page
-    .getByLabel('Как заниматься')
-    .selectOption('listen');
-  await page
-    .getByRole('button', { name: 'Начать занятие', exact: true })
-    .click();
-  await page
-    .getByRole('button', { name: 'Послушать материал', exact: true })
-    .waitFor();
+  await page.getByRole('region', { name: 'Тренажёры раздела Слова', exact: true }).getByRole('button', { name: 'Отвечаю', exact: true }).click();
+  await page.getByRole('button', { name: 'Послушать слово', exact: true }).waitFor();
+  assert.equal(await page.getByRole('button', { name: 'Начать занятие', exact: true }).count(), 0);
+  assert.equal(await page.getByLabel('Как заниматься').count(), 0);
   assert.equal(
     await page
       .getByRole('button', { name: 'Послушать инструкцию', exact: true })
@@ -105,17 +96,16 @@ try {
     [],
     'off must not auto-speak instructions',
   );
-  const target = await page.locator('.curriculum-material').innerText();
+  // Flex letter spans insert layout line breaks into innerText, unlike the spoken word.
+  const target = (await page.locator('.answer-material').textContent()).trim();
   await page
-    .getByRole('button', { name: 'Послушать материал', exact: true })
+    .getByRole('button', { name: 'Послушать слово', exact: true })
     .click();
   await page.waitForFunction(() => window.testSpoken.length > 0);
   assert.ok((await page.evaluate(() => window.testSpoken)).includes(target));
-  const reveal = page.getByRole('button', {
-    name: 'Открыть варианты ответа',
-    exact: true,
-  });
-  if (await reveal.count()) await reveal.click();
+  assert.equal(await page.getByRole('button', {
+    name: 'Открыть варианты ответа', exact: true,
+  }).count(), 0, 'answer mode reveals options durably before showing the card');
   const audioOption = page
     .getByRole('button', { name: /^Послушать вариант/ })
     .first();
@@ -135,7 +125,7 @@ try {
     date: new Date().toISOString(),
     completed: [
       'instruction off leaves global sound enabled after questionnaire preferences',
-      'listen material is spoken while instruction button and automatic speech stay off',
+      'word sample is spoken while instruction button and automatic speech stay off',
       'option audio remains available and does not select an answer',
     ],
   };

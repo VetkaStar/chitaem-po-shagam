@@ -107,13 +107,14 @@ try {
       .getByRole('heading', { name: 'Все тренажёры', exact: true })
       .waitFor();
     assert.deepEqual(
-      (await words.locator('.app-nav-child').allTextContents()).slice(0, 7),
+      (await words.locator('.app-nav-child').allTextContents()).slice(0, 8),
       [
         'Собираем слова',
         'Находим часть',
         'Читаю',
         'Ловлю',
         'Пишу',
+        'Отвечаю',
         'Делим на части',
         'Меняем слово',
       ],

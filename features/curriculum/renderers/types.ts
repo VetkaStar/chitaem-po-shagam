@@ -6,6 +6,7 @@ import type { TaskPresentation } from '../presentation.js';
 export interface TaskRendererProps {
   task: TaskPresentation;
   busy: boolean;
+  compactAudio?: boolean;
   onSubmit: (response: RawResponse) => Promise<void>;
   onReading: (reading?: ReadingProof) => Promise<void>;
   onReveal: () => Promise<void>;

@@ -47,6 +47,7 @@ export function useLesson() {
     [ready, setReady] = useState(false),
     [storageWarning, setStorageWarning] = useState('');
   const [lessonActive, setLessonActive] = useState(false);
+  const [externalActivity, setExternalActivity] = useState(false);
   const [recentWords, setRecentWords] = useState<string[]>([]);
   const [partsHelp, setPartsHelp] = useState(false),
     [wholeAgain, setWholeAgain] = useState(false);
@@ -116,7 +117,10 @@ export function useLesson() {
     [session, setSession] = useState(0),
     [scene, setScene] = useState(false);
   const schedule = useRestSchedule(
-    lessonActive && !parent && !paused && !rest && !done,
+    ((lessonActive && !done) || externalActivity) &&
+      !parent &&
+      !paused &&
+      !rest,
     settings.breakEvery,
     settings.breakMinutes,
   );
@@ -928,6 +932,7 @@ export function useLesson() {
     readingPart,
     selectReadingPart,
     setLessonActive,
+    setExternalActivity,
     schedule,
     showParts,
     wholeAgain,

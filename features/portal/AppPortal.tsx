@@ -2,6 +2,9 @@
 import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
 import CurriculumEntry from '../onboarding/CurriculumEntry';
 import TrainerEntry from '../trainers/TrainerEntry';
+import LessonWorkspace from '../lesson/LessonWorkspace';
+import AnswerEntry from '../answers/AnswerEntry';
+import AnswerSettings from '../answers/AnswerSettings';
 import { isTrainerId } from '../trainers/catalog';
 import SectionTrainers from '../trainers/SectionTrainers';
 import { sections, findTrainerLink } from '../trainers/navigation';
@@ -68,7 +71,7 @@ export default function AppPortal({
   children,
 }: {
   model: LessonModel;
-  children: ReactNode;
+  children: ReactNode | ((onAnswer: () => void) => ReactNode);
 }) {
   const [profile, setProfile] = useState<Profile | null>(() => {
       try {
@@ -132,6 +135,7 @@ export default function AppPortal({
       );
     }
     model.setLessonActive(v === 'lesson');
+    model.setExternalActivity(v === 'answer:words');
     model.stop();
     model.setLessonMic(false);
     model.setPaused(false);
@@ -142,6 +146,11 @@ export default function AppPortal({
     window.scrollTo({ top: 0, behavior: 'instant' });
   }
   function start(id: string) {
+    if (id === 'lesson:words:answer') {
+      if (model.stage !== 'words') model.navigate('words', 'read');
+      go('answer:words');
+      return;
+    }
     if (id.startsWith('lesson:')) {
       const [, stage, mode] = id.split(':');
       model.navigate(stage as Stage, mode as 'read' | 'fly' | 'type');
@@ -187,11 +196,16 @@ export default function AppPortal({
     (s) => s.id === view.split(':')[view.startsWith('trainer:') ? 2 : 1],
   );
   const selectedItem =
-    view === 'lesson'
-      ? model.stage === 'pictures'
-        ? `picture:${model.settings.pictureMode}`
-        : `lesson:${model.stage}:${model.mode}`
-      : view;
+    view === 'answer:words'
+      ? 'lesson:words:answer'
+      : view === 'lesson'
+        ? model.stage === 'pictures'
+          ? `picture:${model.settings.pictureMode}`
+          : `lesson:${model.stage}:${model.mode}`
+        : view;
+  useEffect(() => {
+    if (view === 'answer:words' && model.stage !== 'words') go('lesson');
+  }, [view, model.stage]);
   // Settings and progress come from storage right after the first render; wait for them before choosing a screen.
   if (!model.ready)
     return (
@@ -206,7 +220,10 @@ export default function AppPortal({
     view !== 'edit';
   // «Фокус» shows a task without the app header and the section menu; the task has its own bar.
   const focusActivity =
-    layout === 'focus' && view === 'lesson' && !!profile && !askStyle;
+    layout === 'focus' &&
+    (view === 'lesson' || view === 'answer:words') &&
+    !!profile &&
+    !askStyle;
   return (
     <div
       data-vision={model.settings.colorVision}
@@ -278,8 +295,20 @@ export default function AppPortal({
               <SectionTrainers section={section} onSelect={start} />
             ) : view === 'lesson' ? (
               <FreeExposureContext.Provider value={recordFree}>
-                {children}
+                {typeof children === 'function'
+                  ? children(() => start('lesson:words:answer'))
+                  : children}
               </FreeExposureContext.Provider>
+            ) : view === 'answer:words' ? (
+              <LessonWorkspace
+                model={model}
+                answer
+                onAnswer={() => {}}
+                onPractice={(mode) => start('lesson:words:' + mode)}
+                controls={<AnswerSettings model={model} />}
+              >
+                <AnswerEntry key={model.settings.unit} model={model} />
+              </LessonWorkspace>
             ) : view === 'cabinet' ? (
               <Cabinet
                 profile={profile}

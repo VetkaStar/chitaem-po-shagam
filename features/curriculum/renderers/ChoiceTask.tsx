@@ -31,6 +31,7 @@ export function ChoiceTask(props: TaskRendererProps) {
             : 'Выбери подходящие варианты'}
         </legend>
         <OptionButtons
+          compactAudio={props.compactAudio}
           options={task.options}
           selected={selected}
           busy={busy}

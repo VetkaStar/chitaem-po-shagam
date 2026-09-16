@@ -4,8 +4,15 @@ import type { IndexedDbProgressStore } from '../../lib/progress/indexed-db';
 import type { CurriculumController } from '../curriculum/controller';
 import type { Supply } from '../../lib/curriculum/types';
 import { browserStorage } from '../../lib/progress/profile-storage';
+import type { AnswerSection } from './types';
 
-export default function AnswerEntry({ model }: { model: LessonModel }) {
+export default function AnswerEntry({
+  model,
+  section = 'words',
+}: {
+  model: LessonModel;
+  section?: AnswerSection;
+}) {
   const [ready, setReady] = useState<{
     controller: CurriculumController;
     supply: Supply;
@@ -26,6 +33,8 @@ export default function AnswerEntry({ model }: { model: LessonModel }) {
           import('./AnswerSession'),
         ]);
         const supply = await bank.loadBundledSupply();
+        const exposures = await import('../free-practice/service');
+        await exposures.waitForFreeExposure();
         if (cancelled) return;
         store = new storage.IndexedDbProgressStore(supply);
         const controller = await runtime.CurriculumController.open(
@@ -47,10 +56,11 @@ export default function AnswerEntry({ model }: { model: LessonModel }) {
   if (ready)
     return (
       <ready.Screen
-        key={model.settings.unit}
+        key={`${section}:${model.settings.unit}`}
         controller={ready.controller}
         supply={ready.supply}
         model={model}
+        section={section}
       />
     );
   return (

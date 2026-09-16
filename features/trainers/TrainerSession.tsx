@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { CustomRoute, Supply } from '../../lib/curriculum/types.js';
 import type { Mode, Outcome } from '../../lib/curriculum/contracts.js';
 import type { CurriculumController } from '../curriculum/controller.js';
@@ -30,6 +30,8 @@ export default function TrainerSession({
   exitLabel = 'Все тренажёры',
   section,
   title: requestedTitle,
+  embedded = false,
+  onBusyChange,
 }: {
   controller: CurriculumController;
   supply: Supply;
@@ -40,9 +42,14 @@ export default function TrainerSession({
   exitLabel?: string;
   section?: TrainerSection;
   title?: string;
+  embedded?: boolean;
+  onBusyChange?: (busy: boolean) => void;
 }) {
   const session = useCurriculumSession(controller);
   const { state, view, busy, error, run, act } = session;
+  useEffect(() => {
+    onBusyChange?.(busy);
+  }, [busy, onBusyChange]);
   const prefix = trainerRoutePrefix(trainerId);
   const definition = trainerDefinitions.find((item) => item.id === trainerId)!;
   const items = trainerItems(supply, trainerId, section);
@@ -120,21 +127,23 @@ export default function TrainerSession({
       aria-label={title}
       aria-busy={busy}
     >
-      <header className="curriculum-session-header">
-        <button
-          disabled={busy}
-          onClick={() =>
-            act(async () => {
-              await controller.leaveSession();
-              onExit();
-            })
-          }
-        >
-          {exitLabel}
-        </button>
-        <h1>{title}</h1>
-        <p>{definition.description}</p>
-      </header>
+      {!embedded && (
+        <header className="curriculum-session-header">
+          <button
+            disabled={busy}
+            onClick={() =>
+              act(async () => {
+                await controller.leaveSession();
+                onExit();
+              })
+            }
+          >
+            {exitLabel}
+          </button>
+          <h1>{title}</h1>
+          <p>{definition.description}</p>
+        </header>
+      )}
       {error && (
         <div role="alert" className="curriculum-save-error">
           <p>{error}</p>

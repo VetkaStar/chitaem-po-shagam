@@ -2,17 +2,20 @@ import type { TrainerSection } from './task-section';
 export interface TrainerLink {
   id: string;
   title: string;
+  modes?: {
+    id: 'compose' | 'find_part' | 'boundary' | 'transform';
+    title: string;
+  }[];
 }
 export interface TrainerMenuSection {
   id: TrainerSection;
   name: string;
   items: TrainerLink[];
 }
-const practice = (section: string): TrainerLink[] => [
-  { id: `lesson:${section}:read`, title: 'Читаю' },
-  { id: `lesson:${section}:fly`, title: 'Ловлю' },
-  { id: `lesson:${section}:type`, title: 'Пишу' },
-];
+const practice = (section: string, title: string): TrainerLink => ({
+  id: `lesson:${section}`,
+  title,
+});
 const trainer = (
   section: string,
   kind: string,
@@ -22,63 +25,74 @@ export const sections: TrainerMenuSection[] = [
   {
     id: 'letters',
     name: 'Буквы',
-    items: [
-      ...practice('letters'),
-      trainer('letters', 'choice', 'Выбираем букву'),
-    ],
+    items: [practice('letters', 'Буква')],
   },
   {
     id: 'syllables',
     name: 'Слоги',
     items: [
-      trainer('syllables', 'compose', 'Собираем слоги'),
-      trainer('syllables', 'find_part', 'Находим часть'),
-      ...practice('syllables'),
-      trainer('syllables', 'choice', 'Выбираем ответ'),
+      practice('syllables', 'Слог'),
+      {
+        id: 'group:parts:syllables',
+        title: 'Состав слога',
+        modes: [
+          { id: 'compose', title: 'Собираем' },
+          { id: 'find_part', title: 'Находим часть' },
+        ],
+      },
     ],
   },
   {
     id: 'words',
     name: 'Слова',
     items: [
-      trainer('words', 'compose', 'Собираем слова'),
-      trainer('words', 'find_part', 'Находим часть'),
-      ...practice('words'),
-      { id: 'lesson:words:answer', title: 'Отвечаю' },
-      trainer('words', 'boundary', 'Делим на части'),
-      trainer('words', 'transform', 'Меняем слово'),
+      practice('words', 'Целое слово'),
+      {
+        id: 'group:parts:words',
+        title: 'Состав слова',
+        modes: [
+          { id: 'compose', title: 'Собираем' },
+          { id: 'find_part', title: 'Находим часть' },
+          { id: 'boundary', title: 'Делим на части' },
+          { id: 'transform', title: 'Меняем' },
+        ],
+      },
       trainer('words', 'read_meaning', 'Читаем и понимаем'),
     ],
   },
   {
     id: 'pictures',
     name: 'Картинки',
-    items: [
-      { id: 'picture:free', title: 'Свободный ответ' },
-      { id: 'picture:letters', title: 'Окошки для букв' },
-    ],
+    items: [practice('pictures', 'Называем предмет')],
   },
   {
     id: 'sentences',
     name: 'Предложения',
     items: [
-      { id: 'sentences', title: 'Читаем, отвечаем и пишем' },
-      trainer('sentences', 'find_part', 'Находим часть предложения'),
-      trainer('sentences', 'choice', 'Выбираем ответ'),
+      { id: 'sentences', title: 'Предложение' },
+      {
+        id: 'group:parts:sentences',
+        title: 'Состав предложения',
+        modes: [{ id: 'find_part', title: 'Находим часть' }],
+      },
     ],
   },
   {
     id: 'stories',
     name: 'Рассказы',
     items: [
-      { id: 'stories', title: 'Читаем, отвечаем и пишем' },
-      trainer('stories', 'find_part', 'Находим часть текста'),
+      { id: 'stories', title: 'Рассказ' },
+      {
+        id: 'group:parts:stories',
+        title: 'Состав текста',
+        modes: [{ id: 'find_part', title: 'Находим часть' }],
+      },
     ],
   },
   {
     id: 'poems',
     name: 'Стихи',
-    items: [{ id: 'poems', title: 'Читаем, отвечаем и пишем' }],
+    items: [{ id: 'poems', title: 'Стихотворение' }],
   },
 ];
 export function findTrainerLink(id: string) {

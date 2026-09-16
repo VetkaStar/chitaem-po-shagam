@@ -12,7 +12,7 @@ export default function SectionTrainers({
       aria-label={`Тренажёры раздела ${section.name}`}
     >
       <h1>{section.name}</h1>
-      <p>Выбери, как хочешь заниматься.</p>
+      <p>Выбери тренажёр. Режим занятия можно переключить внутри него.</p>
       <div className="portal-grid">
         {section.items.map((item) => (
           <button

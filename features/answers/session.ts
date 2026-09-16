@@ -3,12 +3,19 @@ import type { Supply } from '../../lib/curriculum/types';
 import { trainerItems } from '../trainers/catalog';
 import { fitsTopic } from '../../lib/topic-material';
 import { nextTrainerTask } from '../trainers/session-actions';
+import type { AnswerSection } from './types';
 
-export function answerItems(supply: Supply, unit: number) {
-  return trainerItems(supply, 'choice', 'words').filter(
+export function answerItems(
+  supply: Supply,
+  unit: number,
+  section: AnswerSection = 'words',
+) {
+  return trainerItems(supply, 'choice', section).filter(
     (task) =>
       fitsTopic(task.requiredLetters ?? '', unit) &&
-      fitsTopic(task.learnerText, unit),
+      fitsTopic(task.learnerText, unit) &&
+      (section !== 'sentences' ||
+        task.options.every((option) => fitsTopic(option.text, unit))),
   );
 }
 export async function openAnswer(
@@ -17,8 +24,9 @@ export async function openAnswer(
   unit: number,
   length: number,
   fresh = false,
+  section: AnswerSection = 'words',
 ) {
-  const prefix = `answer:words:${unit}:`;
+  const prefix = `answer:${section}:${unit}:`;
   const saved = controller.snapshot();
   let route = fresh
     ? undefined
@@ -30,7 +38,7 @@ export async function openAnswer(
         )
         .at(-1);
   if (!route) {
-    const pool = answerItems(supply, unit);
+    const pool = answerItems(supply, unit, section);
     if (!pool.length) return null;
     for (let i = pool.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));

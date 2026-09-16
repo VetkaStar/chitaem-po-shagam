@@ -14,6 +14,8 @@ export interface TrainerEntryProps {
   exitLabel?: string;
   section?: TrainerSection;
   title?: string;
+  embedded?: boolean;
+  onBusyChange?: (busy: boolean) => void;
 }
 export default function TrainerEntry(props: TrainerEntryProps) {
   const [ready, setReady] = useState<{
@@ -23,6 +25,9 @@ export default function TrainerEntry(props: TrainerEntryProps) {
   } | null>(null);
   const [error, setError] = useState(false),
     [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    props.onBusyChange?.(!ready && !error);
+  }, [ready, error, props.onBusyChange]);
   useEffect(() => {
     let cancelled = false;
     let store: IndexedDbProgressStore | undefined;
@@ -36,6 +41,8 @@ export default function TrainerEntry(props: TrainerEntryProps) {
           import('../curriculum/controller.js'),
           import('./TrainerSession.js'),
         ]);
+        const exposures = await import('../free-practice/service');
+        await exposures.waitForFreeExposure();
         if (cancelled) return;
         store = new storage.IndexedDbProgressStore(supply);
         const controller = await runtime.CurriculumController.open(
@@ -80,7 +87,7 @@ export default function TrainerEntry(props: TrainerEntryProps) {
       .title;
   return (
     <section className="portal-panel" aria-label={title} aria-busy={!error}>
-      <h1>{title}</h1>
+      {!props.embedded && <h1>{title}</h1>}
       {error ? (
         <div role="alert">
           <p>Не удалось открыть тренажёр или сохранение.</p>
@@ -91,9 +98,11 @@ export default function TrainerEntry(props: TrainerEntryProps) {
       ) : (
         <p role="status">Готовим задания…</p>
       )}
-      <button onClick={props.onExit}>
-        {props.exitLabel ?? 'Все тренажёры'}
-      </button>
+      {!props.embedded && (
+        <button onClick={props.onExit}>
+          {props.exitLabel ?? 'Все тренажёры'}
+        </button>
+      )}
     </section>
   );
 }

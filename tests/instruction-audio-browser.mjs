@@ -81,9 +81,20 @@ try {
     .locator('.portal-grid')
     .getByRole('button', { name: /ШАГ 3 Слова/ })
     .click();
-  await page.getByRole('region', { name: 'Тренажёры раздела Слова', exact: true }).getByRole('button', { name: 'Отвечаю', exact: true }).click();
-  await page.getByRole('button', { name: 'Послушать слово', exact: true }).waitFor();
-  assert.equal(await page.getByRole('button', { name: 'Начать занятие', exact: true }).count(), 0);
+  await page
+    .getByRole('region', { name: 'Тренажёры раздела Слова', exact: true })
+    .getByRole('button', { name: 'Целое слово', exact: true })
+    .click();
+  await page.getByRole('tab', { name: 'Отвечаю', exact: true }).click();
+  await page
+    .getByRole('button', { name: 'Послушать слово', exact: true })
+    .waitFor();
+  assert.equal(
+    await page
+      .getByRole('button', { name: 'Начать занятие', exact: true })
+      .count(),
+    0,
+  );
   assert.equal(await page.getByLabel('Как заниматься').count(), 0);
   assert.equal(
     await page
@@ -103,9 +114,16 @@ try {
     .click();
   await page.waitForFunction(() => window.testSpoken.length > 0);
   assert.ok((await page.evaluate(() => window.testSpoken)).includes(target));
-  assert.equal(await page.getByRole('button', {
-    name: 'Открыть варианты ответа', exact: true,
-  }).count(), 0, 'answer mode reveals options durably before showing the card');
+  assert.equal(
+    await page
+      .getByRole('button', {
+        name: 'Открыть варианты ответа',
+        exact: true,
+      })
+      .count(),
+    0,
+    'answer mode reveals options durably before showing the card',
+  );
   const audioOption = page
     .getByRole('button', { name: /^Послушать вариант/ })
     .first();

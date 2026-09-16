@@ -6552,6 +6552,39 @@ meter::-webkit-meter-optimum-value {
   text-align: center;
   overflow-wrap: anywhere;
 }
+.lesson .answer-exercise .answer-material[data-section='sentences'] {
+  display: block;
+  white-space: pre-wrap;
+  font-size: clamp(24px, 4vw, 40px);
+  line-height: 1.5;
+}
+.trainer-group .trainer-mode-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  height: auto;
+}
+.trainer-group .trainer-mode-list button {
+  flex: 1 1 auto;
+  white-space: normal;
+  min-height: 44px;
+}
+.trainer-group > .ui-tabs {
+  margin-bottom: 16px;
+}
+.lesson .question-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  height: auto;
+  margin-bottom: 12px;
+}
+.lesson .question-sources button {
+  flex: 1 1 auto;
+  white-space: normal;
+  min-height: 44px;
+  height: auto;
+}
 .answer-exercise .curriculum-answer-form {
   width: 100%;
   max-width: 640px;

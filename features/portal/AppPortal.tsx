@@ -2,6 +2,8 @@
 import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
 import CurriculumEntry from '../onboarding/CurriculumEntry';
 import TrainerEntry from '../trainers/TrainerEntry';
+import TrainerGroup from '../trainers/TrainerGroup';
+import type { AnswerSection } from '../answers/types';
 import LessonWorkspace from '../lesson/LessonWorkspace';
 import AnswerEntry from '../answers/AnswerEntry';
 import AnswerSettings from '../answers/AnswerSettings';
@@ -135,7 +137,7 @@ export default function AppPortal({
       );
     }
     model.setLessonActive(v === 'lesson');
-    model.setExternalActivity(v === 'answer:words');
+    model.setExternalActivity(v.startsWith('answer:'));
     model.stop();
     model.setLessonMic(false);
     model.setPaused(false);
@@ -146,14 +148,26 @@ export default function AppPortal({
     window.scrollTo({ top: 0, behavior: 'instant' });
   }
   function start(id: string) {
-    if (id === 'lesson:words:answer') {
-      if (model.stage !== 'words') model.navigate('words', 'read');
-      go('answer:words');
+    if (/^lesson:(letters|syllables|words):answer$/.test(id)) {
+      const stage = id.split(':')[1] as Stage;
+      if (model.stage !== stage) model.navigate(stage, 'read');
+      go('answer:' + stage);
       return;
     }
     if (id.startsWith('lesson:')) {
       const [, stage, mode] = id.split(':');
-      model.navigate(stage as Stage, mode as 'read' | 'fly' | 'type');
+      if (
+        !mode &&
+        model.stage === stage &&
+        (view === 'lesson' || view.startsWith('answer:'))
+      ) {
+        setMenuOpen(false);
+        return;
+      }
+      model.navigate(
+        stage as Stage,
+        (mode || 'read') as 'read' | 'fly' | 'type',
+      );
       go('lesson');
       return;
     }
@@ -193,18 +207,21 @@ export default function AppPortal({
   }
   const trainerId = view.startsWith('trainer:') ? view.split(':')[1] : '';
   const section = sections.find(
-    (s) => s.id === view.split(':')[view.startsWith('trainer:') ? 2 : 1],
+    (s) =>
+      s.id ===
+      view.split(':')[
+        view.startsWith('trainer:') || view.startsWith('group:') ? 2 : 1
+      ],
   );
-  const selectedItem =
-    view === 'answer:words'
-      ? 'lesson:words:answer'
-      : view === 'lesson'
-        ? model.stage === 'pictures'
-          ? `picture:${model.settings.pictureMode}`
-          : `lesson:${model.stage}:${model.mode}`
-        : view;
+  const selectedTrainer = findTrainerLink(view);
+  const selectedItem = view.startsWith('answer:')
+    ? 'lesson:' + view.split(':')[1]
+    : view === 'lesson'
+      ? `lesson:${model.stage}`
+      : view;
   useEffect(() => {
-    if (view === 'answer:words' && model.stage !== 'words') go('lesson');
+    if (view.startsWith('answer:') && model.stage !== view.split(':')[1])
+      go('lesson');
   }, [view, model.stage]);
   // Settings and progress come from storage right after the first render; wait for them before choosing a screen.
   if (!model.ready)
@@ -221,7 +238,7 @@ export default function AppPortal({
   // «Фокус» shows a task without the app header and the section menu; the task has its own bar.
   const focusActivity =
     layout === 'focus' &&
-    (view === 'lesson' || view === 'answer:words') &&
+    (view === 'lesson' || view.startsWith('answer:')) &&
     !!profile &&
     !askStyle;
   return (
@@ -296,19 +313,35 @@ export default function AppPortal({
             ) : view === 'lesson' ? (
               <FreeExposureContext.Provider value={recordFree}>
                 {typeof children === 'function'
-                  ? children(() => start('lesson:words:answer'))
+                  ? children(() => start('lesson:' + model.stage + ':answer'))
                   : children}
               </FreeExposureContext.Provider>
-            ) : view === 'answer:words' ? (
+            ) : view.startsWith('answer:') ? (
               <LessonWorkspace
                 model={model}
                 answer
                 onAnswer={() => {}}
-                onPractice={(mode) => start('lesson:words:' + mode)}
+                onPractice={(mode) =>
+                  start('lesson:' + model.stage + ':' + mode)
+                }
                 controls={<AnswerSettings model={model} />}
               >
-                <AnswerEntry key={model.settings.unit} model={model} />
+                <AnswerEntry
+                  key={view + ':' + model.settings.unit}
+                  model={model}
+                  section={view.split(':')[1] as AnswerSection}
+                />
               </LessonWorkspace>
+            ) : selectedTrainer?.modes && section ? (
+              <TrainerGroup
+                key={view}
+                trainer={selectedTrainer}
+                section={section.id}
+                sound={model.settings.sound}
+                speak={model.speak}
+                onModeChange={model.stop}
+                onExit={() => go('section:' + section.id)}
+              />
             ) : view === 'cabinet' ? (
               <Cabinet
                 profile={profile}

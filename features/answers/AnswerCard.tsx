@@ -6,7 +6,9 @@ import { TaskRenderer } from '../curriculum/TaskRenderer';
 import type { CurriculumController } from '../curriculum/controller';
 import type { TaskPresentation } from '../curriculum/presentation';
 import type { Outcome, Submission } from '../../lib/curriculum/contracts';
+import { answerMaterialLabels, type AnswerSection } from './types';
 export interface AnswerCardProps {
+  section?: AnswerSection;
   view: TaskPresentation;
   controller: CurriculumController;
   busy: boolean;
@@ -24,6 +26,7 @@ export interface AnswerCardProps {
 /** The familiar exercise frame; durable actions still belong to the shared controller. */
 export default function AnswerCard({
   view,
+  section = 'words',
   controller,
   busy,
   sound,
@@ -90,25 +93,28 @@ export default function AnswerCard({
       />
       <div
         className="reading answer-material"
+        data-section={section}
         aria-label={view.text}
         data-letters={Array.from(view.text).length}
       >
-        {Array.from(view.text).map((char, index) => (
-          <span
-            key={index}
-            className={
-              color
-                ? /[аеёиоуыэюя]/iu.test(char)
-                  ? 'vowel'
-                  : /[а-яё]/iu.test(char)
-                    ? 'consonant'
+        {section === 'sentences'
+          ? view.text
+          : Array.from(view.text).map((char, index) => (
+              <span
+                key={index}
+                className={
+                  color
+                    ? /[аеёиоуыэюя]/iu.test(char)
+                      ? 'vowel'
+                      : /[а-яё]/iu.test(char)
+                        ? 'consonant'
+                        : ''
                     : ''
-                : ''
-            }
-          >
-            {char}
-          </span>
-        ))}
+                }
+              >
+                {char}
+              </span>
+            ))}
       </div>
       {sound && (
         <div className="material-tools">
@@ -118,7 +124,7 @@ export default function AnswerCard({
             disabled={busy}
             onClick={playMaterial}
           >
-            <Volume2 size={16} /> Послушать слово
+            <Volume2 size={16} /> {answerMaterialLabels[section]}
           </button>
         </div>
       )}

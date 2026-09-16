@@ -40,11 +40,12 @@ export default function LessonToolbar({
               <TabsTrigger value="type">
                 <Pencil /> Пишу
               </TabsTrigger>
-              {stage === 'words' && onAnswer && (
-                <TabsTrigger value="answer">
-                  <MessageCircle /> Отвечаю
-                </TabsTrigger>
-              )}
+              {['letters', 'syllables', 'words'].includes(stage) &&
+                onAnswer && (
+                  <TabsTrigger value="answer">
+                    <MessageCircle /> Отвечаю
+                  </TabsTrigger>
+                )}
             </TabsList>
           </Tabs>
         )}

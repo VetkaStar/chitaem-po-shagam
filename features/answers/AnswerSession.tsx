@@ -7,15 +7,18 @@ import { useCurriculumSession } from '../curriculum/use-curriculum-session';
 import AnswerCard from './AnswerCard';
 import { openAnswer, nextAnswer } from './session';
 import { useInstructionAudio } from '../curriculum/use-instruction-audio';
+import type { AnswerSection } from './types';
 
 export default function AnswerSession({
   controller,
   supply,
   model,
+  section = 'words',
 }: {
   controller: CurriculumController;
   supply: Supply;
   model: LessonModel;
+  section?: AnswerSection;
 }) {
   const { state, view, busy, error, run, act } =
     useCurriculumSession(controller);
@@ -30,6 +33,7 @@ export default function AnswerSession({
       model.settings.unit,
       model.settings.length,
       fresh,
+      section,
     );
     setRouteId(id);
     setReady(true);
@@ -105,6 +109,7 @@ export default function AnswerSession({
         <AnswerCard
           key={current.instanceId}
           view={current}
+          section={section}
           controller={controller}
           busy={blocked}
           sound={sound}

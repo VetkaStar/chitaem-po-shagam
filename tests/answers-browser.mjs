@@ -114,9 +114,16 @@ try {
       .click();
     await page
       .locator('.portal-grid')
-      .getByRole('button', { name: 'Отвечаю', exact: true })
+      .getByRole('button', { name: 'Целое слово', exact: true })
       .click();
-    await page.locator('.answer-exercise').waitFor();
+    await page.getByRole('tab', { name: 'Отвечаю', exact: true }).click();
+    await page
+      .locator('.answer-exercise')
+      .waitFor()
+      .catch(async (error) => {
+        console.error(await page.locator('.app-content').innerText());
+        throw error;
+      });
     assert.equal(
       await page
         .getByRole('tab', { name: 'Отвечаю', exact: true })
@@ -128,7 +135,13 @@ try {
     await page.evaluate(() => window.scrollTo(0, 0));
     const before = await geometry();
     await page.getByRole('tab', { name: 'Отвечаю', exact: true }).click();
-    await page.locator('.answer-exercise').waitFor();
+    await page
+      .locator('.answer-exercise')
+      .waitFor()
+      .catch(async (error) => {
+        console.error(await page.locator('.app-content').innerText());
+        throw error;
+      });
     await page.evaluate(() => window.scrollTo(0, 0));
     const after = await geometry();
     for (const selector of Object.keys(before))
@@ -164,7 +177,13 @@ try {
     saved = await state();
     assert.equal(saved.customRoutes[route.routeId].position, 1);
     await page.keyboard.press('Enter');
-    await page.locator('.answer-exercise').waitFor();
+    await page
+      .locator('.answer-exercise')
+      .waitFor()
+      .catch(async (error) => {
+        console.error(await page.locator('.app-content').innerText());
+        throw error;
+      });
     await page.getByRole('button', { name: 'Пропустить', exact: true }).click();
     await page
       .getByRole('heading', { name: 'Задание пропущено', exact: true })
@@ -172,11 +191,23 @@ try {
     await page
       .getByRole('button', { name: 'Дальше · Enter', exact: true })
       .click();
-    await page.locator('.answer-exercise').waitFor();
+    await page
+      .locator('.answer-exercise')
+      .waitFor()
+      .catch(async (error) => {
+        console.error(await page.locator('.app-content').innerText());
+        throw error;
+      });
     const material = await page.locator('.answer-material').innerText();
     await page.getByRole('tab', { name: 'Читаю', exact: true }).click();
     await page.getByRole('tab', { name: 'Отвечаю', exact: true }).click();
-    await page.locator('.answer-exercise').waitFor();
+    await page
+      .locator('.answer-exercise')
+      .waitFor()
+      .catch(async (error) => {
+        console.error(await page.locator('.app-content').innerText());
+        throw error;
+      });
     assert.equal(await page.locator('.answer-material').innerText(), material);
     saved = await state();
     assert.equal(saved.customRoutes[route.routeId].position, 2);
@@ -188,9 +219,16 @@ try {
       .click();
     await page
       .locator('.portal-grid')
-      .getByRole('button', { name: 'Отвечаю', exact: true })
+      .getByRole('button', { name: 'Целое слово', exact: true })
       .click();
-    await page.locator('.answer-exercise').waitFor();
+    await page.getByRole('tab', { name: 'Отвечаю', exact: true }).click();
+    await page
+      .locator('.answer-exercise')
+      .waitFor()
+      .catch(async (error) => {
+        console.error(await page.locator('.app-content').innerText());
+        throw error;
+      });
     assert.equal(
       (await state()).profile.activeInstance.instanceId,
       activeInstance,
@@ -218,7 +256,13 @@ try {
       .getByRole('button', { name: 'Выбрать другую тему', exact: true })
       .click();
     await page.locator('.topic-options').getByRole('button').last().click();
-    await page.locator('.answer-exercise').waitFor();
+    await page
+      .locator('.answer-exercise')
+      .waitFor()
+      .catch(async (error) => {
+        console.error(await page.locator('.app-content').innerText());
+        throw error;
+      });
     assert.equal(await page.locator('.answer-material').innerText(), material);
     assert.equal(
       await page.evaluate(
@@ -275,8 +319,9 @@ try {
     .click();
   await focus
     .locator('.portal-grid')
-    .getByRole('button', { name: 'Отвечаю', exact: true })
+    .getByRole('button', { name: 'Целое слово', exact: true })
     .click();
+  await focus.getByRole('tab', { name: 'Отвечаю', exact: true }).click();
   await focus.locator('.answer-exercise').waitFor();
   assert.equal(await focus.locator('.focus-bar').count(), 1);
   assert.equal(

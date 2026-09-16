@@ -40,6 +40,7 @@ const { answerItems, openAnswer, nextAnswer } = await mod(
   'features/answers/session.js',
 );
 const { levels } = await mod('lib/learning.js');
+const { trainerItems } = await mod('features/trainers/catalog.js');
 const supply = await loadSupply(...supplyText());
 const originalBank = JSON.stringify(supply.curriculum.items);
 const legacy = { getItem: () => null };
@@ -159,6 +160,79 @@ await test('failed answer write does not advance route or fabricate success', as
   );
   assert.deepEqual(controller.snapshot(), before);
   assert.deepEqual(await store.read(), before);
+});
+await test('all four sections isolate routes and resume exact persisted instances', async () => {
+  const { controller, store } = await setup();
+  const saved = [];
+  for (const section of ['letters', 'syllables', 'words', 'sentences']) {
+    const tasks = answerItems(supply, 12, section);
+    assert.ok(tasks.length > 0, section);
+    const routeId = await openAnswer(controller, supply, 12, 3, false, section);
+    assert.ok(routeId.startsWith(`answer:${section}:12:`));
+    const state = controller.snapshot();
+    const instanceId = state.profile.activeInstance.instanceId;
+    assert.ok(
+      tasks.some((task) => task.id === state.profile.activeInstance.itemId),
+    );
+    assert.ok(
+      state.customRoutes[routeId].steps.every((step) =>
+        tasks.some((task) => task.id === step.itemId),
+      ),
+    );
+    assert.equal(controller.visible().optionsRevealed, true);
+    saved.push({ section, routeId, instanceId });
+    await controller.leaveSession();
+  }
+  assert.equal(new Set(saved.map((item) => item.routeId)).size, 4);
+  const reloaded = await CurriculumController.open(supply, store, legacy);
+  // Resume in reverse order after other sections ran, with a different requested length.
+  for (const { section, routeId, instanceId } of [...saved].reverse()) {
+    assert.equal(
+      await openAnswer(reloaded, supply, 12, 7, false, section),
+      routeId,
+    );
+    assert.equal(
+      reloaded.snapshot().profile.activeInstance.instanceId,
+      instanceId,
+    );
+    assert.equal(reloaded.snapshot().customRoutes[routeId].steps.length, 3);
+    await reloaded.leaveSession();
+  }
+  const words = saved.find((item) => item.section === 'words');
+  assert.equal(
+    await openAnswer(reloaded, supply, 12, 5),
+    words.routeId,
+    'omitted section still resumes the existing word route',
+  );
+});
+await test('sentence pools enforce topic letters in both target and every answer option', () => {
+  const candidates = trainerItems(supply, 'choice', 'sentences');
+  assert.ok(candidates.length > 0);
+  let optionOnlyExclusions = 0;
+  for (let unit = 0; unit < levels.length; unit++) {
+    const alphabet = new Set(levels[unit].letters);
+    const allowed = (text) =>
+      [...text.toUpperCase()].every(
+        (letter) => !/[А-ЯЁ]/u.test(letter) || alphabet.has(letter),
+      );
+    const eligibleTargets = candidates.filter(
+      (task) => allowed(task.requiredLetters) && allowed(task.learnerText),
+    );
+    const expected = eligibleTargets.filter((task) =>
+      task.options.every((option) => allowed(option.text)),
+    );
+    optionOnlyExclusions += eligibleTargets.length - expected.length;
+    const actual = answerItems(supply, unit, 'sentences');
+    assert.deepEqual(
+      actual.map((task) => task.id).sort(),
+      expected.map((task) => task.id).sort(),
+      `unit ${unit}`,
+    );
+  }
+  assert.ok(
+    optionOnlyExclusions > 0,
+    'the authored bank exercises an option outside the target alphabet',
+  );
 });
 assert.equal(
   JSON.stringify(supply.curriculum.items),

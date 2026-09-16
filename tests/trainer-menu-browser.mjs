@@ -107,16 +107,11 @@ try {
       .getByRole('heading', { name: 'Все тренажёры', exact: true })
       .waitFor();
     assert.deepEqual(
-      (await words.locator('.app-nav-child').allTextContents()).slice(0, 8),
+      await words.locator('.app-nav-child').allTextContents(),
       [
-        'Собираем слова',
-        'Находим часть',
-        'Читаю',
-        'Ловлю',
-        'Пишу',
-        'Отвечаю',
-        'Делим на части',
-        'Меняем слово',
+        'Целое слово',
+        'Состав слова',
+        'Читаем и понимаем',
       ],
     );
     await words.locator('.app-nav-item').click();
@@ -129,14 +124,16 @@ try {
       path: path.join(output, width + '-menu.png'),
       fullPage: true,
     });
-    for (const title of ['Читаю', 'Ловлю', 'Пишу']) {
+    await words.getByRole('button', { name: 'Целое слово', exact: true }).click();
+    for (const title of ['Читаю', 'Ловлю', 'Пишу', 'Отвечаю']) {
+      await page.getByRole('tab', { name: title, exact: true }).click();
       await openMenu();
       if (
         (await words.locator('.app-nav-item').getAttribute('aria-expanded')) !==
         'true'
       )
         await words.locator('.app-nav-item').click();
-      await words.getByRole('button', { name: title, exact: true }).click();
+      await words.getByRole('button', { name: 'Целое слово', exact: true }).click();
       await page.getByRole('tab', { name: title, exact: true }).waitFor();
       assert.equal(
         await page
@@ -147,7 +144,7 @@ try {
       assert.equal(
         await words
           .getByRole('button', {
-            name: title,
+            name: 'Целое слово',
             exact: true,
             includeHidden: true,
           })
@@ -164,9 +161,13 @@ try {
       );
     }
     await openMenu();
+    if ((await words.locator('.app-nav-item').getAttribute('aria-expanded')) !== 'true')
+      await words.locator('.app-nav-item').click();
     await words
-      .getByRole('button', { name: 'Собираем слова', exact: true })
+      .getByRole('button', { name: 'Состав слова', exact: true })
       .click();
+    assert.deepEqual(await page.getByRole('tab').allTextContents(),
+      ['Собираем', 'Находим часть', 'Делим на части', 'Меняем']);
     await page.getByText('Доступно заданий: 63.', { exact: false }).waitFor();
     assert.equal(
       await page.locator('.app-nav').getAttribute('data-open'),
@@ -175,18 +176,18 @@ try {
     await page
       .getByRole('button', { name: 'Начать занятие', exact: true })
       .click();
-    await page.locator('.curriculum-step').waitFor();
-    await page
-      .getByRole('button', { name: 'К разделу «Слова»', exact: true })
-      .click();
-    await page.getByRole('heading', { name: 'Слова', exact: true }).waitFor();
-    await page
-      .locator('.portal-grid')
-      .getByRole('button', { name: 'Собираем слова', exact: true })
-      .click();
-    await page
-      .getByRole('button', { name: 'Продолжить занятие', exact: true })
-      .waitFor();
+    await page.locator('.curriculum-material').waitFor();
+    const material = await page.locator('.curriculum-material').innerText();
+    for (const mode of ['Находим часть', 'Делим на части', 'Меняем']) {
+      await page.getByRole('tab', { name: mode, exact: true }).click();
+      await page.getByRole('heading', { name: 'Новое занятие', exact: true }).waitFor();
+      assert.equal(await page.getByRole('button', { name: 'Продолжить занятие', exact: true }).count(), 0);
+      assert.equal(await page.getByRole('tab', { name: mode, exact: true }).getAttribute('aria-selected'), 'true');
+      assert.equal(await words.getByRole('button', { name: 'Состав слова', exact: true, includeHidden: true }).getAttribute('aria-current'), 'page');
+    }
+    await page.getByRole('tab', { name: 'Собираем', exact: true }).click();
+    await page.locator('.curriculum-material').waitFor();
+    assert.equal(await page.locator('.curriculum-material').innerText(), material);
     const saved = await page.evaluate(() =>
       JSON.parse(localStorage.getItem('reading-steps-v3')),
     );
@@ -203,10 +204,23 @@ try {
       path: path.join(output, width + '-resume.png'),
       fullPage: true,
     });
+    for (const [section, trainer, modes] of [
+      ['Слоги', 'Состав слога', ['Собираем', 'Находим часть']],
+      ['Предложения', 'Состав предложения', ['Находим часть']],
+      ['Рассказы', 'Состав текста', ['Находим часть']],
+    ]) {
+      await openMenu();
+      const group = page.locator('.app-nav-group').filter({ has: page.locator('.app-nav-item', { hasText: section }) });
+      if (await group.locator('.app-nav-item').getAttribute('aria-expanded') !== 'true') await group.locator('.app-nav-item').click();
+      await group.getByRole('button', { name: trainer, exact: true }).click();
+      await page.getByRole('heading', { name: trainer, exact: true }).waitFor();
+      assert.deepEqual(await page.getByRole('tab').allTextContents(), modes);
+      await page.getByRole('heading', { name: 'Новое занятие', exact: true }).waitFor();
+    }
     assert.deepEqual(errors, []);
     completed.push(
       width +
-        ': seven groups, toggle only, ordered children, three legacy modes, compose pool 63, resume/data/current and no overflow',
+        ': seven sections, three word trainers, core four modes, parts four modes with isolated setup and resume, other groups modes, saved stars and no overflow',
     );
     await page.close();
   }

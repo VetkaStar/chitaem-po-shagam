@@ -6387,6 +6387,54 @@ meter::-webkit-meter-optimum-value {
   width: min(860px, calc(100% - 32px));
   margin: 32px auto;
 }
+.app-nav-item .app-nav-chevron {
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+.app-nav-item[aria-expanded='true'] .app-nav-chevron {
+  transform: rotate(180deg);
+}
+.app-nav-submenu:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0 8px 20px;
+}
+.app-nav-child {
+  justify-content: flex-start;
+  text-align: left;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  font-size: 15px;
+}
+.app-nav-child[aria-current='page'] {
+  background: var(--primary-soft);
+  color: var(--primary-ink);
+  font-weight: 700;
+}
+@media (min-width: 700px) and (max-width: 1099px) {
+  .app-nav { position: relative; }
+  .app-nav nav { align-items: flex-start; }
+  .app-nav-submenu:not([hidden]) {
+    position: absolute;
+    top: 100%;
+    left: 24px;
+    right: 24px;
+    z-index: 30;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-height: 60dvh;
+    overflow-y: auto;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: 0 12px 30px rgba(20, 40, 30, 0.14);
+  }
+}
 .trainer-setup {
   display: grid;
   gap: 18px;

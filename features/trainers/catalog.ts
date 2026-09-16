@@ -1,5 +1,6 @@
 import type { Mode, Task } from '../../lib/curriculum/contracts.js';
 import type { Supply } from '../../lib/curriculum/types.js';
+import { taskSection, type TrainerSection } from './task-section';
 export const trainerDefinitions = [
   {
     id: 'compose',
@@ -42,7 +43,11 @@ export type TrainerId = (typeof trainerDefinitions)[number]['id'];
 export function isTrainerId(value: string): value is TrainerId {
   return trainerDefinitions.some((definition) => definition.id === value);
 }
-export function trainerItems(supply: Supply, id: TrainerId): Task[] {
+export function trainerItems(
+  supply: Supply,
+  id: TrainerId,
+  section?: TrainerSection,
+): Task[] {
   const pools = supply.curriculum.reservePools as
     | Record<string, { itemIds?: string[] }>
     | undefined;
@@ -52,7 +57,10 @@ export function trainerItems(supply: Supply, id: TrainerId): Task[] {
   reserved.add('task.1bb67acaeb41');
   return Object.values(supply.curriculum.items).filter(
     (item) =>
-      item.freeTrainerVisible && item.kind === id && !reserved.has(item.id),
+      item.freeTrainerVisible &&
+      item.kind === id &&
+      !reserved.has(item.id) &&
+      (!section || taskSection(item) === section),
   );
 }
 export const trainerModeLabels: Record<Mode, string> = {

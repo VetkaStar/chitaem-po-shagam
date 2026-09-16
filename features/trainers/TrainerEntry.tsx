@@ -5,11 +5,15 @@ import { browserStorage } from '../../lib/progress/profile-storage';
 import type { IndexedDbProgressStore } from '../../lib/progress/indexed-db.js';
 import type { CurriculumController } from '../curriculum/controller.js';
 import { isTrainerId, trainerDefinitions } from './catalog.js';
+import type { TrainerSection } from './task-section';
 export interface TrainerEntryProps {
   trainerId: string;
   sound: boolean;
   speak: (text: string) => void;
   onExit: () => void;
+  exitLabel?: string;
+  section?: TrainerSection;
+  title?: string;
 }
 export default function TrainerEntry(props: TrainerEntryProps) {
   const [ready, setReady] = useState<{
@@ -55,7 +59,9 @@ export default function TrainerEntry(props: TrainerEntryProps) {
     return (
       <section className="portal-panel">
         <h1>Тренажёр не найден</h1>
-        <button onClick={props.onExit}>Все тренажёры</button>
+        <button onClick={props.onExit}>
+          {props.exitLabel ?? 'Все тренажёры'}
+        </button>
       </section>
     );
   if (ready)
@@ -68,9 +74,10 @@ export default function TrainerEntry(props: TrainerEntryProps) {
         supply={ready.supply}
       />
     );
-  const title = trainerDefinitions.find(
-    (definition) => definition.id === props.trainerId,
-  )!.title;
+  const title =
+    props.title ??
+    trainerDefinitions.find((definition) => definition.id === props.trainerId)!
+      .title;
   return (
     <section className="portal-panel" aria-label={title} aria-busy={!error}>
       <h1>{title}</h1>
@@ -84,7 +91,9 @@ export default function TrainerEntry(props: TrainerEntryProps) {
       ) : (
         <p role="status">Готовим задания…</p>
       )}
-      <button onClick={props.onExit}>Все тренажёры</button>
+      <button onClick={props.onExit}>
+        {props.exitLabel ?? 'Все тренажёры'}
+      </button>
     </section>
   );
 }

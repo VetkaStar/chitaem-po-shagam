@@ -14,6 +14,7 @@
     "build:pages": "vite build --config vite.pages.config.ts",
     "build": "vite build --config vite.pages.config.ts",
     "test:profiles": "node tests/local-profiles.mjs",
+    "test:trainer-menu": "node tests/trainer-sections.mjs && node tests/trainer-menu-browser.mjs",
     "test:entry:browser": "node tests/first-entry-browser.mjs && node tests/profile-switch-browser.mjs && node tests/instruction-audio-browser.mjs",
     "test:trainers:browser": "node tests/curriculum-trainers-browser.mjs",
     "test:curriculum": "node tests/curriculum.mjs",

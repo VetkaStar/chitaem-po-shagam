@@ -79,6 +79,10 @@ try {
   );
   await page
     .locator('.portal-grid')
+    .getByRole('button', { name: /ШАГ 3 Слова/ })
+    .click();
+  await page
+    .locator('.portal-grid')
     .getByRole('button', { name: /^Выбираем ответ/ })
     .click();
   await page

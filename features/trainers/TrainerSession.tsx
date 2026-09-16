@@ -6,6 +6,7 @@ import { CurriculumStep } from '../curriculum/CurriculumStep.js';
 import { useCurriculumSession } from '../curriculum/use-curriculum-session.js';
 import { useInstructionAudio } from '../curriculum/use-instruction-audio.js';
 import TrainerSetup from './TrainerSetup.js';
+import type { TrainerSection } from './task-section';
 import { trainerDefinitions, trainerItems, type TrainerId } from './catalog.js';
 import {
   createTrainerRoute,
@@ -26,6 +27,9 @@ export default function TrainerSession({
   sound,
   speak,
   onExit,
+  exitLabel = 'Все тренажёры',
+  section,
+  title: requestedTitle,
 }: {
   controller: CurriculumController;
   supply: Supply;
@@ -33,15 +37,24 @@ export default function TrainerSession({
   sound: boolean;
   speak: (text: string) => void;
   onExit: () => void;
+  exitLabel?: string;
+  section?: TrainerSection;
+  title?: string;
 }) {
   const session = useCurriculumSession(controller);
   const { state, view, busy, error, run, act } = session;
   const prefix = trainerRoutePrefix(trainerId);
   const definition = trainerDefinitions.find((item) => item.id === trainerId)!;
+  const items = trainerItems(supply, trainerId, section);
+  const eligibleIds = new Set(items.map((item) => item.id));
+  const title = requestedTitle ?? definition.title;
   const [routeId, setRouteId] = useState(() => {
     const saved = controller.snapshot();
     return saved.studyMode === 'custom' &&
-      saved.route?.routeId.startsWith(prefix)
+      saved.route?.routeId.startsWith(prefix) &&
+      saved.customRoutes[saved.route.routeId]?.steps.every((step) =>
+        eligibleIds.has(step.itemId),
+      )
       ? saved.route.routeId
       : null;
   });
@@ -104,7 +117,7 @@ export default function TrainerSession({
   return (
     <section
       className="trainer-session curriculum-session"
-      aria-label={definition.title}
+      aria-label={title}
       aria-busy={busy}
     >
       <header className="curriculum-session-header">
@@ -117,9 +130,9 @@ export default function TrainerSession({
             })
           }
         >
-          Все тренажёры
+          {exitLabel}
         </button>
-        <h1>{definition.title}</h1>
+        <h1>{title}</h1>
         <p>{definition.description}</p>
       </header>
       {error && (
@@ -148,6 +161,15 @@ export default function TrainerSession({
           {unfinished && (
             <section className="curriculum-step">
               <h2>Есть незавершённое занятие</h2>
+              {section &&
+                !unfinished.steps.every((step) =>
+                  eligibleIds.has(step.itemId),
+                ) && (
+                  <p>
+                    Это ранее начатый набор с заданиями другого раздела. Можно
+                    продолжить его или начать новый ниже.
+                  </p>
+                )}
               <p>
                 Пройдено заданий: {unfinished.position} из{' '}
                 {unfinished.steps.length}.
@@ -162,7 +184,7 @@ export default function TrainerSession({
             </section>
           )}
           <TrainerSetup
-            items={trainerItems(supply, trainerId)}
+            items={items}
             busy={busy}
             onStart={(ids, mode, length) => act(() => start(ids, mode, length))}
           />

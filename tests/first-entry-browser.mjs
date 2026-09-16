@@ -79,7 +79,7 @@ try {
     .getByRole('heading', { name: 'Все тренажёры', exact: true })
     .waitFor();
   assert.equal(await page.locator('.exercise').count(), 0);
-  assert.equal(await page.locator('.portal-grid .portal-card').count(), 13);
+  assert.equal(await page.locator('.portal-grid .portal-card').count(), 7);
   assert.equal(
     await page
       .getByRole('navigation', { name: 'Разделы', exact: true })
@@ -87,22 +87,13 @@ try {
       .count(),
     7,
   );
-  assert.equal(
-    await page
-      .getByRole('navigation', {
-        name: 'Дополнительные тренажёры',
-        exact: true,
-      })
-      .getByRole('button')
-      .count(),
-    6,
-  );
+  assert.equal(await page.locator('.app-nav-submenu:not([hidden])').count(), 0);
   await page.reload();
   await page
     .getByRole('heading', { name: 'Все тренажёры', exact: true })
     .waitFor();
   completed.push(
-    'defer opens all 7 existing and 6 new trainers without an entry check',
+    'defer opens 7 sections with collapsed trainer submenus without an entry check',
   );
   await page
     .locator('.app-bar')

@@ -2,7 +2,9 @@
 import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
 import CurriculumEntry from '../onboarding/CurriculumEntry';
 import TrainerEntry from '../trainers/TrainerEntry';
-import { trainerDefinitions, isTrainerId } from '../trainers/catalog';
+import { isTrainerId } from '../trainers/catalog';
+import SectionTrainers from '../trainers/SectionTrainers';
+import { sections, findTrainerLink } from '../trainers/navigation';
 import {
   browserStorage,
   registerCurrentProfile,
@@ -140,6 +142,18 @@ export default function AppPortal({
     window.scrollTo({ top: 0, behavior: 'instant' });
   }
   function start(id: string) {
+    if (id.startsWith('lesson:')) {
+      const [, stage, mode] = id.split(':');
+      model.navigate(stage as Stage, mode as 'read' | 'fly' | 'type');
+      go('lesson');
+      return;
+    }
+    if (id.startsWith('picture:')) {
+      model.update('pictureMode', id.endsWith(':letters') ? 'letters' : 'free');
+      model.navigate('pictures', 'read');
+      go('lesson');
+      return;
+    }
     if (stages.some((s) => s.id === id)) {
       model.navigate(id as Stage, 'read');
       go('lesson');
@@ -168,9 +182,16 @@ export default function AppPortal({
       setWarning('Не удалось выйти из профиля. Попробуйте ещё раз.');
     }
   }
-  const trainerId = view.startsWith('trainer:')
-    ? view.slice('trainer:'.length)
-    : '';
+  const trainerId = view.startsWith('trainer:') ? view.split(':')[1] : '';
+  const section = sections.find(
+    (s) => s.id === view.split(':')[view.startsWith('trainer:') ? 2 : 1],
+  );
+  const selectedItem =
+    view === 'lesson'
+      ? model.stage === 'pictures'
+        ? `picture:${model.settings.pictureMode}`
+        : `lesson:${model.stage}:${model.mode}`
+      : view;
   // Settings and progress come from storage right after the first render; wait for them before choosing a screen.
   if (!model.ready)
     return (
@@ -208,7 +229,8 @@ export default function AppPortal({
         >
           <LessonSidebar
             model={model}
-            active={view === 'lesson' ? model.stage : view}
+            active={view === 'lesson' ? model.stage : (section?.id ?? view)}
+            selectedItem={selectedItem}
             onSelect={start}
             onAbout={() => go('about')}
             onCabinet={() => go('cabinet')}
@@ -252,6 +274,8 @@ export default function AppPortal({
                 }}
                 onExit={() => go('home')}
               />
+            ) : view.startsWith('section:') && section ? (
+              <SectionTrainers section={section} onSelect={start} />
             ) : view === 'lesson' ? (
               <FreeExposureContext.Provider value={recordFree}>
                 {children}
@@ -265,11 +289,16 @@ export default function AppPortal({
               />
             ) : isTrainerId(trainerId) ? (
               <TrainerEntry
-                key={trainerId}
+                key={view}
                 trainerId={trainerId}
+                section={section?.id}
+                title={findTrainerLink(view)?.title}
                 sound={model.settings.sound}
                 speak={model.speak}
-                onExit={() => go('home')}
+                exitLabel={
+                  section ? `К разделу «${section.name}»` : 'Все тренажёры'
+                }
+                onExit={() => go(section ? 'section:' + section.id : 'home')}
               />
             ) : view in textLabels ? (
               <FreeExposureContext.Provider value={recordFree}>
@@ -310,7 +339,7 @@ export default function AppPortal({
                     <button
                       className="portal-card"
                       key={s.id}
-                      onClick={() => start(s.id)}
+                      onClick={() => go('section:' + s.id)}
                     >
                       <small>ШАГ {i + 1}</small>
                       <b>{s.name}</b>
@@ -327,19 +356,6 @@ export default function AppPortal({
                           ][i]
                         }
                       </span>
-                    </button>
-                  ))}
-                </div>
-                <h2>Ещё способы тренироваться</h2>
-                <div className="portal-grid">
-                  {trainerDefinitions.map((trainer) => (
-                    <button
-                      className="portal-card"
-                      key={trainer.id}
-                      onClick={() => go('trainer:' + trainer.id)}
-                    >
-                      <b>{trainer.title}</b>
-                      <span>{trainer.description}</span>
                     </button>
                   ))}
                 </div>

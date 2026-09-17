@@ -2,6 +2,7 @@
 import AutoAdvanceSettings from '@/components/auto-advance-settings';
 import VisionSettings from './VisionSettings';
 import SpeechSettings from './SpeechSettings';
+import NarratorSettings from './NarratorSettings';
 import StylePicker from '../portal/StylePicker';
 import { Mic, MicOff, ArrowRight, Download } from 'lucide-react';
 import {
@@ -116,10 +117,12 @@ export default function ParentSettings({
             </select>
           </div>
           <AutoAdvanceSettings model={model} />
+          <NarratorSettings settings={settings} update={update} stop={stop} />
           <div className="setting">
             <label htmlFor="narrator-voice">Голос озвучки</label>
             <select
               id="narrator-voice"
+              disabled={settings.narrator === 'piper-irina'}
               value={settings.voice}
               onChange={(e) =>
                 update('voice', e.target.value as 'female' | 'male')

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import './piper-speech.mjs';
 import './speech-runtime.mjs';
 import fs from 'node:fs';
 import vm from 'node:vm';

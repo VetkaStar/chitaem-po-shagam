@@ -32,6 +32,7 @@
   "dependencies": {
     "@base-ui/react": "1.7.0",
     "@huggingface/transformers": "3.8.1",
+    "@mintplex-labs/piper-tts-web": "1.0.5",
     "@sherpaw/asr": "0.0.2",
     "@sherpaw/shared": "0.0.2",
     "class-variance-authority": "0.7.1",

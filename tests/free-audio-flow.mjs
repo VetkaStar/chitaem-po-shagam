@@ -6,6 +6,7 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url),
   ts = require('typescript');
 const spoken = [],
+  neural = [],
   writes = [],
   pending = [];
 const synthesis = {
@@ -40,6 +41,11 @@ function load(relative) {
         this.text = text;
       },
       require(p) {
+        if (p.endsWith('/piper-speech'))
+          return {
+            stopPiperSpeech() {},
+            speakPiper: (text, options) => neural.push({ text, options }),
+          };
         if (p.includes('narrator-voice'))
           return { selectNarratorVoice: () => undefined };
         return load(
@@ -89,6 +95,35 @@ pending.shift().reject(new Error('FAIL'));
 await new Promise((resolve) => setImmediate(resolve));
 assert.equal(spoken.length, 1);
 assert.equal(errors, 1);
+audio.setFreeAudioRecorder(null);
+audio.setFreeAudioRecorder(
+  () => new Promise((resolve, reject) => pending.push({ resolve, reject })),
+);
+const neuralSpeak = createVoiceHandler({
+  setCooldown() {},
+  recognition: {
+    current: { setEnabled: (value) => assert.equal(value, false) },
+  },
+  speechEpoch,
+  settings: { sound: true, slow: false, narrator: 'piper-irina' },
+  releaseSoon() {},
+  setSpeaking() {},
+});
+neuralSpeak('Маша', 'МАША');
+assert.equal(neural.length, 0, 'Piper waits for durable assistance too');
+speechEpoch.current++;
+pending.shift().resolve();
+await new Promise((resolve) => setImmediate(resolve));
+assert.equal(
+  neural.length,
+  0,
+  'cancelled lesson cannot start Piper after saving',
+);
+neuralSpeak('Шишка', 'ШИШКА');
+pending.shift().resolve();
+await new Promise((resolve) => setImmediate(resolve));
+assert.equal(neural.length, 1);
+assert.equal(neural[0].text, 'Шишка');
 audio.setFreeAudioRecorder(null);
 console.log(
   'PASS free audio: explicit letter target, durable assistance before speech, stale cancellation, visible failure callback',

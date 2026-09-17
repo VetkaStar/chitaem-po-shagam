@@ -60,6 +60,7 @@ export function restoreLessonProgress({
             ? s.autoAdvanceSeconds
             : 3,
         voice: s.voice === 'male' ? 'male' : 'female',
+        narrator: s.narrator === 'piper-irina' ? 'piper-irina' : 'system',
         speechModel: parseSpeechModel(s.speechModel),
         micProcessing: s.micProcessing !== false,
         layout: s.layout === 'focus' ? 'focus' : 'order',

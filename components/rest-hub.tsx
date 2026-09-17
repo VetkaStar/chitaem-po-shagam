@@ -4,6 +4,7 @@ import { breaks } from '@/lib/learning';
 import MatchPairs from './match-pairs';
 import type { VisionMode } from '@/lib/vision';
 import ColorBubbles from '@/components/color-bubbles';
+import { stopPiperSpeech } from '../lib/piper-speech';
 
 type Game = 'menu' | 'move' | 'bubbles' | 'pairs' | 'music';
 const notes = [261.63, 293.66, 329.63, 392, 440];
@@ -41,12 +42,14 @@ export default function RestHub({
     setPlaying(false);
     setActive(-1);
     window.speechSynthesis?.cancel();
+    stopPiperSpeech();
   }
   useEffect(
     () => () => {
       timers.current.forEach(clearTimeout);
       void audio.current?.close();
       window.speechSynthesis?.cancel();
+      stopPiperSpeech();
     },
     [],
   );
@@ -137,6 +140,7 @@ export default function RestHub({
                 <button
                   onClick={() => {
                     window.speechSynthesis?.cancel();
+                    stopPiperSpeech();
                     setMove((i) => (i + 1) % breaks.length);
                   }}
                 >

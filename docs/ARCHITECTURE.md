@@ -20,6 +20,7 @@
 | Диалоги | features/lesson/RestDialog.tsx, MicrophoneConsent.tsx | Отдых и согласие |
 | Звук и распознаватель | lib/local-speech.ts, lib/speech/ | Vosk, GigaAM, Zipformer, Whisper; микрофон, worker, кэш; SPEECH-MODELS.md |
 | Сравнение распознавания | features/lesson/SpeechSettings.tsx | Выбор модели, обработка микрофона, проверка с расшифровкой только для взрослого |
+| Автоматическая озвучка | features/lesson/NarratorSettings.tsx, lib/piper-*.ts, lib/piper.worker.ts | Системный голос / Piper Ирина в браузере; AUTOMATIC-VOICE.md |
 | Медленное чтение | lib/slow-reading.ts | Сбор последовательных частей, растянутые гласные, срок попытки |
 | Проверка речи | lib/feedback.ts | Верный ответ, известная замена, посторонняя речь, отказ |
 | Учебный материал | lib/learning.ts | Буквы, слоги, картинки, базовые проверки |

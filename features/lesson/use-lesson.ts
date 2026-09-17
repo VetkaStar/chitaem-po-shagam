@@ -11,6 +11,7 @@ import { createSpeechHandler } from './lesson-speech-actions';
 import { createAnswerHandler } from './lesson-answer-actions';
 import { createCatchHandler } from './lesson-catch-actions';
 import { createVoiceHandler } from './lesson-voice-actions';
+import { stopPiperSpeech } from '../../lib/piper-speech';
 import { createReportExporter } from './lesson-report';
 
 import { pictureRetry } from '@/lib/picture-retry';
@@ -182,6 +183,7 @@ export function useLesson() {
               ? 'Напечатай слог'
               : 'Напечатай слово';
   function stop() {
+    stopPiperSpeech();
     slowAttempt.current.reset();
     setSpeechPreview(0);
     setSpeechProgress(0);
@@ -275,6 +277,7 @@ export function useLesson() {
       } catch {}
       if (timer.current) clearTimeout(timer.current);
       window.speechSynthesis?.cancel();
+      stopPiperSpeech();
     };
   }, []);
   useEffect(() => {
@@ -362,6 +365,7 @@ export function useLesson() {
     }, delay);
   }
   const speak = createVoiceHandler({
+    onSpeechStatus: setAttemptStatus,
     setCooldown,
     recognition,
     speechEpoch,

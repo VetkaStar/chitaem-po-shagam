@@ -1,6 +1,7 @@
 import { beforeFreeSpeech } from '../free-practice/audio';
 import type { SpeechController } from './lesson-speech-types';
 import { narratorUtterance } from '../../lib/narrator-utterance';
+import { speakPiper, stopPiperSpeech } from '../../lib/piper-speech';
 import { Settings } from './config';
 import type { Dispatch, SetStateAction, RefObject } from 'react';
 
@@ -13,6 +14,7 @@ export function createVoiceHandler(context: {
   releaseSoon: (delay?: number) => void;
   setSpeaking: Dispatch<SetStateAction<boolean>>;
   onExposureError?: () => void;
+  onSpeechStatus?: (text: string) => void;
 }) {
   const {
     setCooldown,
@@ -23,12 +25,47 @@ export function createVoiceHandler(context: {
     setSpeaking,
   } = context;
   return function speak(text: string, target?: string) {
+    stopPiperSpeech();
     setCooldown(true);
     recognition.current?.setEnabled?.(false);
     speechEpoch.current++;
     const token = speechEpoch.current;
     if (!settings.sound) {
       releaseSoon();
+      return;
+    }
+    if (settings.narrator === 'piper-irina') {
+      window.speechSynthesis?.cancel();
+      setSpeaking(true);
+      const finish = () => {
+        if (speechEpoch.current !== token) return;
+        setSpeaking(false);
+        setCooldown(true);
+        releaseSoon(450);
+      };
+      const start = () => {
+        if (speechEpoch.current !== token) return;
+        speakPiper(text, {
+          slow: settings.slow,
+          onStatus: context.onSpeechStatus,
+          onEnd: () => {
+            finish();
+            context.onSpeechStatus?.('');
+          },
+          onError: (error) => {
+            finish();
+            context.onSpeechStatus?.(`Озвучка недоступна: ${error.message}`);
+          },
+        });
+      };
+      const pending = beforeFreeSpeech(text, target);
+      if (!pending) start();
+      else
+        void pending.then(start).catch(() => {
+          if (speechEpoch.current !== token) return;
+          finish();
+          context.onExposureError?.();
+        });
       return;
     }
     if (!('speechSynthesis' in window)) {

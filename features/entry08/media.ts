@@ -1,5 +1,6 @@
 import { startLocalSpeech } from '../../lib/local-speech';
 import { narratorUtterance } from '../../lib/narrator-utterance';
+import { speakPiper, stopPiperSpeech } from '../../lib/piper-speech';
 import type { Settings } from '../lesson/config';
 
 export type EntrySpeechResult = {
@@ -14,7 +15,7 @@ type RecognitionOptions = {
   onStatus?: (status: string) => void;
 };
 type MediaSettings = Pick<Settings, 'voice' | 'slow' | 'sound' | 'micDevice'> &
-  Partial<Pick<Settings, 'speechModel' | 'micProcessing'>>;
+  Partial<Pick<Settings, 'speechModel' | 'micProcessing' | 'narrator'>>;
 const aborted = () => Object.assign(new Error('ABORTED'), { code: 'ABORTED' });
 
 /** Called only from explicit speech/record buttons. No transcript is persisted. */
@@ -57,6 +58,30 @@ export function createEntryMedia(
       stopSpeech();
       if (!getSettings().sound)
         return Promise.reject(new Error('sound-disabled'));
+      if (getSettings().narrator === 'piper-irina') {
+        window.speechSynthesis?.cancel();
+        return new Promise((resolve, reject) => {
+          let settled = false;
+          const settle = (error?: Error) => {
+            if (settled) return;
+            settled = true;
+            if (cancelSpeech === cancel) cancelSpeech = undefined;
+            if (error) reject(error);
+            else resolve();
+          };
+          const cancel = () => {
+            stopPiperSpeech();
+            settle(aborted());
+          };
+          cancelSpeech = cancel;
+          speakPiper(text, {
+            slow: getSettings().slow,
+            onEnd: () => settle(),
+            onError: settle,
+          });
+        });
+      }
+      stopPiperSpeech();
       if (typeof window === 'undefined' || !('speechSynthesis' in window))
         return Promise.reject(new Error('speech-unavailable'));
       const utterance = narratorUtterance(text, getSettings());

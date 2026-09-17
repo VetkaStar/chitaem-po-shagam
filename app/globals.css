@@ -6939,3 +6939,5 @@ meter::-webkit-meter-optimum-value {
 .personal08-footer { border-top: 1px solid var(--line); padding-top: 16px; }
 .personal08-hint { padding: 16px; border-radius: 14px; background: var(--panel); text-align: center; }
 .personal08 .curriculum-answer-form { margin: 0; }
+.narrator-settings select, .narrator-settings textarea { display: block; width: 100%; min-width: 0; max-width: 100%; margin: 8px 0 12px; padding: 10px; border: 1px solid var(--border); border-radius: 12px; background: var(--background); color: inherit; font: inherit; }
+.narrator-settings textarea { resize: vertical; }

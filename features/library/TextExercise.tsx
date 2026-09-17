@@ -310,10 +310,11 @@ export default function TextExercise({
   function repeatExercise() {
     model.stop();
     setSelectionEpoch((n) => n + 1);
+    setLine(0);
     setReadStart(0);
+    setReadLines([]);
     covered.current.clear();
-    if (!question && mode !== 'questions')
-      setReadLines((lines) => lines.filter((i) => i !== line));
+    setQuestion(false);
     setAccepted(false);
     setDone(false);
     setAnswer('');

@@ -5429,6 +5429,22 @@ h2 {
   font-size: 16px;
   font-weight: 700;
 }
+.speech-settings select {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding: 10px;
+  border: 1px solid currentColor;
+  border-radius: 10px;
+  background: var(--background);
+  color: inherit;
+  font: inherit;
+}
+.speech-processing { display: flex; align-items: center; gap: 10px; }
+.speech-processing input { width: 20px; height: 20px; flex: 0 0 auto; }
+.speech-test-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.speech-test-results { max-height: 220px; overflow: auto; overflow-wrap: anywhere; }
+.speech-settings small { display: block; letter-spacing: normal; }
 .mic-settings p {
   font-size: 12px;
   line-height: 1.5;

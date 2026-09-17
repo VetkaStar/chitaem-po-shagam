@@ -24,6 +24,7 @@ import { SlowReadingAttempt, matchFragment } from '@/lib/slow-reading';
 import { findTypo, type TypoHint } from '@/lib/typo';
 
 import { startLocalSpeech, type SpeechCallbacks } from '@/lib/local-speech';
+import { microphoneConstraints } from '../../lib/speech/models';
 import {
   Stage,
   Mode,
@@ -488,6 +489,8 @@ export function useLesson() {
     setLoadingSpeech(true);
     recognition.current = startLocalSpeech({
       deviceId: settings.micDevice,
+      speechModel: settings.speechModel,
+      micProcessing: settings.micProcessing,
       vocabulary: [
         ...wordPool(levels.length - 1),
         ...levels.flatMap((l) => [
@@ -581,6 +584,8 @@ export function useLesson() {
     done,
     settings.unit,
     settings.micDevice,
+    settings.speechModel,
+    settings.micProcessing,
     settings.letterMode,
     settings.wordMode,
     repeatEpoch,
@@ -629,11 +634,10 @@ export function useLesson() {
       ctx = new AudioContext();
       await ctx.resume();
       stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          deviceId: settings.micDevice
-            ? { exact: settings.micDevice }
-            : undefined,
-        },
+        audio: microphoneConstraints(
+          settings.micDevice,
+          settings.micProcessing,
+        ),
         video: false,
       });
       if (epoch.current !== token) {

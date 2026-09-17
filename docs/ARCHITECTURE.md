@@ -18,7 +18,8 @@
 | Меню разделов и режимов | features/lesson/ {LessonSidebar,LessonToolbar,LessonHeader}.tsx | Навигация и вход в настройки |
 | Настройки взрослого | features/lesson/ParentSettings.tsx | Настройки, выбор микрофона, источники, экспорт |
 | Диалоги | features/lesson/RestDialog.tsx, MicrophoneConsent.tsx | Отдых и согласие |
-| Звук и распознаватель | lib/local-speech.ts | Загрузка Vosk, поток микрофона, спектр, события звука и текста |
+| Звук и распознаватель | lib/local-speech.ts, lib/speech/ | Vosk, GigaAM, Zipformer, Whisper; микрофон, worker, кэш; SPEECH-MODELS.md |
+| Сравнение распознавания | features/lesson/SpeechSettings.tsx | Выбор модели, обработка микрофона, проверка с расшифровкой только для взрослого |
 | Медленное чтение | lib/slow-reading.ts | Сбор последовательных частей, растянутые гласные, срок попытки |
 | Проверка речи | lib/feedback.ts | Верный ответ, известная замена, посторонняя речь, отказ |
 | Учебный материал | lib/learning.ts | Буквы, слоги, картинки, базовые проверки |

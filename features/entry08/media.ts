@@ -13,7 +13,8 @@ type RecognitionOptions = {
   onReady?: () => void;
   onStatus?: (status: string) => void;
 };
-type MediaSettings = Pick<Settings, 'voice' | 'slow' | 'sound' | 'micDevice'>;
+type MediaSettings = Pick<Settings, 'voice' | 'slow' | 'sound' | 'micDevice'> &
+  Partial<Pick<Settings, 'speechModel' | 'micProcessing'>>;
 const aborted = () => Object.assign(new Error('ABORTED'), { code: 'ABORTED' });
 
 /** Called only from explicit speech/record buttons. No transcript is persisted. */
@@ -136,6 +137,8 @@ export function createEntryMedia(
         try {
           engine = startSpeech({
             deviceId: getSettings().micDevice || undefined,
+            speechModel: getSettings().speechModel,
+            micProcessing: getSettings().micProcessing,
             onLevel: () => {},
             onStatus: (text) => {
               if (!settled) options.onStatus?.(text);

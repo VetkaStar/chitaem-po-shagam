@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { startLocalSpeech } from '@/lib/local-speech';
+import type { SpeechOptions } from '../../lib/speech/models';
 import { advanceTextReading, readingLetters } from '@/lib/text-practice';
 import { classifyUtterance } from '@/lib/feedback';
 export function useTextMicrophone(
@@ -9,6 +10,7 @@ export function useTextMicrophone(
   deviceId: string,
   onComplete: () => void,
   onRest: () => void,
+  options: SpeechOptions = {},
 ) {
   const [progress, setProgress] = useState(0),
     [level, setLevel] = useState(0),
@@ -36,6 +38,8 @@ export function useTextMicrophone(
     let active = true;
     const speech = startLocalSpeech({
       deviceId,
+      speechModel: options.speechModel,
+      micProcessing: options.micProcessing,
       onLevel: (value) => {
         if (active) setLevel(value);
       },
@@ -65,6 +69,10 @@ export function useTextMicrophone(
       onResult: (result) => {
         if (!active || completed.current) return;
         setPreviewProgress(0);
+        if (result.experimental) {
+          setStatus('Попытка услышана. Попроси взрослого подтвердить строку.');
+          return;
+        }
         if (classifyUtterance(result.text ?? '', 1, '', []).kind === 'rest') {
           callbacks.current.onRest();
           return;
@@ -109,7 +117,14 @@ export function useTextMicrophone(
       active = false;
       speech.abort();
     };
-  }, [target, resetKey, enabled, deviceId]);
+  }, [
+    target,
+    resetKey,
+    enabled,
+    deviceId,
+    options.speechModel,
+    options.micProcessing,
+  ]);
   return {
     progress: progressKey === resetKey ? progress : 0,
     previewProgress: progressKey === resetKey ? previewProgress : 0,

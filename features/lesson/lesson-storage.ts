@@ -1,4 +1,5 @@
 import { parseVision } from '@/lib/vision';
+import { parseSpeechModel } from '../../lib/speech/models';
 import { browserStorage } from '../../lib/progress/profile-storage';
 
 import { levels } from '@/lib/learning';
@@ -59,6 +60,8 @@ export function restoreLessonProgress({
             ? s.autoAdvanceSeconds
             : 3,
         voice: s.voice === 'male' ? 'male' : 'female',
+        speechModel: parseSpeechModel(s.speechModel),
+        micProcessing: s.micProcessing !== false,
         layout: s.layout === 'focus' ? 'focus' : 'order',
         look: s.look === 'notebook' ? 'notebook' : 'plain',
         paper: s.paper === 'blue' ? 'blue' : 'main',

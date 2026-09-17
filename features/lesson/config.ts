@@ -1,4 +1,5 @@
 import type { VisionMode } from '@/lib/vision';
+import type { SpeechModelId } from '../../lib/speech/models';
 export type Stage = 'letters' | 'syllables' | 'words' | 'pictures';
 export type Mode = 'read' | 'fly' | 'type';
 export type Layout = 'order' | 'focus';
@@ -35,6 +36,8 @@ export type Settings = {
   colorVision: VisionMode;
   micConsent: boolean;
   micDevice: string;
+  speechModel: SpeechModelId;
+  micProcessing: boolean;
   layout: Layout;
   look: Look;
   paper: Paper;
@@ -76,6 +79,8 @@ export const defaults: Settings = {
   colorVision: 'off',
   micConsent: false,
   micDevice: '',
+  speechModel: 'vosk',
+  micProcessing: true,
   layout: 'order',
   look: 'plain',
   paper: 'main',

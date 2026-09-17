@@ -1,6 +1,7 @@
 'use client';
 import AutoAdvanceSettings from '@/components/auto-advance-settings';
 import VisionSettings from './VisionSettings';
+import SpeechSettings from './SpeechSettings';
 import StylePicker from '../portal/StylePicker';
 import { Mic, MicOff, ArrowRight, Download } from 'lucide-react';
 import {
@@ -108,7 +109,9 @@ export default function ParentSettings({
               }
             >
               {[100, 120, 140, 160].map((scale) => (
-                <option key={scale} value={scale}>{scale}%</option>
+                <option key={scale} value={scale}>
+                  {scale}%
+                </option>
               ))}
             </select>
           </div>
@@ -317,6 +320,13 @@ export default function ParentSettings({
             />
             <p>{micMessage}</p>
           </div>
+          <SpeechSettings
+            settings={settings}
+            update={update}
+            stop={stop}
+            open={parent}
+            micTesting={micTesting}
+          />
           <div className="parent-info">
             <h3>Как заниматься</h3>
             <p>
@@ -347,12 +357,11 @@ export default function ParentSettings({
               помощь. Ручная оценка доступна в каждом задании.
             </p>
             <p>
-              Речь распознаётся прямо на устройстве с помощью Vosk. При первом
-              запуске загружается русская модель (около 45 МБ). Голос не
-              отправляется на сервер и не сохраняется. Для загрузки нужен
-              интернет; для чтения — разрешение микрофона. Индикатор показывает
-              реальный уровень звука. В настройках можно выбрать другое
-              устройство.
+              Речь распознаётся прямо на устройстве выбранной моделью. При
+              первом запуске загружаются её файлы. Голос не отправляется на
+              сервер и не сохраняется. Для загрузки нужен интернет; для чтения —
+              разрешение микрофона. Индикатор показывает реальный уровень звука.
+              В настройках можно выбрать другое устройство.
             </p>
             {settings.micConsent && (
               <button

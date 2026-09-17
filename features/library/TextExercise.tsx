@@ -202,6 +202,7 @@ export default function TextExercise({
       setMic(false);
       model.setPaused(true);
     },
+    model.settings,
   );
   const helpExposure = useFreeExposure(
     showingAdditional

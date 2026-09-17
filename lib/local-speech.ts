@@ -1,5 +1,16 @@
 /* Local speech engine: microphone samples stay on this device. */
-type VoskResult = { text?: string; result?: { conf: number; word: string }[] };
+import {
+  microphoneConstraints,
+  parseSpeechModel,
+  type SpeechOptions,
+} from './speech/models';
+type VoskResult = {
+  text?: string;
+  result?: { conf: number; word: string }[];
+  experimental?: boolean;
+  model?: string;
+  elapsedMs?: number;
+};
 type RecognizerMessage = { result?: VoskResult & { partial?: string } };
 type Recognizer = {
   setWords: (words: boolean) => void;
@@ -125,7 +136,7 @@ function loadLocalModel(progress: (text: string) => void = () => {}) {
   });
   return cachedModel;
 }
-export type SpeechCallbacks = {
+export type SpeechCallbacks = SpeechOptions & {
   deviceId?: string;
   vocabulary?: string[];
   onLevel: (level: number) => void;
@@ -136,8 +147,48 @@ export type SpeechCallbacks = {
   onPartial: (text: string) => void;
   onResult: (result: VoskResult) => void;
   onError: (message: string, code?: string) => void;
+  onCaptureSettings?: (settings: MediaTrackSettings) => void;
 };
-export function startLocalSpeech(callbacks: SpeechCallbacks) {
+export type SpeechSession = {
+  abort: () => void;
+  setEnabled: (value: boolean) => void;
+  finish: () => Promise<void>;
+};
+export function startLocalSpeech(callbacks: SpeechCallbacks): SpeechSession {
+  if (parseSpeechModel(callbacks.speechModel) !== 'vosk') {
+    let stopped = false,
+      enabled = true;
+    let engine: SpeechSession | undefined;
+    const loading = import('./speech/browser-session')
+      .then(({ startBrowserSpeech }) => {
+        if (!stopped) {
+          engine = startBrowserSpeech(callbacks);
+          engine.setEnabled(enabled);
+        }
+      })
+      .catch((error: unknown) => {
+        if (!stopped)
+          callbacks.onError(
+            error instanceof Error ? error.message : String(error),
+            'service_unavailable',
+          );
+      });
+    return {
+      abort() {
+        stopped = true;
+        engine?.abort();
+      },
+      setEnabled(value: boolean) {
+        enabled = value;
+        engine?.setEnabled(value);
+      },
+      async finish() {
+        await loading;
+        if (!engine || stopped) throw new Error('not-ready');
+        await engine.finish();
+      },
+    };
+  }
   let closed = false,
     enabled = true,
     stream: MediaStream | undefined,
@@ -254,15 +305,10 @@ export function startLocalSpeech(callbacks: SpeechCallbacks) {
       context = new AudioContext();
       await context.resume();
       stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          deviceId: callbacks.deviceId
-            ? { exact: callbacks.deviceId }
-            : undefined,
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-          channelCount: 1,
-        },
+        audio: microphoneConstraints(
+          callbacks.deviceId,
+          callbacks.micProcessing,
+        ),
         video: false,
       });
       if (closed) {
@@ -270,6 +316,9 @@ export function startLocalSpeech(callbacks: SpeechCallbacks) {
         return;
       }
       source = context.createMediaStreamSource(stream);
+      callbacks.onCaptureSettings?.(
+        stream.getAudioTracks?.()[0]?.getSettings() ?? {},
+      );
       const analyser = context.createAnalyser();
       analyser.fftSize = 512;
       source.connect(analyser);

@@ -510,4 +510,14 @@ act(() => speechOptions.onResult({text:model.target.toLowerCase(), result:[{conf
 assert.equal(model.stars, beforePendingStars + 1, 'stored material resumes ordinary validation');
 console.log('PASS microphone results wait for durable material without clearing intent');
 
+act(m => { m.changeTopic('syllables', 4); m.update('speechModel', 'gigaam-ctc-int8'); m.update('micProcessing', false); m.setLessonMic(true); });
+act(() => speechOptions.onReady());
+assert.equal(speechOptions.speechModel, 'gigaam-ctc-int8');
+assert.equal(speechOptions.micProcessing, false);
+const experimentalStars = model.stars;
+act(() => speechOptions.onResult({ text: model.target.toLowerCase(), experimental: true, result: [{ conf: 1 }] }));
+assert.equal(model.stars, experimentalStars, 'experimental ASR is never an automatic award');
+assert.notEqual(model.feedback.kind, 'success');
+assert.match(model.attemptStatus, /взрослого/);
+console.log('PASS model/microphone options reach lesson and experimental results require adult confirmation');
 for (const slot of slots) slot?.cleanup?.();

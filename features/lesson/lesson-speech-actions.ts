@@ -73,6 +73,12 @@ export function createSpeechHandler(context: {
     )
       return;
     setSpeechPreview(0);
+    if (r.experimental) {
+      setAttemptStatus(
+        'Попытка услышана. Попроси взрослого подтвердить ответ.',
+      );
+      return;
+    }
     const text = r.text || '',
       confidence = r.result?.length
         ? Math.min(...r.result.map((x) => x.conf))

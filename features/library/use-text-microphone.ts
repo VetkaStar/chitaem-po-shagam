@@ -1,4 +1,4 @@
-import { exactSpeechAnswer } from '../../lib/speech/exact-answer';
+import { advanceFinalReading } from '@/lib/slow-reading';
 import { useEffect, useRef, useState } from 'react';
 import { startLocalSpeech } from '@/lib/local-speech';
 import type { SpeechOptions } from '../../lib/speech/models';
@@ -53,7 +53,7 @@ export function useTextMicrophone(
       onPartial: (text) => {
         if (active && !completed.current)
           setPreviewProgress(
-            advanceTextReading(target, position.current, text, 1),
+            advanceFinalReading(text, target, position.current),
           );
       },
       onActivity: (phase) => {
@@ -73,16 +73,21 @@ export function useTextMicrophone(
         if (result.experimental) {
           if (classifyUtterance(result.text ?? '', 0, '', []).kind === 'rest') {
             callbacks.current.onRest();
-          } else if (exactSpeechAnswer(result.text ?? '', target)) {
-            position.current = readingLetters(target).length;
-            setProgress(position.current);
-            setNeedsHelp(false);
+            return;
+          }
+          const previous = position.current;
+          const next = advanceFinalReading(result.text ?? '', target, previous);
+          position.current = next;
+          setProgress(next);
+          setNeedsHelp(next === previous);
+          if (next > 0 && next === readingLetters(target).length) {
             completed.current = true;
             speech.setEnabled(false);
             callbacks.current.onComplete();
           } else {
-            setNeedsHelp(true);
-            setStatus('Пока нет полного совпадения. Прочитай выделенную строку целиком или проверь со взрослым.');
+            setStatus(next > previous
+              ? 'Начало прочитано. Продолжай с выделенного места.'
+              : 'Не расслышал. Продолжай с выделенного места — начало сохранено.');
           }
           return;
         }

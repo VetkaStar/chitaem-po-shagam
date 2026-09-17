@@ -86,12 +86,27 @@ export function createSpeechHandler(context: {
         setReadingPart(null);
         setAttemptStatus('');
         success('local-speech-exact');
-      } else if (stage === 'words' && readingPart &&
-        exactSpeechAnswer(r.text ?? '', target.slice(readingPart.start))) {
-        setReadingPart(null);
-        slowAttempt.current.reset();
-        setSpeechProgress(0);
-        setAttemptStatus('Эта часть прочитана! Теперь прочитай слово целиком.');
+      } else if (stage !== 'letters') {
+        const selected = stage === 'words' && readingPart;
+        const attempt = selected ? partPractice.current : slowAttempt.current;
+        const piece = attempt.acceptFinal(r.text ?? '', selected ? target.slice(selected.start) : target);
+        setSpeechProgress((selected ? selected.start : 0) + piece.progress);
+        if (piece.kind === 'complete') {
+          setReadingPart(null);
+          if (!selected || selected.start === 0) {
+            setAttemptStatus('');
+            success('local-speech-parts');
+          } else {
+            slowAttempt.current.reset();
+            partPractice.current.reset();
+            setSpeechProgress(0);
+            setAttemptStatus('Эта часть прочитана! Теперь прочитай слово целиком.');
+          }
+        } else {
+          setAttemptStatus(piece.kind === 'pending'
+            ? 'Начало услышано. Продолжай, я жду.'
+            : 'Не расслышал. Продолжай с выделенного места — начало сохранено.');
+        }
       } else {
         setAttemptStatus('Пока нет полного совпадения. Прочитай целиком или проверь вместе со взрослым.');
       }

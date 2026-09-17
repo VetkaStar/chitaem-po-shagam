@@ -22,6 +22,17 @@ export function matchFragment(text: string, target: string, start = 0) {
   }
   return position;
 }
+/** Ordered transcript fragments without an invented acoustic confidence score.
+ * A mismatched fragment leaves the last confirmed position untouched.
+ */
+export function advanceFinalReading(text: string, target: string, position = 0) {
+  const clean = (value: string) => value.normalize('NFC').toUpperCase()
+    .replace(/Ё/g, 'Е').replace(/[\s.,!?;:«»"—–-]/gu, '');
+  const input = clean(text), goal = clean(target);
+  if (!/^[А-Я]+$/u.test(input) || !/^[А-Я]+$/u.test(goal)) return position;
+  return Math.max(position, matchFragment(input, goal, position) ?? 0,
+    matchFragment(input, goal, 0) ?? 0);
+}
 export class SlowReadingAttempt {
   private position = 0;
   private lastMatch = 0;
@@ -31,6 +42,12 @@ export class SlowReadingAttempt {
   }
   get progress() {
     return this.position;
+  }
+  acceptFinal(text: string, target: string) {
+    const previous = this.position;
+    this.position = advanceFinalReading(text, target, previous);
+    return { progress: this.position, kind: this.position === target.length
+      ? 'complete' : this.position > previous ? 'pending' : 'unrelated' };
   }
   accept(text: string, confidence: number, target: string, now = Date.now()) {
     if (this.position && now - this.lastMatch > 20000) this.reset();

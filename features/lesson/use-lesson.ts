@@ -21,7 +21,7 @@ import { freshWordDeck, wordParts } from '@/content/word-bank';
 import { useEffect, useRef, useState } from 'react';
 import { levels, pictures, breaks } from '@/lib/learning';
 import { wordPool, makeDeck } from '@/lib/session';
-import { SlowReadingAttempt, matchFragment } from '@/lib/slow-reading';
+import { SlowReadingAttempt, advanceFinalReading } from '@/lib/slow-reading';
 import { findTypo, type TypoHint } from '@/lib/typo';
 
 import { startLocalSpeech, type SpeechCallbacks } from '@/lib/local-speech';
@@ -549,19 +549,12 @@ export function useLesson() {
       onPartial: (text) => {
         if (epoch.current === token) {
           activitySink.current('sound');
-          if (stage === 'words')
-            setSpeechPreview(
-              matchFragment(
-                text,
-                target,
-                selectedPartRef.current
-                  ? selectedPartRef.current.start +
-                      partPractice.current.progress
-                  : slowAttempt.current.progress,
-              ) ??
-                matchFragment(text, target) ??
-                0,
-            );
+          if (stage !== 'letters') {
+            const selected = selectedPartRef.current;
+            const start = selected ? selected.start : 0;
+            setSpeechPreview(start + advanceFinalReading(text, target.slice(start),
+              selected ? partPractice.current.progress : slowAttempt.current.progress));
+          }
         }
       },
       onResult: (r) => {
@@ -593,6 +586,7 @@ export function useLesson() {
     settings.letterMode,
     settings.wordMode,
     repeatEpoch,
+    target,
   ]);
   useEffect(() => {
     recognition.current?.setEnabled?.(

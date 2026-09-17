@@ -521,8 +521,12 @@ act(() => speechOptions.onResult({ text: model.target.slice(0, 1), experimental:
 assert.equal(model.stars, experimentalStars, 'a single sound cannot complete a syllable');
 act(() => speechOptions.onResult({ text: 'посторонняя фраза', experimental: true }));
 assert.equal(model.stars, experimentalStars);
-act(() => speechOptions.onResult({ text: model.target.toLowerCase(), experimental: true }));
-assert.equal(model.stars, experimentalStars + 1, 'exact final answer works without fabricated confidence');
+assert.equal(model.speechProgress, 1, 'error preserves confirmed letter');
+act(() => speechOptions.onPartial(model.target.slice(1)));
+assert.equal(model.speechPreview, model.target.length, 'preview advances before final');
+assert.equal(model.stars, experimentalStars);
+act(() => speechOptions.onResult({ text: model.target.slice(1), experimental: true }));
+assert.equal(model.stars, experimentalStars + 1, 'ordered final fragments complete without fabricated confidence');
 act(() => speechOptions.onResult({ text: model.target.toLowerCase(), experimental: true }));
 assert.equal(model.stars, experimentalStars + 1, 'duplicate final does not award twice');
 console.log('PASS final exact experimental answers accepted; partial and unrelated speech rejected');

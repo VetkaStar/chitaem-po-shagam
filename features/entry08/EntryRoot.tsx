@@ -1,3 +1,4 @@
+import { ArrowLeft } from 'lucide-react';
 import EntryScreens from './EntryScreens';
 import PersonalLesson from './PersonalLesson';
 import { useEntry08 } from './use-entry08';
@@ -39,6 +40,12 @@ export default function EntryRoot(props: {
     );
   return (
     <>
+      {!m.entry && ['age', 'questions', 'interests', 'access'].includes(m.ui.page) && (
+        <button disabled={m.busy} onClick={() => m.dispatch('back_to_role')}>
+          <ArrowLeft size={18} aria-hidden="true" />
+          Назад к выбору «Кто отвечает?»
+        </button>
+      )}
       <EntryScreens
         {...m}
         page={m.ui.page === 'lesson' ? 'report' : m.ui.page}

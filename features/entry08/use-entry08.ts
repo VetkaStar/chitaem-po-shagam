@@ -338,6 +338,8 @@ export function useEntry08(
       }
       const u = ui();
       let e = current();
+      if (action === 'back_to_role' && !e)
+        return save({ ui: { ...u, page: 'role' } });
       if (action === 'answer') {
         const answers = { ...u.answers },
           id = String(payload.id),
@@ -352,7 +354,15 @@ export function useEntry08(
           return save({ ui: { ...u, answers } });
         }
         answers[id] = value;
-        return save({ ui: { ...u, answers, page: questionPage(answers) } });
+        return save({
+          ui: {
+            ...u,
+            answers,
+            page: id === 'respondent' && value === 'child' && answers.age
+              ? 'interests'
+              : questionPage(answers),
+          },
+        });
       }
       if ((action === 'next' || action === 'skip') && u.page === 'interests')
         return save({

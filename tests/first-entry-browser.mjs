@@ -57,6 +57,19 @@ try {
   completed.push(
     'new profile opens short entry and resumes role screen after reload',
   );
+  const backToRole = () => page.getByRole('button', { name: 'Назад к выбору «Кто отвечает?»', exact: true });
+  await page.getByRole('button', { name: 'Ребёнок сам', exact: true }).click();
+  await page.getByRole('heading', { name: 'Что тебе интересно?', exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Животные', exact: true }).click();
+  await backToRole().click();
+  await page.getByRole('heading', { name: 'Кто сейчас отвечает?', exact: true }).waitFor();
+  await page.reload();
+  await page.getByRole('heading', { name: 'Кто сейчас отвечает?', exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Ребёнок сам', exact: true }).click();
+  await page.getByRole('heading', { name: 'Что тебе интересно?', exact: true }).waitFor();
+  assert.equal(await page.getByRole('button', { name: 'Животные', exact: true }).getAttribute('aria-pressed'), 'true');
+  await backToRole().click();
+  completed.push('back to respondent survives reload, preserves interests and permits switching to adult');
   await page
     .getByRole('button', { name: 'Взрослый о ребёнке', exact: true })
     .click();

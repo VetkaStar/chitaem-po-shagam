@@ -129,6 +129,7 @@ export default function TextExercise({
     }
   }
   const showQuestion = mode === 'questions' || question;
+  const readingFocus = model.settings.readingFocus ?? 'word';
   // Hidden lines and unanswered-question hints are absent from this snapshot.
   const visibleLines =
     showQuestion || model.settings.showFullText !== false
@@ -576,11 +577,7 @@ export default function TextExercise({
                           <ReadingGuide
                             text={text}
                             color={model.settings.color}
-                            focus={
-                              speech.needsHelp
-                                ? 'word'
-                                : (model.settings.readingFocus ?? 'word')
-                            }
+                            focus={readingFocus}
                             highlight={
                               model.settings.readingHighlight !== false ||
                               speech.needsHelp
@@ -619,9 +616,13 @@ export default function TextExercise({
               </div>
               {mode === 'read' && speech.needsHelp && !accepted && (
                 <div className="text-error-place" role="status">
-                  Продолжи со слова «
+                  {readingFocus === 'syllable'
+                    ? 'Продолжи со слога «'
+                    : readingFocus === 'line'
+                      ? 'Продолжи строку «'
+                      : 'Продолжи со слова «'}
                   {
-                    guideParts(item.lines[line], 'word').find(
+                    guideParts(item.lines[line], readingFocus).find(
                       (p) =>
                         p.letters &&
                         letterOffset(item.lines[line], p.end) >

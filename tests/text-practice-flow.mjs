@@ -50,6 +50,7 @@ const React = {
   },
 };
 const storage = new Map();
+let uiSpeech = { progress: 0, level: 0, status: 'listening' };
 let speechCallbacks,
   aborts = 0,
   completes = 0,
@@ -96,7 +97,7 @@ function load(file) {
           return {
             useTextMicrophone: (...args) => {
               uiMic = args;
-              return { progress: 0, level: 0, status: 'listening' };
+              return uiSpeech;
             },
           };
         if (p === '@/lib/local-speech')
@@ -385,3 +386,26 @@ assert.equal(uiMic[0], 'Кот спит.');
 console.log(
   'PASS guided selection: reading last line or suffix cannot skip unread prefix',
 );
+
+const recoveryItem = { ...item, lines: ['Аня поставила горшок поближе к свету.'] };
+model.settings.readingFocus = 'syllable';
+mount(() => Exercise({ item: recoveryItem, model, onBack() {} }));
+click('Читаю');
+uiSpeech = { progress: 5, previewProgress: 0, level: 0, status: 'listening', needsHelp: true };
+flush();
+const recoveryGuide = () => nodes(result).find(n => n.props?.onSelect && n.props?.text === recoveryItem.lines[0]);
+assert.equal(recoveryGuide().props.focus, 'syllable');
+assert.equal(recoveryGuide().props.progress, 5);
+assert(text(result).includes('Продолжи со слога «ста»'), text(result));
+const actualGuide = load('features/lesson/ReadingGuide.tsx').default;
+const renderedGuide = actualGuide(recoveryGuide().props);
+assert.equal(text(nodes(renderedGuide).find(n => n.props?.className === 'guide-current')), 'ста');
+model.settings.readingFocus = 'word';
+flush();
+assert.equal(recoveryGuide().props.focus, 'word');
+assert(text(result).includes('Продолжи со слова «поставила»'));
+model.settings.readingFocus = 'line';
+flush();
+assert.equal(recoveryGuide().props.focus, 'line');
+assert(text(result).includes('Продолжи строку «Аня поставила'));
+console.log('PASS error recovery respects syllable, word and line focus; confirmed syllable prefix retained');

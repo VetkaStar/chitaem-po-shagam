@@ -13,6 +13,7 @@ const { chromium } = await import(
     ),
   )
 );
+const narrator = process.env.PIPER_NARRATOR || 'piper-irina';
 const root = path.resolve(import.meta.dirname, '..');
 const out = path.join(root, '.local/piper-tests');
 fs.mkdirSync(out, { recursive: true });
@@ -69,12 +70,12 @@ try {
       .click();
   };
   await open();
-  await page.locator('#narrator-engine').selectOption('piper-irina');
+  await page.locator('#narrator-engine').selectOption(narrator);
   await page.reload();
   await open();
   assert.equal(
     await page.locator('#narrator-engine').inputValue(),
-    'piper-irina',
+    narrator,
   );
   await page
     .locator('#narrator-sample')
@@ -99,7 +100,7 @@ try {
   const bytes = await page.evaluate(async () => [
     ...new Uint8Array(await window.testAudio[0].arrayBuffer()),
   ]);
-  fs.writeFileSync(path.join(out, 'irina.wav'), Buffer.from(bytes));
+  fs.writeFileSync(path.join(out, narrator + '.wav'), Buffer.from(bytes));
   assert(bytes.length > 20000, 'nonempty generated audio');
   await page.waitForFunction(
     () =>
@@ -136,7 +137,8 @@ try {
       passed: true,
       bytes: bytes.length,
       elapsedMs: Date.now() - started,
-      wav: path.join(out, 'irina.wav'),
+      narrator,
+      wav: path.join(out, narrator + '.wav'),
     }),
   );
 } finally {

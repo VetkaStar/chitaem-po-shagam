@@ -1,3 +1,5 @@
+import { piperVoiceId, type Narrator } from './narrator-models';
+let selectedVoice: string | undefined;
 let worker: Worker | undefined;
 let serial = 0;
 let idle: ReturnType<typeof setTimeout> | undefined;
@@ -26,8 +28,12 @@ export function cancelPiperGeneration() {
 export function generatePiper(
   text: string,
   status: (text: string) => void,
+  narrator: Narrator = 'piper-irina',
 ): Promise<Blob> {
-  if (pending) dispose();
+  const voiceId = piperVoiceId(narrator);
+  if (!voiceId) return Promise.reject(new Error('Не выбран голос Piper.'));
+  if (pending || selectedVoice !== voiceId) dispose();
+  selectedVoice = voiceId;
   clearTimeout(idle);
   worker ??= new Worker(new URL('./piper.worker.ts', import.meta.url), {
     type: 'module',
@@ -66,6 +72,6 @@ export function generatePiper(
         180000,
       ),
     };
-    worker!.postMessage({ id, text });
+    worker!.postMessage({ id, text, voiceId });
   });
 }

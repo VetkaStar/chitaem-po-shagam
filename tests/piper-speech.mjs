@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import ts from 'typescript';
+const selectedVoices = [];
 const audios = [],
   tasks = [],
   revoked = [],
@@ -18,7 +19,7 @@ vm.runInNewContext(
     module,
     exports: module.exports,
     require: () => ({
-      generatePiper: () => new Promise((resolve) => tasks.push(resolve)),
+      generatePiper: (_text, _status, voice) => { selectedVoices.push(voice); return new Promise((resolve) => tasks.push(resolve)); },
       cancelPiperGeneration: () => {
         cancelled++;
       },
@@ -86,3 +87,13 @@ assert.deepEqual(errors, []);
 console.log(
   'PASS Piper playback: cancellation during/before generation, slow playback preserves pitch, ended cleanup and URL release',
 );
+
+for (const narrator of ['piper-denis', 'piper-dmitri', 'piper-ruslan']) {
+  speakPiper('Мама', { ...options, narrator });
+  await tick();
+  assert.equal(selectedVoices.at(-1), narrator);
+  tasks.shift()(new Blob(['wave']));
+  await tick();
+  audios.at(-1).onended();
+}
+console.log('PASS selected male voices reach the generation worker facade');

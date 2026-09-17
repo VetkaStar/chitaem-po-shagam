@@ -1,3 +1,4 @@
+import { parseNarrator } from '../../lib/narrator-models';
 import { parseVision } from '@/lib/vision';
 import { parseSpeechModel } from '../../lib/speech/models';
 import { browserStorage } from '../../lib/progress/profile-storage';
@@ -60,7 +61,7 @@ export function restoreLessonProgress({
             ? s.autoAdvanceSeconds
             : 3,
         voice: s.voice === 'male' ? 'male' : 'female',
-        narrator: s.narrator === 'piper-irina' ? 'piper-irina' : 'system',
+        narrator: parseNarrator(s.narrator),
         speechModel: parseSpeechModel(s.speechModel),
         micProcessing: s.micProcessing !== false,
         layout: s.layout === 'focus' ? 'focus' : 'order',

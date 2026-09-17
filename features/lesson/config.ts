@@ -1,3 +1,4 @@
+import type { Narrator } from '../../lib/narrator-models';
 import type { VisionMode } from '@/lib/vision';
 import type { SpeechModelId } from '../../lib/speech/models';
 export type Stage = 'letters' | 'syllables' | 'words' | 'pictures';
@@ -27,7 +28,7 @@ export type Settings = {
   motion: boolean;
   sound: boolean;
   voice: 'female' | 'male';
-  narrator: 'system' | 'piper-irina';
+  narrator: Narrator;
   autoSpeech: boolean;
   partsThenWhole: boolean;
   autoAdvance: boolean;

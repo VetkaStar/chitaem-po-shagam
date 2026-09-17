@@ -1,3 +1,4 @@
+import { exactSpeechAnswer } from '../../lib/speech/exact-answer';
 import type { SpeechCallbacks } from '@/lib/local-speech';
 import { levels } from '@/lib/learning';
 import { wordPool } from '@/lib/session';
@@ -74,9 +75,26 @@ export function createSpeechHandler(context: {
       return;
     setSpeechPreview(0);
     if (r.experimental) {
-      setAttemptStatus(
-        'Попытка услышана. Попроси взрослого подтвердить ответ.',
-      );
+      if (classifyUtterance(r.text ?? '', 0, '', []).kind === 'rest') {
+        stop();
+        setPaused(true);
+        return;
+      }
+      const expected = stage === 'letters' && settings.letterMode === 'alphabet'
+        ? names[target] || target : target;
+      if (exactSpeechAnswer(r.text ?? '', expected)) {
+        setReadingPart(null);
+        setAttemptStatus('');
+        success('local-speech-exact');
+      } else if (stage === 'words' && readingPart &&
+        exactSpeechAnswer(r.text ?? '', target.slice(readingPart.start))) {
+        setReadingPart(null);
+        slowAttempt.current.reset();
+        setSpeechProgress(0);
+        setAttemptStatus('Эта часть прочитана! Теперь прочитай слово целиком.');
+      } else {
+        setAttemptStatus('Пока нет полного совпадения. Прочитай целиком или проверь вместе со взрослым.');
+      }
       return;
     }
     const text = r.text || '',

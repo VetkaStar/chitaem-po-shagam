@@ -119,10 +119,10 @@ export default function ParentSettings({
           <AutoAdvanceSettings model={model} />
           <NarratorSettings settings={settings} update={update} stop={stop} />
           <div className="setting">
-            <label htmlFor="narrator-voice">Голос озвучки</label>
+            <label htmlFor="narrator-voice">Системный голос</label>
             <select
               id="narrator-voice"
-              disabled={settings.narrator === 'piper-irina'}
+              disabled={settings.narrator?.startsWith('piper-')}
               value={settings.voice}
               onChange={(e) =>
                 update('voice', e.target.value as 'female' | 'male')

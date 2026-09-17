@@ -1,3 +1,4 @@
+import { parseNarrator, piperVoices } from '../../lib/narrator-models';
 import { useEffect, useRef, useState } from 'react';
 import { speakPiper } from '../../lib/piper-speech';
 import { narratorUtterance } from '../../lib/narrator-utterance';
@@ -49,9 +50,10 @@ export default function NarratorSettings({
         setPlaying(false);
       }
     };
-    if (settings.narrator === 'piper-irina') {
+    if (settings.narrator?.startsWith('piper-')) {
       cancelRef.current = speakPiper(text.trim(), {
         slow: settings.slow,
+          narrator: settings.narrator,
         onStatus: (value) => {
           if (token === epoch.current) setStatus(value);
         },
@@ -93,14 +95,14 @@ export default function NarratorSettings({
           stop();
           update(
             'narrator',
-            event.target.value === 'piper-irina' ? 'piper-irina' : 'system',
+            parseNarrator(event.target.value),
           );
         }}
       >
         <option value="system">Системный голос — текущий</option>
-        <option value="piper-irina">Piper — Ирина, на устройстве</option>
+        {piperVoices.map(v => <option key={v.id} value={v.id}>Piper — {v.label}, на устройстве</option>)}
       </select>
-      {settings.narrator === 'piper-irina' && (
+      {settings.narrator?.startsWith('piper-') && (
         <p>
           При первом прослушивании загрузится голос: около 63 МБ плюс файлы
           движка. Текст озвучивается на устройстве, без API. Ударения и короткие

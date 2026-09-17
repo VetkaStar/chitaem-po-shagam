@@ -165,10 +165,10 @@ speechCallbacks.onActivity('pause');
 flush();
 assert.equal(completes, 0);
 const final = (text, conf = 0.9) => ({ text, result: [{ word: text, conf }] });
-speechCallbacks.onResult({ ...final('кот спит', 1), experimental: true });
+speechCallbacks.onResult({ text: 'кот', experimental: true });
 flush();
-assert.equal(completes, 0, 'experimental model cannot complete a line');
-assert.equal(result.progress, 0, 'experimental model cannot confirm a prefix');
+assert.equal(completes, 0, 'partial final cannot complete a line');
+assert.equal(result.progress, 0, 'partial final cannot confirm a prefix');
 speechCallbacks.onResult(final('кот'));
 flush();
 assert.equal(result.progress, 3);
@@ -225,6 +225,20 @@ assert.equal(result.progress, 25);
 console.log(
   'PASS recognized prefix survives incorrect ending; continuation completes without rereading',
 );
+key = 'experimental-full';
+target = 'Кот спит.';
+flush();
+const previousComplete = completes;
+speechCallbacks.onPartial('кот спит');
+flush();
+assert.equal(completes, previousComplete);
+speechCallbacks.onResult({ text: 'кот спит лишнее', experimental: true });
+flush();
+assert.equal(completes, previousComplete);
+speechCallbacks.onResult({ text: 'Кот спит!', experimental: true });
+flush();
+assert.equal(completes, previousComplete + 1);
+assert.equal(result.progress, 7);
 const Exercise = load('features/library/TextExercise.tsx').default;
 const item = {
   id: 'test',

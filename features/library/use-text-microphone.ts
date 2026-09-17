@@ -1,3 +1,4 @@
+import { exactSpeechAnswer } from '../../lib/speech/exact-answer';
 import { useEffect, useRef, useState } from 'react';
 import { startLocalSpeech } from '@/lib/local-speech';
 import type { SpeechOptions } from '../../lib/speech/models';
@@ -70,7 +71,19 @@ export function useTextMicrophone(
         if (!active || completed.current) return;
         setPreviewProgress(0);
         if (result.experimental) {
-          setStatus('Попытка услышана. Попроси взрослого подтвердить строку.');
+          if (classifyUtterance(result.text ?? '', 0, '', []).kind === 'rest') {
+            callbacks.current.onRest();
+          } else if (exactSpeechAnswer(result.text ?? '', target)) {
+            position.current = readingLetters(target).length;
+            setProgress(position.current);
+            setNeedsHelp(false);
+            completed.current = true;
+            speech.setEnabled(false);
+            callbacks.current.onComplete();
+          } else {
+            setNeedsHelp(true);
+            setStatus('Пока нет полного совпадения. Прочитай выделенную строку целиком или проверь со взрослым.');
+          }
           return;
         }
         if (classifyUtterance(result.text ?? '', 1, '', []).kind === 'rest') {

@@ -58,7 +58,7 @@ export function createEntryMedia(
       stopSpeech();
       if (!getSettings().sound)
         return Promise.reject(new Error('sound-disabled'));
-      if (getSettings().narrator === 'piper-irina') {
+      if (getSettings().narrator && getSettings().narrator !== 'system') {
         window.speechSynthesis?.cancel();
         return new Promise((resolve, reject) => {
           let settled = false;
@@ -76,6 +76,7 @@ export function createEntryMedia(
           cancelSpeech = cancel;
           speakPiper(text, {
             slow: getSettings().slow,
+            narrator: getSettings().narrator,
             onEnd: () => settle(),
             onError: settle,
           });
@@ -175,8 +176,8 @@ export function createEntryMedia(
             onResult: (result) => {
               if (settled || !result.text?.trim()) return;
               parts.push(result.text.trim());
-              // Missing confidence is not evidence of a reliable observation.
-              confidence.push(
+              // Experimental engines have unknown confidence: keep it absent, never invent a score.
+              if (!result.experimental) confidence.push(
                 result.result?.length
                   ? Math.min(
                       ...result.result.map((word) =>

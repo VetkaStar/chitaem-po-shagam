@@ -34,7 +34,7 @@ export function createVoiceHandler(context: {
       releaseSoon();
       return;
     }
-    if (settings.narrator === 'piper-irina') {
+    if (settings.narrator?.startsWith('piper-')) {
       window.speechSynthesis?.cancel();
       setSpeaking(true);
       const finish = () => {
@@ -47,6 +47,7 @@ export function createVoiceHandler(context: {
         if (speechEpoch.current !== token) return;
         speakPiper(text, {
           slow: settings.slow,
+          narrator: settings.narrator,
           onStatus: context.onSpeechStatus,
           onEnd: () => {
             finish();

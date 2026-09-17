@@ -1,4 +1,6 @@
+import type { Narrator } from './narrator-models';
 type Options = {
+  narrator?: Narrator;
   slow: boolean;
   onStatus?: (text: string) => void;
   onEnd: () => void;
@@ -46,7 +48,7 @@ export function speakPiper(text: string, options: Options) {
       cancelGeneration = client.cancelPiperGeneration;
       const wav = await client.generatePiper(text, (value) => {
         if (!stopped) options.onStatus?.(value);
-      });
+      }, options.narrator ?? 'piper-irina');
       if (stopped) return;
       url = URL.createObjectURL(wav);
       audio.src = url;

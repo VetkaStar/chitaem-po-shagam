@@ -2,12 +2,12 @@ import { TtsSession } from '@mintplex-labs/piper-tts-web';
 
 let session: TtsSession | undefined;
 let queue = Promise.resolve();
-self.onmessage = ({ data }: MessageEvent<{ id: number; text: string }>) => {
+self.onmessage = ({ data }: MessageEvent<{ id: number; text: string; voiceId: string }>) => {
   queue = queue.then(async () => {
-    const { id, text } = data;
+    const { id, text, voiceId } = data;
     try {
       session ??= await TtsSession.create({
-        voiceId: 'ru_RU-irina-medium',
+        voiceId,
         wasmPaths: { ...TtsSession.WASM_LOCATIONS, onnxWasm: '' },
         progress: (p) =>
           self.postMessage({

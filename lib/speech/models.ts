@@ -52,6 +52,7 @@ export function verificationModel(value: SpeechModelId): SingleSpeechModelId {
 export type SpeechOptions = {
   speechModel?: SpeechModelId;
   micProcessing?: boolean;
+  speechConfidenceThreshold?: number;
 };
 export function parseSpeechModel(value: unknown): SpeechModelId {
   if (

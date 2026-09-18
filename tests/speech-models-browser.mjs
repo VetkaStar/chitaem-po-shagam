@@ -59,6 +59,7 @@ try {
         );
         const samples = decoded.getChannelData(0);
         const output = [];
+        const scores = [];
         let serial = 0;
         const request = (kind, pcm) =>
           new Promise((resolve, reject) => {
@@ -74,6 +75,7 @@ try {
             worker.onmessage = ({ data }) => {
               if (data.id !== id) return;
               if (data.status) console.log(model, data.status);
+              if (data.result?.confidenceScore !== undefined) scores.push(data.result.confidenceScore);
               if (data.result?.final && data.result.text)
                 output.push(data.result.text);
               if (data.error) {
@@ -107,6 +109,7 @@ try {
             model,
             loadedMs,
             totalMs: performance.now() - start,
+            scores,
             text: output.join(' '),
           };
         } catch (error) {
@@ -119,6 +122,7 @@ try {
       { model, workerFile, wav },
     );
     console.log(JSON.stringify(result));
+    if (model.startsWith('gigaam-ctc') && !result.error) assert(result.scores?.length && result.scores.every(s=>Number.isFinite(s)&&s>=0&&s<=1), 'real CTC score required');
     report.push(result);
   }
   fs.writeFileSync(

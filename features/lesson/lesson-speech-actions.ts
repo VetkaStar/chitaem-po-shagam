@@ -1,3 +1,4 @@
+import { belowSpeechThreshold } from '../../lib/speech/ctc-score';
 import { exactSpeechAnswer } from '../../lib/speech/exact-answer';
 import type { SpeechCallbacks } from '@/lib/local-speech';
 import { levels } from '@/lib/learning';
@@ -79,6 +80,9 @@ export function createSpeechHandler(context: {
         stop();
         setPaused(true);
         return;
+      }
+      if (r.model?.startsWith('gigaam-ctc') && belowSpeechThreshold(r.confidenceScore, settings.speechConfidenceThreshold)) {
+        setAttemptStatus('Не удалось уверенно распознать. Попробуй ещё раз.'); return;
       }
       const expected = stage === 'letters' && settings.letterMode === 'alphabet'
         ? names[target] || target : target;

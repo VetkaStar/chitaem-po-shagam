@@ -1,3 +1,4 @@
+import { ctcScore, type CtcOutput } from './ctc-score';
 import { modelFile } from './assets';
 import type { SpeechModelId } from './models';
 import type { AsrTranscriber } from 'onnx-asr-web';
@@ -17,6 +18,7 @@ let stream: OnlineStream | undefined;
 let streamRate = 16000;
 let whisper: ((samples: Float32Array) => Promise<string>) | undefined;
 let loaded: SpeechModelId | undefined;
+let score: number | undefined;
 const hf = (repo: string, file: string) =>
   `https://huggingface.co/${repo}/resolve/main/${file}`;
 const decoder = new TextDecoder();
@@ -141,6 +143,18 @@ async function load(model: SpeechModelId, status: (message: string) => void) {
         : implementation.encoder;
       if (!helper) throw new Error('Несовместимый адаптер GigaAM.');
       helper.prepareInputsFromWaveform = prepare;
+      if (!rnnt) {
+        const ctc = transcriber as unknown as {
+          encoder: { run: (...args: unknown[]) => Promise<CtcOutput> };
+          decoder: { blankTokenId: number };
+        };
+        const run = ctc.encoder.run.bind(ctc.encoder);
+        ctc.encoder.run = async (...args) => {
+          const output = await run(...args);
+          score = ctcScore(output, ctc.decoder.blankTokenId);
+          return output;
+        };
+      }
     } finally {
       urls.forEach((url) => URL.revokeObjectURL(url));
     }
@@ -194,11 +208,12 @@ async function handle(message: Request) {
       stream = zip.createStream();
     }
   } else if (kind === 'audio') {
+    score = undefined;
     const text = whisper
       ? await whisper(resample(message.samples!, message.rate!))
       : (await transcriber!.transcribeSamples(message.samples!, message.rate!))
           .text;
-    self.postMessage({ id, result: { text, final: true } });
+    self.postMessage({ id, result: { text, final: true, confidenceScore: score } });
   }
   self.postMessage({ id, done: true });
 }

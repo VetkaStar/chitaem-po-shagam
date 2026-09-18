@@ -1,3 +1,4 @@
+import { belowSpeechThreshold } from '../../lib/speech/ctc-score';
 import { advanceFinalReading } from '@/lib/slow-reading';
 import { useEffect, useRef, useState } from 'react';
 import { startLocalSpeech } from '@/lib/local-speech';
@@ -70,6 +71,9 @@ export function useTextMicrophone(
             callbacks.current.onRest();
             return;
           }
+      if (result.model?.startsWith('gigaam-ctc') && belowSpeechThreshold(result.confidenceScore, options.speechConfidenceThreshold)) {
+        setNeedsHelp(true); setStatus('Не удалось уверенно распознать. Попробуй ещё раз.'); return;
+      }
           const previous = position.current;
           const next = advanceFinalReading(result.text ?? '', target, previous);
           position.current = next;
@@ -138,6 +142,7 @@ export function useTextMicrophone(
     deviceId,
     options.speechModel,
     options.micProcessing,
+    options.speechConfidenceThreshold,
   ]);
   return {
     progress: progressKey === resetKey ? progress : 0,

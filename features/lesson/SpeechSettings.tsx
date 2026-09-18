@@ -33,6 +33,7 @@ export default function SpeechSettings({
   const [actual, setActual] = useState('');
   const combined = settings.speechModel.startsWith('combined:');
   const [partial, setPartial] = useState('');
+  const ctc = verificationModel(settings.speechModel).startsWith('gigaam-ctc');
   const selected =
     speechModels.find(
       (m) => m.id === verificationModel(settings.speechModel),
@@ -103,13 +104,16 @@ export default function SpeechSettings({
         if (token !== epoch.current) return;
         setPartial('');
         setStatus(result.text?.trim() ? 'Ответ получен. Можно говорить дальше.' : 'Окончательный ответ пустой. Попробуйте ещё раз.');
+        const score = result.confidenceScore === undefined ? '' :
+          ' · оценка ' + (result.confidenceScore * 100).toFixed(1) + '%' +
+          (result.confidenceScore * 100 < settings.speechConfidenceThreshold ? ' — ниже порога' : '');
         const timing =
           result.elapsedMs === undefined
             ? ''
             : ` · обработка ${(result.elapsedMs / 1000).toFixed(2)} с`;
         setLines((previous) => [
           ...previous.slice(-19),
-          (result.text?.trim() || 'Модель не распознала слова в этой попытке') + timing,
+          (result.text?.trim() || 'Модель не распознала слова в этой попытке') + score + timing,
         ]);
       },
       onError: (message) => {
@@ -210,6 +214,16 @@ export default function SpeechSettings({
           можно проверить вместе со взрослым.
         </p>
       )}
+      {ctc && <div className="setting">
+        <label htmlFor="speech-confidence">Порог уверенности GigaAM — тест
+          <small>Оценка нейросети, не процент правильного произношения. 0% — фильтр выключен. Zipformer не отменяет ответ GigaAM.</small>
+        </label>
+        <select id="speech-confidence" value={settings.speechConfidenceThreshold} onChange={event => {
+          cancel(); stop(); update('speechConfidenceThreshold', Number(event.target.value));
+        }}>
+          {Array.from({length:21}, (_, i) => i * 5).map(value => <option key={value} value={value}>{value}%{value === 0 ? ' — выключен' : ''}</option>)}
+        </select>
+      </div>}
       <label className="speech-processing">
         <input
           type="checkbox"

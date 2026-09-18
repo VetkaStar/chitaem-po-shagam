@@ -118,10 +118,12 @@ try {
       .click();
     assert.equal(await select.locator('option').count(), 4);
     await select.selectOption('gigaam-ctc-int8');
+    await page.locator('#speech-confidence').selectOption('70');
     await page.getByRole('checkbox', { name: 'Обработка микрофона' }).uncheck();
     await page.reload();
     await open();
     assert.equal(await select.inputValue(), 'gigaam-ctc-int8');
+    assert.equal(await page.locator('#speech-confidence').inputValue(), '70');
     assert.equal(
       await page
         .getByRole('button', {

@@ -145,6 +145,7 @@ export function startBrowserSpeech(callbacks: SpeechCallbacks) {
             callbacks.onResult({
               text: reply.result.text.trim(),
               experimental: true,
+              confidenceScore: reply.result.confidenceScore,
               model,
               elapsedMs: performance.now() - started,
             });

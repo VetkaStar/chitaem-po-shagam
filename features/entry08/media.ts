@@ -1,3 +1,4 @@
+import { belowSpeechThreshold } from '../../lib/speech/ctc-score';
 import { startLocalSpeech } from '../../lib/local-speech';
 import { narratorUtterance } from '../../lib/narrator-utterance';
 import { speakPiper, stopPiperSpeech } from '../../lib/piper-speech';
@@ -15,7 +16,7 @@ type RecognitionOptions = {
   onStatus?: (status: string) => void;
 };
 type MediaSettings = Pick<Settings, 'voice' | 'slow' | 'sound' | 'micDevice'> &
-  Partial<Pick<Settings, 'speechModel' | 'micProcessing' | 'narrator' | 'narrationRate'>>;
+  Partial<Pick<Settings, 'speechModel' | 'micProcessing' | 'narrator' | 'narrationRate' | 'speechConfidenceThreshold'>>;
 const aborted = () => Object.assign(new Error('ABORTED'), { code: 'ABORTED' });
 
 /** Called only from explicit speech/record buttons. No transcript is persisted. */
@@ -176,6 +177,7 @@ export function createEntryMedia(
             onPartial: () => {},
             onResult: (result) => {
               if (settled || !result.text?.trim()) return;
+              if (result.model?.startsWith('gigaam-ctc') && belowSpeechThreshold(result.confidenceScore, getSettings().speechConfidenceThreshold)) return;
               parts.push(result.text.trim());
               // Experimental engines have unknown confidence: keep it absent, never invent a score.
               if (!result.experimental) confidence.push(

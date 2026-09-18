@@ -66,6 +66,7 @@ export function restoreLessonProgress({
           ? Math.min(1.5, Math.max(0.5, s.narrationRate)) : s.slow === false ? 1 : 0.8,
         speechModel: parseSpeechModel(s.speechModel),
         micProcessing: s.micProcessing !== false,
+        speechConfidenceThreshold: Number.isFinite(s.speechConfidenceThreshold) ? Math.min(100, Math.max(0, s.speechConfidenceThreshold)) : 0,
         layout: s.layout === 'focus' ? 'focus' : 'order',
         look: s.look === 'notebook' ? 'notebook' : 'plain',
         paper: s.paper === 'blue' ? 'blue' : 'main',

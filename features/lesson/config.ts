@@ -41,6 +41,7 @@ export type Settings = {
   micDevice: string;
   speechModel: SpeechModelId;
   micProcessing: boolean;
+  speechConfidenceThreshold: number;
   layout: Layout;
   look: Look;
   paper: Paper;
@@ -86,6 +87,7 @@ export const defaults: Settings = {
   micDevice: '',
   speechModel: 'vosk',
   micProcessing: true,
+  speechConfidenceThreshold: 0,
   layout: 'order',
   look: 'plain',
   paper: 'main',

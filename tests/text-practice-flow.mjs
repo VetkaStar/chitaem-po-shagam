@@ -143,6 +143,7 @@ function mount(fn) {
   return flush();
 }
 const hook = load('features/library/use-text-microphone.ts').useTextMicrophone;
+let threshold = 0;
 let target = 'Кот спит.',
   key = 'a',
   enabled = true;
@@ -154,6 +155,7 @@ mount(() =>
     '',
     () => completes++,
     () => rests++,
+    {speechConfidenceThreshold:threshold},
   ),
 );
 speechCallbacks.onPartial('кот спит');
@@ -256,6 +258,16 @@ key = 'experimental-full';
 target = 'Кот спит.';
 flush();
 const previousComplete = completes;
+threshold=70;flush();
+speechCallbacks.onResult({text:'Кот спит',experimental:true,model:'gigaam-ctc-int8',confidenceScore:0.6});flush();
+assert.equal(completes,previousComplete);
+assert.equal(result.progress,0);
+speechCallbacks.onResult({text:'кот',experimental:true,model:'gigaam-ctc-int8',confidenceScore:0.9});flush();
+assert.equal(result.progress,3);
+speechCallbacks.onResult({text:'спит',experimental:true,model:'gigaam-ctc-int8',confidenceScore:0.2});flush();
+assert.equal(result.progress,3);
+assert.equal(completes,previousComplete);
+threshold=0;key='threshold-reset';flush();
 speechCallbacks.onResult({text:'',experimental:true});flush();
 assert.equal(result.progress,0);
 assert.equal(result.needsHelp,true);

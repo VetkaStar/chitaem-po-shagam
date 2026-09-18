@@ -2,7 +2,7 @@ import type { SpeechModelId } from './models';
 type Reply = {
   id: number;
   status?: string;
-  result?: { text: string; final: boolean };
+  result?: { text: string; final: boolean; confidenceScore?: number };
   done?: boolean;
   error?: string;
 };

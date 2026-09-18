@@ -258,3 +258,15 @@ assert.equal(emptyResults[0].text,'');
 emptyEngine.abort();
 for(const session of sessions.slice(emptyBase))for(const task of session.tasks)task.resolve();
 console.log('PASS verifier processing and empty final remain observable');
+
+const {ctcScore, belowSpeechThreshold}=load('lib/speech/ctc-score');
+const scored={encodedData:[0,5,0, 0,4,0, 5,0,0, 0,0,3],encodedDims:[1,4,3],encodedLayout:'BTV',encodedLength:4};
+const score=ctcScore(scored,0);
+assert(Math.abs(score-1/(1+2*Math.exp(-3)))<1e-8);
+assert.equal(ctcScore({...scored,encodedData:[5,5,5,5,0,0,0,0,0,0,0,0],encodedLayout:'BVT',encodedDims:[1,3,4]},0),undefined);
+assert.equal(ctcScore({...scored,encodedData:[NaN,...scored.encodedData.slice(1)]},0),undefined);
+assert(belowSpeechThreshold(0.6,65));
+assert(!belowSpeechThreshold(0.65,65));
+assert(belowSpeechThreshold(undefined,65));
+assert(!belowSpeechThreshold(undefined,0));
+console.log('PASS CTC posterior score, blank exclusion, malformed output and threshold boundary');

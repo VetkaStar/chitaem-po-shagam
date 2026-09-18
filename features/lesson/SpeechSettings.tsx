@@ -76,6 +76,7 @@ export default function SpeechSettings({
       deviceId: settings.micDevice,
       speechModel: settings.speechModel,
       micProcessing: settings.micProcessing,
+      speechConfidenceThreshold: settings.speechConfidenceThreshold,
       onLevel: (value) => {
         if (token === epoch.current) setLevel(value);
       },
@@ -113,6 +114,10 @@ export default function SpeechSettings({
             : ` · обработка ${(result.elapsedMs / 1000).toFixed(2)} с`;
         setLines((previous) => [
           ...previous.slice(-19),
+          (result.candidates ? result.candidates.map(c =>
+            (c.model === 'zipformer-int8' ? 'Zipformer' : selected.label) + ': ' + (c.text || 'пусто') +
+            (c.confidenceScore === undefined ? ' (без оценки)' : ' (' + (c.confidenceScore * 100).toFixed(1) + '%)')).join(' | ') +
+            ' → выбран ' + (result.decision === 'fallback' ? 'Zipformer' : result.decision === 'primary' ? selected.label : 'пустой ответ') + '. ' : '') +
           (result.text?.trim() || 'Модель не распознала слова в этой попытке') + score + timing,
         ]);
       },
@@ -216,7 +221,7 @@ export default function SpeechSettings({
       )}
       {ctc && <div className="setting">
         <label htmlFor="speech-confidence">Порог уверенности GigaAM — тест
-          <small>Оценка нейросети, не процент правильного произношения. 0% — фильтр выключен. Zipformer не отменяет ответ GigaAM.</small>
+          <small>Оценка нейросети, не процент правильного произношения. 0% — фильтр выключен. Если GigaAM не проходит порог, используется окончательный ответ Zipformer.</small>
         </label>
         <select id="speech-confidence" value={settings.speechConfidenceThreshold} onChange={event => {
           cancel(); stop(); update('speechConfidenceThreshold', Number(event.target.value));

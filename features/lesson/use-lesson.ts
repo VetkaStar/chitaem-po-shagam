@@ -495,6 +495,7 @@ export function useLesson() {
       deviceId: settings.micDevice,
       speechModel: settings.speechModel,
       micProcessing: settings.micProcessing,
+      speechConfidenceThreshold: settings.speechConfidenceThreshold,
       vocabulary: [
         ...wordPool(levels.length - 1),
         ...levels.flatMap((l) => [
@@ -583,6 +584,7 @@ export function useLesson() {
     settings.micDevice,
     settings.speechModel,
     settings.micProcessing,
+    settings.speechConfidenceThreshold,
     settings.letterMode,
     settings.wordMode,
     repeatEpoch,

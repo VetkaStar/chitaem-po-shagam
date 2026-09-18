@@ -9,6 +9,8 @@ type VoskResult = {
   result?: { conf: number; word: string }[];
   experimental?: boolean;
   confidenceScore?: number;
+  decision?: 'primary' | 'fallback' | 'empty';
+  candidates?: {text: string; model: string; confidenceScore?: number}[];
   model?: string;
   elapsedMs?: number;
 };

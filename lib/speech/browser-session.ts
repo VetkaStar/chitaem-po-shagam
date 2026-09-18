@@ -1,3 +1,4 @@
+import { combineFinals, type FinalCandidate } from './combined-result';
 import type { SpeechCallbacks } from '../local-speech';
 import {
   microphoneConstraints,
@@ -35,6 +36,7 @@ export function startBrowserSpeech(callbacks: SpeechCallbacks) {
     active = false,
     lastMeter = 0;
   let chain: Promise<void> = Promise.resolve();
+  let delivery: Promise<void> = Promise.resolve();
   const abort = () => {
     if (closed) return;
     closed = true;
@@ -131,17 +133,24 @@ export function startBrowserSpeech(callbacks: SpeechCallbacks) {
     }
     const started = performance.now();
     if (preview && samples) callbacks.onStatus('Проверяю услышанное…');
+    let primary: FinalCandidate = {text:'', model};
+    let fastText = '';
+    const fastFinish = preview && samples ? preview.request('finish', reply => {
+      if (closed || current !== generation) return;
+      if (reply.result?.final) fastText = ((previewParts.get(part)?.prefix ?? '') + ' ' + reply.result.text).trim();
+    }) : Promise.resolve();
     const task = client.request(
       kind,
       (reply) => {
         if (closed || !enabled || current !== generation) return;
-        if (reply.result?.final) {
+        if (reply.result?.final && !preview) {
           confirmedSegment = Math.max(confirmedSegment, part);
           for (const id of previewParts.keys())
             if (id <= confirmedSegment) previewParts.delete(id);
         }
         if (reply.result && (reply.result.final || reply.result.text.trim())) {
           if (reply.result.final) {
+            if (preview) { primary = {text:reply.result.text.trim(), model, confidenceScore:reply.result.confidenceScore}; return; }
             callbacks.onResult({
               text: reply.result.text.trim(),
               experimental: true,
@@ -155,6 +164,18 @@ export function startBrowserSpeech(callbacks: SpeechCallbacks) {
       samples,
       context?.sampleRate,
     );
+    if (preview) {
+      const ready = Promise.all([task, fastFinish]);
+      // Attach rejection immediately; deliver segments in capture order.
+      const settled = ready.then(() => true, error => { fail(error); return false; });
+      delivery = delivery.then(async () => {
+        if (!await settled || closed || !enabled || current !== generation) return;
+        confirmedSegment = Math.max(confirmedSegment, part);
+        for (const id of previewParts.keys()) if (id <= confirmedSegment) previewParts.delete(id);
+        callbacks.onResult({...combineFinals(primary, {text:fastText, model:'zipformer-int8'}, callbacks.speechConfidenceThreshold),
+          experimental:true, elapsedMs:performance.now()-started});
+      }).catch(fail);
+    }
     chain = Promise.all([chain, task])
       .then(() => {
         queued -= duration;
@@ -278,7 +299,7 @@ export function startBrowserSpeech(callbacks: SpeechCallbacks) {
       const segment = segments?.finish();
       if (segment) submit('audio', segment);
     }
-    await Promise.all([chain, previewChain]);
+    await Promise.all([chain, previewChain, delivery]);
     if (closed) throw new Error('ABORTED');
     abort();
   };

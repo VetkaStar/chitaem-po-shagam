@@ -42,6 +42,7 @@ export function useTextMicrophone(
       deviceId,
       speechModel: options.speechModel,
       micProcessing: options.micProcessing,
+      speechConfidenceThreshold: options.speechConfidenceThreshold,
       onLevel: (value) => {
         if (active) setLevel(value);
       },

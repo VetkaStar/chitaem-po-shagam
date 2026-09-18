@@ -167,6 +167,7 @@ export function createEntryMedia(
             deviceId: getSettings().micDevice || undefined,
             speechModel: getSettings().speechModel,
             micProcessing: getSettings().micProcessing,
+            speechConfidenceThreshold: getSettings().speechConfidenceThreshold,
             onLevel: () => {},
             onStatus: (text) => {
               if (!settled) options.onStatus?.(text);

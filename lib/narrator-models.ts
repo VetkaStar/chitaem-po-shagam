@@ -5,5 +5,5 @@ export const piperVoices = [
   { id: 'piper-ruslan', voiceId: 'ru_RU-ruslan-medium', label: 'Руслан — мужской' },
 ] as const;
 export type Narrator = 'system' | (typeof piperVoices)[number]['id'];
-export const parseNarrator = (value: unknown): Narrator => piperVoices.find(v => v.id === value)?.id ?? 'system';
+export const parseNarrator = (value: unknown): Narrator => piperVoices.find(v => v.id === value)?.id ?? 'piper-irina';
 export const piperVoiceId = (value: unknown) => piperVoices.find(v => v.id === value)?.voiceId;

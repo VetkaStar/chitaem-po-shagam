@@ -2,6 +2,7 @@ import type { Narrator } from './narrator-models';
 type Options = {
   narrator?: Narrator;
   slow: boolean;
+  rate?: number;
   onStatus?: (text: string) => void;
   onEnd: () => void;
   onError: (error: Error) => void;
@@ -19,7 +20,8 @@ export function speakPiper(text: string, options: Options) {
     cancelGeneration: (() => void) | undefined;
   const audio = new Audio();
   audio.preservesPitch = true;
-  audio.playbackRate = options.slow ? 0.8 : 1;
+  const rate = typeof options.rate === "number" && Number.isFinite(options.rate)
+    ? Math.min(1.5, Math.max(0.5, options.rate)) : options.slow ? 0.8 : 1;
   const cancel = () => {
     if (stopped) return;
     stopped = true;
@@ -35,6 +37,7 @@ export function speakPiper(text: string, options: Options) {
   // Prime the same media element during the explicit click, before model download.
   audio.src =
     'data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQIAAAAAAA==';
+  audio.playbackRate = rate;
   void audio.play().catch(() => {});
   const fail = (error: unknown) => {
     if (stopped) return;
@@ -52,6 +55,8 @@ export function speakPiper(text: string, options: Options) {
       if (stopped) return;
       url = URL.createObjectURL(wav);
       audio.src = url;
+      audio.defaultPlaybackRate = rate;
+      audio.playbackRate = rate;
       audio.onended = () => {
         if (!stopped) {
           cancel();

@@ -1,7 +1,6 @@
 import { parseNarrator, piperVoices } from '../../lib/narrator-models';
 import { useEffect, useRef, useState } from 'react';
 import { speakPiper } from '../../lib/piper-speech';
-import { narratorUtterance } from '../../lib/narrator-utterance';
 import type { Settings } from './config';
 
 export default function NarratorSettings({
@@ -37,7 +36,7 @@ export default function NarratorSettings({
       cancel();
       document.removeEventListener('visibilitychange', hidden);
     };
-  }, [settings.narrator, settings.voice, settings.slow, settings.sound]);
+  }, [settings.narrator, settings.voice, settings.slow, settings.narrationRate, settings.sound]);
   function preview() {
     cancel();
     stop();
@@ -50,9 +49,10 @@ export default function NarratorSettings({
         setPlaying(false);
       }
     };
-    if (settings.narrator?.startsWith('piper-')) {
+    {
       cancelRef.current = speakPiper(text.trim(), {
         slow: settings.slow,
+        rate: settings.narrationRate,
           narrator: settings.narrator,
         onStatus: (value) => {
           if (token === epoch.current) setStatus(value);
@@ -60,24 +60,6 @@ export default function NarratorSettings({
         onEnd: () => end('Готово.'),
         onError: (error) => end(error.message),
       });
-    } else {
-      if (!('speechSynthesis' in window)) {
-        end('Системная озвучка недоступна.');
-        return;
-      }
-      const utterance = narratorUtterance(text.trim(), settings);
-      if (!utterance) {
-        end('Русский системный голос недоступен.');
-        return;
-      }
-      utterance.onend = () => end('Готово.');
-      utterance.onerror = () => end('Не удалось воспроизвести голос.');
-      cancelRef.current = () => {
-        utterance.onend = utterance.onerror = null;
-        speechSynthesis.cancel();
-      };
-      setStatus('Воспроизведение…');
-      speechSynthesis.speak(utterance);
     }
   }
   return (
@@ -86,7 +68,7 @@ export default function NarratorSettings({
       aria-label="Автоматическая озвучка"
     >
       <h3>Автоматическая озвучка</h3>
-      <label htmlFor="narrator-engine">Способ озвучки</label>
+      <label htmlFor="narrator-engine">Голос озвучки</label>
       <select
         id="narrator-engine"
         value={settings.narrator}
@@ -99,7 +81,6 @@ export default function NarratorSettings({
           );
         }}
       >
-        <option value="system">Системный голос — текущий</option>
         {piperVoices.map(v => <option key={v.id} value={v.id}>Piper — {v.label}, на устройстве</option>)}
       </select>
       {settings.narrator?.startsWith('piper-') && (
@@ -109,6 +90,13 @@ export default function NarratorSettings({
           слоги стоит проверить перед занятием.
         </p>
       )}
+      <label htmlFor="narration-rate">Скорость озвучки</label>
+      <select id="narration-rate" value={settings.narrationRate} onChange={event => {
+        cancel(); stop(); update('narrationRate', Number(event.target.value));
+      }}>
+        {[0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5].map(rate =>
+          <option key={rate} value={rate}>{rate.toFixed(1)}×{rate === 1 ? ' — обычная' : ''}</option>)}
+      </select>
       <label htmlFor="narrator-sample">Текст для проверки</label>
       <textarea
         id="narrator-sample"

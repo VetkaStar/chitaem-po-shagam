@@ -287,7 +287,7 @@ export default function AppPortal({
               <Welcome
                 profile={profile}
                 voice={model.settings.voice}
-                onVoiceChange={(voice) => model.update('voice', voice)}
+                onVoiceChange={(voice) => { model.update('voice', voice); model.update('narrator', voice === 'male' ? 'piper-denis' : 'piper-irina'); }}
                 style={style}
                 onStyleChange={changeStyle}
                 onSave={save}

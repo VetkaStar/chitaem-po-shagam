@@ -47,6 +47,7 @@ export function createVoiceHandler(context: {
         if (speechEpoch.current !== token) return;
         speakPiper(text, {
           slow: settings.slow,
+        rate: settings.narrationRate,
           narrator: settings.narrator,
           onStatus: context.onSpeechStatus,
           onEnd: () => {

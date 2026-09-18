@@ -61,7 +61,9 @@ export function restoreLessonProgress({
             ? s.autoAdvanceSeconds
             : 3,
         voice: s.voice === 'male' ? 'male' : 'female',
-        narrator: parseNarrator(s.narrator),
+        narrator: parseNarrator(s.narrator === 'system' && s.voice === 'male' ? 'piper-denis' : s.narrator),
+        narrationRate: typeof s.narrationRate === 'number' && Number.isFinite(s.narrationRate)
+          ? Math.min(1.5, Math.max(0.5, s.narrationRate)) : s.slow === false ? 1 : 0.8,
         speechModel: parseSpeechModel(s.speechModel),
         micProcessing: s.micProcessing !== false,
         layout: s.layout === 'focus' ? 'focus' : 'order',

@@ -29,6 +29,7 @@ export type Settings = {
   sound: boolean;
   voice: 'female' | 'male';
   narrator: Narrator;
+  narrationRate: number;
   autoSpeech: boolean;
   partsThenWhole: boolean;
   autoAdvance: boolean;
@@ -72,7 +73,8 @@ export const defaults: Settings = {
   motion: true,
   sound: true,
   voice: 'female',
-  narrator: 'system',
+  narrator: 'piper-irina',
+  narrationRate: 0.8,
   autoSpeech: false,
   partsThenWhole: false,
   autoAdvance: false,

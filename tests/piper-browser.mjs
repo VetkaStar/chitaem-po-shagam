@@ -51,6 +51,9 @@ try {
       );
     }
     window.testAudio = [];
+    window.playRates = [];
+    const play = HTMLMediaElement.prototype.play;
+    HTMLMediaElement.prototype.play = function() { window.playRates.push(this.playbackRate); return play.call(this); };
     const original = URL.createObjectURL.bind(URL);
     URL.createObjectURL = (blob) => {
       if (blob.type?.startsWith('audio/')) window.testAudio.push(blob);
@@ -70,6 +73,9 @@ try {
       .click();
   };
   await open();
+  assert.equal(await page.locator('#narrator-engine option[value=system]').count(),0);
+  assert.equal(await page.locator('#narrator-voice').count(),0);
+  await page.locator('#narration-rate').selectOption('1.3');
   await page.locator('#narrator-engine').selectOption(narrator);
   await page.reload();
   await open();
@@ -80,6 +86,7 @@ try {
   await page
     .locator('#narrator-sample')
     .fill('Маша нашла шишку. Жук жужжит. Ма. Ша. Жу. Ща.');
+  assert.equal(await page.locator('#narration-rate').inputValue(),'1.3');
   const started = Date.now();
   await page
     .getByRole('button', { name: 'Послушать голос', exact: true })
@@ -102,6 +109,7 @@ try {
   ]);
   fs.writeFileSync(path.join(out, narrator + '.wav'), Buffer.from(bytes));
   assert(bytes.length > 20000, 'nonempty generated audio');
+  assert.equal(await page.evaluate(() => window.playRates.at(-1)), 1.3);
   await page.waitForFunction(
     () =>
       document.querySelector('.narrator-settings [role=status]')

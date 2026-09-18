@@ -119,20 +119,6 @@ export default function ParentSettings({
           <AutoAdvanceSettings model={model} />
           <NarratorSettings settings={settings} update={update} stop={stop} />
           <div className="setting">
-            <label htmlFor="narrator-voice">Системный голос</label>
-            <select
-              id="narrator-voice"
-              disabled={settings.narrator?.startsWith('piper-')}
-              value={settings.voice}
-              onChange={(e) =>
-                update('voice', e.target.value as 'female' | 'male')
-              }
-            >
-              <option value="female">Женский</option>
-              <option value="male">Мужской</option>
-            </select>
-          </div>
-          <div className="setting">
             <label htmlFor="setting-unit">Материал</label>
             <Select
               value={String(settings.unit)}
@@ -226,11 +212,7 @@ export default function ParentSettings({
                 'Разрешить прослушивание и музыку',
                 'Выключите, чтобы скрыть динамики и запретить прослушивание заданий, ответов и подсказок.',
               ],
-              [
-                'slow',
-                'Медленная озвучка',
-                'Больше времени, чтобы расслышать.',
-              ],
+
               [
                 'color',
                 'Цветные буквы',

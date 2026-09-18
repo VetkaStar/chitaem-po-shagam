@@ -15,7 +15,7 @@ type RecognitionOptions = {
   onStatus?: (status: string) => void;
 };
 type MediaSettings = Pick<Settings, 'voice' | 'slow' | 'sound' | 'micDevice'> &
-  Partial<Pick<Settings, 'speechModel' | 'micProcessing' | 'narrator'>>;
+  Partial<Pick<Settings, 'speechModel' | 'micProcessing' | 'narrator' | 'narrationRate'>>;
 const aborted = () => Object.assign(new Error('ABORTED'), { code: 'ABORTED' });
 
 /** Called only from explicit speech/record buttons. No transcript is persisted. */
@@ -76,6 +76,7 @@ export function createEntryMedia(
           cancelSpeech = cancel;
           speakPiper(text, {
             slow: getSettings().slow,
+            rate: getSettings().narrationRate,
             narrator: getSettings().narrator,
             onEnd: () => settle(),
             onError: settle,

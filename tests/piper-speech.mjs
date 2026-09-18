@@ -97,3 +97,11 @@ for (const narrator of ['piper-denis', 'piper-dmitri', 'piper-ruslan']) {
   audios.at(-1).onended();
 }
 console.log('PASS selected male voices reach the generation worker facade');
+
+for (const [rate, expected] of [[0.5,0.5],[1.3,1.3],[5,1.5],[NaN,1]]) {
+ const cancel = speakPiper('Мама', {...options, rate});
+ assert.equal(audios.at(-1).playbackRate, expected);
+ assert.equal(audios.at(-1).preservesPitch,true);
+ cancel();
+}
+console.log('PASS narration speed and bounds preserve pitch');

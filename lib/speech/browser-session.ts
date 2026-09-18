@@ -1,10 +1,23 @@
 import type { SpeechCallbacks } from '../local-speech';
-import { microphoneConstraints, parseSpeechModel } from './models';
+import {
+  microphoneConstraints,
+  parseSpeechModel,
+  verificationModel,
+} from './models';
 import { SpeechSegments } from './segments';
 import { claimWorker } from './worker-client';
 
 export function startBrowserSpeech(callbacks: SpeechCallbacks) {
-  const model = parseSpeechModel(callbacks.speechModel);
+  const selected = parseSpeechModel(callbacks.speechModel);
+  const model = verificationModel(selected);
+  const preview = selected.startsWith('combined:')
+    ? claimWorker('zipformer-int8', 'preview')
+    : undefined;
+  let previewChain: Promise<void> = Promise.resolve();
+  let previewQueued = 0,
+    segmentId = 0,
+    confirmedSegment = -1;
+  const previewParts = new Map<number, { prefix: string; text: string }>();
   const client = claimWorker(model);
   const streaming = model.startsWith('zipformer');
   let closed = false,
@@ -36,6 +49,7 @@ export function startBrowserSpeech(callbacks: SpeechCallbacks) {
     if (context && context.state !== 'closed') void context.close();
     segments?.reset();
     client.release(!ready);
+    preview?.release(true);
     callbacks.onLevel(0);
     callbacks.onSpectrum?.(Array(12).fill(0));
   };
@@ -54,8 +68,59 @@ export function startBrowserSpeech(callbacks: SpeechCallbacks) {
       name === 'NotAllowedError' ? 'not-allowed' : 'service_unavailable',
     );
   };
+  const submitPreview = (samples: Float32Array) => {
+    if (!preview) return;
+    const current = generation,
+      part = segmentId;
+    const duration = samples.length / (context?.sampleRate ?? 16000);
+    previewQueued += duration;
+    if (previewQueued > 10) {
+      fail(
+        new Error(
+          'Совместный режим не успевает обрабатывать звук. Выберите одну модель.',
+        ),
+      );
+      return;
+    }
+    const task = preview.request(
+      'audio',
+      (reply) => {
+        if (
+          closed ||
+          !enabled ||
+          current !== generation ||
+          part <= confirmedSegment
+        )
+          return;
+        if (reply.result?.text.trim()) {
+          const text = reply.result.text.trim();
+          const previous = previewParts.get(part)?.prefix ?? '';
+          const combined = (previous + ' ' + text).trim();
+          previewParts.set(part, {
+            prefix: reply.result.final ? combined : previous,
+            text: combined,
+          });
+          callbacks.onPartial(
+            [...previewParts]
+              .filter(([id]) => id > confirmedSegment)
+              .sort(([a], [b]) => a - b)
+              .map(([, value]) => value.text)
+              .join(' '),
+          );
+        }
+      },
+      samples,
+      context?.sampleRate,
+    );
+    previewChain = Promise.all([previewChain, task])
+      .then(() => {
+        previewQueued -= duration;
+      })
+      .catch(fail);
+  };
   const submit = (kind: 'audio' | 'finish', samples?: Float32Array) => {
-    const current = generation;
+    const current = generation,
+      part = segmentId;
     const duration = (samples?.length ?? 0) / (context?.sampleRate ?? 16000);
     queued += duration;
     if (queued > 40) {
@@ -69,6 +134,11 @@ export function startBrowserSpeech(callbacks: SpeechCallbacks) {
       kind,
       (reply) => {
         if (closed || !enabled || current !== generation) return;
+        if (reply.result?.final) {
+          confirmedSegment = Math.max(confirmedSegment, part);
+          for (const id of previewParts.keys())
+            if (id <= confirmedSegment) previewParts.delete(id);
+        }
         if (reply.result?.text.trim()) {
           if (reply.result.final) {
             callbacks.onResult({
@@ -77,7 +147,7 @@ export function startBrowserSpeech(callbacks: SpeechCallbacks) {
               model,
               elapsedMs: performance.now() - started,
             });
-          } else callbacks.onPartial(reply.result.text.trim());
+          } else if (!preview) callbacks.onPartial(reply.result.text.trim());
         }
       },
       samples,
@@ -95,7 +165,12 @@ export function startBrowserSpeech(callbacks: SpeechCallbacks) {
     generation++;
     segments?.reset();
     active = false;
-    if (ready) void client.request('reset').catch(fail);
+    previewParts.clear();
+    segmentId++;
+    if (ready) {
+      void client.request('reset').catch(fail);
+      void preview?.request('reset').catch(fail);
+    }
   };
   void (async () => {
     try {
@@ -116,11 +191,16 @@ export function startBrowserSpeech(callbacks: SpeechCallbacks) {
         stream.getAudioTracks()[0]?.getSettings() ?? {},
       );
       callbacks.onStatus('Загружаю выбранную модель. Пока говорить не нужно.');
-      await client.request('load', ({ status }) => {
-        if (!closed && status) callbacks.onStatus(status);
-      });
+      await Promise.all([
+        preview?.request('load', ({ status }) => {
+          if (!closed && status) callbacks.onStatus('Подсветка: ' + status);
+        }),
+        client.request('load', ({ status }) => {
+          if (!closed && status) callbacks.onStatus(status);
+        }),
+      ]);
       if (closed) return;
-      await client.request('reset');
+      await Promise.all([client.request('reset'), preview?.request('reset')]);
       if (closed) return;
       ready = true;
       if (context.state === 'suspended') await context.resume();
@@ -167,10 +247,18 @@ export function startBrowserSpeech(callbacks: SpeechCallbacks) {
           active = false;
           callbacks.onActivity?.('pause');
         }
+        if (preview) submitPreview(new Float32Array(samples));
         if (streaming) submit('audio', samples);
         else {
           const segment = segments!.push(samples);
-          if (segment) submit('audio', segment);
+          if (segment) {
+            submit('audio', segment);
+            segmentId++;
+            // Reset the fast stream on the same boundary used by the verifier.
+            if (preview) {
+              void preview.request('reset').catch(fail);
+            }
+          }
         }
       };
       source.connect(node);
@@ -188,7 +276,7 @@ export function startBrowserSpeech(callbacks: SpeechCallbacks) {
       const segment = segments?.finish();
       if (segment) submit('audio', segment);
     }
-    await chain;
+    await Promise.all([chain, previewChain]);
     if (closed) throw new Error('ABORTED');
     abort();
   };

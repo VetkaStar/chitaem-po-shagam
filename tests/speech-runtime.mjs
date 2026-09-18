@@ -10,10 +10,12 @@ let processor,
 const load = (name) => {
   if (name.endsWith('worker-client'))
     return {
-      claimWorker() {
+      claimWorker(model, lane) {
         const tasks = [];
         const session = {
           tasks,
+          model,
+          lane,
           request(kind, reply, samples, rate) {
             if (kind === 'load' || kind === 'reset') return Promise.resolve();
             return new Promise((resolve, reject) =>
@@ -173,4 +175,68 @@ assert.equal(finals.length, 1, 'finished session rejects stale result');
 assert.deepEqual(errors, []);
 console.log(
   'PASS speech models: selection, raw microphone constraints, silence/short syllables, v3 features, pause, final drain, cleanup and no fabricated confidence.',
+);
+
+assert.equal(
+  parseSpeechModel('combined:gigaam-ctc-int8'),
+  'combined:gigaam-ctc-int8',
+);
+assert.equal(parseSpeechModel('combined:vosk'), 'vosk');
+const previews = [],
+  combinedFinals = [];
+let combinedReady;
+const readyBoth = new Promise((resolve) => {
+  combinedReady = resolve;
+});
+const base = sessions.length;
+const both = startBrowserSpeech({
+  speechModel: 'combined:gigaam-ctc-int8',
+  onReady: combinedReady,
+  onLevel() {},
+  onStatus() {},
+  onPartial: (t) => previews.push(t),
+  onResult: (r) => combinedFinals.push(r),
+  onError: (e) => errors.push(e),
+});
+await readyBoth;
+const fast = sessions.slice(base).find((s) => s.lane === 'preview');
+const verifier = sessions
+  .slice(base)
+  .find((s) => s.model === 'gigaam-ctc-int8');
+assert.equal(fast.model, 'zipformer-int8');
+audio(0.1);
+fast.tasks[0].reply({ result: { text: 'ма', final: false } });
+assert.equal(previews.at(-1), 'ма');
+assert.equal(combinedFinals.length, 0);
+fast.tasks[0].reply({ result: { text: 'мама', final: true } });
+assert.equal(combinedFinals.length, 0, 'fast finals never award');
+for (let i = 0; i < 4; i++) audio(0);
+assert.equal(
+  verifier.tasks.length,
+  1,
+  'same captured audio reaches verifier after pause',
+);
+verifier.tasks[0].reply({ result: { text: 'мама', final: true } });
+assert.equal(combinedFinals.length, 1);
+assert.equal(combinedFinals[0].model, 'gigaam-ctc-int8');
+const previewCount = previews.length;
+fast.tasks[0].reply({ result: { text: 'запоздалое', final: false } });
+assert.equal(
+  previews.length,
+  previewCount,
+  'confirmed segment ignores late fast preview',
+);
+both.setEnabled(false);
+fast.tasks.at(-1).reply({ result: { text: 'пауза', final: true } });
+verifier.tasks[0].reply({ result: { text: 'пауза', final: true } });
+assert.equal(previews.length, previewCount);
+assert.equal(combinedFinals.length, 1);
+both.abort();
+assert.equal(stopped, 2, 'combined session owns just one capture');
+for (const session of [fast, verifier])
+  for (const task of session.tasks) task.resolve();
+await Promise.resolve();
+assert.deepEqual(errors, []);
+console.log(
+  'PASS combined: single capture, early preview, verifier-only finals, stale preview and pause isolation',
 );

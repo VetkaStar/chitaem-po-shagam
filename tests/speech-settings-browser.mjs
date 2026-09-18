@@ -68,10 +68,12 @@ try {
         window.testStreams.push(stream);
         return stream;
       };
+      window.workerModels = [];
       window.Worker = class {
         onmessage;
         onerror;
         postMessage(request) {
+          if (request.kind === 'load') window.workerModels.push(request.model);
           setTimeout(
             () => this.onmessage?.({ data: { id: request.id, done: true } }),
             10,
@@ -108,11 +110,27 @@ try {
       await select.selectOption(id);
       assert.equal(await select.inputValue(), id);
     }
+    await page
+      .getByRole('button', {
+        name: 'Быстрая Zipformer INT8 + вторая модель',
+        exact: true,
+      })
+      .click();
+    assert.equal(await select.locator('option').count(), 4);
     await select.selectOption('gigaam-ctc-int8');
     await page.getByRole('checkbox', { name: 'Обработка микрофона' }).uncheck();
     await page.reload();
     await open();
     assert.equal(await select.inputValue(), 'gigaam-ctc-int8');
+    assert.equal(
+      await page
+        .getByRole('button', {
+          name: 'Быстрая Zipformer INT8 + вторая модель',
+          exact: true,
+        })
+        .getAttribute('aria-pressed'),
+      'true',
+    );
     assert.equal(
       await page
         .getByRole('checkbox', { name: 'Обработка микрофона' })
@@ -125,15 +143,18 @@ try {
     await page
       .getByRole('button', { name: 'Завершить запись', exact: true })
       .waitFor();
+    assert.deepEqual(
+      await page.evaluate(() => [...window.workerModels].sort()),
+      ['gigaam-ctc-int8', 'zipformer-int8'],
+    );
+    assert.equal(await page.evaluate(() => window.testStreams.length), 1);
     assert.match(
       await page.locator('.speech-settings').innerText(),
       /шумоподавление — выкл.*автогромкость — выкл.*эхо — выкл/,
     );
-    await page
-      .locator('.speech-settings')
-      .screenshot({
-        path: path.join(root, `.local/speech-tests/settings-${width}.png`),
-      });
+    await page.locator('.speech-settings').screenshot({
+      path: path.join(root, `.local/speech-tests/settings-${width}.png`),
+    });
     assert(
       await page
         .locator('.parent-dialog')

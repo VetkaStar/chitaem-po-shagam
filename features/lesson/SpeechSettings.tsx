@@ -1,7 +1,12 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { startLocalSpeech } from '../../lib/local-speech';
-import { parseSpeechModel, speechModels } from '../../lib/speech/models';
+import {
+  parseSpeechModel,
+  speechModels,
+  verificationModels,
+  verificationModel,
+} from '../../lib/speech/models';
 import type { Settings } from './config';
 
 export default function SpeechSettings({
@@ -26,8 +31,12 @@ export default function SpeechSettings({
   const [level, setLevel] = useState(0);
   const [lines, setLines] = useState<string[]>([]);
   const [actual, setActual] = useState('');
+  const combined = settings.speechModel.startsWith('combined:');
+  const [partial, setPartial] = useState('');
   const selected =
-    speechModels.find((m) => m.id === settings.speechModel) ?? speechModels[0];
+    speechModels.find(
+      (m) => m.id === verificationModel(settings.speechModel),
+    ) ?? speechModels[0];
   function cancel() {
     epoch.current++;
     engine.current?.abort();
@@ -41,6 +50,7 @@ export default function SpeechSettings({
   useEffect(() => {
     cancel();
     setLines([]);
+    setPartial('');
     setStatus('');
     setActual('');
     const hidden = () => {
@@ -86,9 +96,12 @@ export default function SpeechSettings({
           `Браузер: шумоподавление — ${show(capture.noiseSuppression)}, автогромкость — ${show(capture.autoGainControl)}, эхо — ${show(capture.echoCancellation)}.`,
         );
       },
-      onPartial: () => {},
+      onPartial: (text) => {
+        if (token === epoch.current) setPartial(text);
+      },
       onResult: (result) => {
         if (token !== epoch.current || !result.text?.trim()) return;
+        setPartial('');
         const timing =
           result.elapsedMs === undefined
             ? ''
@@ -129,33 +142,71 @@ export default function SpeechSettings({
       aria-label="Распознавание речи"
     >
       <h3>Распознавание речи</h3>
-      <label htmlFor="speech-model">Модель распознавания</label>
+      <div className="speech-test-actions">
+        <button
+          aria-pressed={!combined}
+          onClick={() => {
+            cancel();
+            stop();
+            update('speechModel', selected.id);
+          }}
+        >
+          Одна модель
+        </button>
+        <button
+          aria-pressed={combined}
+          onClick={() => {
+            cancel();
+            stop();
+            const second = verificationModels.some((m) => m.id === selected.id)
+              ? selected.id
+              : 'gigaam-ctc-int8';
+            update('speechModel', parseSpeechModel('combined:' + second));
+          }}
+        >
+          Быстрая Zipformer INT8 + вторая модель
+        </button>
+      </div>
+      {combined && (
+        <p>
+          Zipformer INT8 двигает предварительную подсветку. Вторая модель
+          проверяет прочитанное после паузы. Для обеих используется один
+          микрофон.
+        </p>
+      )}
+      <label htmlFor="speech-model">
+        {combined ? 'Вторая модель — проверка ответа' : 'Модель распознавания'}
+      </label>
       <select
         id="speech-model"
         value={selected.id}
         onChange={(event) => {
           cancel();
           stop();
-          update('speechModel', parseSpeechModel(event.target.value));
+          update(
+            'speechModel',
+            parseSpeechModel(
+              (combined ? 'combined:' : '') + event.target.value,
+            ),
+          );
         }}
       >
-        {speechModels.map((model) => (
+        {(combined ? verificationModels : speechModels).map((model) => (
           <option key={model.id} value={model.id}>
             {model.label} · ≈{model.mb} МБ
           </option>
         ))}
       </select>
       <p>
-        При первом включении скачивается только выбранная модель. Голос
-        обрабатывается на устройстве. Повторная загрузка не нужна, пока браузер
-        сохраняет кэш.
+        При первом включении скачиваются выбранные модели. Голос обрабатывается
+        на устройстве. Повторная загрузка не нужна, пока браузер сохраняет кэш.
       </p>
       {selected.id !== 'vosk' && (
         <p className="warning">
           Экспериментальная модель. Качество детской речи пока проверяется. В
           занятиях принимается полное совпадение окончательно распознанного
-          ответа. Читай слово или выделенную строку целиком. Оценку произношения
-          модель не даёт; можно проверить вместе со взрослым.
+          ответа. Можно читать по слогам. Оценку произношения модель не даёт;
+          можно проверить вместе со взрослым.
         </p>
       )}
       <label className="speech-processing">
@@ -200,6 +251,7 @@ export default function SpeechSettings({
         aria-label="Громкость при проверке распознавания"
       />
       <p role="status">{status}</p>
+      {partial && <p>Предварительно, без зачёта: {partial}</p>}
       {actual && <small>{actual}</small>}
       {!!lines.length && (
         <div className="speech-test-results">

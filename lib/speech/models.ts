@@ -37,12 +37,29 @@ export const speechModels = [
     engine: 'whisper',
   },
 ] as const;
-export type SpeechModelId = (typeof speechModels)[number]['id'];
+export const verificationModels = speechModels.filter(
+  (m) => m.engine === 'gigaam' || m.engine === 'whisper',
+);
+export type SingleSpeechModelId = (typeof speechModels)[number]['id'];
+export type SpeechModelId =
+  | SingleSpeechModelId
+  | `combined:${SingleSpeechModelId}`;
+export function verificationModel(value: SpeechModelId): SingleSpeechModelId {
+  return (
+    value.startsWith('combined:') ? value.slice(9) : value
+  ) as SingleSpeechModelId;
+}
 export type SpeechOptions = {
   speechModel?: SpeechModelId;
   micProcessing?: boolean;
 };
 export function parseSpeechModel(value: unknown): SpeechModelId {
+  if (
+    typeof value === 'string' &&
+    value.startsWith('combined:') &&
+    verificationModels.some((m) => 'combined:' + m.id === value)
+  )
+    return value as SpeechModelId;
   return speechModels.find((model) => model.id === value)?.id ?? 'vosk';
 }
 export function microphoneConstraints(

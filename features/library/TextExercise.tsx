@@ -631,7 +631,7 @@ export default function TextExercise({
                             speech.progress,
                     )?.text
                   }
-                  ». Прочитанное начало сохранено.
+                  ».{speech.progress > 0 && ' Прочитанное начало сохранено.'}
                 </div>
               )}
             </>

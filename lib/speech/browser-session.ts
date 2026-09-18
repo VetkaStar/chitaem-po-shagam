@@ -130,6 +130,7 @@ export function startBrowserSpeech(callbacks: SpeechCallbacks) {
       return;
     }
     const started = performance.now();
+    if (preview && samples) callbacks.onStatus('Проверяю услышанное…');
     const task = client.request(
       kind,
       (reply) => {
@@ -139,7 +140,7 @@ export function startBrowserSpeech(callbacks: SpeechCallbacks) {
           for (const id of previewParts.keys())
             if (id <= confirmedSegment) previewParts.delete(id);
         }
-        if (reply.result?.text.trim()) {
+        if (reply.result && (reply.result.final || reply.result.text.trim())) {
           if (reply.result.final) {
             callbacks.onResult({
               text: reply.result.text.trim(),

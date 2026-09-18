@@ -100,15 +100,16 @@ export default function SpeechSettings({
         if (token === epoch.current) setPartial(text);
       },
       onResult: (result) => {
-        if (token !== epoch.current || !result.text?.trim()) return;
+        if (token !== epoch.current) return;
         setPartial('');
+        setStatus(result.text?.trim() ? 'Ответ получен. Можно говорить дальше.' : 'Окончательный ответ пустой. Попробуйте ещё раз.');
         const timing =
           result.elapsedMs === undefined
             ? ''
             : ` · обработка ${(result.elapsedMs / 1000).toFixed(2)} с`;
         setLines((previous) => [
           ...previous.slice(-19),
-          result.text!.trim() + timing,
+          (result.text?.trim() || 'Модель не распознала слова в этой попытке') + timing,
         ]);
       },
       onError: (message) => {

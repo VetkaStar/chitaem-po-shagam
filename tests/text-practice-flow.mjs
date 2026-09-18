@@ -256,6 +256,15 @@ key = 'experimental-full';
 target = 'Кот спит.';
 flush();
 const previousComplete = completes;
+speechCallbacks.onResult({text:'',experimental:true});flush();
+assert.equal(result.progress,0);
+assert.equal(result.needsHelp,true);
+const emptyStatus=result.status;
+assert(!emptyStatus.includes('сохранено'));
+speechCallbacks.onActivity('pause');flush();
+assert.equal(result.status,emptyStatus,'pause does not erase verification feedback');
+assert.equal(completes,previousComplete);
+
 speechCallbacks.onPartial('кот спит');
 flush();
 assert.equal(completes, previousComplete);

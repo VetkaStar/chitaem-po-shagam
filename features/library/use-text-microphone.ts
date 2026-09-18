@@ -57,12 +57,7 @@ export function useTextMicrophone(
           );
       },
       onActivity: (phase) => {
-        if (active)
-          setStatus(
-            phase === 'sound'
-              ? 'Слышу тебя. Читай, я жду.'
-              : 'Попытка услышана. Продолжай или попробуй ещё раз.',
-          );
+        if (active && phase === 'sound') setStatus('Слышу тебя. Читай, я жду.');
       },
       onError: (value) => {
         if (active) setStatus(value);
@@ -87,7 +82,8 @@ export function useTextMicrophone(
           } else {
             setStatus(next > previous
               ? 'Начало прочитано. Продолжай с выделенного места.'
-              : 'Не расслышал. Продолжай с выделенного места — начало сохранено.');
+              : next > 0 ? 'Не расслышал. Продолжай с выделенного места — начало сохранено.'
+                : 'Не удалось подтвердить начало. Попробуй прочитать выделенное место ещё раз.');
           }
           return;
         }

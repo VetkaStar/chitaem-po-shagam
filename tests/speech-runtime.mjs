@@ -240,3 +240,21 @@ assert.deepEqual(errors, []);
 console.log(
   'PASS combined: single capture, early preview, verifier-only finals, stale preview and pause isolation',
 );
+
+const emptyResults = [], processingStatuses = [];
+let emptyReady;
+const emptyPrepared = new Promise(resolve => {emptyReady=resolve;});
+const emptyBase=sessions.length;
+const emptyEngine=startBrowserSpeech({speechModel:'combined:gigaam-ctc-int8',
+ onReady:emptyReady,onLevel(){},onStatus:s=>processingStatuses.push(s),onPartial(){},
+ onResult:r=>emptyResults.push(r),onError:e=>errors.push(e)});
+await emptyPrepared;
+audio(0.1);for(let i=0;i<4;i++)audio(0);
+const emptyVerifier=sessions.slice(emptyBase).find(s=>s.model==='gigaam-ctc-int8');
+assert(processingStatuses.includes('Проверяю услышанное…'));
+emptyVerifier.tasks[0].reply({result:{text:'',final:true}});
+assert.equal(emptyResults.length,1,'empty final is delivered, not silently discarded');
+assert.equal(emptyResults[0].text,'');
+emptyEngine.abort();
+for(const session of sessions.slice(emptyBase))for(const task of session.tasks)task.resolve();
+console.log('PASS verifier processing and empty final remain observable');

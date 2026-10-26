@@ -12,6 +12,7 @@ const supply = await loadSupply(...supplyText()),
 class Store {
   state = null;
   fail = false;
+  /** @type {Promise<void> | null} */
   wait = null;
   async read() {
     return structuredClone(this.state);

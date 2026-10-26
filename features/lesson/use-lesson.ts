@@ -18,7 +18,7 @@ import { pictureRetry } from '@/lib/picture-retry';
 
 import { useRestSchedule } from './use-rest-schedule';
 import { freshWordDeck, wordParts } from '@/content/word-bank';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
 import { levels, pictures, breaks } from '@/lib/learning';
 import { wordPool, makeDeck } from '@/lib/session';
 import { SlowReadingAttempt, advanceFinalReading } from '@/lib/slow-reading';
@@ -132,12 +132,12 @@ export function useLesson() {
     mode === 'read' &&
     !wholeAgain &&
     (settings.wordMode === 'parts' || settings.partsThenWhole || partsHelp);
-  const pool =
+  const pool = useMemo(() =>
     stage === 'pictures'
       ? pictures.map((x) => x.word)
       : stage === 'words'
         ? wordPool(settings.unit)
-        : levels[settings.unit][stage];
+        : levels[settings.unit][stage], [stage, settings.unit]);
   const target = deck[index % Math.max(1, deck.length)] || pool[0],
     picture =
       stage === 'pictures'
@@ -148,14 +148,16 @@ export function useLesson() {
       ? Math.min(settings.length, new Set(pool).size)
       : settings.length;
   const showParts = wantsParts && wordParts(target).length > 1;
-  useEffect(() => {
-    if (ready)
+  const resetDeck = useEffectEvent(() => {
       setDeck((old) =>
         stage === 'words'
           ? freshWordDeck(pool, Math.max(24, settings.length), recentWords)
           : makeDeck(pool, Math.max(24, settings.length), old),
       );
-  }, [ready, stage, mode, settings.unit, session]);
+  });
+  useEffect(() => {
+    if (ready) resetDeck();
+  }, [ready, stage, mode, settings.unit, settings.length, session]);
   useEffect(() => {
     if (ready && lessonActive && !done && stage === 'words' && target)
       setRecentWords((h) =>
@@ -245,6 +247,14 @@ export function useLesson() {
     setRest(false);
     setPaused(false);
   }
+  const releaseMedia = useEffectEvent(() => {
+    mounted.current = false;
+    epoch.current++;
+    try { recognition.current?.abort(); } catch {}
+    if (timer.current) clearTimeout(timer.current);
+    window.speechSynthesis?.cancel();
+    stopPiperSpeech();
+  });
   useEffect(() => {
     mounted.current = true;
     setSupported(
@@ -269,16 +279,7 @@ export function useLesson() {
       setStorageWarning,
     });
     setReady(true);
-    return () => {
-      mounted.current = false;
-      epoch.current++;
-      try {
-        recognition.current?.abort();
-      } catch {}
-      if (timer.current) clearTimeout(timer.current);
-      window.speechSynthesis?.cancel();
-      stopPiperSpeech();
-    };
+    return () => releaseMedia();
   }, []);
   useEffect(() => {
     if (!ready) return;
@@ -297,14 +298,14 @@ export function useLesson() {
       setStorageWarning('Не удалось сохранить результаты на этом устройстве.');
     }
   }, [settings, stars, history, recentWords, ready]);
-  useEffect(() => {
-    function hide() {
+  const hide = useEffectEvent(() => {
       if (document.hidden) {
         schedule.suspend();
         stop();
         setLessonMic(false);
       }
-    }
+  });
+  useEffect(() => {
     document.addEventListener('visibilitychange', hide);
     return () => document.removeEventListener('visibilitychange', hide);
   }, []);
@@ -694,7 +695,7 @@ export function useLesson() {
       })),
     );
     setFlyInputStatus('Напечатай любую карточку, которую видишь.');
-  }, [mode, stage, settings.unit, done, deck]);
+  }, [mode, stage, settings.unit, done, deck, pool]);
   useEffect(() => {
     if (mode !== 'fly' || paused || rest || parent || done) return;
     const caught = flyCards.filter((c) => c.caught);
@@ -713,7 +714,7 @@ export function useLesson() {
       );
     }, 1000);
     return () => clearTimeout(t);
-  }, [flyCards, mode, paused, rest, parent, done]);
+  }, [flyCards, mode, paused, rest, parent, done, pool]);
   const catchCard = createCatchHandler({
     stage,
     mode,

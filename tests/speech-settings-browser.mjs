@@ -146,7 +146,7 @@ try {
       .getByRole('button', { name: 'Завершить запись', exact: true })
       .waitFor();
     assert.deepEqual(
-      await page.evaluate(() => [...window.workerModels].sort()),
+      await page.evaluate(() => [...window.workerModels].sort((a, b) => a.localeCompare(b))),
       ['gigaam-ctc-int8', 'zipformer-int8'],
     );
     assert.equal(await page.evaluate(() => window.testStreams.length), 1);

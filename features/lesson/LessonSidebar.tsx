@@ -1,11 +1,11 @@
 'use client';
 import { useEffect, useId, useState, useRef } from 'react';
 import { ChevronDown, Info, Leaf, Settings2, UserRound, X } from 'lucide-react';
-import { sections } from '../trainers/navigation';
+import { navigationSections as sections, navigationSectionId } from '../trainers/navigation';
 import type { LessonModel } from './use-lesson';
 export default function LessonSidebar({
   model,
-  active,
+  active: materialSection,
   selectedItem,
   onSelect,
   onAbout,
@@ -25,6 +25,7 @@ export default function LessonSidebar({
   disabled?: boolean;
 }) {
   const { stop, setRest, setParent } = model;
+  const active = navigationSectionId(materialSection);
   const [expanded, setExpanded] = useState<string | null>(null);
   const menuId = useId();
   const navigation = useRef<HTMLElement>(null);

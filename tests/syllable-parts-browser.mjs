@@ -630,7 +630,7 @@ try {
   await auto
     .locator('.syllable-parts-exercise button[type="submit"]')
     .waitFor();
-  let snapshot = await autoState();
+  const snapshot = await autoState();
   assert.equal(
     snapshot.customRoutes[snapshot.route.routeId].position,
     1,

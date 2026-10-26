@@ -41,6 +41,7 @@ const { answerItems, openAnswer, nextAnswer } = await mod(
 );
 const { levels } = await mod('lib/learning.js');
 const { trainerItems } = await mod('features/trainers/catalog.js');
+const { repeatTrainerTask, routeResults, stepWasCorrect } = await mod('features/trainers/session-actions.js');
 const supply = await loadSupply(...supplyText());
 const originalBank = JSON.stringify(supply.curriculum.items);
 const legacy = { getItem: () => null };
@@ -233,6 +234,31 @@ await test('sentence pools enforce topic letters in both target and every answer
     optionOnlyExclusions > 0,
     'the authored bank exercises an option outside the target alphabet',
   );
+});
+await test('retry preserves the task and counts results once across reloads', async () => {
+  const { controller, store } = await setup();
+  const id = await openAnswer(controller, supply, 12, 3);
+  let state = controller.snapshot();
+  const route = state.customRoutes[id];
+  const task = supply.curriculum.items[state.profile.activeInstance.itemId];
+  await controller.answer({ instanceId: state.profile.activeInstance.instanceId, response: { optionIds: [] } });
+  const repeated = await repeatTrainerTask(controller, controller.snapshot().customRoutes[id], 0);
+  state = controller.snapshot();
+  assert.equal(state.profile.activeInstance.itemId, task.id);
+  assert.equal(state.customRoutes[repeated].steps[0].id, route.steps[0].id);
+  assert.equal(stepWasCorrect(state, route.steps[0].id), false);
+  const reloaded = await CurriculumController.open(supply, store, legacy);
+  assert.equal(await openAnswer(reloaded, supply, 12, 3), repeated);
+  await reloaded.answer({ instanceId: reloaded.snapshot().profile.activeInstance.instanceId,
+    response: { optionIds: task.answer.correctOptionIds } });
+  assert.equal(stepWasCorrect(reloaded.snapshot(), route.steps[0].id), true);
+  assert.deepEqual(routeResults(reloaded.snapshot(), reloaded.snapshot().customRoutes[repeated]), {correct: 1, skipped: 0, practice: 0});
+  for (let i = 0; i < 2; i++) {
+    await nextAnswer(reloaded);
+    await reloaded.answer({ instanceId: reloaded.snapshot().profile.activeInstance.instanceId, disposition: 'skipped' });
+  }
+  assert.deepEqual(routeResults(reloaded.snapshot(), reloaded.snapshot().customRoutes[repeated]), {correct: 1, skipped: 2, practice: 0});
+  assert.notEqual(await openAnswer(reloaded, supply, 12, 3), id, 'do not resurrect an earlier route after a completed retry');
 });
 assert.equal(
   JSON.stringify(supply.curriculum.items),

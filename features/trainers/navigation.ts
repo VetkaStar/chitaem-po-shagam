@@ -95,6 +95,36 @@ export const sections: TrainerMenuSection[] = [
     items: [{ id: 'poems', title: 'Стихотворение' }],
   },
 ];
+/** Navigation groups are independent of material IDs used by saved lessons. */
+export type NavigationSection = Omit<TrainerMenuSection, 'id'> & {
+  id: TrainerSection | 'texts';
+  description: string;
+};
+export const navigationSections: NavigationSection[] = [
+  ...sections.slice(0, 5).map((section, index) => ({
+    ...section,
+    description: [
+      'Узнаём буквы',
+      'Соединяем звуки и собираем слова',
+      'Читаем целое слово',
+      'Называем то, что видим',
+      'Слова дружат друг с другом',
+    ][index],
+  })),
+  {
+    id: 'texts',
+    name: 'Тексты',
+    description: 'Читаем рассказы и стихи',
+    items: [
+      { id: 'stories', title: 'Рассказы' },
+      { id: 'poems', title: 'Стихи' },
+      ...sections.find(section => section.id === 'stories')!.items.filter(item => item.modes),
+    ],
+  },
+];
+export function navigationSectionId(id: string): string {
+  return id === 'stories' || id === 'poems' ? 'texts' : id;
+}
 export function findTrainerLink(id: string) {
   return sections
     .flatMap((section) => section.items)

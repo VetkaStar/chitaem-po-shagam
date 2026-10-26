@@ -56,59 +56,69 @@ export default function WordBridge({
     <FreeExposureFrame ready={exposure.ready} blocker={exposure.blocker}>
       <section
         className="word-bridge"
+        data-complete={done}
         aria-label="Из слогов в слово"
         onClickCapture={onInteract}
       >
-        <h3>Смотри, слоги умеют дружить!</h3>
-        <div className="task-instruction">
-          {sound && (
-            <button
-              className="speak-button"
-              aria-label="Послушать задание со слогами"
-              onClick={() =>
-                speak(
-                  `Смотри, слоги умеют дружить! Собери слово по порядку: ${item.parts.join(', ')}.`,
-                )
-              }
-            >
-              <Volume2 size={18} />
-            </button>
-          )}
-          <p>
-            Собери слово по порядку: <b>{item.parts.join(' · ')}</b>
-          </p>
-        </div>
-        <div className="bridge-slots" aria-label="Собранные слоги">
-          {item.parts.map((p, i) => (
-            <span key={i}>{i < chosen.length ? p : '…'}</span>
-          ))}
-        </div>
-        <div className="portal-actions">
-          {cards.map((c) => (
-            <button
-              key={c.id}
-              disabled={chosen.includes(c.id) || done}
-              onClick={() => {
-                if (c.text === item.parts[chosen.length]) {
-                  setChosen((v) => [...v, c.id]);
-                  setMessage('Получается!');
-                } else
-                  setMessage(
-                    'Найди слог ' +
-                      item.parts[chosen.length] +
-                      '. Он идёт следующим.',
-                  );
-              }}
-            >
-              {c.text}
-            </button>
-          ))}
-        </div>
-        <p role="status">{done ? `${item.word}! ${item.meaning}` : message}</p>
-        {done && sound && (
-          <button className="text-button" onClick={() => speak(item.word)}>
-            <Volume2 size={18} /> Послушать слово
-          </button>
+        {done ? (
+          <>
+            <h3 className="bridge-word">{item.word}</h3>
+            <p role="status">{item.meaning}</p>
+            {sound && (
+              <button className="text-button" onClick={() => speak(item.word)}>
+                <Volume2 size={18} /> Послушать слово
+              </button>
+            )}
+          </>
+        ) : (
+          <>
+            <h3>Смотри, слоги умеют дружить!</h3>
+            <div className="task-instruction">
+              {sound && (
+                <button
+                  className="speak-button"
+                  aria-label="Послушать задание со слогами"
+                  onClick={() =>
+                    speak(
+                      `Смотри, слоги умеют дружить! Собери слово по порядку: ${item.parts.join(', ')}.`,
+                    )
+                  }
+                >
+                  <Volume2 size={18} />
+                </button>
+              )}
+              <p>
+                Собери слово по порядку: <b>{item.parts.join(' · ')}</b>
+              </p>
+            </div>
+            <div className="bridge-slots" aria-label="Собранные слоги">
+              {item.parts.map((p, i) => (
+                <span key={i}>{i < chosen.length ? p : '…'}</span>
+              ))}
+            </div>
+            <div className="portal-actions">
+              {cards.map((c) => (
+                <button
+                  key={c.id}
+                  disabled={chosen.includes(c.id) || done}
+                  onClick={() => {
+                    if (c.text === item.parts[chosen.length]) {
+                      setChosen((v) => [...v, c.id]);
+                      setMessage('Получается!');
+                    } else
+                      setMessage(
+                        'Найди слог ' +
+                          item.parts[chosen.length] +
+                          '. Он идёт следующим.',
+                      );
+                  }}
+                >
+                  {c.text}
+                </button>
+              ))}
+            </div>
+            <p role="status">{message}</p>
+          </>
         )}
       </section>
     </FreeExposureFrame>

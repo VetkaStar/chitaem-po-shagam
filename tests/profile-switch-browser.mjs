@@ -85,22 +85,14 @@ try {
       .click();
     await tab.getByRole('heading', { name: 'Кто будет заниматься?' }).waitFor();
   }
-  async function questionnaire(tab, method) {
-    await tab
-      .getByRole('button', { name: 'Настроить программу', exact: true })
-      .click();
-    await tab
-      .getByLabel('Какой способ хочешь попробовать?')
-      .selectOption(method);
-    await tab.waitForFunction(
-      () =>
-        document
-          .querySelector('.curriculum-session')
-          ?.getAttribute('aria-busy') !== 'true',
-    );
-    await tab
-      .getByRole('button', { name: 'Настроить позже', exact: true })
-      .click();
+  async function questionnaire(tab, interest) {
+    if (interest === 'Животные') {
+      await tab.getByRole('heading', { name: 'Выбери свой путь', exact: true }).waitFor();
+      await tab.getByRole('button', { name: /^Моя дорожка/ }).click();
+    }
+    await tab.getByRole('button', { name: 'Ребёнок сам', exact: true }).click();
+    await tab.getByRole('button', { name: interest, exact: true }).click();
+    await tab.getByRole('button', { name: 'К тренажёрам', exact: true }).click();
     await tab
       .getByRole('heading', { name: 'Все тренажёры', exact: true })
       .waitFor();
@@ -109,7 +101,7 @@ try {
   await sibling
     .getByRole('button', { name: 'Учебные программы', exact: true })
     .click();
-  await questionnaire(sibling, 'method_syllable_first');
+  await questionnaire(sibling, 'Животные');
   await logout(page);
   await page.reload();
   await page.getByRole('heading', { name: 'Кто будет заниматься?' }).waitFor();
@@ -127,7 +119,7 @@ try {
   await page.getByLabel('Как тебя называть?').fill('Второй ребёнок');
   await page.getByLabel('Сколько тебе лет?').selectOption('6');
   await page.getByRole('button', { name: 'Продолжить →', exact: true }).click();
-  await questionnaire(page, 'method_word_first');
+  await questionnaire(page, 'Техника');
   await stars(page, 0);
   await stars(sibling, 37);
   const newId = await page.evaluate(() =>
@@ -168,15 +160,13 @@ try {
   await page
     .getByRole('button', { name: 'Учебные программы', exact: true })
     .click();
-  await page
-    .getByRole('button', { name: 'Настроить программу', exact: true })
-    .click();
+  await page.getByRole('button', { name: /^Моя дорожка/ }).click();
   assert.equal(
-    await page.getByLabel('Какой способ хочешь попробовать?').inputValue(),
-    'method_syllable_first',
+    await page.getByRole('button', { name: 'Животные', exact: true }).getAttribute('aria-pressed'),
+    'true',
   );
   await page
-    .getByRole('button', { name: 'Настроить позже', exact: true })
+    .getByRole('button', { name: 'К тренажёрам', exact: true })
     .click();
   await logout(page);
   await page
@@ -192,12 +182,10 @@ try {
   await page
     .getByRole('button', { name: 'Учебные программы', exact: true })
     .click();
-  await page
-    .getByRole('button', { name: 'Настроить программу', exact: true })
-    .click();
+  await page.getByRole('button', { name: /^Моя дорожка/ }).click();
   assert.equal(
-    await page.getByLabel('Какой способ хочешь попробовать?').inputValue(),
-    'method_word_first',
+    await page.getByRole('button', { name: 'Техника', exact: true }).getAttribute('aria-pressed'),
+    'true',
   );
   await sibling.reload();
   await sibling

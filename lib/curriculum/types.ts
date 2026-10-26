@@ -37,6 +37,8 @@ export interface EntryRegistry {
 export interface Supply {
   curriculum: Curriculum;
   registry: EntryRegistry;
+  /** Verified previous snapshot, used only to validate and migrate existing saves. */
+  previous?: Supply;
 }
 export interface RuntimeInstance extends TaskInstance {
   illustrationVariant?: 'main' | 'alternate' | 'context';

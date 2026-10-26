@@ -29,9 +29,10 @@ export default function TrainerEntry(props: TrainerEntryProps) {
   } | null>(null);
   const [error, setError] = useState(false),
     [attempt, setAttempt] = useState(0);
+  const { onBusyChange } = props;
   useEffect(() => {
-    props.onBusyChange?.(!ready && !error);
-  }, [ready, error, props.onBusyChange]);
+    onBusyChange?.(!ready && !error);
+  }, [ready, error, onBusyChange]);
   useEffect(() => {
     let cancelled = false;
     let store: IndexedDbProgressStore | undefined;
@@ -109,7 +110,11 @@ export default function TrainerEntry(props: TrainerEntryProps) {
     trainerDefinitions.find((definition) => definition.id === props.trainerId)!
       .title;
   return (
-    <section className="portal-panel" aria-label={title} aria-busy={!error}>
+    <section
+      className={props.model ? 'exercise task-card' : 'portal-panel'}
+      aria-label={title}
+      aria-busy={!error}
+    >
       {!props.embedded && <h1>{title}</h1>}
       {error ? (
         <div role="alert">

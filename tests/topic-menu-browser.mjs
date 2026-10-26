@@ -148,6 +148,7 @@ try {
       const page = await context.newPage();
       await page.goto(base + '/');
       await page.locator('.portal-card').filter({ hasText: 'Слоги' }).click();
+      await page.locator('.portal-grid').getByRole('button', { name: 'Слог', exact: true }).click();
       const trigger = page.getByRole('button', {
         name: /^Выбрать другую тему/,
       });

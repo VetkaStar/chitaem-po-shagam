@@ -36,7 +36,18 @@ try {
   });
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
+  await page.route('**/lib/piper-speech.ts*', (route) => route.fulfill({ contentType: 'text/javascript', body: `
+    export function stopPiperSpeech() {}
+    export function speakPiper(text, options = {}) {
+      window.testSpoken.push(text);
+      queueMicrotask(() => options.onEnd?.());
+    }
+  ` }));
   await page.addInitScript(() => {
+    if (!localStorage.getItem('reading-profile-v1')) {
+      localStorage.setItem('reading-profile-v1', JSON.stringify({ name: 'Проверка звука', age: '7', start: 'words' }));
+      localStorage.setItem('reading-steps-v3', JSON.stringify({ settings: { styleChosen: true, sound: true, autoSpeech: false, layout: 'order', unit: 12, curriculumVersion: 2 }, stars: 0, history: [] }));
+    }
     window.testSpoken = [];
     Object.defineProperty(window, 'speechSynthesis', {
       configurable: true,
@@ -55,20 +66,19 @@ try {
     });
   });
   await page.goto(base);
-  await page.getByLabel('Как тебя называть?').fill('Проверка звука');
-  await page.getByLabel('Сколько тебе лет?').selectOption('7');
-  await page.getByRole('button', { name: 'Продолжить →', exact: true }).click();
-  await page
-    .getByRole('button', { name: 'Настроить программу', exact: true })
-    .click();
-  await page
-    .getByLabel('Можно пользоваться озвучкой и понимать её?')
-    .selectOption('true');
-  await page.getByLabel('Озвучка инструкции').selectOption('off');
-  await page.getByRole('button', { name: 'Продолжить', exact: true }).click();
-  await page
-    .getByRole('button', { name: 'Настроить позже', exact: true })
-    .click();
+  await page.getByRole('heading', { name: 'Все тренажёры', exact: true }).waitFor();
+  // Persist the existing instruction preference through the real controller. The short entry has its own suite.
+  await page.evaluate(async (sourceRoot) => {
+    const { loadBundledSupply } = await import(sourceRoot + '/lib/curriculum/bundled.ts');
+    const { IndexedDbProgressStore } = await import(sourceRoot + '/lib/progress/indexed-db.ts');
+    const { CurriculumController } = await import(sourceRoot + '/features/curriculum/controller.ts');
+    const { browserStorage } = await import(sourceRoot + '/lib/progress/profile-storage.ts');
+    const supply = await loadBundledSupply();
+    const store = new IndexedDbProgressStore(supply);
+    const controller = await CurriculumController.open(supply, store, browserStorage);
+    await controller.saveQuestionnaire({ ...controller.snapshot().onboarding.questionnaire, audioUsable: true, instructionAudio: 'off' }, null);
+    await store.close();
+  }, '/@fs/' + root.replaceAll('\\', '/'));
   await page
     .getByRole('heading', { name: 'Все тренажёры', exact: true })
     .waitFor();

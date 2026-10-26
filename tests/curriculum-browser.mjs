@@ -62,6 +62,7 @@ try{
     if(JSON.stringify(backup)!==JSON.stringify(prior))throw Error('backup mismatch');
     if(localStorage.getItem('reading-steps-v3')!=='{"stars":29,"settings":{"look":"notebook"}}')throw Error('legacy key modified');
     const good=ctl.snapshot();
+    // eslint-disable-next-line typescript/unbound-method -- Save and restore the prototype method; never call it unbound.
     const originalPut=IDBObjectStore.prototype.put;
     IDBObjectStore.prototype.put=function(){throw new DOMException('test quota','QuotaExceededError');};
     let quota=false;

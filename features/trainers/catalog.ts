@@ -54,7 +54,6 @@ export function trainerItems(
   const reserved = new Set(
     Object.values(pools ?? {}).flatMap((pool) => pool.itemIds ?? []),
   );
-  reserved.add('task.1bb67acaeb41');
   return Object.values(supply.curriculum.items).filter(
     (item) =>
       item.freeTrainerVisible &&

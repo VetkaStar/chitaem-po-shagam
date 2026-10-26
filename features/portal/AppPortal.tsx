@@ -1,6 +1,6 @@
 'use client';
 import TrainerWorkspace from '../trainers/TrainerWorkspace';
-import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
+import { useEffect, useEffectEvent, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import CurriculumEntry from '../onboarding/CurriculumEntry';
 import TrainerEntry from '../trainers/TrainerEntry';
 import type { AnswerSection } from '../answers/types';
@@ -9,7 +9,7 @@ import AnswerEntry from '../answers/AnswerEntry';
 import AnswerSettings from '../answers/AnswerSettings';
 import { isTrainerId } from '../trainers/catalog';
 import SectionTrainers from '../trainers/SectionTrainers';
-import { sections, findTrainerLink } from '../trainers/navigation';
+import { sections, navigationSections, navigationSectionId, findTrainerLink } from '../trainers/navigation';
 import {
   browserStorage,
   registerCurrentProfile,
@@ -34,6 +34,7 @@ import About from './About';
 import StylePicker, { type StyleValue } from './StylePicker';
 import { PortalContext } from './portal-context';
 import TextLibrary from '../library/TextLibrary';
+import { usePortalHistory } from './use-portal-history';
 import { parseProfile, profileKey, type Profile } from './profile';
 
 const recordFree: ExposureRecorder = async (input) => {
@@ -94,6 +95,19 @@ export default function AppPortal({
     }),
     [menuOpen, setMenuOpen] = useState(false),
     [warning, setWarning] = useState('');
+  const trainersHeading = useRef<HTMLHeadingElement>(null);
+  function showTrainers() {
+    const heading = trainersHeading.current;
+    if (!heading) return;
+    const reduceMotion =
+      !model.settings.motion ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    heading.focus({ preventScroll: true });
+    heading.scrollIntoView({
+      behavior: reduceMotion ? 'instant' : 'smooth',
+      block: 'start',
+    });
+  }
   const freePractice = view === 'lesson' || view in textLabels;
   useLayoutEffect(() => {
     setFreeAudioRecorder(freePractice ? recordFree : null);
@@ -148,6 +162,16 @@ export default function AppPortal({
     window.scrollTo({ top: 0, behavior: 'instant' });
   }
   function start(id: string) {
+    if (id.startsWith('section:')) {
+      go('section:' + navigationSectionId(id.slice('section:'.length)));
+      return;
+    }
+    if (/^answer:(letters|syllables|words)$/.test(id)) {
+      const stage = id.split(':')[1] as Stage;
+      if (model.stage !== stage) model.navigate(stage, 'read');
+      go(id);
+      return;
+    }
     if (/^lesson:(letters|syllables|words):answer$/.test(id)) {
       const stage = id.split(':')[1] as Stage;
       if (model.stage !== stage) model.navigate(stage, 'read');
@@ -205,6 +229,15 @@ export default function AppPortal({
       setWarning('Не удалось выйти из профиля. Попробуйте ещё раз.');
     }
   }
+  usePortalHistory(
+    view === 'lesson'
+      ? model.stage === 'pictures'
+        ? `picture:${model.settings.pictureMode}`
+        : `lesson:${model.stage}:${model.mode}`
+      : view,
+    model.ready,
+    start,
+  );
   const trainerId = view.startsWith('trainer:') ? view.split(':')[1] : '';
   const section = sections.find(
     (s) =>
@@ -214,14 +247,18 @@ export default function AppPortal({
       ],
   );
   const selectedTrainer = findTrainerLink(view);
+  const navigationSection = view.startsWith('section:')
+    ? navigationSections.find(item => item.id === navigationSectionId(view.slice('section:'.length)))
+    : undefined;
   const selectedItem = view.startsWith('answer:')
     ? 'lesson:' + view.split(':')[1]
     : view === 'lesson'
       ? `lesson:${model.stage}`
       : view;
+  const returnToLesson = useEffectEvent(() => go('lesson'));
   useEffect(() => {
     if (view.startsWith('answer:') && model.stage !== view.split(':')[1])
-      go('lesson');
+      returnToLesson();
   }, [view, model.stage]);
   // Settings and progress come from storage right after the first render; wait for them before choosing a screen.
   if (!model.ready)
@@ -266,7 +303,7 @@ export default function AppPortal({
         >
           <LessonSidebar
             model={model}
-            active={view === 'lesson' ? model.stage : (section?.id ?? view)}
+            active={view === 'lesson' ? model.stage : (navigationSection?.id ?? section?.id ?? view)}
             selectedItem={selectedItem}
             onSelect={start}
             onAbout={() => go('about')}
@@ -299,8 +336,11 @@ export default function AppPortal({
                 onChange={changeStyle}
                 onDone={() => model.update('styleChosen', true)}
               />
-            ) : view === 'curriculum' ? (
+            ) : view === 'curriculum' || view === 'programs' ? (
               <CurriculumEntry
+                key={view}
+                catalog={view === 'programs'}
+                suspended={model.parent || model.rest || model.paused}
                 settings={model.settings}
                 sound={model.settings.sound}
                 speak={model.speak}
@@ -312,8 +352,8 @@ export default function AppPortal({
                 }}
                 onExit={() => go('home')}
               />
-            ) : view.startsWith('section:') && section ? (
-              <SectionTrainers section={section} onSelect={start} />
+            ) : navigationSection ? (
+              <SectionTrainers section={navigationSection} onSelect={start} />
             ) : view === 'lesson' ? (
               <FreeExposureContext.Provider value={recordFree}>
                 {typeof children === 'function'
@@ -344,12 +384,15 @@ export default function AppPortal({
                 trainer={selectedTrainer}
                 section={section.id}
                 model={model}
-                onExit={() => go(`section:${section.id}`)}
+                onExit={() => start(`section:${section.id}`)}
               />
             ) : view === 'cabinet' ? (
               <Cabinet
                 profile={profile}
                 stars={model.stars}
+                history={model.history}
+                onContinue={() => start(profile.start)}
+                onPrograms={() => go('programs')}
                 onEdit={() => go('edit')}
                 onLogout={logout}
               />
@@ -382,51 +425,43 @@ export default function AppPortal({
                   Сегодня можно сделать один маленький шаг. Выбери, что тебе
                   интересно.
                 </p>
-                <button
-                  className="primary"
-                  onClick={() => start(profile.start)}
-                >
-                  Начать занятие →
-                </button>
-                <div className="curriculum-actions">
-                  <button type="button" onClick={() => go('curriculum')}>
+                <div className="portal-actions home-actions">
+                  <button
+                    type="button"
+                    className="primary"
+                    onClick={() => start(profile.start)}
+                  >
+                    Начать занятие →
+                  </button>
+                  <button type="button" onClick={() => go('programs')}>
                     Учебные программы
                   </button>
+                  <button
+                    type="button"
+                    aria-controls="home-trainers"
+                    onClick={showTrainers}
+                  >
+                    Все тренажёры ↓
+                  </button>
                 </div>
-                <h2>Все тренажёры</h2>
-                <div className="portal-grid">
-                  {[
-                    ...stages.map((s) => ({ id: s.id, name: s.name })),
-                    ...Object.entries(textLabels).map(([id, name]) => ({
-                      id,
-                      name,
-                    })),
-                  ].map((s, i) => (
+                <p className="storage-note">«Начать занятие» открывает свободный тренажёр. В учебных программах можно выбрать авторский курс или продолжить личную дорожку — их прогресс сохраняется отдельно.</p>
+                <h2 ref={trainersHeading} tabIndex={-1} className="home-trainers-heading">
+                  Все тренажёры
+                </h2>
+                <div id="home-trainers" className="portal-grid">
+                  {navigationSections.map((s, i) => (
                     <button
                       className="portal-card"
                       key={s.id}
                       onClick={() => {
-                        const entry = sections.find(
-                          (section) => section.id === s.id,
-                        )!;
-                        if (entry.items.length === 1) start(entry.items[0].id);
+                        if (s.items.length === 1) start(s.items[0].id);
                         else go('section:' + s.id);
                       }}
                     >
                       <small>ШАГ {i + 1}</small>
                       <b>{s.name}</b>
                       <span>
-                        {
-                          [
-                            'Узнаём буквы',
-                            'Соединяем звуки и собираем слова',
-                            'Читаем целое слово',
-                            'Называем то, что видим',
-                            'Слова дружат друг с другом',
-                            'Читаем и понимаем',
-                            'Слушаем ритм и читаем',
-                          ][i]
-                        }
+                        {s.description}
                       </span>
                     </button>
                   ))}

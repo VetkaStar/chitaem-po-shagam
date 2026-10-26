@@ -2,7 +2,6 @@ import type { Profile } from '../curriculum/contracts.js';
 import type { ProgressState, Supply } from '../curriculum/types.js';
 import { engine } from '../curriculum/core.js';
 import {
-  CURRICULUM_SHA,
   demand,
   object,
   natural,
@@ -34,7 +33,7 @@ export function validateState(
   demand(
     object(s.supply) &&
       s.supply.curriculumVersion === '0.7.0' &&
-      s.supply.curriculumSha256 === CURRICULUM_SHA &&
+      s.supply.curriculumSha256 === supply.registry.curriculumSha256 &&
       s.supply.specVersion === 'onboarding-0.7.3',
     'supply version',
   );

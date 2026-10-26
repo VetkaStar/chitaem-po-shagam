@@ -47,8 +47,9 @@ export function useFreeExposure(input: FreeExposure): {
   const ready = !record || empty || saved === key;
   const id = useRef({});
   useLayoutEffect(() => {
-    setMaterialPending(id.current, !ready);
-    return () => setMaterialPending(id.current, false);
+    const materialId = id.current;
+    setMaterialPending(materialId, !ready);
+    return () => setMaterialPending(materialId, false);
   }, [ready]);
   return {
     ready,

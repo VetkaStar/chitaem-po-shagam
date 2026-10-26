@@ -323,7 +323,7 @@ try {
     for (const [section, trainer, kind, slug] of [
       ['Слова', 'Читаем и понимаем', 'read_meaning', 'meaning'],
       ['Предложения', 'Состав предложения', 'find_part', 'sentence'],
-      ['Рассказы', 'Состав текста', 'find_part', 'story'],
+      ['Тексты', 'Состав текста', 'find_part', 'story'],
     ]) {
       await navigate(section, trainer);
       await ready();

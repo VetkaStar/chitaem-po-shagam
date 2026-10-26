@@ -15,8 +15,7 @@ import {
 
 import type { ReactNode, RefObject } from 'react';
 
-/** Main action between two side buttons, plus quiet links.
- *  Laptop shows them under the task; tablet and phone move the buttons into a dock at the bottom edge. */
+/** Permanent action shelf, inside the card and its durable material gate. */
 export default function ExerciseActions({
   done,
   countdown,
@@ -172,32 +171,38 @@ export default function ExerciseActions({
     links = (
       <>
         <details className="adult-check">
-          <summary>
-            <Users /> Проверить вместе со взрослым
+          <summary aria-label="Проверить вместе со взрослым">
+            <Users />
+            <span className="label-long">Проверить вместе со взрослым</span>
+            <span className="label-short" aria-hidden="true">
+              Со взрослым
+            </span>
           </summary>
-          <p>Послушайте ребёнка и выберите результат.</p>
-          <div className="adult-actions">
-            <button
-              onClick={() => {
-                success('adult');
-              }}
-            >
-              <Check /> Получилось
-            </button>
-            <button
-              onClick={() => {
-                setFeedback({
-                  kind: 'uncertain',
-                  text: 'Давай вместе. Послушай и повтори.',
-                });
-                setHint(true);
-                setMistakes((n) => Math.max(2, n));
-                record('help', 'adult');
-                speak(target.toLowerCase());
-              }}
-            >
-              Нужна помощь
-            </button>
+          <div className="task-card-adult-panel">
+            <p>Послушайте ребёнка и выберите результат.</p>
+            <div className="adult-actions">
+              <button
+                onClick={() => {
+                  success('adult');
+                }}
+              >
+                <Check /> Получилось
+              </button>
+              <button
+                onClick={() => {
+                  setFeedback({
+                    kind: 'uncertain',
+                    text: 'Давай вместе. Послушай и повтори.',
+                  });
+                  setHint(true);
+                  setMistakes((n) => Math.max(2, n));
+                  record('help', 'adult');
+                  speak(target.toLowerCase());
+                }}
+              >
+                Нужна помощь
+              </button>
+            </div>
           </div>
         </details>
         {skip}
@@ -228,8 +233,8 @@ export default function ExerciseActions({
     links = mode === 'fly' ? null : skip;
   }
   return (
-    <div className="lesson-actions">
-      <div className="lesson-dock">
+    <div className="task-card-actions">
+      <div className="task-card-dock">
         {primary}
         {left ?? <span className="dock-spacer dock-left" aria-hidden="true" />}
         {right ?? (
@@ -237,7 +242,7 @@ export default function ExerciseActions({
         )}
       </div>
       {autoAdvanceStop}
-      {links && <div className="lesson-links">{links}</div>}
+      {links && <div className="task-card-links">{links}</div>}
       {note}
     </div>
   );

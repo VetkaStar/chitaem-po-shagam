@@ -1,7 +1,6 @@
 import type { Profile } from '../curriculum/contracts.js';
 import type { Supply } from '../curriculum/types.js';
 import {
-  CURRICULUM_SHA,
   demand,
   object,
   strings,
@@ -206,7 +205,7 @@ export function validatePlatform(
     object(o) &&
       o.schemaVersion === 1 &&
       o.specVersion === 'onboarding-0.7.3' &&
-      o.curriculumSha256 === CURRICULUM_SHA,
+      o.curriculumSha256 === supply.registry.curriculumSha256,
     'onboarding version',
   );
   demand(

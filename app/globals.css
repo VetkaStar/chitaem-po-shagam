@@ -1207,6 +1207,8 @@
   min-width: 0;
 }
 .topic-heading small {
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0;
@@ -1610,6 +1612,24 @@
   line-height: 1.8;
   font-size: 24px;
 }
+.spoken-heading,
+.spoken-feedback,
+.text-reference p {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.spoken-heading > button,
+.spoken-feedback > button,
+.text-reference p > button {
+  flex-shrink: 0;
+}
+.spoken-heading > span,
+.full-text-line > span,
+.text-reference p > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
 .text-reference button {
   display: inline-flex;
   vertical-align: middle;
@@ -1713,8 +1733,7 @@
 /* ===== features/lesson/lesson.css (consolidated, original cascade order) ===== */
 /* Lesson screen in the «Порядок» layout with the plain look, sized as in the approved mockups:
    laptop from 1100px, tablet 700–1099px, phone below 700px.
-   On laptop the task sheet is drawn by .exercise and .lesson-actions together, so the actions sit under the task.
-   On tablet and phone the main buttons move to a dock fixed to the bottom edge, links go under the sheet.
+   Permanent task cards use the shared frame and action shelf at the end of this file.
    Every line of text has its own speaker in front of it.
    This file holds all styles of the lesson screen. app/globals.css is imported after the app (static-entry/main.tsx),
    so rules here are scoped to .lesson to outrank its shared rules. */
@@ -1885,16 +1904,13 @@ section.lesson > * {
   max-width: 100%;
   margin: 0;
 }
-.lesson .exercise:is(.success, .error),
-.lesson .exercise:is(.success, .error) + .lesson-actions {
+.lesson .exercise:is(.success, .error) {
   border-width: 2px;
 }
-.lesson .exercise.success,
-.lesson .exercise.success + .lesson-actions {
+.lesson .exercise.success {
   border-color: var(--ok-line);
 }
-.lesson .exercise.error,
-.lesson .exercise.error + .lesson-actions {
+.lesson .exercise.error {
   border-color: var(--err-line);
 }
 .lesson .task-line {
@@ -2106,7 +2122,7 @@ section.lesson > * {
   overflow: visible;
 }
 .lesson .hint-space[data-visible='false'] {
-  display: none;
+  visibility: hidden;
 }
 .lesson .hint-box {
   color: #5c715c;
@@ -2812,7 +2828,7 @@ section.lesson > * {
 .lesson .dock-spacer {
   display: none;
 }
-.lesson :is(.lesson-actions .primary, .next-exercise-button) {
+.lesson .next-exercise-button {
   height: 58px;
   min-height: 0;
   min-width: 240px;
@@ -2823,20 +2839,20 @@ section.lesson > * {
   font-size: 17px;
   font-weight: 800;
 }
-.lesson :is(.lesson-actions .primary, .next-exercise-button) > svg {
+.lesson .next-exercise-button > svg {
   flex-shrink: 0;
   width: 22px;
   height: 22px;
 }
-.lesson :is(.lesson-actions .primary, .next-exercise-button).listening {
+.lesson .next-exercise-button.listening {
   background: var(--listen);
   box-shadow: 0 4px 0 var(--listen-edge);
 }
-[data-vision]:not([data-vision='off']) .lesson :is(.lesson-actions .primary, .next-exercise-button) {
+[data-vision]:not([data-vision='off']) .lesson .next-exercise-button {
   background: var(--vision-first);
   box-shadow: 0 4px 0 #202020;
 }
-.lesson :is(.lesson-actions .primary, .next-exercise-button) .countdown {
+.lesson .next-exercise-button .countdown {
   margin-left: 4px;
 }
 .lesson .mic-unsupported {
@@ -2847,176 +2863,21 @@ section.lesson > * {
 }
 
 @media (min-width: 1100px) {
-  .lesson .only-narrow {
-    display: none;
-  }
-  /* Second half of the sheet: main button, then a row of side buttons and links under a line. */
-  .lesson .lesson-actions {
-    display: grid;
-    grid-template-columns: auto auto minmax(0, 1fr) auto;
-    column-gap: 6px;
-    align-items: center;
-    margin-top: -12px;
-    padding: 4px 28px 14px;
-    border: 1px solid var(--line);
-    border-top: 0;
-    border-radius: 0 0 24px 24px;
-    background: var(--surface);
-  }
-  .lesson-actions::before {
-    content: '';
-    grid-row: 3;
-    grid-column: 1 / -1;
-    align-self: start;
-    height: 1px;
-    margin-top: 8px;
-    background: var(--line-soft);
-  }
-  .lesson-dock,
-  .lesson-links {
-    display: contents;
-  }
-  .lesson-actions .primary {
-    grid-row: 1;
-    grid-column: 1 / -1;
-    justify-self: center;
-  }
-  .lesson-actions .auto-stop {
-    grid-row: 2;
-    grid-column: 1 / -1;
-    justify-self: center;
-    margin-top: 6px;
-  }
-  .lesson-actions :is(.dock-side, .lesson-links > *) {
-    grid-row: 3;
-    margin-top: 19px;
-  }
-  .lesson-actions .dock-left {
-    grid-column: 1;
-  }
-  .lesson-actions .dock-right {
-    grid-column: 2;
-  }
-  .lesson-links .adult-check {
-    grid-column: 3;
-    justify-self: center;
-  }
-  .lesson-links .skip-link {
-    grid-column: 4;
-  }
-  .lesson-links .adult-check[open] {
-    grid-row: 4;
-    grid-column: 1 / -1;
-    margin-top: 10px;
-  }
-  .lesson-actions .mic-unsupported {
-    grid-row: 5;
-    grid-column: 1 / -1;
-    margin-top: 8px;
-  }
   [data-vision]:not([data-vision='off'])
     .lesson
     .exercise:is(.success, .error) {
     border-bottom-width: 0;
   }
-  [data-vision]:not([data-vision='off'])
-    .lesson
-    .exercise.success
-    + .lesson-actions {
-    border: 3px solid var(--vision-first);
-    border-top: 0;
-  }
-  [data-vision]:not([data-vision='off'])
-    .lesson
-    .exercise.error
-    + .lesson-actions {
-    border: 3px dashed var(--vision-second);
-    border-top: 0;
-  }
 }
 
 @media (max-width: 1099px) {
-  .lesson .only-wide {
-    display: none;
-  }
   .lesson .exercise {
     padding: 20px 28px 24px;
     border-bottom: 1px solid var(--line);
     border-radius: 24px;
   }
-  .lesson-actions {
-    display: contents;
-  }
-  .lesson-dock {
-    position: fixed;
-    z-index: 20;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 14px 24px calc(22px + env(safe-area-inset-bottom));
-    border-top: 1px solid var(--header-line);
-    background: var(--surface);
-    box-shadow: 0 -10px 24px rgba(32, 60, 49, 0.08);
-  }
-  .lesson-dock .dock-left {
-    order: 0;
-  }
-  .lesson-dock .primary {
-    order: 1;
-    flex: 1;
-  }
-  .lesson-dock .dock-right {
-    order: 2;
-  }
-  .lesson .lesson-dock :is(.primary, .dock-side) {
-    height: 64px;
-    border-radius: 16px;
-  }
-  .lesson .lesson-dock .primary {
-    min-width: 0;
-    padding: 0 20px;
-    font-size: 18px;
-    line-height: 1.2;
-  }
-  .lesson .lesson-dock .primary > svg {
-    width: 24px;
-    height: 24px;
-  }
-  .lesson .lesson-dock .dock-side {
-    padding: 0 18px;
-    font-size: 16px;
-  }
-  .lesson .lesson-dock .dock-side > svg {
-    width: 20px;
-    height: 20px;
-  }
-  .lesson-links {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 4px 8px;
-    padding: 0 4px;
-  }
-  .lesson-links .skip-link {
-    margin-left: auto;
-  }
-  .lesson-links .adult-check[open] {
-    flex-basis: 100%;
-    order: 1;
-  }
   .lesson :is(.link-button, .adult-check > summary) {
     font-size: 15px;
-  }
-  /* The dock covers the bottom of the page: keep room for it and for focused fields. */
-  body:has(.lesson-dock) .app-layout {
-    padding-bottom: calc(124px + env(safe-area-inset-bottom));
-  }
-  html:has(.lesson-dock) {
-    scroll-padding-bottom: 130px;
   }
 }
 
@@ -3284,53 +3145,8 @@ section.lesson > * {
     min-height: 46px;
     font-size: 24px;
   }
-  .lesson-dock {
-    gap: 10px;
-    padding: 10px 14px calc(18px + env(safe-area-inset-bottom));
-  }
-  .lesson .lesson-dock :is(.primary, .dock-side) {
-    height: 62px;
-  }
-  .lesson .lesson-dock .primary {
-    padding: 0 10px;
-    font-size: 15px;
-    line-height: 1.2;
-    white-space: normal;
-  }
-  .lesson .lesson-dock .primary > svg {
-    width: 22px;
-    height: 22px;
-  }
-  .lesson .lesson-dock .key-hint {
-    display: none;
-  }
-  .lesson .lesson-dock .dock-side {
-    flex-direction: column;
-    flex-shrink: 0;
-    width: 72px;
-    padding: 4px 6px;
-    gap: 3px;
-    font-size: 11px;
-  }
-  .lesson .lesson-dock .dock-side .label-long {
-    display: none;
-  }
-  .lesson .lesson-dock .dock-side .label-short {
-    display: inline;
-  }
-  .lesson .lesson-dock .dock-side > svg {
-    order: -1;
-  }
-  .lesson .lesson-dock .dock-spacer {
-    display: block;
-    flex-shrink: 0;
-    width: 72px;
-  }
   .lesson :is(.link-button, .adult-check > summary) {
     font-size: 13px;
-  }
-  body:has(.lesson-dock) .app-layout {
-    padding-bottom: calc(110px + env(safe-area-inset-bottom));
   }
 }
 
@@ -3352,10 +3168,7 @@ section.lesson > * {
   border-radius: 999px;
 }
 :root[data-layout='focus'] .app-content > .portal-panel {
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: none;
+  padding: clamp(18px, 3vw, 36px);
 }
 :root[data-layout='focus'] .portal-footer .footer-about {
   display: inline-flex;
@@ -3754,34 +3567,22 @@ button.topic-chip-open:hover {
   border-radius: 32px 32px 0 0;
   box-shadow: 0 20px 48px rgba(32, 60, 49, 0.07);
 }
-:root[data-layout='focus'] .lesson .exercise.success,
-:root[data-layout='focus'] .lesson .exercise.success + .lesson-actions {
+:root[data-layout='focus'] .lesson .exercise.success {
   --state: var(--ok-line);
 }
-:root[data-layout='focus'] .lesson .exercise.error,
-:root[data-layout='focus'] .lesson .exercise.error + .lesson-actions {
+:root[data-layout='focus'] .lesson .exercise.error {
   --state: var(--err-line);
 }
 :root[data-layout='focus']
   [data-vision]:not([data-vision='off'])
   .lesson
-  .exercise.success,
-:root[data-layout='focus']
-  [data-vision]:not([data-vision='off'])
-  .lesson
-  .exercise.success
-  + .lesson-actions {
+  .exercise.success {
   --state: var(--vision-first);
 }
 :root[data-layout='focus']
   [data-vision]:not([data-vision='off'])
   .lesson
-  .exercise.error,
-:root[data-layout='focus']
-  [data-vision]:not([data-vision='off'])
-  .lesson
-  .exercise.error
-  + .lesson-actions {
+  .exercise.error {
   --state: var(--vision-second);
 }
 :root[data-layout='focus'] .lesson .task-line h2 {
@@ -3851,85 +3652,14 @@ button.topic-chip-open:hover {
       inset 0 2px 0 var(--state),
       0 20px 48px rgba(32, 60, 49, 0.07);
   }
-  /* Main button between the two side buttons, links under a line. The top of the box shadow is clipped
-     so the second half of the sheet does not shade the first. */
-  :root[data-layout='focus'] .lesson .lesson-actions {
-    /* Overlaps the first half by 1px so no seam shows between the two boxes. */
-    margin-top: -15px;
-    grid-template-columns: minmax(0, 1fr) auto auto auto minmax(0, 1fr);
-    column-gap: 14px;
-    padding: 9px 40px 20px;
-    border: 0;
-    border-radius: 0 0 32px 32px;
-    box-shadow:
-      0 1px 0 var(--line),
-      0 20px 48px rgba(32, 60, 49, 0.07);
-    clip-path: inset(0 -60px -80px -60px);
-  }
-  :root[data-layout='focus']
-    .lesson
-    .exercise:is(.success, .error)
-    + .lesson-actions {
-    box-shadow:
-      inset 2px 0 0 var(--state),
-      inset -2px 0 0 var(--state),
-      inset 0 -2px 0 var(--state),
-      0 20px 48px rgba(32, 60, 49, 0.07);
-  }
-  :root[data-layout='focus'] .lesson-actions::before {
-    margin-top: 6px;
-  }
-  :root[data-layout='focus']
-    .lesson
-    .lesson-actions:not(:has(.lesson-links))::before {
-    content: none;
-  }
-  :root[data-layout='focus']
-    .lesson-actions
-    :is(.dock-left, .dock-right, .primary) {
-    grid-row: 1;
-    margin-top: 0;
-  }
-  :root[data-layout='focus'] .lesson-actions .dock-left {
-    grid-column: 2;
-    justify-self: end;
-  }
-  :root[data-layout='focus'] .lesson-actions .primary {
-    grid-column: 3;
-  }
-  :root[data-layout='focus'] .lesson-actions .dock-right {
-    grid-column: 4;
-    justify-self: start;
-  }
-  :root[data-layout='focus'] .lesson-links > * {
-    margin-top: 19px;
-  }
-  :root[data-layout='focus'] .lesson-links .adult-check {
-    grid-column: 1 / 3;
-    justify-self: start;
-  }
-  :root[data-layout='focus'] .lesson-links .skip-link {
-    grid-column: 4 / -1;
-    justify-self: end;
-  }
-  :root[data-layout='focus'] .lesson .lesson-actions .dock-side {
-    height: 64px;
-    padding: 0 20px;
-    border-radius: 22px;
-    font-size: 16px;
-  }
-  :root[data-layout='focus'] .lesson .lesson-actions .dock-side > svg {
-    width: 20px;
-    height: 20px;
-  }
-  :root[data-layout='focus'] .lesson :is(.lesson-actions .primary, .next-exercise-button) {
+  :root[data-layout='focus'] .lesson .next-exercise-button {
     height: 72px;
     min-width: 0;
     padding: 0 32px;
     border-radius: 24px;
     font-size: 20px;
   }
-  :root[data-layout='focus'] .lesson :is(.lesson-actions .primary, .next-exercise-button) > svg {
+  :root[data-layout='focus'] .lesson .next-exercise-button > svg {
     width: 24px;
     height: 24px;
   }
@@ -3947,19 +3677,6 @@ button.topic-chip-open:hover {
     box-shadow:
       inset 0 0 0 2px var(--state),
       0 20px 48px rgba(32, 60, 49, 0.07);
-  }
-  :root[data-layout='focus'] .lesson-dock {
-    border-top: 0;
-    background: var(--ground);
-  }
-  :root[data-layout='focus'] .lesson .lesson-dock .dock-side {
-    border-radius: 22px;
-  }
-  :root[data-layout='focus'] .lesson .lesson-dock .primary {
-    border-radius: 24px;
-  }
-  :root[data-layout='focus'] .lesson-links {
-    padding: 0 12px;
   }
 }
 
@@ -4034,9 +3751,6 @@ button.topic-chip-open:hover {
   }
   :root[data-layout='focus'] .exercise-count:has(~ .exercise-rest)::after {
     content: none;
-  }
-  :root[data-layout='focus'] .lesson-links {
-    padding: 0 6px;
   }
 }
 
@@ -4113,7 +3827,7 @@ button.topic-chip-open:hover {
   border-radius: 12px;
   box-shadow: 0 2px 0 var(--press);
 }
-:root[data-look='notebook'] .lesson :is(.lesson-actions .primary, .next-exercise-button) {
+:root[data-look='notebook'] .lesson .next-exercise-button {
   border-radius: 12px;
 }
 
@@ -4135,21 +3849,12 @@ button.topic-chip-open:hover {
 }
 :root[data-look='notebook'] .lesson .exercise:is(.success, .error) {
   box-shadow: none;
-}
-/* A checked answer keeps the 2px frame of the plain look. */
-:root[data-look='notebook'] .lesson .exercise:is(.success, .error),
-:root[data-look='notebook']
-  .lesson
-  .exercise:is(.success, .error)
-  + .lesson-actions {
   border-width: 2px;
 }
-:root[data-look='notebook'] .lesson .exercise.success,
-:root[data-look='notebook'] .lesson .exercise.success + .lesson-actions {
+:root[data-look='notebook'] .lesson .exercise.success {
   border-color: var(--ok-line);
 }
-:root[data-look='notebook'] .lesson .exercise.error,
-:root[data-look='notebook'] .lesson .exercise.error + .lesson-actions {
+:root[data-look='notebook'] .lesson .exercise.error {
   border-color: var(--err-line);
 }
 :root[data-look='notebook'] .lesson .exercise::before {
@@ -4200,46 +3905,12 @@ button.topic-chip-open:hover {
 }
 
 @media (min-width: 1100px) {
-  /* Second half of the sheet: the squares continue from the first half, which it overlaps by 12px. */
-  :root[data-look='notebook'] .lesson .lesson-actions {
-    position: relative;
-    padding-right: 24px;
-    padding-left: 94px;
-    border-width: 0 1.5px 1.5px;
-    border-color: var(--press);
-    border-radius: 0 0 22px 6px;
-    background-color: var(--surface);
-    background-image:
-      linear-gradient(var(--grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 24px 24px;
-    background-position: 0 12px;
-    box-shadow: 0 2px 0 var(--press);
-  }
-  :root[data-look='notebook'][data-layout='focus'] .lesson .lesson-actions {
-    background-position: 0 15px;
-  }
-  /* A sheet with no actions under it (texts) is closed on its own. */
-  :root[data-look='notebook'] .lesson .exercise:not(:has(+ .lesson-actions)) {
+  :root[data-look='notebook'] .lesson .exercise:not(.task-card) {
     padding-bottom: 14px;
     border-bottom: 1.5px solid var(--press);
     border-radius: 6px 22px 22px 6px;
     background-position: 0 0;
     box-shadow: 0 2px 0 var(--press);
-  }
-  :root[data-look='notebook'] .lesson .lesson-actions::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 70px;
-    width: 2px;
-    background: var(--margin);
-  }
-  :root[data-look='notebook'] .lesson-actions::before {
-    height: 0;
-    border-top: 1.5px dashed var(--press);
-    background: none;
   }
 }
 
@@ -4261,9 +3932,6 @@ button.topic-chip-open:hover {
   :root[data-look='notebook'] .lesson .exercise-top::before {
     top: 66px;
     width: 60px;
-  }
-  :root[data-look='notebook'] .lesson .lesson-dock :is(.primary, .dock-side) {
-    border-radius: 14px;
   }
 }
 
@@ -4445,14 +4113,26 @@ button.topic-chip-open:hover {
 
 /* ===== features/portal/portal.css (consolidated, original cascade order) ===== */
 /* Portal, local profile, reading library. */
+.portal-panel,
+.curriculum-step,
+.entry08-card {
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  color: var(--ink);
+}
+:root[data-look='notebook'] :is(.portal-panel, .curriculum-step, .entry08-card) {
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  border-color: var(--press);
+  border-radius: 6px 22px 22px 6px;
+}
 .portal-panel {
   max-width: 1000px;
   margin: 32px auto;
   padding: 44px;
-  background: #fffefa;
-  border: 1px solid #d9e2d2;
-  border-radius: 28px;
-  color: #244c41;
 }
 .portal-panel h1 {
   font-size: clamp(28px, 4vw, 44px);
@@ -4476,9 +4156,9 @@ button.topic-chip-open:hover {
   letter-spacing: 0.12em;
 }
 .welcome-note {
-  border-left: 4px solid #367d62;
+  border-left: 4px solid var(--primary);
   padding: 16px 20px;
-  background: #eef4ea;
+  background: var(--panel);
   border-radius: 0 16px 16px 0;
 }
 .portal-grid {
@@ -4495,9 +4175,9 @@ button.topic-chip-open:hover {
   gap: 12px;
   text-align: left;
   padding: 24px;
-  border: 1px solid #d7e3ce;
+  border: 1px solid var(--line);
   border-radius: 20px;
-  background: #f5f8f0;
+  background: var(--surface-2);
   min-height: 145px;
 }
 .portal-card b {
@@ -4510,7 +4190,7 @@ button.topic-chip-open:hover {
 .portal-card small,
 .soon {
   font-size: 14px;
-  color: #556957;
+  color: var(--ink-2);
 }
 .portal-actions {
   display: flex;
@@ -4521,13 +4201,33 @@ button.topic-chip-open:hover {
 .portal-actions button,
 .portal-actions a {
   padding: 12px 20px;
-  border: 1px solid #c9d9c3;
+  border: 1px solid var(--line-strong);
   border-radius: 14px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #f0f5ea;
+  background: var(--panel);
   font-size: 17px;
+}
+.home-actions > button {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 52px;
+  justify-content: center;
+}
+.home-actions .primary {
+  background: var(--primary);
+}
+.home-actions .primary:where(:hover) {
+  background: var(--primary-edge);
+}
+.home-trainers-heading {
+  scroll-margin-block-start: 16px;
+}
+.home-trainers-heading:focus {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
 }
 .profile-fields {
   display: grid;
@@ -4545,9 +4245,9 @@ button.topic-chip-open:hover {
 .profile-fields select {
   width: 100%;
   padding: 15px;
-  border: 1px solid #a9bd9f;
+  border: 1px solid var(--line-strong);
   border-radius: 12px;
-  background: white;
+  background: var(--surface);
   font-size: 18px;
 }
 .welcome fieldset {
@@ -4567,13 +4267,13 @@ button.topic-chip-open:hover {
 }
 .start-options label {
   padding: 13px 18px;
-  border: 1px solid #c3d5bb;
+  border: 1px solid var(--line-strong);
   border-radius: 12px;
   cursor: pointer;
 }
 .start-options label.chosen {
-  background: #dfeccc;
-  border-color: #367d62;
+  background: var(--primary-soft);
+  border-color: var(--primary);
 }
 .start-options input {
   margin-right: 8px;
@@ -4583,7 +4283,7 @@ button.topic-chip-open:hover {
   font-size: 15px;
   line-height: 1.6;
   padding: 18px;
-  background: #f3f2e8;
+  background: var(--surface-2);
   border-radius: 14px;
 }
 .portal-panel .star-total {
@@ -4591,7 +4291,7 @@ button.topic-chip-open:hover {
   align-items: center;
   gap: 10px;
   font-size: 28px;
-  color: #98692c;
+  color: var(--star-ink);
 }
 .support-block {
   display: flex;
@@ -4599,12 +4299,12 @@ button.topic-chip-open:hover {
   gap: 32px;
   flex-wrap: wrap;
   padding: 24px;
-  background: #f5f5ed;
+  background: var(--panel);
   border-radius: 22px;
 }
 .support-block img {
   object-fit: contain;
-  background: white;
+  background: var(--surface);
 }
 .support-block a.primary {
   display: inline-flex;
@@ -4623,10 +4323,10 @@ button.topic-chip-open:hover {
   font-size: 15px;
 }
 .muted {
-  color: #677869;
+  color: var(--ink-2);
 }
 .portal-panel button:focus-visible {
-  outline: 3px solid #a86925;
+  outline: 3px solid var(--focus);
   outline-offset: 3px;
 }
 @media (max-width: 650px) {
@@ -4981,17 +4681,18 @@ html {
     display: none;
   }
 }
-/* Narrow tablets: the section row tightens, and scrolls sideways if it still does not fit.
-   The padding keeps focus outlines visible inside the scroll box. */
+/* Tablets keep every section visible; submenus remain below this wrapping row. */
 @media (min-width: 700px) and (max-width: 1099px) {
   .app-nav-panel {
     margin: -8px;
     padding: 8px;
-    overflow-x: auto;
-    scrollbar-width: none;
+    flex-wrap: wrap;
+    gap: 8px;
   }
-  .app-nav-panel::-webkit-scrollbar {
-    display: none;
+  .app-nav nav {
+    flex-shrink: 1;
+    flex-wrap: wrap;
+    align-items: flex-start;
   }
 }
 @media (min-width: 700px) and (max-width: 900px) {
@@ -6433,7 +6134,6 @@ meter::-webkit-meter-optimum-value {
 }
 @media (min-width: 700px) and (max-width: 1099px) {
   .app-nav { position: relative; }
-  .app-nav nav { align-items: flex-start; }
   .app-nav-submenu:not([hidden]) {
     position: absolute;
     top: 100%;
@@ -6522,9 +6222,6 @@ meter::-webkit-meter-optimum-value {
 }
 .curriculum-step {
   padding: clamp(18px, 3vw, 36px);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 24px;
 }
 .curriculum-instruction {
   display: flex;
@@ -6890,6 +6587,7 @@ meter::-webkit-meter-optimum-value {
 .free-material { position: relative; }
 .free-material.is-pending > .free-material-content,
 .free-material.is-pending > .free-material-content * { visibility: hidden !important; }
+.free-material.is-pending > .free-material-content .task-card { visibility: visible !important; }
 .free-material-notice { position: absolute; inset: 0; display: flex; align-items: flex-start; justify-content: center; }
 
 .trainer-response { width: 100%; }
@@ -6898,7 +6596,7 @@ meter::-webkit-meter-optimum-value {
 .entry08 { max-width: 860px; margin: 0 auto; padding: 24px 0; }
 .entry08-header { margin-bottom: 20px; }
 .entry08-header h1 { margin: 8px 0 0; }
-.entry08-card { display: flex; flex-direction: column; gap: 24px; border: 1px solid var(--border, #d5dfcc); border-radius: 24px; background: var(--paper, #fffefa); padding: 28px; }
+.entry08-card { display: flex; flex-direction: column; gap: 24px; padding: 28px; }
 .entry08-card > .primary { align-self: center; }
 .entry08 .task-instruction { margin: 0; justify-content: flex-start; }
 .entry08-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
@@ -6941,3 +6639,388 @@ meter::-webkit-meter-optimum-value {
 .personal08 .curriculum-answer-form { margin: 0; }
 .narrator-settings select, .narrator-settings textarea { display: block; width: 100%; min-width: 0; max-width: 100%; margin: 8px 0 12px; padding: 10px; border: 1px solid var(--border); border-radius: 12px; background: var(--background); color: inherit; font: inherit; }
 .narrator-settings textarea { resize: vertical; }
+
+/* Release review: progress and empty topics use the existing panel vocabulary. */
+.activity-history { padding: 0; list-style: none; }
+.activity-history li { display: flex; flex-wrap: wrap; gap: 8px 16px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.activity-history li span { flex: 1; min-width: 180px; }
+.activity-history time { color: var(--ink-2); }
+.empty-topic h2 { font-size: 24px; }
+.empty-topic .curriculum-actions { justify-content: center; }
+.voice-status, .personal08-input-note { padding: 12px 16px; border-radius: 14px; background: var(--panel); color: var(--ink); }
+.session-results { line-height: 1.7; }
+
+/* Permanent task card. A single surface owns the header, scrollable material and
+   action shelf. Form submits stay in their native forms and in the durable gate;
+   their containing block is the card, outside the scrolling material. */
+:root .lesson .exercise.task-card {
+  container: task-card / size;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) 112px;
+  align-items: stretch;
+  gap: 8px;
+  height: clamp(440px, calc(100dvh / var(--zoom) - 280px), 760px);
+  min-height: 0;
+  padding: 14px 20px 0;
+  border: 2px solid var(--line);
+  border-radius: 24px;
+  overflow: visible;
+  box-shadow: none;
+}
+:root .lesson .exercise.task-card.success { border-color: var(--ok-line); }
+:root .lesson .exercise.task-card.error { border-color: var(--err-line); }
+:root[data-look='notebook'] .lesson .exercise.task-card {
+  border-radius: 6px 22px 22px 6px;
+  background-position: 0 0;
+}
+:root[data-look='notebook'] .lesson .exercise.task-card::before { content: none; }
+:root[data-look='notebook'] .task-card .exercise-top::before { content: none; }
+:root .lesson .task-card > .exercise-top { width: 100%; align-self: start; }
+.task-card .task-card-body {
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable both-edges;
+  padding: 4px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: safe center;
+  gap: 10px;
+}
+.task-card .task-card-material {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.task-card [hidden] { display: none !important; }
+.task-card-body > *, .task-card-material > * { flex-shrink: 0; max-width: 100%; }
+.task-card .task-card-material > *, .task-card .task-card-body > * { margin-block: 0; }
+:root .lesson .task-card .task-card-material .reading { --size: 110px; }
+:root .lesson .task-card .task-card-material .reading:has(.reading-guide) { --size: 100px; }
+:root .lesson .task-card .task-card-material .trainer-material { --size: 80px; }
+.task-card .task-card-material .answer-material { margin: 4px auto; }
+.task-card .curriculum-answer-form { margin: 0 auto; position: static; }
+.task-card .task-card-body .curriculum-task-renderer { position: static; }
+.task-card .word-bridge { margin: 0 auto; width: 100%; }
+.task-card .hint-space { width: 100%; }
+.task-card .task-card-body > .free-material { width: 100%; }
+:root .lesson .task-card .task-card-actions {
+  grid-row: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-end;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 12px;
+  width: 100%;
+  margin: 0;
+  padding: 8px 0 10px;
+  border-top: 1px solid var(--line);
+}
+.task-card .task-card-dock { display: contents; }
+.task-card .task-card-links { display: contents; }
+.task-card .task-card-actions .dock-spacer { display: none; }
+.task-card .task-card-actions .dock-side { min-height: 44px; }
+.task-card .task-card-actions :is(button, summary) { min-height: 44px; }
+.task-card .task-card-actions .text-button { padding: 8px 12px; font-size: 14px; }
+:root .lesson .task-card .task-card-actions .primary,
+:root .lesson .task-card .task-card-primary,
+:root .lesson .task-card .task-card-body .next-exercise-button,
+:root .lesson .task-card .curriculum-task-renderer > .curriculum-answer-form > button[type='submit'] {
+  position: absolute;
+  z-index: 2;
+  bottom: 58px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  min-height: 52px;
+  height: auto;
+  min-width: min(240px, 90%);
+  width: min(340px, calc(100% - 32px));
+  max-width: calc(100% - 32px);
+  padding: 10px 24px;
+  line-height: 1.3;
+  font-size: 17px;
+  border-radius: 14px;
+  background: var(--task-card-action, var(--primary));
+  color: var(--color-primary-foreground, #fff);
+  box-shadow: 0 3px 0 var(--task-card-edge, var(--primary-edge));
+}
+:root .lesson .task-card .task-card-actions .primary.listening { background: var(--task-card-action, var(--listen)); }
+.task-card .task-card-body > .auto-stop {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  z-index: 2;
+  background: var(--surface);
+  border-radius: 8px;
+}
+.task-card .task-card-auto button, .task-card .auto-stop button { min-height: 44px; font-size: 13px; }
+.task-card .adult-check { position: static; }
+.lesson .task-card .adult-check[open] { padding: 0; background: none; }
+.task-card .adult-check[open] .task-card-adult-panel {
+  position: absolute;
+  z-index: 5;
+  bottom: 120px;
+  max-height: calc(100% - 168px);
+  overflow: auto;
+  left: 12px;
+  right: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 4px 24px #0002;
+}
+.task-card .mic-unsupported { font-size: 13px; }
+.task-card .voice-orbit { min-height: 0; padding: 4px; }
+.task-card .text-mic-consent { position: static; }
+.task-card .task-card-actions .auto-offer { font-size: 13px; }
+:root .app-layout:has(.task-card) {
+    height: calc(100dvh / var(--zoom) - 98px);
+    padding-bottom: 12px;
+  }
+:root .app-layout:has(.task-card) > .app-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+  }
+:root .app-content > .lesson:has(.task-card) { flex: 1; min-height: 0; }
+.lesson:has(.task-card) > .free-material,
+  .lesson:has(.task-card) > .free-material > .free-material-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    gap: 12px;
+  }
+:root .app-content > .lesson > .task-card,
+  :root .app-content > .lesson > .free-material > .free-material-content > .task-card {
+    flex: 1;
+    height: auto;
+    max-height: 700px;
+  }
+.app-content:has(.task-card) > .portal-footer { margin-top: 8px; padding-block: 4px; }
+@media (max-height: 1180px) {
+  .lesson:has(.task-card) { gap: 8px; }
+  .task-card .task-card-material { gap: 6px; }
+  :root .lesson .task-card .task-card-material .trainer-material { --size: 52px; }
+  .task-card .task-card-material .task-line h2 { font-size: 22px; }
+  .task-card .task-card-material .task-instruction p { font-size: 14px; }
+  .task-card .curriculum-token-bank button { min-height: 48px; min-width: 48px; font-size: 26px; padding: 6px 14px; }
+  .task-card .curriculum-composition { min-height: 44px; padding: 4px; font-size: 20px; }
+  .task-card .curriculum-actions { margin: 4px 0; }
+  .task-card .curriculum-actions button { min-height: 44px; padding-block: 6px; }
+  .task-card.syllable-parts-exercise .curriculum-answer-form fieldset {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    column-gap: 12px;
+  }
+  .task-card.syllable-parts-exercise .curriculum-answer-form fieldset legend { text-align: center; }
+  .task-card.syllable-parts-exercise .curriculum-composition { font-size: 18px; }
+  .task-card.syllable-parts-exercise .curriculum-answer-form fieldset > .curriculum-actions { grid-column: 1 / -1; }
+  .task-card.syllable-parts-exercise .task-card-material:has(.curriculum-composition) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 16px;
+  }
+  .task-card.syllable-parts-exercise .task-card-material:has(.curriculum-composition) > .task-line { grid-column: 1; grid-row: 1; }
+  .task-card.syllable-parts-exercise .task-card-material:has(.curriculum-composition) > .task-instruction { grid-column: 1; grid-row: 2; }
+  .task-card.syllable-parts-exercise .task-card-material:has(.curriculum-composition) > .reading { grid-column: 2; grid-row: 1 / 3; }
+  .task-card.syllable-parts-exercise .task-card-material:has(.curriculum-composition) > :is(.trainer-response, .material-tools) { grid-column: 1 / -1; }
+}
+[data-vision]:not([data-vision='off']) .lesson .exercise.task-card {
+  --task-card-action: var(--vision-first);
+  --task-card-edge: #202020;
+  border-width: 3px;
+}
+[data-vision]:not([data-vision='off']) .lesson .exercise.task-card.success { border-color: var(--vision-first); }
+[data-vision]:not([data-vision='off']) .lesson .exercise.task-card.error { border-color: var(--vision-second); border-style: dashed; }
+/* Hide only the response material during help, keeping the native form and its
+   guarded submit in the action shelf. No duplicate submit or detached form. */
+.task-card-material[data-hint='true'],
+.task-card-material[data-hint='true'] .trainer-response,
+.task-card-material[data-hint='true'] .curriculum-task-renderer,
+.task-card-material[data-hint='true'] .curriculum-answer-form { display: contents !important; }
+.task-card-material[data-hint='true'] > :not(.trainer-response):not(.curriculum-task-renderer),
+.task-card-material[data-hint='true'] .curriculum-task-renderer > :not(.curriculum-answer-form),
+.task-card-material[data-hint='true'] .curriculum-answer-form > :not(button[type='submit']) { display: none; }
+.task-card .adult-check .label-short { display: none; }
+
+:root[data-layout='focus'] .app-layout.focus-activity:has(.task-card) { height: calc(100dvh / var(--zoom)); }
+@media (max-width: 1099px) {
+  :root .app-layout:has(.task-card) { display: flex; flex-direction: column; height: calc(100dvh - 65px); }
+  :root .app-layout:has(.task-card) > .app-content { flex: 1; width: 100%; height: auto; }
+  .task-card .task-card-actions .dock-side .label-long { display: none; }
+  .task-card .task-card-actions .dock-side .label-short { display: inline; }
+  :root[data-layout='focus'] .app-layout.focus-activity:has(.task-card) { display: flex; flex-direction: column; padding-bottom: 12px; }
+}
+
+/* Short material uses two columns so its heading, target and input remain
+   visible together even when the surrounding lesson chrome is tall. */
+.lesson .task-card .word-bridge { gap: 6px; padding: 8px; }
+.task-card .word-bridge [role='status']:empty { display: none; }
+
+/* Letter names and explanatory sound notes are part of the same short target. */
+.task-card .letter-display { max-width: 240px; }
+.lesson .task-card .letter-display > p { text-align: center; }
+
+/* Use the card's CSS size, which already accounts for interface zoom. */
+.lesson .task-card .word-bridge:not([data-complete='true']) {
+  display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); align-items: center; gap: 6px 10px;
+}
+.task-card .word-bridge > :is(h3, .task-instruction, [role='status']) { grid-column: 1 / -1; }
+.task-card .word-bridge .bridge-slots { flex-wrap: wrap; gap: 6px; }
+.task-card .word-bridge .bridge-slots span { min-width: 48px; font-size: 28px; }
+.task-card .word-bridge .portal-actions { gap: 6px; }
+.task-card .word-bridge .portal-actions button { padding-inline: 12px; }
+.lesson .task-card .word-bridge .bridge-word { font-family: var(--font-reading); font-size: 44px; }
+.task-card .word-bridge > .text-button { min-height: 44px; }
+.task-card.syllable-parts-exercise :is(.curriculum-token-bank, .curriculum-actions) { margin-block: 0; }
+.task-card.syllable-parts-exercise .curriculum-answer-form fieldset { row-gap: 4px; }
+
+/* Preserve glyph bounds as well as element bounds inside the scroll region. */
+:root .lesson .task-card[data-stage='letters'] .task-card-material > .letter-display .reading { --size: 64px; line-height: 1.6; padding-top: 0; }
+.lesson .task-card .task-card-material > .letter-display .letter-name { font-size: 22px; line-height: 1.6; }
+.task-card.success[data-stage] .task-card-material > :is(.task-instruction, .answer-form, .sound-note) { display: none; }
+.task-card .voice-orbit .equalizer { height: 32px; width: 58px; flex: 0 0 58px; gap: 2px; }
+.task-card .voice-orbit .equalizer-bar { max-height: 30px; width: 3px; }
+.task-card .voice-orbit > span { flex: 1; min-width: 0; }
+.task-card.syllable-parts-exercise .task-card-material:has(.curriculum-composition) { row-gap: 4px; }
+:root .lesson .task-card.syllable-parts-exercise .task-card-material .trainer-material { --size: 44px; }
+
+/* Three moving lanes and their original answer form share a compact workspace. */
+.task-card[data-mode='fly'] .catch-game { padding: 4px 8px; }
+.task-card[data-mode='fly'] .catch-lane { height: 40px; }
+.task-card[data-mode='fly'] .catch-token { top: 2px; min-height: 36px; font-size: 22px; padding-inline: 8px; }
+.task-card[data-mode='fly'] .catch-token .letter-display { flex-direction: row; gap: 6px; }
+.task-card[data-mode='fly'] .catch-token .letter-display .reading { line-height: 1; }
+.task-card[data-mode='fly'] .catch-token .letter-name { line-height: 1; font-size: 14px; }
+
+@container task-card (max-height: 600px) and (min-width: 500px) {
+  .task-card:is([data-stage='syllables'], [data-stage='letters'], [data-stage='words']) .task-card-material {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 6px 16px;
+  }
+  .task-card:is([data-stage='syllables'], [data-stage='letters'], [data-stage='words']) .task-card-material > .task-line { grid-column: 1; grid-row: 1; }
+  .task-card:is([data-stage='syllables'], [data-stage='letters'], [data-stage='words']) .task-card-material > .task-instruction { grid-column: 1; grid-row: 2; }
+  .task-card:is([data-stage='syllables'], [data-stage='letters'], [data-stage='words']) .task-card-material > :is(.reading, .letter-display) { grid-column: 2; grid-row: 1 / 3; }
+  .task-card:is([data-stage='syllables'], [data-stage='letters'], [data-stage='words']) .task-card-material > :is(.answer-form, .material-tools, .vision-legend) { grid-column: 1 / -1; }
+  :root .lesson .task-card:is([data-stage='syllables'], [data-stage='letters'], [data-stage='words']) .task-card-material .reading { --size: 72px; }
+  .task-card:is([data-stage='letters'], [data-stage='syllables']) .task-card-material > .material-tools { grid-column: 2; grid-row: 3; }
+  .task-card:is([data-stage='letters'], [data-stage='syllables']) .task-card-material > .answer-form { grid-column: 1; grid-row: 3; margin: 0; }
+  .task-card:is([data-stage='letters'], [data-stage='syllables']) .task-card-material > .letter-display { grid-row: 1 / 3; }
+  .task-card .task-card-body { gap: 6px; }
+  .task-card .voice-orbit { flex-direction: row; gap: 8px; padding: 0; font-size: 14px; }
+  .task-card[data-mode='read'] .task-card-body:has(.voice-orbit) { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); align-content: center; align-items: center; }
+  .task-card[data-mode='read'] .task-card-body:has(.voice-orbit) > :is(.task-card-material, .hint-space) { grid-column: 1 / -1; }
+  .task-card[data-mode='read'] .task-card-body:has(.voice-orbit) > .feedback { font-size: 14px; }
+  .task-card.syllable-parts-exercise .task-card-material:has(.curriculum-composition) > .material-tools { grid-column: 2; grid-row: 2; }
+  .task-card.syllable-parts-exercise .task-card-material:has(.curriculum-composition) > .reading { grid-row: 1; }
+  .task-card[data-stage='letters'] .task-card-material > .letter-display { grid-row: 1 / 4; }
+  .task-card[data-stage='letters'] .task-card-material > .material-tools { grid-column: 1; grid-row: 3; }
+  .task-card[data-stage='letters'] .task-card-material > .sound-note { grid-column: 1 / -1; }
+  .task-card .task-card-material .speak-button { --size: 32px; }
+  .task-card .answer-form input { height: 48px; padding-block: 4px; font-size: 24px; }
+  .task-card .feedback { padding-block: 3px; }
+  .task-card[data-mode='fly'] .task-card-material { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 4px 16px; align-items: center; }
+  .task-card[data-mode='fly'] .task-card-material > .task-line { grid-column: 1; grid-row: 1; }
+  .task-card[data-mode='fly'] .task-card-material > .task-instruction { grid-column: 1; grid-row: 2; }
+  .task-card[data-mode='fly'] .task-card-material > .answer-form { grid-column: 1; grid-row: 3; }
+  .task-card[data-mode='fly'] .task-card-material > .catch-game { grid-column: 2; grid-row: 1 / 4; }
+  .task-card:is([data-stage='letters'],[data-stage='syllables'],[data-stage='words']):not([data-mode='fly']) .task-card-material > :is(.reading,.letter-display) { grid-column: 2; grid-row: 1 / 4; }
+  .task-card:is([data-stage='letters'],[data-stage='syllables'],[data-stage='words']) .task-card-material > .material-tools { grid-column: 1; grid-row: 3; }
+  :root .lesson .task-card:not([data-mode='fly']) .task-card-material > .reading:not(.trainer-material):not(.answer-material) { --size: 64px; line-height: 1.6; }
+  .task-card[data-stage='pictures'] .task-card-material { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 4px 16px; align-items: center; }
+  .task-card[data-stage='pictures'] .task-card-material > .task-line { grid-column: 1; grid-row: 1; }
+  .task-card[data-stage='pictures'] .task-card-material > .task-instruction { grid-column: 1; grid-row: 2; }
+  .task-card[data-stage='pictures'] .task-card-material > :is(.answer-form,.letter-slots) { grid-column: 1; grid-row: 3; }
+  .task-card[data-stage='pictures'] .task-card-material > .illustration-gallery { grid-column: 2; grid-row: 1 / 4; }
+  :root .lesson .task-card .task-card-material > .illustration-gallery { display: grid; grid-template-columns: 144px minmax(0,1fr); align-items: center; width: 100%; gap: 8px; }
+  .task-card .illustration-gallery .reviewed-illustration { width: 144px; height: 144px; }
+  .task-card.answer-exercise:is([data-section='letters'],[data-section='syllables'],[data-section='words']) .task-card-material { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 4px 16px; align-items: center; }
+  .task-card.answer-exercise .task-card-material > .task-line { grid-column: 1; grid-row: 1; }
+  .task-card.answer-exercise .task-card-material > .task-instruction { grid-column: 1; grid-row: 2; }
+  .task-card.answer-exercise .task-card-material > .material-tools { grid-column: 1; grid-row: 3; }
+  .task-card.answer-exercise .task-card-material > .answer-material { grid-column: 2; grid-row: 1 / 4; }
+  .task-card.answer-exercise .task-card-material > .curriculum-task-renderer { grid-column: 1 / -1; }
+}
+:root .lesson .task-card .task-card-material .answer-material { --size: 48px; line-height: 1.6; }
+.task-card.answer-exercise .curriculum-options { margin: 6px 0 0; gap: 6px; }
+.task-card.answer-exercise .curriculum-option { min-height: 44px; padding-block: 8px; }
+.task-card .letter-slots { width: 100%; gap: 4px; }
+.task-card .slots-row { flex-wrap: nowrap; width: 100%; gap: 6px; }
+.task-card .slots-row input { flex: 1; min-width: 0; max-width: 48px; height: 48px; font-size: 28px; }
+.task-card.success[data-stage='letters'] .task-card-body { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); align-content: center; align-items: center; gap: 8px; }
+.task-card.success[data-stage='letters'] .task-card-body > .task-card-material { display: flex; grid-column: 1; grid-row: 1 / 3; }
+.task-card.success[data-stage='letters'] .task-card-material > :not(.letter-display),
+.task-card.success[data-stage='letters'] .voice-orbit { display: none; }
+.task-card.success[data-stage='letters'] .success-badge { grid-column: 2; grid-row: 1; }
+.task-card.success[data-stage='letters'] .feedback { grid-column: 2; grid-row: 2; }
+
+/* An error message replaces the inactive level meter, leaving its explanation visible. */
+.task-card .voice-orbit[data-error='true'] .equalizer { display: none; }
+.task-card .illustration-navigation { min-width: 0; width: 100%; }
+.task-card .illustration-navigation .text-button { min-width: 0; width: 100%; white-space: normal; min-height: 44px; font-size: 13px; padding: 4px; }
+@media (max-width: 699px) {
+  .task-card .adult-check[open] .task-card-adult-panel { bottom: 170px; max-height: calc(100% - 210px); }
+  .task-card .task-card-actions .dock-side .label-long { display: none; }
+  .task-card .task-card-actions .dock-side .label-short { display: inline; }
+  :root .app-layout:has(.task-card) { height: calc(100dvh - 57px); padding-block: 8px; }
+  :root .lesson .exercise.task-card { padding-inline: 8px; grid-template-rows: auto minmax(0, 1fr) 180px; }
+  :root .lesson .task-card .task-card-actions { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-content: end; gap: 4px 8px; }
+  .task-card .task-card-links { display: flex; grid-column: 1 / -1; justify-content: space-between; gap: 4px; }
+  .task-card .task-card-actions > .trainer-skip { grid-column: 1 / -1; margin: 0; justify-self: end; }
+  .task-card .task-card-actions .dock-side { padding: 6px; font-size: 13px; white-space: normal; }
+  .task-card .adult-check .label-long { display: none; }
+  .task-card .adult-check .label-short { display: inline; }
+  :root .lesson .task-card .task-card-actions .primary,
+  :root .lesson .task-card .task-card-primary,
+  :root .lesson .task-card .task-card-body .next-exercise-button,
+  :root .lesson .task-card .curriculum-task-renderer > .curriculum-answer-form > button[type='submit'] { bottom: 106px; min-height: 64px; padding: 8px 16px; }
+  :root .lesson .task-card:is([data-stage='syllables'], [data-stage='letters'], [data-stage='words']) .task-card-material .reading { --size: 76px; }
+  .task-card .task-card-material .task-line h2 { font-size: 22px; }
+  .task-card.syllable-parts-exercise .curriculum-actions button { font-size: 13px; padding-inline: 8px; }
+  :root .lesson .task-card[data-stage='letters'] .task-card-material .reading { --size: 64px; }
+  .task-card:is([data-stage='letters'], [data-stage='syllables']) .task-card-material .material-tools .sample { white-space: normal; height: auto; min-height: 44px; padding-block: 4px; }
+  .task-card[data-stage='letters'] .task-card-body { gap: 6px; }
+  .task-card[data-stage='letters'] .task-card-material { gap: 4px; }
+  .task-card.syllable-parts-exercise .task-card-material:has(.curriculum-composition) { grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 6px 8px; }
+  .task-card.syllable-parts-exercise .task-card-material:has(.curriculum-composition) > :is(.task-line,.task-instruction) { grid-column: 1 / -1; }
+  .task-card.syllable-parts-exercise .task-card-material:has(.curriculum-composition) > .reading { grid-column: 1; grid-row: 3; }
+  .task-card.syllable-parts-exercise .task-card-material:has(.curriculum-composition) > .material-tools { grid-column: 2; grid-row: 3; }
+  .task-card.syllable-parts-exercise .material-tools .sample { white-space: normal; height: auto; min-height: 44px; padding: 4px 8px; }
+  .task-card.syllable-parts-exercise .curriculum-answer-form fieldset { grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 4px 8px; }
+  .task-card.syllable-parts-exercise .curriculum-answer-form fieldset > .curriculum-actions { flex-wrap: nowrap; grid-column: 1 / -1; }
+  .task-card:is([data-stage='letters'],[data-stage='syllables']) .task-card-material { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 4px 8px; }
+  .task-card:is([data-stage='letters'],[data-stage='syllables']) .task-card-material > :is(.task-line,.task-instruction,.sound-note,.vision-legend) { grid-column: 1 / -1; }
+  .task-card:is([data-stage='letters'],[data-stage='syllables']) .task-card-material > :is(.reading,.letter-display) { grid-column: 1; grid-row: 3; }
+  .task-card:is([data-stage='letters'],[data-stage='syllables']) .task-card-material > :is(.material-tools,.answer-form) { grid-column: 2; grid-row: 3; min-width: 0; width: 100%; }
+  .task-card:is([data-stage='letters'],[data-stage='syllables']) .answer-form input { min-width: 0; width: 100%; font-size: 24px; padding-inline: 6px; }
+  .task-card .task-card-body { gap: 6px; }
+  .task-card .task-card-material .task-instruction p { font-size: 14px; padding-top: 0; }
+  .task-card .voice-orbit { flex-direction: row; gap: 8px; padding: 0; font-size: 14px; width: 100%; max-width: 100%; }
+  .task-card[data-mode='fly'] .task-card-material > :is(.catch-game,.answer-form) { grid-column: 1 / -1; grid-row: auto; }
+  :root .lesson .task-card:not([data-mode='fly']) .task-card-material > .reading:not(.trainer-material):not(.answer-material) { --size: 64px; line-height: 1.6; }
+  .task-card[data-mode='fly'] .answer-form input { height: 44px; }
+  .task-card[data-mode='fly'] .feedback { padding-block: 2px; font-size: 14px; }
+  :root .lesson .task-card .task-card-material > .illustration-gallery { display: grid; grid-template-columns: 112px minmax(0,1fr); align-items: center; width: 100%; gap: 8px; }
+  .task-card .illustration-gallery .reviewed-illustration { width: 112px; height: 112px; }
+  .task-card[data-stage='pictures'] .task-card-material { gap: 4px; }
+  .task-card[data-stage='pictures'] .answer-form input { height: 48px; }
+  .task-card[data-stage='pictures'] .task-card-material .task-line h2 { font-size: 20px; }
+  .task-card.answer-exercise .task-card-material { gap: 4px; }
+  .task-card.answer-exercise .curriculum-options { gap: 4px; }
+  .task-card.success[data-stage='letters'] .task-card-body > .task-card-material { grid-row: 1; }
+  .task-card.success[data-stage='letters'] .feedback { grid-column: 1 / -1; grid-row: 2; }
+  .task-card[data-mode='fly'] .task-card-material { gap: 0; }
+  .task-card[data-mode='fly'] .task-card-body { gap: 4px; }
+}

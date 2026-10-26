@@ -29,8 +29,21 @@ export default function ExerciseVoiceMonitor({
 }) {
   return (
     <>
+      {(!lessonMic || mode !== 'read') &&
+        (speaking || attemptStatus.startsWith('Озвучка')) && (
+          <p className="voice-status" role="status">
+            {attemptStatus || 'Готовлю озвучку…'}
+          </p>
+        )}
       {mode === 'read' && lessonMic && (
         <div
+          data-error={
+            !!attemptStatus &&
+            !listening &&
+            !loadingSpeech &&
+            !cooldown &&
+            !speaking
+          }
           className={
             'voice-orbit ' +
             (feedback.kind === 'success' ? 'voice-success' : '')
@@ -51,7 +64,13 @@ export default function ExerciseVoiceMonitor({
                 className="equalizer-bar"
                 aria-hidden="true"
                 width={7}
-                height={8 + (speaking || cooldown || feedback.kind === 'success' ? 0 : v) * 48}
+                height={
+                  8 +
+                  (speaking || cooldown || feedback.kind === 'success'
+                    ? 0
+                    : v) *
+                    48
+                }
               />
             ))}
           </div>

@@ -18,6 +18,8 @@ export interface PersonalLessonProps {
   playingTarget?: boolean;
   number?: number;
   total?: number;
+  visitUsed?: number;
+  visitBudget?: number;
   dispatch: EntryDispatch;
   voiceEnabled?: boolean;
 }
@@ -32,6 +34,8 @@ export default function PersonalLesson({
   playingTarget,
   number = 1,
   total = 1,
+  visitUsed,
+  visitBudget,
   dispatch,
   voiceEnabled = true,
 }: PersonalLessonProps) {
@@ -92,6 +96,13 @@ export default function PersonalLesson({
         <h1>{v.title}</h1>
       </header>
       <div className="entry08-card">
+        {visitUsed !== undefined && <p className="storage-note">Экраны этого подхода: {visitUsed} из {visitBudget}. После него можно отдохнуть.</p>}
+        {!voiceEnabled && (
+          <div className="personal08-input-note">
+            <p>Ответы нажатием помогают тренироваться. Для продвижения по чтению нужны самостоятельные ответы голосом в разных занятиях.</p>
+            <button disabled={busy} onClick={() => dispatch('personal_enable_voice')}>Включить ответы голосом</button>
+          </div>
+        )}
         {!terminal && (
           <ExerciseHeader
             number={number}

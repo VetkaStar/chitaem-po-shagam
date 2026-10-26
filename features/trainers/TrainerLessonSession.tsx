@@ -1,6 +1,7 @@
+import TaskCardBody from '@/features/lesson/TaskCardBody';
 import type { TaskPresentation } from '../curriculum/presentation';
 import type { Outcome } from '../../lib/curriculum/contracts';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import ExerciseHeader from '../../components/exercise-header';
 import type { LessonModel } from '../lesson/use-lesson';
 import type { CurriculumController } from '../curriculum/controller';
@@ -10,12 +11,21 @@ import { useInstructionAudio } from '../curriculum/use-instruction-audio';
 import TrainerExerciseCard from './TrainerExerciseCard';
 import {
   openTrainerLesson,
-  trainerRoutePrefix,
+  lessonTrainerItems,
 } from './trainer-lesson-session';
+import AvailableTopic from '../../components/available-topic';
+import { topicNames } from '../../lib/topics';
 import type { TrainerId } from './catalog';
 import type { TrainerSection } from './task-section';
 import type { Mode } from '../../lib/curriculum/contracts';
-import { nextTrainerTask } from './session-actions';
+import {
+  nextTrainerTask,
+  repeatTrainerTask,
+  routeOffset,
+  routeResults,
+  stepWasCorrect,
+} from './session-actions';
+import SessionResults from '../../components/session-results';
 export default function TrainerLessonSession({
   controller,
   supply,
@@ -63,16 +73,17 @@ export default function TrainerLessonSession({
     setSummary(false);
     setReady(true);
   };
+  const initialize = useEffectEvent(() => act(() => start()));
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
-    act(() => start());
+    initialize();
   }, []);
   useEffect(() => {
     onBusyChange?.(busy || (!ready && !error));
   }, [busy, ready, error, onBusyChange]);
   const route = routeId ? state.customRoutes[routeId] : undefined;
-  const offset = Number(route?.routeId.match(/:offset-(\d+):/)?.[1] ?? 0);
+  const offset = route ? routeOffset(route) : 0;
   const complete = !!route && route.position >= route.steps.length;
   const current =
     route && state.route?.routeId === routeId && view?.kind === 'task'
@@ -95,20 +106,7 @@ export default function TrainerLessonSession({
   const repeat = () =>
     act(async () => {
       if (!route || !result) return;
-      const id = `${trainerRoutePrefix(kind, section, model.settings.unit, mode)}repeat-0:offset-${offset + result.position}:${crypto.randomUUID()}`;
-      const copy = {
-        ...route,
-        routeId: id,
-        position: 0,
-        suspendedInstance: null,
-        steps: route.steps.slice(result.position).map((step, index) => ({
-          ...step,
-          id: `${id}:${index}`,
-        })),
-      };
-      await controller.registerCustomRoute(copy);
-      await controller.selectCustomRoute(id);
-      await nextTrainerTask(controller, 7);
+      const id = await repeatTrainerTask(controller, route, result.position);
       setRouteId(id);
       setResult(null);
     });
@@ -117,15 +115,19 @@ export default function TrainerLessonSession({
     sound && !blocked && preferences.instructionAudio === 'always',
     model.speak,
   );
+  const active = !!current;
+  const updateActivity = useEffectEvent((value: boolean) => {
+    model.setExternalActivity(value);
+    if (value) model.schedule.touch();
+  });
   useEffect(() => {
-    model.setExternalActivity(!!current);
-    if (current) model.schedule.touch();
-    return () => model.setExternalActivity(false);
-  }, [!!current]);
+    updateActivity(active);
+    return () => updateActivity(false);
+  }, [active]);
   useEffect(() => {
     if (ready && route && !current && !blocked)
       nextButton.current?.focus({ preventScroll: true });
-  }, [ready, current?.instanceId, route?.position, blocked]);
+  }, [ready, current, route, blocked]);
   return (
     <>
       {error && (
@@ -145,17 +147,22 @@ export default function TrainerLessonSession({
         </div>
       )}
       {!ready && (
-        <div className="exercise answer-result" aria-busy="true">
+        <div className="exercise task-card answer-result" aria-busy="true">
           <p role="status">Готовим задание…</p>
         </div>
       )}
       {ready && !route && (
-        <div className="exercise answer-result">
-          <p>
-            В этой теме пока нет таких заданий. Можно выбрать другую тему или
-            режим.
-          </p>
-        </div>
+        <AvailableTopic
+          available={topicNames.flatMap((_, unit) =>
+            lessonTrainerItems(supply, kind, section, unit, mode).length
+              ? [unit]
+              : [],
+          )}
+          onSelect={(unit) => {
+            model.stop();
+            model.update('unit', unit);
+          }}
+        />
       )}
       {(current || result) && route && !summary && (
         <TrainerExerciseCard
@@ -179,7 +186,11 @@ export default function TrainerLessonSession({
             if (!current) return;
             const reward =
               outcome === 'correct' &&
-              !route.routeId.includes(`:repeat-${route.position}:`);
+              !stepWasCorrect(
+                controller.snapshot(),
+                route.steps[route.position].id,
+                current.instanceId,
+              );
             if (reward) model.awardTrainer(current.instanceId);
             setResult({
               view: current,
@@ -199,23 +210,23 @@ export default function TrainerLessonSession({
         />
       )}
       {route && !current && !result && (
-        <div className={'exercise answer-result neutral'}>
+        <div className={'exercise task-card answer-result neutral'}>
           <ExerciseHeader
             number={offset + Math.min(route.position + 1, route.steps.length)}
             total={offset + route.steps.length}
             completed={offset + route.position}
-            label={complete ? 'Все задания пройдены' : undefined}
+            label={complete ? 'Занятие завершено' : undefined}
           />
-          <div className="completion">
+          <TaskCardBody
+            className="completion task-card-body"
+            aria-label="Результат занятия"
+          >
             <h2>
               {complete ? 'Ты позанимался. Здорово!' : 'Занятие сохранено'}
             </h2>
-            {complete && (
-              <p>
-                Пройдено заданий: {offset + route.position}. Теперь можно
-                отдохнуть.
-              </p>
-            )}
+            {complete && <SessionResults {...routeResults(state, route)} />}
+          </TaskCardBody>
+          <div className="task-card-actions">
             <button
               ref={nextButton}
               className="primary"

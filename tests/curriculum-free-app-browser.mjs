@@ -87,6 +87,10 @@ try {
     });
   });
   const page = await context.newPage();
+  await page.route('**/lib/piper-speech.ts*', (route) => route.fulfill({contentType:'text/javascript', body:`
+    export function stopPiperSpeech() {}
+    export function speakPiper(text, options) { window.testSpoken.push(text); queueMicrotask(() => options.onEnd?.()); }
+  `}));
   page.setDefaultTimeout(20000);
   page.on('pageerror', (error) => errors.push(error.message));
   const saved = () =>
@@ -112,10 +116,12 @@ try {
     );
   }
   async function select(name) {
-    await page
-      .getByRole('navigation', { name: 'Разделы', exact: true })
-      .getByRole('button', { name: new RegExp(name + '$') })
-      .click();
+    const parent = ['Рассказы', 'Стихи'].includes(name) ? 'Тексты' : name;
+    const link = page.getByRole('navigation', { name: 'Разделы', exact: true })
+      .getByRole('button', { name: new RegExp(parent + '$') });
+    if (await link.getAttribute('aria-expanded') !== 'true') await link.click();
+    const child = { 'Слоги': 'Слог', 'Слова': 'Целое слово', 'Предложения': 'Предложение', 'Рассказы': 'Рассказы', 'Стихи': 'Стихи' }[name];
+    if (child) await page.locator('.app-nav-submenu:not([hidden])').getByRole('button', {name:child,exact:true}).click();
     await ready();
   }
   await page.goto(address + '/base/');

@@ -1,3 +1,4 @@
+import TaskCardBody from '@/features/lesson/TaskCardBody';
 import AutoAdvance from '../../components/auto-advance';
 import NextExerciseButton from '../../components/next-exercise-button';
 import FeedbackMessage from '../../components/feedback-message';
@@ -63,6 +64,7 @@ export default function TrainerExerciseCard({
 }: TrainerExerciseCardProps) {
   const nextButton = useRef<HTMLButtonElement>(null);
   const [stopped, setStopped] = useState(false);
+  const [hintOpen, setHintOpen] = useState(false);
   useEffect(() => {
     if (result && !busy) nextButton.current?.focus({ preventScroll: true });
   }, [result, busy]);
@@ -107,7 +109,7 @@ export default function TrainerExerciseCard({
   return (
     <section
       className={
-        'exercise trainer-exercise ' +
+        'exercise task-card trainer-exercise ' +
         (section === 'syllables' ? 'syllable-parts-exercise ' : '') +
         (result === 'correct'
           ? 'success'
@@ -125,190 +127,216 @@ export default function TrainerExerciseCard({
         completed={position}
         rest={rest}
       />
-      <div className="task-line">
-        {sound && instructionSound && (
-          <button
-            type="button"
-            className="speak-button"
-            disabled={busy}
-            aria-label="Озвучить задание"
-            onClick={() => instructionAudio(title)}
-          >
-            <Volume2 size={20} />
-          </button>
-        )}
-        <h2>{title}</h2>
-      </div>
-      <TaskInstruction
-        text={
-          view.taskKind === 'compose' && section === 'syllables'
-            ? 'Собери слог из букв по порядку. Затем прочитай его.'
-            : view.taskInstruction || view.instruction
-        }
-        sound={sound && instructionSound}
-        speak={instructionAudio}
-      />
-      <div
-        className={
-          'reading trainer-material' +
-          (textMaterial ? ' trainer-text-material' : '')
-        }
-        aria-label={view.text}
-        data-letters={Array.from(view.text).length}
-      >
-        {textMaterial
-          ? view.text
-          : Array.from(view.text).map((char, index) => (
-              <span
-                key={index}
-                className={
-                  settings.color
-                    ? /[аеёиоуыэюя]/iu.test(char)
-                      ? 'vowel'
-                      : /[а-яё]/iu.test(char)
-                        ? 'consonant'
-                        : ''
-                    : ''
-                }
+      <TaskCardBody className="task-card-body" aria-label="Содержимое задания">
+        <div className="task-card-material" data-hint={hintOpen && !result}>
+          <div className="task-line">
+            {sound && instructionSound && (
+              <button
+                type="button"
+                className="speak-button"
+                disabled={busy}
+                aria-label="Озвучить задание"
+                onClick={() => instructionAudio(title)}
               >
-                {char}
-              </span>
-            ))}
-      </div>
-      {sound && (
-        <div className="material-tools">
-          <button
-            type="button"
-            className="pill-button sample"
-            disabled={busy}
-            onClick={materialAudio}
-          >
-            <Volume2 size={16} /> Послушать образец
-          </button>
-        </div>
-      )}
-      {!result && view.canShowIllustration && !view.illustration && (
-        <div className="material-tools">
-          <button
-            type="button"
-            className="pill-button"
-            disabled={busy}
-            onClick={() => act(() => controller.illustration(view.instanceId))}
-          >
-            <Image size={16} /> Показать картинку
-          </button>
-        </div>
-      )}
-      {view.illustration && (
-        <CurriculumIllustration
-          asset={view.illustration}
-          busy={busy || !!result}
-          onVariant={(variant) =>
-            act(() => controller.illustration(view.instanceId, variant))
-          }
-        />
-      )}
-      <div className="trainer-response" hidden={!!result}>
-        <TaskRenderer
-          key={`${view.instanceId}:${revision}`}
-          task={view}
-          busy={busy}
-          compactAudio
-          compactControls
-          compositionPlaceholder={placeholder}
-          submitLabel="Проверить · Enter"
-          onSubmit={submit}
-          onReading={(reading) =>
-            run(() => controller.recordReading(view.instanceId, reading))
-          }
-          onReveal={() => run(() => controller.revealOptions())}
-          onSpeak={
-            sound
-              ? (questionId, optionId) =>
-                  act(async () => {
-                    const text = await controller.optionAudio(
-                      view.instanceId,
-                      questionId,
-                      optionId,
-                    );
-                    speak(text);
-                  })
-              : undefined
-          }
-        />
-      </div>
-      {!result && view.hints.length > 0 && (
-        <div className="hint-box">
-          {view.hints.map((text, index) => (
-            <p key={index}>{text}</p>
-          ))}
-        </div>
-      )}
-      {result && (
-        <>
-          {rewarded && (
-            <div className="success-badge" aria-hidden="true">
-              <Star />
-              <span>+1 звезда</span>
-              <Star />
-            </div>
-          )}
-          <FeedbackMessage
-            kind={
-              result === 'correct'
-                ? 'success'
-                : result === 'incorrect'
-                  ? 'error'
-                  : 'neutral'
-            }
+                <Volume2 size={20} />
+              </button>
+            )}
+            <h2>{title}</h2>
+          </div>
+          <TaskInstruction
             text={
-              result === 'correct'
-                ? textMaterial
-                  ? 'Верно! Получилось!'
-                  : `Верно! ${view.transformText ?? view.text}. Получилось!`
-                : result === 'skipped'
-                  ? 'Задание пропущено.'
-                  : 'Попробуем ещё раз.'
+              view.taskKind === 'compose' && section === 'syllables'
+                ? 'Собери слог из букв по порядку. Затем прочитай его.'
+                : view.taskInstruction || view.instruction
             }
             sound={sound && instructionSound}
-            speaking={model.speaking}
-            speak={speak}
+            speak={instructionAudio}
           />
-          <NextExerciseButton
-            buttonRef={nextButton}
-            onNext={onNext}
-            disabled={busy}
-            countdown={
-              <AutoAdvance
-                inline
-                stopped={stopped}
-                enabled={settings.autoAdvance && result === 'correct'}
-                blocked={busy}
-                seconds={settings.autoAdvanceSeconds}
-                onNext={onNext}
-              />
+          <div
+            className={
+              'reading trainer-material' +
+              (textMaterial ? ' trainer-text-material' : '')
             }
-          />
-          {settings.autoAdvance && result === 'correct' && (
-            <div className="auto-stop">
+            aria-label={view.text}
+            data-letters={Array.from(view.text).length}
+          >
+            {textMaterial
+              ? view.text
+              : Array.from(view.text).map((char, index) => (
+                  <span
+                    key={index}
+                    className={
+                      settings.color
+                        ? /[аеёиоуыэюя]/iu.test(char)
+                          ? 'vowel'
+                          : /[а-яё]/iu.test(char)
+                            ? 'consonant'
+                            : ''
+                        : ''
+                    }
+                  >
+                    {char}
+                  </span>
+                ))}
+          </div>
+          {sound && (
+            <div className="material-tools">
               <button
-                className="link-button"
-                disabled={stopped}
-                onClick={() => setStopped(true)}
+                type="button"
+                className="pill-button sample"
+                disabled={busy}
+                onClick={materialAudio}
               >
-                <X size={16} />
-                {stopped ? 'Автопереход остановлен' : 'Не переходить'}
+                <Volume2 size={16} /> Послушать образец
               </button>
             </div>
           )}
-        </>
-      )}
-      <div className="exercise-footer">
+          {!result && view.canShowIllustration && !view.illustration && (
+            <div className="material-tools">
+              <button
+                type="button"
+                className="pill-button"
+                disabled={busy}
+                onClick={() =>
+                  act(() => controller.illustration(view.instanceId))
+                }
+              >
+                <Image size={16} /> Показать картинку
+              </button>
+            </div>
+          )}
+          {view.illustration && (
+            <CurriculumIllustration
+              asset={view.illustration}
+              busy={busy || !!result}
+              onVariant={(variant) =>
+                act(() => controller.illustration(view.instanceId, variant))
+              }
+            />
+          )}
+          <div className="trainer-response" hidden={!!result}>
+            <TaskRenderer
+              key={`${view.instanceId}:${revision}`}
+              task={view}
+              busy={busy}
+              compactAudio
+              compactControls
+              compositionPlaceholder={
+                section === 'syllables' ? 'Твой слог' : placeholder
+              }
+              submitLabel="Проверить · Enter"
+              onSubmit={submit}
+              onReading={(reading) =>
+                run(() => controller.recordReading(view.instanceId, reading))
+              }
+              onReveal={() => run(() => controller.revealOptions())}
+              onSpeak={
+                sound
+                  ? (questionId, optionId) =>
+                      act(async () => {
+                        const text = await controller.optionAudio(
+                          view.instanceId,
+                          questionId,
+                          optionId,
+                        );
+                        speak(text);
+                      })
+                  : undefined
+              }
+            />
+          </div>
+        </div>
+        {!result && hintOpen && view.hints.length > 0 && (
+          <div className="hint-box">
+            {sound && instructionSound && (
+              <button
+                type="button"
+                className="speak-button"
+                aria-label="Послушать подсказку"
+                disabled={busy}
+                onClick={() => instructionAudio(view.hints.join('. '))}
+              >
+                <Volume2 size={18} />
+              </button>
+            )}
+            {view.hints.map((text, index) => (
+              <p key={index}>{text}</p>
+            ))}
+          </div>
+        )}
+        {result && (
+          <>
+            {rewarded && (
+              <div className="success-badge" aria-hidden="true">
+                <Star />
+                <span>+1 звезда</span>
+                <Star />
+              </div>
+            )}
+            <FeedbackMessage
+              kind={
+                result === 'correct'
+                  ? 'success'
+                  : result === 'incorrect'
+                    ? 'error'
+                    : 'neutral'
+              }
+              text={
+                result === 'correct'
+                  ? textMaterial
+                    ? 'Верно! Получилось!'
+                    : `Верно! ${view.transformText ?? view.text}. Получилось!`
+                  : result === 'skipped'
+                    ? 'Задание пропущено.'
+                    : 'Попробуем ещё раз.'
+              }
+              sound={sound && instructionSound}
+              speaking={model.speaking}
+              speak={speak}
+            />
+            <NextExerciseButton
+              buttonRef={nextButton}
+              onNext={result === 'incorrect' ? onRepeat : onNext}
+              label={result === 'incorrect' ? 'Попробовать ещё раз' : 'Дальше'}
+              disabled={busy}
+              countdown={
+                <AutoAdvance
+                  inline
+                  stopped={stopped}
+                  enabled={settings.autoAdvance && result === 'correct'}
+                  blocked={busy}
+                  seconds={settings.autoAdvanceSeconds}
+                  onNext={onNext}
+                />
+              }
+            />
+            {result === 'incorrect' && (
+              <button disabled={busy} onClick={onNext}>
+                Продолжить без повтора
+              </button>
+            )}
+            {settings.autoAdvance && result === 'correct' && (
+              <div className="auto-stop">
+                <button
+                  className="link-button"
+                  disabled={stopped}
+                  onClick={() => setStopped(true)}
+                >
+                  <X size={16} />
+                  {stopped ? 'Автопереход остановлен' : 'Не переходить'}
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </TaskCardBody>
+      <div className="exercise-footer task-card-actions">
         <button
           type="button"
           className="dock-side"
           disabled={busy}
           onClick={() => {
+            setHintOpen(false);
             model.stop();
             if (result) {
               onRepeat();
@@ -323,10 +351,21 @@ export default function TrainerExerciseCard({
           <button
             type="button"
             className="dock-side"
-            disabled={busy || !view.canRequestHint}
-            onClick={() => act(() => controller.hint(view.hints.length))}
+            disabled={
+              busy || (!hintOpen && !view.canRequestHint && !view.hints.length)
+            }
+            onClick={() => {
+              if (hintOpen) setHintOpen(false);
+              else
+                act(async () => {
+                  if (view.canRequestHint)
+                    await controller.hint(view.hints.length);
+                  setHintOpen(true);
+                });
+            }}
           >
-            <HelpCircle size={16} /> Подсказка
+            <HelpCircle size={16} />{' '}
+            {hintOpen ? 'Скрыть подсказку' : 'Подсказка'}
           </button>
         )}
         {!result && (

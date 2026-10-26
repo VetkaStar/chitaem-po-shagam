@@ -4,6 +4,7 @@ import type {
   Supply,
 } from '../curriculum/types.js';
 import { validateState } from './validation.js';
+import { upgradeProgress, validateStoredSnapshot } from './content-migration.js';
 import { profileDatabaseName } from './profile-storage.js';
 export class RevisionConflict extends Error {
   constructor() {
@@ -56,23 +57,29 @@ export class IndexedDbProgressStore implements ProgressStore {
   async read(): Promise<ProgressState | null> {
     const db = await this.open();
     return new Promise((resolve, reject) => {
-      const tx = db.transaction('state', 'readonly');
+      const tx = db.transaction(['state', 'backups'], 'readwrite');
       const req = tx.objectStore('state').get('local');
       let result: ProgressState | null = null;
+      let reason: unknown;
       req.onsuccess = () => {
         try {
           if (req.result !== undefined) {
-            validateState(req.result, this.supply);
-            result = req.result;
+            const upgrade = upgradeProgress(req.result, this.supply);
+            result = upgrade.state;
+            if (upgrade.migrated) {
+              result.storageRevision = req.result.storageRevision + 1;
+              tx.objectStore('backups').add(req.result, req.result.storageRevision);
+              tx.objectStore('state').put(result, 'local');
+            }
           }
         } catch (error) {
-          reject(error);
+          reason = error;
           tx.abort();
         }
       };
       tx.oncomplete = () => resolve(result);
       tx.onabort = tx.onerror = () =>
-        reject(tx.error ?? new Error('STORAGE_READ_FAILED'));
+        reject(reason ?? tx.error ?? new Error('STORAGE_READ_FAILED'));
     });
   }
   async commit(
@@ -94,7 +101,9 @@ export class IndexedDbProgressStore implements ProgressStore {
           const old: ProgressState | undefined = req.result;
           if ((old?.storageRevision ?? null) !== expectedRevision)
             throw new RevisionConflict();
-          if (old) validateState(old, this.supply);
+          if (old) validateStoredSnapshot(old, this.supply);
+          if (old && old.supply.curriculumSha256 !== candidate.supply.curriculumSha256 && !backupPrevious)
+            throw new Error('CONTENT_MIGRATION_REQUIRES_BACKUP');
           saved = {
             ...candidate,
             storageRevision: (old?.storageRevision ?? -1) + 1,
@@ -122,7 +131,7 @@ export class IndexedDbProgressStore implements ProgressStore {
         try {
           if (req.result === undefined) resolve(null);
           else {
-            validateState(req.result, this.supply);
+            validateStoredSnapshot(req.result, this.supply);
             resolve(req.result);
           }
         } catch (error) {

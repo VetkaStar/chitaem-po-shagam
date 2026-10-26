@@ -10,6 +10,8 @@ import { textsForTopic } from '@/lib/topic-texts';
 import { shuffled } from '@/lib/session';
 import type { LessonModel } from '../lesson/use-lesson';
 import TextExercise from './TextExercise';
+import AvailableTopic from '../../components/available-topic';
+import { plural } from '../../lib/plural';
 export default function TextLibrary({
   kind,
   model,
@@ -23,14 +25,14 @@ export default function TextLibrary({
       <div className="lesson-top">
         <div>
           <small>
-            ШАГ 0{kind === 'sentences' ? 5 : kind === 'stories' ? 6 : 7} ·
+            ШАГ 0{kind === 'sentences' ? 5 : 6} ·
             ЧИТАЕМ И ПОНИМАЕМ
           </small>
           <h1>{textLabels[kind]}</h1>
         </div>
         <span className="pill">
           <Star size={17} />
-          {model.stars} <span className="desktop-word">звёзд</span>
+          {model.stars} <span className="desktop-word">{plural(model.stars, ['звезда', 'звезды', 'звёзд'])}</span>
         </span>
       </div>
       <TopicBar
@@ -78,13 +80,12 @@ function TopicTextSession({
   kind: TextKind;
   model: LessonModel;
 }) {
-  const [round, setRound] = useState(0),
+  const [round, setRound] = useState({ number: 0, last: '' }),
     [index, setIndex] = useState(0);
-  const [last, setLast] = useState('');
   const [completed, setCompleted] = useState<string[]>([]);
   const deck = useMemo(() => {
     const result = shuffled(textsForTopic(kind, model.settings.unit));
-    if (result.length > 1 && result[0].id === last)
+    if (result.length > 1 && result[0].id === round.last)
       [result[0], result[1]] = [result[1], result[0]];
     return result;
   }, [kind, model.settings.unit, round]);
@@ -94,17 +95,14 @@ function TopicTextSession({
     if (index + 1 < deck.length) setIndex((n) => n + 1);
     else {
       setCompleted([]);
-      setLast(item.id);
-      setRound((n) => n + 1);
+      setRound((value) => ({ number: value.number + 1, last: item.id }));
       setIndex(0);
     }
   }
   if (!item)
     return (
-      <p>
-        Для этой темы пока нет подходящего текста. Можно потренировать слоги и
-        слова или выбрать следующую тему.
-      </p>
+      <AvailableTopic available={topicNames.flatMap((_, unit) => textsForTopic(kind, unit).length ? [unit] : [])}
+        onSelect={(unit) => { model.stop(); model.update('unit', unit); }} />
     );
   return (
     <>
@@ -114,7 +112,7 @@ function TopicTextSession({
       />
       <TextExercise
         micSession={micSession}
-        key={item.id + ':' + round}
+        key={item.id + ':' + round.number}
         textPicker={
           <>
             <TextPickerMenu titles={deck.map((text) => text.title)}>

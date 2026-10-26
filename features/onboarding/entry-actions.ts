@@ -74,14 +74,14 @@ export function startPractice(s: ProgressState, supply: Supply) {
   s.studyMode = 'entry';
   s.route = { source: 'entry', routeId: 'onboarding', version: 1 };
 }
-export function requestPrerequisite(s: ProgressState, supply: Supply) {
+export function requestPrerequisite(s: ProgressState, _supply: Supply) {
   const p = ensureEntry(s).placement,
     group = p?.next?.groupId;
   if (p?.kind !== 'entry_checkpoint_needed' || typeof group !== 'string')
     throw new Error('NO_PENDING_PREREQUISITE');
   newCheckpoint(s, group, 'prerequisite');
 }
-export function requestSide(s: ProgressState, supply: Supply) {
+export function requestSide(s: ProgressState, _supply: Supply) {
   const flow = ensureEntry(s),
     v = s.profile.currentVisit,
     group = s.onboarding.sideQueue[0];

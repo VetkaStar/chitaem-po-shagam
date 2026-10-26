@@ -275,6 +275,14 @@ try {
   passed.push(
     'Adult eight answers; complete listening gate; cancellation/replay; real answer',
   );
+  await aClick('Начать занятие');
+  await adult.getByRole('button', {name:'Включить ответы голосом',exact:true}).click();
+  await adult.waitForFunction(() => window.entryHarness.controller.snapshot().profile.entry08.config.input === 'voice');
+  assert.equal(await adult.getByRole('button',{name:'Готово',exact:true}).count(),0,'enabling voice does not open microphone');
+  await adult.reload();
+  await adult.getByRole('region',{name:'Моя дорожка',exact:true}).waitFor();
+  assert.equal(await adult.getByRole('button',{name:'Включить ответы голосом',exact:true}).count(),0);
+  passed.push('Button path can enable voice durably without starting capture or losing the episode');
   const voiceContext=await browser.newContext();
   await voiceContext.route('**/__entry08.html*',route=>route.fulfill({contentType:'text/html',body:html}));
   const voice=await voiceContext.newPage();voice.on('pageerror',e=>errors.push(e.message));
@@ -286,6 +294,14 @@ try {
   await vClick('Сказать');await vClick('Готово');
   const adultTarget=await voice.evaluate(()=>{const h=window.entryHarness;return h.bank.cards[h.controller.snapshot().profile.entry08.active.cardId].target;});
   await voice.evaluate(text=>window.entryHarness.say(text),adultTarget);
+  await vClick('Ответить голосом');
+  const beforeSuspension = await voice.evaluate(() => window.entryHarness.controller.snapshot().profile.entry08);
+  await voice.evaluate(() => window.suspendEntry(true));
+  await voice.waitForFunction(() => !window.entryHarness.controller.snapshot().profile.entry08.active.captureId);
+  await voice.evaluate(() => window.suspendEntry(false));
+  await voice.getByRole('button', {name:'Ответить голосом',exact:true}).waitFor();
+  assert.equal(await voice.evaluate(() => window.entryHarness.controller.snapshot().profile.entry08.observations.length), beforeSuspension.observations.length);
+  passed.push('Parent/rest suspension cancels capture without recording an answer; explicit restart resumes');
   await vClick('Ответить голосом');await vClick('Готово');
   await voice.locator('.entry08-pick').first().waitFor();
   const adultAnswer=await voice.evaluate(()=>{const h=window.entryHarness,c=h.bank.cards[h.controller.snapshot().profile.entry08.active.cardId];return c.question.options.find(o=>c.question.correctOptionIds.includes(o.id)).text;});

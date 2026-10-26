@@ -56,7 +56,7 @@ legacyHistory.exposures.events = [
   },
 ];
 assert.deepEqual(entryHistory(legacyHistory).promptedTargetsThisVisit, ['КОТ']);
-let ui = {
+const ui = {
   version: '0.8.1',
   answers: { ...answers, respondent: 'child', interests: ['technology'] },
   page: 'access',

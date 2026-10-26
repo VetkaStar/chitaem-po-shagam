@@ -218,7 +218,7 @@ export default function RestHub({
           onReturn();
         }}
       >
-        Вернуться к чтению →
+        Вернуться назад →
       </button>
     </div>
   );

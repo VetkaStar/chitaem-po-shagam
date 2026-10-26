@@ -94,7 +94,7 @@ test('interest choices come only from supplied material tags', () => {
         (item) => item.interestTags,
       ),
     ),
-  ].sort();
+  ].sort((a, b) => a.localeCompare(b));
   assert.deepEqual(roadmapPresentation(supply, state).tags, actual);
 });
 test('assisted and unassessed entry observations remain distinct, with no mastery', () => {

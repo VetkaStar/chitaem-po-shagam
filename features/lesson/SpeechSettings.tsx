@@ -92,8 +92,8 @@ export default function SpeechSettings({
       },
       onCaptureSettings: (capture) => {
         if (token !== epoch.current) return;
-        const show = (value: boolean | undefined) =>
-          value === undefined ? 'не сообщает' : value ? 'вкл.' : 'выкл.';
+        const show = (value: boolean | string | undefined) =>
+          value === undefined ? 'не сообщает' : typeof value === 'string' ? value : value ? 'вкл.' : 'выкл.';
         setActual(
           `Браузер: шумоподавление — ${show(capture.noiseSuppression)}, автогромкость — ${show(capture.autoGainControl)}, эхо — ${show(capture.echoCancellation)}.`,
         );

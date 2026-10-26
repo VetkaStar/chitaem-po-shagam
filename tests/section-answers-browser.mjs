@@ -78,6 +78,13 @@ try {
         reducedMotion: 'reduce',
       });
       const page = await context.newPage();
+      await page.route('**/lib/piper-speech.ts*', (route) => route.fulfill({ contentType: 'text/javascript', body: `
+        export function stopPiperSpeech() {}
+        export function speakPiper(text, options) {
+          window.sectionTestSpoken.push(text);
+          queueMicrotask(() => options.onEnd?.());
+        }
+      ` }));
       page.setDefaultTimeout(15000);
       const errors = [];
       page.on('pageerror', (error) => errors.push(error.message));

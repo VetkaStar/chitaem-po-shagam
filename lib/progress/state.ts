@@ -1,5 +1,5 @@
 import { engine } from '../curriculum/core.js';
-import { CURRICULUM_SHA } from '../curriculum/loader.js';
+import { upgradeProgress } from './content-migration.js';
 import type { ProgressState, Supply } from '../curriculum/types.js';
 import { LEGACY_KEYS, validateState } from './validation.js';
 /** Reads only the established site keys; does not write, delete or migrate them in-place. */
@@ -20,7 +20,7 @@ export function createState(
     storageRevision: 0,
     supply: {
       curriculumVersion: '0.7.0',
-      curriculumSha256: CURRICULUM_SHA,
+      curriculumSha256: supply.registry.curriculumSha256,
       specVersion: 'onboarding-0.7.3',
     },
     profile,
@@ -33,7 +33,7 @@ export function createState(
     onboarding: {
       schemaVersion: 1,
       specVersion: 'onboarding-0.7.3',
-      curriculumSha256: CURRICULUM_SHA,
+      curriculumSha256: supply.registry.curriculumSha256,
       setupStatus: 'not_started',
       screen: 'questionnaire',
       questionnaireStep: null,
@@ -81,6 +81,5 @@ export function decodeProgress(raw: string, supply: Supply): ProgressState {
     !('state' in payload)
   )
     throw new Error('INCOMPATIBLE_IMPORT');
-  validateState(payload.state, supply);
-  return structuredClone(payload.state);
+  return structuredClone(upgradeProgress(payload.state, supply).state);
 }

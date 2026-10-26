@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import type { CurriculumController } from '../curriculum/controller';
 import type { Supply } from '../../lib/curriculum/types';
 import type { Settings } from '../lesson/config';
@@ -18,6 +18,7 @@ export function useEntry08(
   settings: Settings,
   onExit: () => void,
   injectedMedia?: ReturnType<typeof createEntryMedia>,
+  suspended = false,
 ) {
   const [state, setState] = useState(() => controller.snapshot());
   const [busy, setBusy] = useState(true),
@@ -26,6 +27,8 @@ export function useEntry08(
     [capturing, setCapturing] = useState(false);
   const settingsRef = useRef(settings);
   settingsRef.current = settings;
+  const suspendedRef = useRef(suspended);
+  suspendedRef.current = suspended;
   const mediaRef = useRef<ReturnType<typeof createEntryMedia> | null>(null);
   const media = (mediaRef.current ??=
     injectedMedia ?? createEntryMedia(() => settingsRef.current));
@@ -111,7 +114,7 @@ export function useEntry08(
     );
   const simpleAudio = async (text: string) => {
     await halt();
-    if (!alive.current || document.hidden) return;
+    if (!alive.current || document.hidden || suspendedRef.current) return;
     const epoch = generation.current;
     void media.speak(text).catch((e) => {
       if (
@@ -126,6 +129,7 @@ export function useEntry08(
   };
   const audio = async (scope: string, optionId?: string) => {
     await halt();
+    if (!alive.current || document.hidden || suspendedRef.current) return;
     const e = current();
     if (!e) return;
     const request = E.requestAudio(e, bank, {
@@ -155,7 +159,7 @@ export function useEntry08(
   };
   const startMic = async (isPersonal = false) => {
     await halt();
-    if (!alive.current || document.hidden) return;
+    if (!alive.current || document.hidden || suspendedRef.current) return;
     const epoch = generation.current,
       trial = ui().page === 'mic_trial',
       captureId = crypto.randomUUID();
@@ -234,6 +238,7 @@ export function useEntry08(
     optionId?: string,
   ) => {
     await halt();
+    if (!alive.current || document.hidden || suspendedRef.current) return;
     const p = personal();
     if (!p) return;
     if (!p.active || p.paused) {
@@ -269,11 +274,13 @@ export function useEntry08(
       );
   };
   const dispatch = (action: string, payload: Record<string, unknown> = {}) => {
+    if (suspended) return;
     if (action === 'mic_done' || action === 'personal_mic_done') {
       media.finishRecognition();
       return;
     }
     void queue(async () => {
+      if (suspendedRef.current || !alive.current) return;
       setStatus('');
       if (action === 'personal_audio')
         return personalAudio(
@@ -287,6 +294,10 @@ export function useEntry08(
         await halt();
         const p = personal();
         if (!p) return;
+        if (action === 'personal_enable_voice') {
+          const entry = E.updateInputMode(current()!, bank, 'voice');
+          return save({ entry, ui: { ...ui(), answers: { ...ui().answers, input: 'voice' } } });
+        }
         if (action === 'personal_finish') {
           onExit();
           return;
@@ -320,9 +331,9 @@ export function useEntry08(
       if (action === 'option_audio')
         return current()?.active && ui().page === 'probe'
           ? audio('option', String(payload.id))
-          : simpleAudio(String(payload.text ?? ''));
+          : simpleAudio(typeof payload.text === 'string' ? payload.text : '');
       if (action === 'feedback_audio')
-        return simpleAudio(String(payload.text ?? ''));
+        return simpleAudio(typeof payload.text === 'string' ? payload.text : '');
       if (action === 'instruction') {
         if (ui().page === 'probe') return audio('instruction');
         return simpleAudio(instructionFor(ui()));
@@ -444,7 +455,7 @@ export function useEntry08(
       }
     });
   };
-  useEffect(() => {
+  const mountEntry = useEffectEvent(() => {
     alive.current = true;
     void queue(async () => {
       const s = snapshot(),
@@ -516,7 +527,17 @@ export function useEntry08(
         media.stopRecognition();
       });
     };
-  }, [controller]);
+  });
+  useEffect(() => mountEntry(), [controller]);
+  const suspendMedia = useEffectEvent(() => {
+    generation.current++;
+    media.stopSpeech();
+    media.stopRecognition();
+    void queue(halt);
+  });
+  useEffect(() => {
+    if (suspended) suspendMedia();
+  }, [suspended]);
   const s = state.profile,
     u = s.entry08Ui,
     e = s.entry08,
@@ -529,7 +550,7 @@ export function useEntry08(
     learner: e ? E.learnerView(e, bank) : null,
     report: e ? E.report(e, bank) : null,
     question: u ? E.questionnaireFor(u.answers)[0] : null,
-    busy,
+    busy: busy || suspended,
     error,
     status,
     capturing,

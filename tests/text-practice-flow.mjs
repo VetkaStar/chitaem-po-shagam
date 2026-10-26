@@ -31,6 +31,12 @@ const React = {
     const i = cursor++;
     return slots[i] ?? (slots[i] = { current: v });
   },
+  useEffectEvent(fn) {
+    const ref = React.useRef(fn);
+    ref.current = fn;
+    const event = React.useRef((...args) => ref.current(...args));
+    return event.current;
+  },
   useEffect(fn, deps) {
     const i = cursor++,
       old = slots[i];
@@ -434,9 +440,10 @@ click('Строка прочитана верно');
 const continueButton = nodes(result).find(
   (n) =>
     n.type === 'button' &&
-    n.props.className === 'primary' &&
+    n.props.className?.split(/\s+/).includes('primary') &&
     !text(n).includes('микрофоном'),
 );
+assert(continueButton, 'A primary continuation action must remain available');
 continueButton.props.onClick();
 flush();
 assert(text(result).includes('Строка 1 из 2'));

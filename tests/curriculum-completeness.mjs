@@ -104,4 +104,4 @@ for (const item of Object.values(c.items)) {
 }
 console.log('PASS complete node/episode references and task/information projections');
 console.log(JSON.stringify({ programs: c.programs.length, nodes: nodeIds.size, teachingEpisodes, episodes: episodeIds.size, steps, taskModes: modes, actions, kinds }, null, 2));
-console.log('Scope: structural and projection audit only; C-01, editorial quality and learner trials are not certified.');
+console.log('Scope: structural and projection audit only; C-01 has a separate regression/migration suite. General editorial quality and learner trials are not certified.');

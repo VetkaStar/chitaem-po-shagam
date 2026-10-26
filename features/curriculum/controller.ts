@@ -13,6 +13,7 @@ import type {
 } from '../../lib/curriculum/contracts.js';
 import { engine, routeEngine } from '../../lib/curriculum/core.js';
 import { validateState } from '../../lib/progress/validation.js';
+import { upgradeProgress } from '../../lib/progress/content-migration.js';
 import {
   createState,
   decodeProgress,
@@ -76,6 +77,8 @@ export class CurriculumController extends EntryCommands {
   ) {
     let state = await store.read();
     if (!state) state = await store.commit(createState(supply, legacy), null);
+    const upgrade = upgradeProgress(state, supply);
+    if (upgrade.migrated) state = await store.commit(upgrade.state, state.storageRevision, true);
     validateState(state, supply);
     return new CurriculumController(supply, store, state, sources);
   }
@@ -169,8 +172,10 @@ export class CurriculumController extends EntryCommands {
   }
   refresh() {
     return this.serial(async () => {
-      const saved = await this.store.read();
+      let saved = await this.store.read();
       if (!saved) throw new Error('PROGRESS_MISSING');
+      const upgrade = upgradeProgress(saved, this.supply);
+      if (upgrade.migrated) saved = await this.store.commit(upgrade.state, saved.storageRevision, true);
       validateState(saved, this.supply);
       this.state = saved;
       this.pending = null;

@@ -83,7 +83,8 @@ try {
         await page.locator('.app-nav-close').click();
     };
     await openMenu();
-    assert.equal(await page.locator('.app-nav-item').count(), 7);
+    assert.equal(await page.locator('.app-nav-item').count(), 6);
+    assert.equal(await page.locator('.portal-grid > .portal-card').count(), 6);
     assert.equal(
       await page.locator('.app-nav-submenu:not([hidden])').count(),
       0,
@@ -246,7 +247,7 @@ try {
     for (const [section, trainer, modes] of [
       ['Слоги', 'Состав слога', ['Собираем', 'Находим часть']],
       ['Предложения', 'Состав предложения', ['Находим часть']],
-      ['Рассказы', 'Состав текста', ['Находим часть']],
+      ['Тексты', 'Состав текста', ['Находим часть']],
     ]) {
       await openMenu();
       const group = page
@@ -267,7 +268,7 @@ try {
       );
       await page.locator('.trainer-exercise').waitFor();
     }
-    for (const name of ['Буквы', 'Картинки', 'Стихи']) {
+    for (const name of ['Буквы', 'Картинки']) {
       await openMenu();
       const group = page
         .locator('.app-nav-group')
@@ -288,10 +289,32 @@ try {
       await page.locator('.lesson h1').waitFor();
       assert.equal(await page.locator('.portal-grid').count(), 0);
     }
+    for (const name of ['Рассказы', 'Стихи']) {
+      await openMenu();
+      const group = page.locator('.app-nav-group').filter({has: page.locator('.app-nav-item', {hasText: 'Тексты'})});
+      if (await group.locator('.app-nav-item').getAttribute('aria-expanded') !== 'true')
+        await group.locator('.app-nav-item').click();
+      await group.getByRole('button', {name, exact: true}).click();
+      await page.getByRole('heading', {name, exact: true}).waitFor();
+      assert.equal(await group.locator('.app-nav-item').getAttribute('aria-current'), 'step');
+      assert.equal(await group.getByRole('button', {name, exact: true, includeHidden: true}).getAttribute('aria-current'), 'page');
+      assert.equal(await page.locator('.app-nav').getAttribute('data-open'), null);
+      assert.match(await page.locator('.lesson-top small').innerText(), /ШАГ 06/);
+    }
+    await page.locator('.app-brand').click();
+    await page.locator('.portal-grid').getByRole('button', {name: /Тексты/}).click();
+    await page.getByRole('heading', {name: 'Тексты', exact: true}).waitFor();
+    assert.deepEqual(await page.locator('.portal-grid b').allTextContents(), ['Рассказы', 'Стихи', 'Состав текста']);
+    await page.locator('.portal-grid').getByRole('button', {name: 'Стихи', exact: true}).click();
+    await page.getByRole('heading', {name: 'Стихи', exact: true}).waitFor();
+    await page.goBack();
+    await page.getByRole('heading', {name: 'Тексты', exact: true}).waitFor();
+    await page.goForward();
+    await page.getByRole('heading', {name: 'Стихи', exact: true}).waitFor();
     assert.deepEqual(errors, []);
     completed.push(
       width +
-        ': seven sections, three word trainers, core four modes, parts four modes with direct entry and resume, other groups modes, saved stars and no overflow',
+        ': six sections, grouped stories/poems and text composition, home entry and back/forward, three word trainers, core four modes, parts modes and resume, saved stars and no overflow',
     );
     await page.close();
   }

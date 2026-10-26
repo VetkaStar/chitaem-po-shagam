@@ -5,11 +5,13 @@ export default function NextExerciseButton({
   onNext,
   disabled = false,
   countdown,
+  label = 'Дальше',
 }: {
   buttonRef: RefObject<HTMLButtonElement | null>;
   onNext: () => void;
   disabled?: boolean;
   countdown?: ReactNode;
+  label?: string;
 }) {
   return (
     <button
@@ -22,7 +24,7 @@ export default function NextExerciseButton({
       }}
     >
       <span>
-        Дальше<span className="key-hint"> · Enter</span>
+        {label}<span className="key-hint"> · Enter</span>
       </span>{' '}
       <ArrowRight />
       {countdown}

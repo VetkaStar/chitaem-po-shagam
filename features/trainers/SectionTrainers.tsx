@@ -1,9 +1,9 @@
-import type { TrainerMenuSection } from './navigation';
+import type { NavigationSection } from './navigation';
 export default function SectionTrainers({
   section,
   onSelect,
 }: {
-  section: TrainerMenuSection;
+  section: NavigationSection;
   onSelect: (id: string) => void;
 }) {
   return (

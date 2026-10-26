@@ -5,6 +5,9 @@ import RoadmapReport from './RoadmapReport.js';
 import RoadmapInterests from './RoadmapInterests.js';
 
 export interface RoadmapProps {
+  title?: string;
+  exitLabel?: string;
+  setupLabel?: string;
   supply: Supply;
   state: ProgressState;
   busy: boolean;
@@ -15,6 +18,9 @@ export interface RoadmapProps {
   onInterests?: (tags: string[]) => void;
 }
 export default function Roadmap({
+  title = 'Моя учебная дорожка',
+  exitLabel = 'Все тренажёры',
+  setupLabel = 'Вернуться к настройке',
   supply,
   state,
   busy,
@@ -31,13 +37,13 @@ export default function Roadmap({
   return (
     <section
       className="curriculum-session"
-      aria-label="Моя учебная дорожка"
+      aria-label={title}
       aria-busy={busy}
     >
       <header className="curriculum-session-header">
-        <h1>Моя учебная дорожка</h1>
+        <h1>{title}</h1>
         <button type="button" disabled={busy} onClick={onExit}>
-          Все тренажёры
+          {exitLabel}
         </button>
       </header>
       <section className="curriculum-step">
@@ -56,7 +62,7 @@ export default function Roadmap({
             </button>
           )}
           <button type="button" disabled={busy} onClick={onSetup}>
-            Вернуться к настройке
+            {setupLabel}
           </button>
         </div>
         <fieldset disabled={busy}>

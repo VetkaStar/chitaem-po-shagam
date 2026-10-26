@@ -33,10 +33,10 @@ export async function openAnswer(
     : Object.values(saved.customRoutes)
         .filter(
           (item) =>
-            item.routeId.startsWith(prefix) &&
-            item.position < item.steps.length,
+            item.routeId.startsWith(prefix),
         )
         .at(-1);
+  if (route && route.position >= route.steps.length) route = undefined;
   if (!route) {
     const pool = answerItems(supply, unit, section);
     if (!pool.length) return null;

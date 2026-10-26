@@ -108,7 +108,7 @@ export default function ExerciseFeedback({
         speaking={speaking}
         speak={speak}
       />
-      {mode !== 'fly' && (
+      {mode !== 'fly' && hint && (
         <div
           className="hint-space"
           data-visible={hint}

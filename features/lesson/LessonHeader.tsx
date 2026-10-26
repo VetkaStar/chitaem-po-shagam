@@ -48,6 +48,7 @@ export default function LessonHeader({
             </span>
           )}
           <button
+            aria-label="Мой кабинет"
             className={
               'app-bar-button' + (active === 'cabinet' ? ' selected' : '')
             }
@@ -58,6 +59,7 @@ export default function LessonHeader({
             <span>Мой кабинет</span>
           </button>
           <button
+            aria-label="Для взрослого"
             className="app-bar-button"
             onClick={() => {
               stop();

@@ -15,6 +15,7 @@ export interface CurriculumSessionProps {
   speak: (text: string) => void;
   onExit: () => void;
   onRoadmap?: () => void;
+  roadmapLabel?: string;
 }
 const outcomes: Record<Outcome, string> = {
   correct: 'Ответ принят.',
@@ -33,6 +34,7 @@ export default function CurriculumSession({
   speak,
   onExit,
   onRoadmap,
+  roadmapLabel = 'Моя дорожка',
 }: CurriculumSessionProps) {
   const session = useCurriculumSession(controller);
   const { state, view, busy, error, status, run, act, next, setStatus } =
@@ -76,7 +78,7 @@ export default function CurriculumSession({
         <h1>Учебная программа</h1>
         {onRoadmap && (
           <button type="button" disabled={busy} onClick={onRoadmap}>
-            Моя дорожка
+            {roadmapLabel}
           </button>
         )}
         {allowProgramSelection && (

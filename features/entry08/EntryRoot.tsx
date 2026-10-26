@@ -9,6 +9,7 @@ export default function EntryRoot(props: {
   controller: CurriculumController;
   supply: Supply;
   settings: Settings;
+  suspended?: boolean;
   onExit: () => void;
   media?: ReturnType<typeof import('./media').createEntryMedia>;
 }) {
@@ -18,6 +19,7 @@ export default function EntryRoot(props: {
     props.settings,
     props.onExit,
     props.media,
+    props.suspended,
   );
   if (!m.ui)
     return (
@@ -33,8 +35,10 @@ export default function EntryRoot(props: {
         {...m}
         view={m.view}
         voiceEnabled={m.entry?.config.input !== 'buttons'}
-        number={m.personal.visit.used}
-        total={m.personal.visit.budget}
+        number={m.personal.cursor.stepIndex + 1}
+        total={props.supply.curriculum.episodes[m.personal.cursor.episodeId].steps.length}
+        visitUsed={m.personal.visit.used}
+        visitBudget={m.personal.visit.budget}
         playingTarget={m.personal.active?.audio?.scope === 'target'}
       />
     );

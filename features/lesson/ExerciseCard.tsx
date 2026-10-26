@@ -1,4 +1,6 @@
 'use client';
+
+import TaskCardBody from '@/features/lesson/TaskCardBody';
 import { FreeExposureFrame } from '../free-practice/FreeExposureFrame';
 import { useEffect, useRef, useState } from 'react';
 import { Image as ImageIcon, Star, Volume2, X } from 'lucide-react';
@@ -103,10 +105,10 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
   const autoStopped = stoppedActivity === activityKey;
   const stopAdvance = () => setStoppedActivity(activityKey);
 
-  // Shown under the main button on laptop and under the feedback on tablet and phone.
-  const advanceStop = (place: 'only-wide' | 'only-narrow') =>
+  // One stop control in the permanent action shelf on every viewport.
+  const advanceStop = () =>
     settings.autoAdvance && (done || feedback.kind === 'success') ? (
-      <div className={'auto-stop ' + place}>
+      <div className="auto-stop task-card-auto">
         <button
           className="link-button"
           onClick={stopAdvance}
@@ -203,6 +205,7 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
       nextButton.current?.focus({ preventScroll: true });
   }, [exposure.ready, feedback.kind, done, paused, parent, rest]);
   const blocked = parent || paused || rest || speaking || !exposure.ready;
+  const displayedTask = mode === 'fly' ? 'Поймай карточку' : task;
   const answerInput = (
     <ExerciseAnswerInput
       mode={mode}
@@ -230,7 +233,11 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
   return (
     <FreeExposureFrame ready={exposure.ready} blocker={exposure.blocker}>
       <CompletionCelebration done={done} motion={settings.motion} />
-      <div className={'exercise ' + feedback.kind}>
+      <div
+        className={'exercise task-card ' + feedback.kind}
+        data-stage={stage}
+        data-mode={mode}
+      >
         <ExerciseHeader
           number={Math.min(count + 1, model.lessonLength)}
           total={model.lessonLength}
@@ -238,270 +245,288 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
           label={done ? 'Все задания пройдены' : undefined}
           rest={restLabel}
         />
-        {done ? (
-          <div className="completion">
-            <Star className="completion-star" aria-hidden="true" />
-            <h2>Ты позанимался. Здорово!</h2>
-            <p>Пройдено заданий: {count}. Теперь можно отдохнуть.</p>
-            {stage === 'words' && model.lessonLength < settings.length && (
-              <p>
-                Все доступные слова этой темы пройдены. В следующей теме
-                появятся новые буквы и слова.
-              </p>
-            )}
-            {advanceStop('only-narrow')}
-            {!settings.autoAdvance && (
-              <div className="auto-offer">
-                <p>Продолжать автоматически после задания и занятия?</p>
-                <AutoAdvanceSettings model={model} />
-              </div>
-            )}
-          </div>
-        ) : (
-          <>
-            <div className="task-line">
-              {settings.sound && (
-                <button
-                  className="speak-button"
-                  onClick={() => speak(task)}
-                  disabled={speaking}
-                  aria-label="Озвучить задание"
-                >
-                  <Volume2 size={20} />
-                </button>
-              )}
-              <h2>{task}</h2>
-            </div>
-            <TaskInstruction
-              text={instruction}
-              sound={settings.sound}
-              speak={speak}
-            />
-            {wordRead &&
-              showWordPicture &&
-              (wordIllustrations[target] ? (
-                <IllustrationGallery
-                  key={`${target}-${index}`}
-                  assetId={wordIllustrations[target]}
-                />
-              ) : (
-                <div className="word-picture" role="img" aria-label={target}>
-                  {entry?.icon}
-                </div>
-              ))}
-            <ExerciseMaterial
-              mode={mode}
-              settings={settings}
-              flyCards={flyCards}
-              paused={paused || !exposure.ready}
-              parent={parent}
-              rest={rest}
-              done={done}
-              stage={stage}
-              picture={picture}
-              scene={scene}
-              target={target}
-              setScene={setScene}
-              model={model}
-              speechProgress={speechProgress}
-              index={index}
-              listening={listening}
-              feedback={feedback}
-              displayWord={displayWord}
-              mistakes={mistakes}
-            />
-            {settings.colorVision !== 'off' &&
-              settings.color &&
-              mode === 'read' && (
-                <p className="vision-legend">
-                  <span className="vowel">Гласные — двойная линия</span> ·{' '}
-                  <span className="consonant">Согласные — одна линия</span>
+        <TaskCardBody
+          className="task-card-body"
+          aria-label="Содержимое задания"
+        >
+          {done ? (
+            <div className="completion">
+              <Star className="completion-star" aria-hidden="true" />
+              <h2>Ты позанимался. Здорово!</h2>
+              <p>Пройдено заданий: {count}. Теперь можно отдохнуть.</p>
+              {stage === 'words' && model.lessonLength < settings.length && (
+                <p>
+                  Все доступные слова этой темы пройдены. В следующей теме
+                  появятся новые буквы и слова.
                 </p>
               )}
-            {wordRead && model.showParts && (
-              <div className="word-help">
-                <div className="said">
+              {!settings.autoAdvance && (
+                <div className="auto-offer">
+                  <p>Продолжать автоматически после задания и занятия?</p>
+                  <AutoAdvanceSettings model={model} />
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <div
+                className="task-card-material"
+                hidden={shownHint || showBridge}
+              >
+                <div className="task-line">
                   {settings.sound && (
                     <button
                       className="speak-button"
-                      aria-label="Послушать подсказку"
-                      onClick={() => speak(partsHelp)}
+                      onClick={() => speak(displayedTask)}
                       disabled={speaking}
+                      aria-label="Озвучить задание"
                     >
-                      <Volume2 size={18} />
+                      <Volume2 size={20} />
                     </button>
                   )}
-                  <p>{partsHelp}</p>
+                  <h2>{displayedTask}</h2>
                 </div>
-                <div className="word-help-parts">
-                  {parts.map((part, i) => (
-                    <button
-                      key={i}
-                      className="part-button"
-                      onClick={() => speak(part)}
-                      disabled={speaking}
-                    >
-                      <Volume2 size={22} />
-                      {part}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-            {stage === 'letters' && settings.letterMode === 'sounds' && (
-              <p className="sound-note">
-                {/[ЪЬ]/.test(target)
-                  ? 'У этой буквы нет собственного звука.'
-                  : /[ЕЁЮЯ]/.test(target)
-                    ? 'Звуки этой буквы зависят от её места в слове. Разберите пример со взрослым.'
-                    : 'Произнеси звук коротко, без названия буквы. Например: [б], а не «бэ».'}
-              </p>
-            )}
-            {mode === 'read' ? (
-              <div className="material-tools">
-                {wordRead && (entry?.icon || wordIllustrations[target]) && (
-                  <button
-                    className="pill-button"
-                    aria-pressed={showWordPicture}
-                    onClick={() =>
-                      setPictureOpenFor(showWordPicture ? null : pictureKey)
-                    }
-                  >
-                    <ImageIcon size={16} />
-                    {showWordPicture ? 'Скрыть картинку' : 'Показать картинку'}
-                  </button>
-                )}
+                <TaskInstruction
+                  text={instruction}
+                  sound={settings.sound}
+                  speak={speak}
+                />
                 {wordRead &&
-                  !model.showParts &&
-                  !model.wholeAgain &&
-                  feedback.kind !== 'success' &&
-                  parts.length > 1 && (
-                    <button
-                      className="pill-button"
-                      onClick={() => model.setPartsHelp(true)}
+                  showWordPicture &&
+                  (wordIllustrations[target] ? (
+                    <IllustrationGallery
+                      key={`${target}-${index}`}
+                      assetId={wordIllustrations[target]}
+                    />
+                  ) : (
+                    <div
+                      className="word-picture"
+                      role="img"
+                      aria-label={target}
                     >
-                      Помоги прочитать по слогам
-                    </button>
+                      {entry?.icon}
+                    </div>
+                  ))}
+                <ExerciseMaterial
+                  mode={mode}
+                  settings={settings}
+                  flyCards={flyCards}
+                  paused={paused || !exposure.ready}
+                  parent={parent}
+                  rest={rest}
+                  done={done}
+                  stage={stage}
+                  picture={picture}
+                  scene={scene}
+                  target={target}
+                  setScene={setScene}
+                  model={model}
+                  speechProgress={speechProgress}
+                  index={index}
+                  listening={listening}
+                  feedback={feedback}
+                  displayWord={displayWord}
+                  mistakes={mistakes}
+                />
+                {settings.colorVision !== 'off' &&
+                  settings.color &&
+                  mode === 'read' && (
+                    <p className="vision-legend">
+                      <span className="vowel">Гласные — двойная линия</span> ·{' '}
+                      <span className="consonant">Согласные — одна линия</span>
+                    </p>
                   )}
-                {answerInput}
+                {wordRead && model.showParts && (
+                  <div className="word-help">
+                    <div className="said">
+                      {settings.sound && (
+                        <button
+                          className="speak-button"
+                          aria-label="Послушать подсказку"
+                          onClick={() => speak(partsHelp)}
+                          disabled={speaking}
+                        >
+                          <Volume2 size={18} />
+                        </button>
+                      )}
+                      <p>{partsHelp}</p>
+                    </div>
+                    <div className="word-help-parts">
+                      {parts.map((part, i) => (
+                        <button
+                          key={i}
+                          className="part-button"
+                          onClick={() => speak(part)}
+                          disabled={speaking}
+                        >
+                          <Volume2 size={22} />
+                          {part}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {stage === 'letters' && settings.letterMode === 'sounds' && (
+                  <p className="sound-note">
+                    {/[ЪЬ]/.test(target)
+                      ? 'У этой буквы нет собственного звука.'
+                      : /[ЕЁЮЯ]/.test(target)
+                        ? 'Звуки этой буквы зависят от её места в слове. Разберите пример со взрослым.'
+                        : 'Произнеси звук коротко, без названия буквы. Например: [б], а не «бэ».'}
+                  </p>
+                )}
+                {mode === 'read' ? (
+                  <div className="material-tools">
+                    {wordRead && (entry?.icon || wordIllustrations[target]) && (
+                      <button
+                        className="pill-button"
+                        aria-pressed={showWordPicture}
+                        onClick={() =>
+                          setPictureOpenFor(showWordPicture ? null : pictureKey)
+                        }
+                      >
+                        <ImageIcon size={16} />
+                        {showWordPicture
+                          ? 'Скрыть картинку'
+                          : 'Показать картинку'}
+                      </button>
+                    )}
+                    {wordRead &&
+                      !model.showParts &&
+                      !model.wholeAgain &&
+                      feedback.kind !== 'success' &&
+                      parts.length > 1 && (
+                        <button
+                          className="pill-button"
+                          onClick={() => model.setPartsHelp(true)}
+                        >
+                          Помоги прочитать по слогам
+                        </button>
+                      )}
+                    {answerInput}
+                  </div>
+                ) : (
+                  answerInput
+                )}
               </div>
-            ) : (
-              answerInput
-            )}
-            {feedback.kind === 'success' && (
-              <div className="success-badge" aria-hidden="true">
-                <Star /> <span>+1 звезда</span>
-                <Star />
-              </div>
-            )}
-            <ExerciseVoiceMonitor
-              mode={mode}
-              lessonMic={lessonMic}
-              feedback={feedback}
-              listening={listening}
-              speaking={speaking}
-              cooldown={cooldown}
-              spectrum={spectrum}
-              loadingSpeech={loadingSpeech}
-              attemptStatus={attemptStatus}
-              micLevel={micLevel}
-              speechProgress={speechProgress}
-              target={target}
+              {!showBridge && feedback.kind === 'success' && (
+                <div className="success-badge" aria-hidden="true">
+                  <Star /> <span>+1 звезда</span>
+                  <Star />
+                </div>
+              )}
+              {!showBridge && (
+                <ExerciseVoiceMonitor
+                  mode={mode}
+                  lessonMic={lessonMic}
+                  feedback={feedback}
+                  listening={listening}
+                  speaking={speaking}
+                  cooldown={cooldown}
+                  spectrum={spectrum}
+                  loadingSpeech={loadingSpeech}
+                  attemptStatus={attemptStatus}
+                  micLevel={micLevel}
+                  speechProgress={speechProgress}
+                  target={target}
+                />
+              )}
+              {!showBridge && (
+                <ExerciseFeedback
+                  feedback={feedback}
+                  mode={mode}
+                  flyInputStatus={flyInputStatus}
+                  settings={settings}
+                  speaking={speaking}
+                  speak={speak}
+                  heard={heard}
+                  target={target}
+                  typo={typo}
+                  hint={hint}
+                  picture={picture}
+                  mistakes={mistakes}
+                  setFeedback={setFeedback}
+                  setHeard={setHeard}
+                  stop={stop}
+                  setRest={setRest}
+                />
+              )}
+              {showBridge && (
+                <WordBridge
+                  key={`${index}-${target}-${settings.unit}`}
+                  onInteract={stopAdvance}
+                  onComplete={() => {
+                    if (!done && !paused && !parent && !rest)
+                      nextButton.current?.focus({ preventScroll: true });
+                  }}
+                  unit={settings.unit}
+                  target={target}
+                  speak={speak}
+                  sound={settings.sound}
+                />
+              )}
+            </>
+          )}
+        </TaskCardBody>
+        <ExerciseActions
+          done={done}
+          autoAdvanceStop={advanceStop()}
+          countdown={
+            <AutoAdvance
+              key={`${index}-${model.repeatEpoch}`}
+              inline
+              stopped={autoStopped}
+              enabled={settings.autoAdvance}
+              seconds={advanceSeconds}
+              blocked={blocked}
+              onNext={() => next()}
             />
-            <ExerciseFeedback
-              feedback={feedback}
-              mode={mode}
-              flyInputStatus={flyInputStatus}
-              settings={settings}
-              speaking={speaking}
-              speak={speak}
-              heard={heard}
-              target={target}
-              typo={typo}
-              hint={hint}
-              picture={picture}
-              mistakes={mistakes}
-              setFeedback={setFeedback}
-              setHeard={setHeard}
-              stop={stop}
-              setRest={setRest}
+          }
+          continueCountdown={
+            <AutoAdvance
+              inline
+              stopped={autoStopped}
+              enabled={settings.autoAdvance}
+              seconds={advanceSeconds}
+              blocked={blocked}
+              onNext={model.continueLesson}
             />
-            {advanceStop('only-narrow')}
-            {showBridge && (
-              <WordBridge
-                key={`${index}-${target}-${settings.unit}`}
-                onInteract={stopAdvance}
-                onComplete={() => {
-                  if (!done && !paused && !parent && !rest)
-                    nextButton.current?.focus({ preventScroll: true });
-                }}
-                unit={settings.unit}
-                target={target}
-                speak={speak}
-                sound={settings.sound}
-              />
-            )}
-          </>
-        )}
+          }
+          feedback={feedback}
+          nextButton={nextButton}
+          next={next}
+          mode={mode}
+          hint={hint}
+          canSubmit={
+            !!answer.trim() &&
+            feedback.kind !== 'success' &&
+            !paused &&
+            !parent &&
+            !rest
+          }
+          submit={submit}
+          listening={listening}
+          listen={listen}
+          supported={supported}
+          speaking={speaking}
+          lessonMic={lessonMic}
+          loadingSpeech={loadingSpeech}
+          success={success}
+          setFeedback={setFeedback}
+          setHint={setHint}
+          setMistakes={setMistakes}
+          record={record}
+          speak={speak}
+          target={target}
+          onRepeat={model.repeatExercise}
+          onOtherCards={otherCards}
+          onRest={() => {
+            navigate(stage, mode);
+            setRest(true);
+          }}
+          onContinue={model.continueLesson}
+        />
       </div>
-      <ExerciseActions
-        done={done}
-        autoAdvanceStop={advanceStop('only-wide')}
-        countdown={
-          <AutoAdvance
-            key={`${index}-${model.repeatEpoch}`}
-            inline
-            stopped={autoStopped}
-            enabled={settings.autoAdvance}
-            seconds={advanceSeconds}
-            blocked={blocked}
-            onNext={() => next()}
-          />
-        }
-        continueCountdown={
-          <AutoAdvance
-            inline
-            stopped={autoStopped}
-            enabled={settings.autoAdvance}
-            seconds={advanceSeconds}
-            blocked={blocked}
-            onNext={model.continueLesson}
-          />
-        }
-        feedback={feedback}
-        nextButton={nextButton}
-        next={next}
-        mode={mode}
-        hint={hint}
-        canSubmit={
-          !!answer.trim() &&
-          feedback.kind !== 'success' &&
-          !paused &&
-          !parent &&
-          !rest
-        }
-        submit={submit}
-        listening={listening}
-        listen={listen}
-        supported={supported}
-        speaking={speaking}
-        lessonMic={lessonMic}
-        loadingSpeech={loadingSpeech}
-        success={success}
-        setFeedback={setFeedback}
-        setHint={setHint}
-        setMistakes={setMistakes}
-        record={record}
-        speak={speak}
-        target={target}
-        onRepeat={model.repeatExercise}
-        onOtherCards={otherCards}
-        onRest={() => {
-          navigate(stage, mode);
-          setRest(true);
-        }}
-        onContinue={model.continueLesson}
-      />
     </FreeExposureFrame>
   );
 }

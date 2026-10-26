@@ -64,7 +64,7 @@ export default function AnswerEntry({
       />
     );
   return (
-    <div className="exercise" aria-busy={!error}>
+    <div className="exercise task-card" aria-busy={!error}>
       {error ? (
         <>
           <p role="alert">Не удалось открыть задания. Сохранения не удалены.</p>

@@ -6,6 +6,7 @@ export function ComposeTask({
   onSubmit,
   compositionPlaceholder,
   submitLabel,
+  compactControls,
 }: TaskRendererProps) {
   const [ids, setIds] = useState<string[]>([]);
   const text = ids
@@ -21,7 +22,9 @@ export function ComposeTask({
       }}
     >
       <fieldset disabled={busy}>
-        <legend>Выбери части по порядку</legend>
+        <legend className={compactControls ? 'sr-only' : undefined}>
+          Выбери части по порядку
+        </legend>
         <div className="curriculum-token-bank">
           {task.tokens.map((token, index) => (
             <button

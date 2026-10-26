@@ -160,8 +160,8 @@ try {
       path: path.join(output, width + '-answer.png'),
       fullPage: true,
     });
-    let saved = await state(),
-      route = saved.customRoutes[saved.route.routeId];
+    let saved = await state();
+    const route = saved.customRoutes[saved.route.routeId];
     const firstId = route.steps[route.position].itemId,
       task = bank.items[firstId];
     for (const id of task.answer.correctOptionIds)

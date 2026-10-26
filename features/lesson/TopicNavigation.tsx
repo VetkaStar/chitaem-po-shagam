@@ -37,7 +37,7 @@ export default function TopicNavigation({
       caption={
         stage === 'pictures'
           ? 'Моя тема'
-          : `Тема ${settings.unit + 1} из ${topicNames.length}`
+          : `Тема ${settings.unit + 1} из ${topicNames.length}${settings.unit === topicNames.length - 1 ? ' · обзор всех букв' : ''}`
       }
       nextTitle={stage === 'pictures' ? 'Новые картинки' : 'Следующая тема'}
       nextShort={stage === 'pictures' ? 'Новые' : 'Следующая'}

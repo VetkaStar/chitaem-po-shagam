@@ -37,7 +37,7 @@ const test = (name, fn) => {
 const begin = () =>
   P.startPersonal(entry, bank, curriculum, { attempts: [{ untouched: true }] });
 const taskOf = (run) => curriculum.items[run.active.taskId];
-const speech = (run, text, extra = {}) => {
+const _speech = (run, text, extra = {}) => {
   const captureId = `capture:${run.revision}`;
   run = P.startPersonalCapture(run, captureId);
   return P.answerPersonal(run, curriculum, {
@@ -297,7 +297,7 @@ test('Reading and comprehension remain separate on wrong answer', () => {
   assert.equal(next.observations[0].meaning, 'incorrect');
 });
 test('Read-to-question budget pauses before question and resumes exact instance', () => {
-  let { run, c, task } = atTask('read_meaning');
+  const { run, c, task } = atTask('read_meaning');
   run.visit.used = run.visit.budget;
   let next = say(run, c, task.learnerText);
   assert.equal(next.paused, true);
@@ -378,7 +378,9 @@ test('Transform projection and audio never reveal answer before typed response',
   );
 });
 test('Listening options require successful explicit audio and survive cancelled replay', () => {
-  let { run, c } = atTask('read_meaning');
+  const initial = atTask('read_meaning');
+  let { run } = initial;
+  const { c } = initial;
   run.active.phase = 'listen';
   assert.equal(P.personalView(run, c).options.length, 0);
   let request = P.requestPersonalAudio(run, c, {
@@ -413,7 +415,9 @@ test('Listening options require successful explicit audio and survive cancelled 
   assert.equal(run.visit.used, used);
 });
 test('Passage questions charge individually and preserve reading through visit pause', () => {
-  let { run, c, task } = atTask('passage');
+  const initial = atTask('passage');
+  let { run } = initial;
+  const { c, task } = initial;
   run.visit.budget = 2;
   run = say(run, c, task.learnerText);
   assert.equal(run.visit.used, 2);
@@ -458,7 +462,9 @@ test('Listening completion reserves question budget before exposure', () => {
   assert.ok(P.personalView(run, c).options.length);
 });
 test('Listening projection hides target text and lines in every stage', () => {
-  let { run, c } = atTask('passage');
+  const initial = atTask('passage');
+  const { run } = initial;
+  let { c } = initial;
   c = structuredClone(c);
   c.episodes['test.ep'].steps[0].mode = 'listen';
   for (const phase of ['listen', 'question', 'feedback']) {
@@ -469,7 +475,7 @@ test('Listening projection hides target text and lines in every stage', () => {
   }
 });
 test('Info and reading instructions exclude source methodological wording', () => {
-  let run = begin();
+  const run = begin();
   const c = structuredClone(curriculum);
   const step = c.episodes[run.cursor.episodeId].steps[0];
   step.instruction = 'SECRET STAFF METADATA';

@@ -1,13 +1,23 @@
-import { useEffect, useRef, useState } from 'react';
+import TaskCardBody from '@/features/lesson/TaskCardBody';
+import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import ExerciseHeader from '../../components/exercise-header';
 import type { LessonModel } from '../lesson/use-lesson';
 import type { CurriculumController } from '../curriculum/controller';
 import type { Supply } from '../../lib/curriculum/types';
 import { useCurriculumSession } from '../curriculum/use-curriculum-session';
 import AnswerCard from './AnswerCard';
-import { openAnswer, nextAnswer } from './session';
+import { openAnswer, nextAnswer, answerItems } from './session';
+import AvailableTopic from '../../components/available-topic';
+import { topicNames } from '../../lib/topics';
 import { useInstructionAudio } from '../curriculum/use-instruction-audio';
 import type { AnswerSection } from './types';
+import {
+  repeatTrainerTask,
+  routeOffset,
+  routeResults,
+  stepWasCorrect,
+} from '../trainers/session-actions';
+import SessionResults from '../../components/session-results';
 
 export default function AnswerSession({
   controller,
@@ -38,10 +48,11 @@ export default function AnswerSession({
     setRouteId(id);
     setReady(true);
   };
+  const initialize = useEffectEvent(() => act(() => start()));
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
-    act(() => start());
+    initialize();
   }, []);
   const route = routeId ? state.customRoutes[routeId] : undefined;
   const complete = !!route && route.position >= route.steps.length;
@@ -61,6 +72,24 @@ export default function AnswerSession({
   const blocked = busy || model.parent || model.rest || model.paused;
   const feedback =
     outcome && typeof outcome === 'object' ? outcome.outcome : undefined;
+  const retry =
+    feedback === 'incorrect' ||
+    feedback === 'uncertain' ||
+    feedback === 'input_error';
+  const offset = route ? routeOffset(route) : 0;
+  const repeat = async () => {
+    if (!route) return;
+    setRouteId(
+      await repeatTrainerTask(
+        controller,
+        route,
+        Math.max(0, route.position - 1),
+      ),
+    );
+    const view = controller.visible();
+    if (view?.kind === 'task' && !view.optionsRevealed)
+      await controller.revealOptions();
+  };
   useInstructionAudio(
     current,
     sound && !blocked && preferences.instructionAudio === 'always',
@@ -69,12 +98,16 @@ export default function AnswerSession({
   useEffect(() => {
     if (ready && route && !current && !blocked)
       nextButton.current?.focus({ preventScroll: true });
-  }, [ready, current?.instanceId, route?.position, blocked]);
+  }, [ready, current, route, blocked]);
+  const active = !!current;
+  const updateActivity = useEffectEvent((value: boolean) => {
+    model.setExternalActivity(value);
+    if (value) model.schedule.touch();
+  });
   useEffect(() => {
-    model.setExternalActivity(!!current);
-    if (current) model.schedule.touch();
-    return () => model.setExternalActivity(false);
-  }, [!!current]);
+    updateActivity(active);
+    return () => updateActivity(false);
+  }, [active]);
   return (
     <>
       {error && (
@@ -94,16 +127,20 @@ export default function AnswerSession({
         </div>
       )}
       {!ready && (
-        <div className="exercise" aria-busy="true">
+        <div className="exercise task-card" aria-busy="true">
           <p role="status">Готовим вопрос…</p>
         </div>
       )}
       {ready && !route && (
-        <div className="exercise">
-          <p>
-            В этой теме пока нет вопросов. Можно выбрать другую тему или режим.
-          </p>
-        </div>
+        <AvailableTopic
+          available={topicNames.flatMap((_, unit) =>
+            answerItems(supply, unit, section).length ? [unit] : [],
+          )}
+          onSelect={(unit) => {
+            model.stop();
+            model.changeTopic(model.stage, unit);
+          }}
+        />
       )}
       {current && route && (
         <AnswerCard
@@ -116,12 +153,21 @@ export default function AnswerSession({
           instructionSound={sound && preferences.instructionAudio !== 'off'}
           speak={model.speak}
           run={run}
-          number={route.position + 1}
-          total={route.steps.length}
-          completed={route.position}
+          number={offset + route.position + 1}
+          total={offset + route.steps.length}
+          completed={offset + route.position}
           color={model.settings.color}
           onActivity={model.schedule.touch}
-          onResult={() => {
+          onResult={(outcome) => {
+            if (
+              outcome === 'correct' &&
+              !stepWasCorrect(
+                controller.snapshot(),
+                route.steps[route.position].id,
+                current.instanceId,
+              )
+            )
+              model.awardTrainer(current.instanceId);
             model.schedule.touch();
             if (
               model.schedule.shouldRest(route.position + 1, route.steps.length)
@@ -133,35 +179,42 @@ export default function AnswerSession({
       {route && !current && (
         <div
           className={
-            'exercise answer-result ' +
+            'exercise task-card answer-result ' +
             (feedback === 'correct' ? 'success' : 'neutral')
           }
         >
           <ExerciseHeader
-            number={Math.min(route.position + 1, route.steps.length)}
-            total={route.steps.length}
-            completed={route.position}
-            label={complete ? 'Все задания пройдены' : undefined}
+            number={offset + Math.max(1, route.position)}
+            total={offset + route.steps.length}
+            completed={offset + route.position}
+            label={complete && !retry ? 'Занятие завершено' : undefined}
           />
-          <div className="completion">
+          <TaskCardBody
+            className="completion task-card-body"
+            aria-label="Результат задания"
+          >
             <h2>
-              {complete
+              {complete && !retry
                 ? 'Ты позанимался. Здорово!'
                 : feedback === 'correct'
                   ? 'Верно!'
                   : feedback === 'skipped'
                     ? 'Задание пропущено'
-                    : 'Можно потренироваться ещё'}
+                    : 'Попробуем ещё раз'}
             </h2>
-            {complete && (
-              <p>Пройдено заданий: {route.position}. Теперь можно отдохнуть.</p>
+            {complete && !retry && (
+              <SessionResults {...routeResults(state, route)} />
             )}
-            {complete && route.steps.length < model.settings.length && (
-              <p>
-                Все вопросы этой темы пройдены. В следующих темах появятся
-                новые.
-              </p>
-            )}
+            {complete &&
+              !retry &&
+              offset + route.steps.length < model.settings.length && (
+                <p>
+                  Вопросы этой темы закончились. В следующих темах появятся
+                  новые.
+                </p>
+              )}
+          </TaskCardBody>
+          <div className="task-card-actions">
             <button
               ref={nextButton}
               className="primary"
@@ -172,12 +225,17 @@ export default function AnswerSession({
               }}
               onClick={() =>
                 act(async () => {
-                  if (complete) await start(true);
+                  if (retry) await repeat();
+                  else if (complete) await start(true);
                   else await nextAnswer(controller);
                 })
               }
             >
-              {complete ? 'Ещё занятие' : 'Дальше · Enter'}
+              {retry
+                ? 'Попробовать ещё раз · Enter'
+                : complete
+                  ? 'Ещё занятие'
+                  : 'Дальше · Enter'}
             </button>
             {complete && (
               <button disabled={blocked} onClick={() => model.setRest(true)}>

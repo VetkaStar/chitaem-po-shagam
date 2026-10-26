@@ -227,7 +227,7 @@ self.onmessage = (event: MessageEvent<Request>) => {
           ? error.message
           : typeof error === 'object'
             ? JSON.stringify(error)
-            : String(error);
+            : typeof error === 'string' ? error : 'Ошибка движка распознавания.';
       self.postMessage({
         id: event.data.id,
         error: detail || 'Ошибка движка распознавания.',

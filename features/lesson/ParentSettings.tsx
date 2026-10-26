@@ -1,5 +1,6 @@
 'use client';
 import AutoAdvanceSettings from '@/components/auto-advance-settings';
+import { plural } from '../../lib/plural';
 import VisionSettings from './VisionSettings';
 import SpeechSettings from './SpeechSettings';
 import NarratorSettings from './NarratorSettings';
@@ -150,12 +151,12 @@ export default function ParentSettings({
                 id="setting-length"
                 aria-label="Количество заданий"
               >
-                <SelectValue>{settings.length} заданий</SelectValue>
+                <SelectValue>{settings.length} {plural(settings.length, ['задание', 'задания', 'заданий'])}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {[3, 5, 8].map((n) => (
                   <SelectItem key={n} value={String(n)}>
-                    {n} заданий
+                    {n} {plural(n, ['задание', 'задания', 'заданий'])}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -186,7 +187,7 @@ export default function ParentSettings({
               <option value="t0">Только по кнопке</option>
               {[3, 5, 8, 10].map((n) => (
                 <option key={'t' + n} value={'t' + n}>
-                  Через {n} заданий
+                  Через {n} {plural(n, ['задание', 'задания', 'заданий'])}
                 </option>
               ))}
               {[3, 5, 10, 15].map((n) => (
@@ -358,7 +359,7 @@ export default function ParentSettings({
             )}
             <h3>Прогресс</h3>
             <p>
-              {stars} звёзд · записей в журнале: {history.length}. Пропуски и
+              {stars} {plural(stars, ['звезда', 'звезды', 'звёзд'])} · записей в журнале: {history.length}. Пропуски и
               просьбы о помощи сохраняются отдельно от верных ответов. Последние
               300 записей.
             </p>

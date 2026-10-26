@@ -8,14 +8,12 @@ function load(relative) {
   const code = ts.transpile(fs.readFileSync(relative, 'utf8'), {
     module: ts.ModuleKind.CommonJS,
   });
+  // eslint-disable-next-line typescript/no-implied-eval -- Compile trusted repository fixtures only.
   new Function('exports', 'require', code)(exports, (name) =>
     load(path.join(path.dirname(relative), name + '.ts')),
   );
   return exports;
 }
-const code = ts.transpile(fs.readFileSync('content/illustrations.ts', 'utf8'), {
-  module: ts.ModuleKind.CommonJS,
-});
 const data = {};
 Object.assign(data, load('content/illustrations.ts'));
 const { illustrations, wordIllustrations, textIllustrations } = data;
@@ -81,6 +79,7 @@ for (const image of newAudit.images) {
   );
 }
 const library = {};
+// eslint-disable-next-line typescript/no-implied-eval -- Compile trusted repository fixtures only.
 new Function(
   'exports',
   ts.transpile(fs.readFileSync('content/reading-library.ts', 'utf8'), {

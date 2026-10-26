@@ -485,7 +485,7 @@ try {
     .getByRole('button', { name: 'Учебные программы', exact: true })
     .click();
   await mainPage
-    .getByRole('button', { name: 'Настроить программу', exact: true })
+    .getByRole('heading', { name: 'Выбери свой путь', exact: true })
     .waitFor();
   assert.equal(
     supplyRequests().length,
@@ -497,7 +497,7 @@ try {
     'lazy content preserves nested base',
   );
   await mainPage
-    .getByRole('button', { name: 'Настроить позже', exact: true })
+    .getByRole('button', { name: 'К тренажёрам', exact: true })
     .click();
   await mainPage
     .getByRole('heading', { name: 'Привет, Проверка!', exact: true })

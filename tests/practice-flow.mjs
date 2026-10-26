@@ -37,6 +37,18 @@ const React = {
     const i = cursor++;
     return slots[i] ?? (slots[i] = { current: initial });
   },
+  useMemo(fn, deps) {
+    const ref = React.useRef();
+    if (!ref.current || deps.some((value, i) => !Object.is(value, ref.current.deps[i])))
+      ref.current = { deps, value: fn() };
+    return ref.current.value;
+  },
+  useEffectEvent(fn) {
+    const ref = React.useRef(fn);
+    ref.current = fn;
+    const event = React.useRef((...args) => ref.current(...args));
+    return event.current;
+  },
   useEffect(fn, deps) {
     const i = cursor++,
       old = slots[i];

@@ -37,7 +37,7 @@ function officialFixture(episode, stepIndex = 0) {
   const state = createState(supply, legacy, 'synthetic-execution-test');
   const node = curriculum.nodes[episode.nodeId];
   state.profile = engine.switchProgram(state.profile, episode.programId, curriculum);
-  state.profile.knownLetters = [...'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'];
+  state.profile.knownLetters = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'.split('');
   for (const skill of node.prerequisiteSkills) {
     state.profile = engine.confirmEntrySkill(state.profile, curriculum, skill, { verifier: 'companion', reason: 'SYNTHETIC TEST FIXTURE' });
   }

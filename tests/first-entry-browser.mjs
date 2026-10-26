@@ -102,13 +102,13 @@ try {
     .getByRole('heading', { name: 'Все тренажёры', exact: true })
     .waitFor();
   assert.equal(await page.locator('.exercise').count(), 0);
-  assert.equal(await page.locator('.portal-grid .portal-card').count(), 7);
+  assert.equal(await page.locator('.portal-grid .portal-card').count(), 6);
   assert.equal(
     await page
       .getByRole('navigation', { name: 'Разделы', exact: true })
       .getByRole('button')
       .count(),
-    7,
+    6,
   );
   assert.equal(await page.locator('.app-nav-submenu:not([hidden])').count(), 0);
   await page.reload();
@@ -146,6 +146,7 @@ try {
   await page
     .getByRole('button', { name: 'Учебные программы', exact: true })
     .click();
+  await page.getByRole('button', { name: /^Моя дорожка/ }).click();
   await page
     .getByRole('heading', { name: 'Что сейчас труднее всего?', exact: true })
     .waitFor();
@@ -169,6 +170,7 @@ try {
   );
   const failed = await browser.newPage();
   await failed.addInitScript(() => {
+    // eslint-disable-next-line typescript/unbound-method -- Wrapper invokes the original with its receiver via call/apply.
     const setItem = Storage.prototype.setItem;
     Storage.prototype.setItem = function (key, value) {
       if (key.startsWith('reading-profile-record-v1:'))

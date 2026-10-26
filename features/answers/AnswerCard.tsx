@@ -1,4 +1,6 @@
+import TaskCardBody from '@/features/lesson/TaskCardBody';
 import { ArrowRight, HelpCircle, Image, Volume2 } from 'lucide-react';
+import { useState } from 'react';
 import ExerciseHeader from '../../components/exercise-header';
 import TaskInstruction from '../../components/task-instruction';
 import { CurriculumIllustration } from '../curriculum/CurriculumIllustration';
@@ -41,6 +43,7 @@ export default function AnswerCard({
   onActivity,
 }: AnswerCardProps) {
   const title = 'Ответь на вопрос';
+  const [hintOpen, setHintOpen] = useState(false);
   const act = (action: () => Promise<unknown>) => {
     if (!busy) void run(action).catch(() => undefined);
   };
@@ -66,100 +69,142 @@ export default function AnswerCard({
     });
   return (
     <section
-      className="exercise answer-exercise"
+      className="exercise task-card answer-exercise"
+      data-section={section}
       aria-busy={busy}
       onPointerDownCapture={onActivity}
       onKeyDownCapture={onActivity}
     >
       <ExerciseHeader number={number} total={total} completed={completed} />
-      <div className="task-line">
-        {sound && instructionSound && (
-          <button
-            type="button"
-            className="speak-button"
-            disabled={busy}
-            aria-label="Озвучить задание"
-            onClick={() => instructionAudio(title)}
-          >
-            <Volume2 size={20} />
-          </button>
-        )}
-        <h2>{title}</h2>
-      </div>
-      <TaskInstruction
-        text={view.taskInstruction || view.instruction}
-        sound={sound && instructionSound}
-        speak={instructionAudio}
-      />
-      <div
-        className="reading answer-material"
-        data-section={section}
-        aria-label={view.text}
-        data-letters={Array.from(view.text).length}
-      >
-        {section === 'sentences'
-          ? view.text
-          : Array.from(view.text).map((char, index) => (
-              <span
-                key={index}
-                className={
-                  color
-                    ? /[аеёиоуыэюя]/iu.test(char)
-                      ? 'vowel'
-                      : /[а-яё]/iu.test(char)
-                        ? 'consonant'
-                        : ''
-                    : ''
-                }
+      <TaskCardBody className="task-card-body" aria-label="Содержимое задания">
+        <div className="task-card-material" data-hint={hintOpen}>
+          <div className="task-line">
+            {sound && instructionSound && (
+              <button
+                type="button"
+                className="speak-button"
+                disabled={busy}
+                aria-label="Озвучить задание"
+                onClick={() => instructionAudio(title)}
               >
-                {char}
-              </span>
-            ))}
-      </div>
-      {sound && (
-        <div className="material-tools">
-          <button
-            type="button"
-            className="pill-button sample"
-            disabled={busy}
-            onClick={playMaterial}
+                <Volume2 size={20} />
+              </button>
+            )}
+            <h2>{title}</h2>
+          </div>
+          <TaskInstruction
+            text={view.taskInstruction || view.instruction}
+            sound={sound && instructionSound}
+            speak={instructionAudio}
+          />
+          <div
+            className="reading answer-material"
+            data-section={section}
+            aria-label={view.text}
+            data-letters={Array.from(view.text).length}
           >
-            <Volume2 size={16} /> {answerMaterialLabels[section]}
-          </button>
+            {section === 'sentences'
+              ? view.text
+              : Array.from(view.text).map((char, index) => (
+                  <span
+                    key={index}
+                    className={
+                      color
+                        ? /[аеёиоуыэюя]/iu.test(char)
+                          ? 'vowel'
+                          : /[а-яё]/iu.test(char)
+                            ? 'consonant'
+                            : ''
+                        : ''
+                    }
+                  >
+                    {char}
+                  </span>
+                ))}
+          </div>
+          {sound && (
+            <div className="material-tools">
+              <button
+                type="button"
+                className="pill-button sample"
+                disabled={busy}
+                onClick={playMaterial}
+              >
+                <Volume2 size={16} /> {answerMaterialLabels[section]}
+              </button>
+            </div>
+          )}
+          <TaskRenderer
+            compactAudio
+            key={view.instanceId}
+            task={view}
+            busy={busy}
+            onSubmit={submit}
+            onReading={(reading) =>
+              run(() => controller.recordReading(view.instanceId, reading))
+            }
+            onReveal={() => run(() => controller.revealOptions())}
+            onSpeak={
+              sound
+                ? (questionId, optionId) =>
+                    act(async () => {
+                      const text = await controller.optionAudio(
+                        view.instanceId,
+                        questionId,
+                        optionId,
+                      );
+                      speak(text);
+                    })
+                : undefined
+            }
+          />
         </div>
-      )}
-      <TaskRenderer
-        compactAudio
-        key={view.instanceId}
-        task={view}
-        busy={busy}
-        onSubmit={submit}
-        onReading={(reading) =>
-          run(() => controller.recordReading(view.instanceId, reading))
-        }
-        onReveal={() => run(() => controller.revealOptions())}
-        onSpeak={
-          sound
-            ? (questionId, optionId) =>
-                act(async () => {
-                  const text = await controller.optionAudio(
-                    view.instanceId,
-                    questionId,
-                    optionId,
-                  );
-                  speak(text);
-                })
-            : undefined
-        }
-      />
-      <div className="answer-help material-tools">
+        {hintOpen && view.hints.length > 0 && (
+          <div className="hint-box">
+            {sound && instructionSound && (
+              <button
+                type="button"
+                className="speak-button"
+                aria-label="Послушать подсказку"
+                disabled={busy}
+                onClick={() => instructionAudio(view.hints.join('. '))}
+              >
+                <Volume2 size={18} />
+              </button>
+            )}
+            {view.hints.map((text, index) => (
+              <p key={index}>{text}</p>
+            ))}
+          </div>
+        )}
+        {view.illustration && (
+          <CurriculumIllustration
+            asset={view.illustration}
+            busy={busy}
+            onVariant={(variant) =>
+              act(() => controller.illustration(view.instanceId, variant))
+            }
+          />
+        )}
+      </TaskCardBody>
+      <div className="exercise-footer task-card-actions">
         <button
           type="button"
           className="pill-button"
-          disabled={busy || !view.canRequestHint}
-          onClick={() => act(() => controller.hint(view.hints.length))}
+          disabled={
+            busy || (!hintOpen && !view.canRequestHint && !view.hints.length)
+          }
+          onClick={() => {
+            if (hintOpen) setHintOpen(false);
+            else
+              act(async () => {
+                if (view.canRequestHint)
+                  await controller.hint(view.hints.length);
+                setHintOpen(true);
+              });
+          }}
         >
-          <HelpCircle size={16} /> Подсказка
+          <HelpCircle size={16} /> {hintOpen ? 'Скрыть подсказку' : 'Подсказка'}
         </button>
         {view.canShowIllustration && !view.illustration && (
           <button
@@ -171,24 +216,6 @@ export default function AnswerCard({
             <Image size={16} /> Показать картинку
           </button>
         )}
-      </div>
-      {view.hints.length > 0 && (
-        <div className="hint-box">
-          {view.hints.map((text, index) => (
-            <p key={index}>{text}</p>
-          ))}
-        </div>
-      )}
-      {view.illustration && (
-        <CurriculumIllustration
-          asset={view.illustration}
-          busy={busy}
-          onVariant={(variant) =>
-            act(() => controller.illustration(view.instanceId, variant))
-          }
-        />
-      )}
-      <div className="exercise-footer">
         <button
           type="button"
           className="text-button"

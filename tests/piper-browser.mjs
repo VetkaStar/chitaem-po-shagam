@@ -28,6 +28,9 @@ const browser = await chromium.launchPersistentContext(
 );
 try {
   const page = await browser.newPage();
+  page.on('response', response => {
+    if (response.status() >= 400) console.log('HTTP', response.status(), response.url());
+  });
   page.on('console', (message) => {
     fs.appendFileSync(
       path.join(out, 'console.log'),
@@ -52,6 +55,7 @@ try {
     }
     window.testAudio = [];
     window.playRates = [];
+    // eslint-disable-next-line typescript/unbound-method -- The wrapper preserves the receiver with call(this).
     const play = HTMLMediaElement.prototype.play;
     HTMLMediaElement.prototype.play = function() { window.playRates.push(this.playbackRate); return play.call(this); };
     const original = URL.createObjectURL.bind(URL);

@@ -82,8 +82,10 @@ async function initialize() {
       },
     },
   });
-  createRoot(document.getElementById('root')!).render(
+  const root = createRoot(document.getElementById('root')!);
+  const render = (suspended = false) => root.render(
     <EntryRoot
+      suspended={suspended}
       controller={controller}
       supply={supply}
       settings={defaults}
@@ -93,6 +95,8 @@ async function initialize() {
       }}
     />,
   );
+  Object.assign(window, { suspendEntry: render });
+  render();
 }
 void initialize().catch((e) =>
   Object.assign(window, { entryError: String(e) }),

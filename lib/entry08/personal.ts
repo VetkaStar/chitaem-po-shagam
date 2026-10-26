@@ -153,7 +153,8 @@ const matches = (value: string, expected: string) =>
 const sameSet = (a: unknown[], b: unknown[]) =>
   a.length === b.length &&
   new Set(a).size === a.length &&
-  [...a].sort().every((v, i) => v === [...b].sort()[i]);
+  new Set(b).size === b.length &&
+  a.every((value) => b.includes(value));
 const touched = (run: PersonalRun) => {
   run.revision++;
   return run;
@@ -559,7 +560,7 @@ export function answerPersonal(
     previous.paused
   )
     return previous;
-  let run = clone(previous);
+  const run = clone(previous);
   const a = run.active!,
     { task } = source(run, c);
   if (answer.kind === 'info') {

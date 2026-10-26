@@ -5,7 +5,7 @@ const output = compileCurriculum();
 const mod = (name) => import(pathToFileURL(output + '/' + name));
 const { loadSupply } = await mod('lib/curriculum/loader.js');
 const { validateState } = await mod('lib/progress/validation.js');
-const { createState, encodeProgress, decodeProgress } = await mod(
+const { createState } = await mod(
   'lib/progress/state.js',
 );
 const { CurriculumController } = await mod('features/curriculum/controller.js');
@@ -27,6 +27,7 @@ class Store {
   state = null;
   backups = [];
   fail = false;
+  /** @type {Promise<void> | null} */
   gate = null;
   async read() {
     return structuredClone(this.state);
@@ -58,7 +59,7 @@ async function setup() {
 }
 function preparedState() {
   const s = createState(supply, legacy, 'synthetic-test-only');
-  s.profile.knownLetters = [...'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'];
+  s.profile.knownLetters = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'.split('');
   for (const p of c.programs)
     for (const skillId of c.nodes[p.defaultPath[0]].prerequisiteSkills)
       s.profile = engine.confirmEntrySkill(s.profile, c, skillId, {

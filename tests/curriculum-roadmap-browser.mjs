@@ -165,8 +165,12 @@ try {
 
   await page.getByText('Интересы', { exact: true }).click();
   const beforeInterests = await snapshot();
-  await page.getByRole('checkbox', { name: 'Животные', exact: true }).check();
+  const animals = page.getByRole('checkbox', { name: 'Животные', exact: true });
+  // This controlled checkbox changes only after the asynchronous IndexedDB commit.
+  await animals.click();
   await saved();
+  await page.waitForFunction(() => window.onboardingHarness.controller.snapshot().profile.interests.includes('animals'));
+  assert.equal(await animals.isChecked(), true);
   state = await snapshot();
   assert.ok(state.profile.interests.includes('animals'));
   assert.deepEqual(state.profile.programs, beforeInterests.profile.programs);

@@ -87,6 +87,11 @@ export function restoreLessonProgress({
           : 'word',
         readingHighlight: s.readingHighlight !== false,
         textFlow: s.textFlow === 'manual' ? 'manual' : 'auto',
+        textFontSize: [24, 28, 32, 40].includes(s.textFontSize)
+          ? s.textFontSize
+          : defaults.textFontSize,
+        textPresentation:
+          s.textPresentation === 'pages' ? 'pages' : defaults.textPresentation,
         showFullText: s.showFullText !== false,
         flySpeed: [0.5, 1, 1.5, 2].includes(s.flySpeed) ? s.flySpeed : 1,
         breakMinutes: [0, 3, 5, 10, 15].includes(s.breakMinutes)

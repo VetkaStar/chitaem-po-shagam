@@ -13,6 +13,8 @@ let slots = [],
   renderFn,
   result;
 const React = {
+  createContext(value) { return {Provider: 'context', value}; },
+  useSyncExternalStore(_subscribe, getSnapshot) { return getSnapshot(); },
   useState(v) {
     const i = cursor++;
     if (!(i in slots)) slots[i] = typeof v === 'function' ? v() : v;
@@ -89,9 +91,17 @@ function load(file) {
       require(p) {
         if (p.includes('use-free-exposure')) return { useFreeExposure: () => ({ready: true, blocker: null}) };
         if (p === 'react') return React;
+        if (p === 'react-dom') return { createPortal: value => value };
         if (p === 'react/jsx-runtime')
           return {
-            jsx: (type, props) => ({ type, props }),
+            jsx: (type, props) => {
+              // This flow test assumes committed exposure; viewport geometry has browser coverage.
+              if (type?.name === 'TextReadingViewport') {
+                props.onTargetReady(props.targetKey);
+                return {type,props:{...props,children:props.lines.map((line,i)=>props.renderLine(i,0,line.length))}};
+              }
+              return { type, props };
+            },
             jsxs: (type, props) => ({ type, props }),
           };
         if (p.endsWith('.css')) return {};
@@ -149,7 +159,7 @@ function mount(fn) {
   return flush();
 }
 const hook = load('features/library/use-text-microphone.ts').useTextMicrophone;
-let threshold = 0;
+let threshold = 0, accepting = true;
 let target = 'Кот спит.',
   key = 'a',
   enabled = true;
@@ -162,6 +172,7 @@ mount(() =>
     () => completes++,
     () => rests++,
     {speechConfidenceThreshold:threshold},
+    () => accepting,
   ),
 );
 speechCallbacks.onPartial('кот спит');
@@ -293,6 +304,22 @@ speechCallbacks.onResult({ text: 'Кот спит!', experimental: true });
 flush();
 assert.equal(completes, previousComplete + 1);
 assert.equal(result.progress, 7);
+// A durable gate can change while the same microphone generation is running.
+key = 'durable-gate'; enabled = true; accepting = false; flush();
+const gateCompletes = completes, gateAborts = aborts;
+speechCallbacks.onPartial('кот спит');
+speechCallbacks.onResult(final('кот спит'));
+speechCallbacks.onResult({text:'кот спит',experimental:true}); flush();
+assert.equal(result.progress,0); assert.equal(result.previewProgress,0);
+assert.equal(completes,gateCompletes);
+accepting = true; flush(); speechCallbacks.onResult(final('кот')); flush();
+assert.equal(result.progress,3);
+accepting = false; flush(); speechCallbacks.onResult(final('спит')); flush();
+assert.equal(result.progress,3); assert.equal(completes,gateCompletes);
+accepting = true; flush(); speechCallbacks.onResult(final('спит')); flush();
+assert.equal(completes,gateCompletes+1);
+assert.equal(aborts,gateAborts,'a feedback-only save gate must not restart capture');
+console.log('PASS pending gate blocks partial/final/experimental progress; prefix and microphone generation survive');
 const Exercise = load('features/library/TextExercise.tsx').default;
 const item = {
   id: 'test',

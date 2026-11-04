@@ -2,7 +2,9 @@
 
 import TaskCardBody from '@/features/lesson/TaskCardBody';
 import { browserStorage } from '../../lib/progress/profile-storage';
-import { FreeExposureFrame } from '../free-practice/FreeExposureFrame';
+import RetainedTextFrame, { TextSaveNoticeContext } from './RetainedTextFrame';
+import TextReadingViewport from './TextReadingViewport';
+import TextDisplayControls from '../lesson/TextDisplayControls';
 import { illustrationSources } from '@/content/illustration-sources';
 import {
   illustrationSizes,
@@ -13,7 +15,14 @@ import PracticeMenu from '@/components/practice-menu';
 import type { ReactNode } from 'react';
 import AutoAdvanceSettings from '@/components/auto-advance-settings';
 import AutoAdvance from '@/components/auto-advance';
-import { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
+import {
+  useEffect,
+  useEffectEvent,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 import { Mic, MessageCircle, Keyboard, Volume2, RotateCcw } from 'lucide-react';
 import type { ReadingText } from '@/content/reading-library';
 import type { LessonModel } from '../lesson/use-lesson';
@@ -27,6 +36,10 @@ import TaskInstruction from '@/components/task-instruction';
 import { guideParts } from '@/lib/reading-guide';
 import IllustrationGallery from '@/components/illustration-gallery';
 import { textIllustrations } from '@/content/illustrations';
+import {
+  freeMaterialReady,
+  subscribeMaterialReady,
+} from '../free-practice/material-ready';
 import { useFreeExposure } from '@/features/free-practice/use-free-exposure';
 import AdditionalQuestions, {
   QuestionSource,
@@ -57,6 +70,19 @@ export default function TextExercise({
   taskTotal?: number;
   completedTasks?: number;
 }) {
+  const [noticeTarget, setNoticeTarget] = useState<HTMLDivElement | null>(null);
+  const allMaterialReady = useSyncExternalStore(
+    subscribeMaterialReady,
+    freeMaterialReady,
+    () => false,
+  );
+  const [visiblePassages, setVisiblePassages] = useState<{
+    key: string;
+    texts: string[];
+  }>({ key: '', texts: [] });
+  function speak(text: string) {
+    if (freeMaterialReady()) model.speak(text);
+  }
   useIllustrationPreload(textIllustrations[item.id], item.lineIllustrations);
   const [mode, setMode] = useState<Mode>('read'),
     [ask, setAsk] = useState(false),
@@ -80,6 +106,8 @@ export default function TextExercise({
     });
   }
   const [readStart, setReadStart] = useState(0);
+  const [authorizedTarget, setAuthorizedTarget] = useState('');
+  const targetKey = item.id + ':' + mode + ':' + line;
   const [readLines, setReadLines] = useState<number[]>([]);
   const covered = useRef(new Set<number>());
   const [selectionEpoch, setSelectionEpoch] = useState(0);
@@ -89,6 +117,12 @@ export default function TextExercise({
     nextButton = useRef<HTMLButtonElement>(null),
     input = useRef<HTMLTextAreaElement>(null);
   const [pictureOpen, setPictureOpen] = useState(false);
+  const pictureExposure = useFreeExposure({
+    promptedTexts:
+      pictureOpen && visiblePassages.key === targetKey
+        ? visiblePassages.texts
+        : [],
+  });
   const options = useMemo(() => shuffled(item.options), [item]);
   useEffect(() => {
     try {
@@ -123,6 +157,7 @@ export default function TextExercise({
     };
   }, []);
   function finish() {
+    if (!freeMaterialReady()) return;
     setDone(true);
     onComplete?.();
     setMessage('Молодец! Задание выполнено.');
@@ -133,11 +168,6 @@ export default function TextExercise({
   }
   const showQuestion = mode === 'questions' || question;
   const readingFocus = model.settings.readingFocus ?? 'word';
-  // Hidden lines and unanswered-question hints are absent from this snapshot.
-  const visibleLines =
-    showQuestion || model.settings.showFullText !== false
-      ? item.lines
-      : [item.lines[line]];
   const readingHelp =
     !showQuestion &&
     mode === 'read' &&
@@ -149,10 +179,6 @@ export default function TextExercise({
       ? {
           texts: [
             item.title,
-            ...visibleLines,
-            ...(visibleLines.length === item.lines.length
-              ? [item.lines.join('\n')]
-              : []),
             ...(!done && showQuestion ? [item.question, ...options] : []),
             ...(!done ? [message] : []),
             ...(!done && !showQuestion && mode === 'write' && hint
@@ -160,9 +186,7 @@ export default function TextExercise({
               : []),
           ],
           promptedTexts: [
-            ...(pictureOpen ? visibleLines : []),
-            ...(readingHelp ||
-            (!done && !showQuestion && mode === 'write' && hint)
+            ...(!done && !showQuestion && mode === 'write' && hint
               ? [item.lines[line]]
               : []),
             ...(questionHint ? [item.hint] : []),
@@ -173,7 +197,7 @@ export default function TextExercise({
   const speech = useTextMicrophone(
     item.lines[line].slice(readStart),
     readStart + ':' + selectionEpoch + ':' + item.id + ':' + mode + ':' + line,
-    exposure.ready &&
+    authorizedTarget === targetKey &&
       loaded &&
       mic &&
       mode === 'read' &&
@@ -187,6 +211,7 @@ export default function TextExercise({
       model.settings.micConsent,
     model.settings.micDevice,
     () => {
+      if (!freeMaterialReady() || authorizedTarget !== targetKey) return;
       const start = letterOffset(item.lines[line], readStart);
       for (let i = start; i < readingLetters(item.lines[line]).length; i++)
         covered.current.add(i);
@@ -206,6 +231,7 @@ export default function TextExercise({
       model.setPaused(true);
     },
     model.settings,
+    () => freeMaterialReady() && authorizedTarget === targetKey,
   );
   const helpExposure = useFreeExposure(
     showingAdditional
@@ -213,7 +239,15 @@ export default function TextExercise({
       : {
           promptedTexts:
             mode === 'read' && !showQuestion && speech.needsHelp && !accepted
-              ? [item.lines[line]]
+              ? [
+                  guideParts(item.lines[line], readingFocus).find(
+                    (p) =>
+                      p.letters &&
+                      letterOffset(item.lines[line], p.end) >
+                        letterOffset(item.lines[line], readStart) +
+                          speech.progress,
+                  )?.text ?? '',
+                ]
               : [],
         },
   );
@@ -225,7 +259,7 @@ export default function TextExercise({
     else if (mode === 'write') input.current?.focus({ preventScroll: true });
   }, [ready, accepted, mode, line]);
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || !allMaterialReady || authorizedTarget !== targetKey) return;
     const start = letterOffset(item.lines[line], readStart);
     for (let i = start; i < start + speech.progress; i++)
       covered.current.add(i);
@@ -238,7 +272,17 @@ export default function TextExercise({
       setReadLines((v) => [...new Set([...v, line])]);
       setMessage('Строка прочитана!');
     }
-  }, [ready, speech.progress, line, readStart, accepted, item.lines]);
+  }, [
+    ready,
+    allMaterialReady,
+    authorizedTarget,
+    targetKey,
+    speech.progress,
+    line,
+    readStart,
+    accepted,
+    item.lines,
+  ]);
   const advance = useEffectEvent(() => next());
   useEffect(() => {
     if (
@@ -329,7 +373,7 @@ export default function TextExercise({
     setMessage('Попробуем это задание ещё раз.');
   }
   function next() {
-    if (!accepted) return;
+    if (!accepted || !freeMaterialReady()) return;
     const unreadLine =
       mode === 'read'
         ? item.lines.findIndex((_, i) => !readLines.includes(i))
@@ -350,6 +394,7 @@ export default function TextExercise({
     } else finish();
   }
   function check() {
+    if (!freeMaterialReady()) return;
     if (accepted) {
       next();
       return;
@@ -369,148 +414,52 @@ export default function TextExercise({
       </div>
     );
   return (
-    <FreeExposureFrame
-      ready={showingAdditional || ready}
-      blocker={!exposure.ready ? exposure.blocker : helpExposure.blocker}
-    >
-      <div className="lesson-controls">
-        <div
-          className="mode-list text-mode-list"
-          role="group"
-          aria-label="Режим работы с текстом"
-        >
-          {(
-            [
-              ['read', 'Читаю'],
-              ['questions', 'Отвечаю'],
-              ['write', 'Пишу'],
-            ] as const
-          ).map(([value, label]) => (
-            <button
-              key={value}
-              aria-pressed={mode === value}
-              data-active={mode === value ? '' : undefined}
-              onClick={() => changeMode(value)}
-            >
-              {value === 'read' ? (
-                <Mic size={16} />
-              ) : value === 'questions' ? (
-                <MessageCircle size={16} />
-              ) : (
-                <Keyboard size={16} />
-              )}{' '}
-              {label}
-            </button>
-          ))}
-        </div>
-        {!showingAdditional && textPicker}
-        {showingAdditional ? (
-          <AnswerSettings model={model} />
-        ) : (
-          <PracticeMenu>
-            <AutoAdvanceSettings model={model} />{' '}
-            {mode === 'read' && (
-              <label className="text-question-option">
-                <input
-                  type="checkbox"
-                  checked={ask}
-                  onChange={(e) => setAsk(e.target.checked)}
-                />{' '}
-                Задать вопрос после прочтения
-              </label>
-            )}
-            {mode === 'read' && !showQuestion && !done && (
-              <>
-                <div className="text-flow-controls">
-                  <label>
-                    Чтение{' '}
-                    <select
-                      aria-label="Ведение по тексту"
-                      value={model.settings.textFlow}
-                      onChange={(e) =>
-                        model.update(
-                          'textFlow',
-                          e.target.value as 'auto' | 'manual',
-                        )
-                      }
-                    >
-                      <option value="auto">Автоматическое</option>
-                      <option value="manual">Ручное</option>
-                    </select>
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={model.settings.showFullText !== false}
-                      onChange={(e) =>
-                        model.update('showFullText', e.target.checked)
-                      }
-                    />
-                    Показать весь текст
-                  </label>
-                </div>
-                <ReadingGuideControls
-                  model={model}
-                  wordOnly={item.lines.length === 1}
-                />
-
-                {item.lines.length > 1 &&
-                  model.settings.textFlow !== 'auto' && (
-                    <div
-                      className="reading-line-picker"
-                      aria-label="Выбор строки"
-                    >
-                      {item.lines.map((_, i) => (
-                        <button
-                          key={i}
-                          aria-current={line === i ? 'step' : undefined}
-                          onClick={() => chooseLine(i)}
-                        >
-                          Строка {i + 1}
-                          {readLines.includes(i) ? ' ✓' : ''}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-              </>
-            )}
-          </PracticeMenu>
-        )}
-      </div>
-      {mode === 'questions' && additional.available && (
-        <QuestionSource
-          selected={showingAdditional}
-          onChange={(selected) => {
-            model.stop();
-            setMic(false);
-            additional.setSelected(selected);
-          }}
-        />
-      )}
-      {showingAdditional ? (
-        <AdditionalQuestions model={model} />
-      ) : (
-        <div className="exercise task-card text-exercise">
-          <ExerciseHeader
-            number={taskNumber}
-            total={taskTotal}
-            completed={completedTasks}
-          />
-          <TaskCardBody className="task-card-body" aria-label="Текст и задание">
-            <div className="task-card-material" hidden={done}>
-              <h2 className="spoken-heading">
-                {model.settings.sound && (
-                  <button
-                    className="speak-button"
-                    aria-label="Послушать название текста"
-                    disabled={model.speaking}
-                    onClick={() => model.speak(item.title)}
-                  >
-                    <Volume2 size={18} />
-                  </button>
-                )}
-                <span>{item.title}</span>
-              </h2>
+    <TextSaveNoticeContext.Provider value={noticeTarget}>
+      <RetainedTextFrame
+        ready={showingAdditional || ready}
+        blocker={!exposure.ready ? exposure.blocker : helpExposure.blocker}
+      >
+        <div className="lesson-controls">
+          <div
+            className="mode-list text-mode-list"
+            role="group"
+            aria-label="Режим работы с текстом"
+          >
+            {(
+              [
+                ['read', 'Читаю'],
+                ['questions', 'Отвечаю'],
+                ['write', 'Пишу'],
+              ] as const
+            ).map(([value, label]) => (
+              <button
+                key={value}
+                aria-pressed={mode === value}
+                data-active={mode === value ? '' : undefined}
+                onClick={() => changeMode(value)}
+              >
+                {value === 'read' ? (
+                  <Mic size={16} />
+                ) : value === 'questions' ? (
+                  <MessageCircle size={16} />
+                ) : (
+                  <Keyboard size={16} />
+                )}{' '}
+                {label}
+              </button>
+            ))}
+          </div>
+          {!showingAdditional && textPicker}
+          {showingAdditional ? (
+            <AnswerSettings model={model} />
+          ) : (
+            <PracticeMenu>
+              <AutoAdvanceSettings model={model} />{' '}
+              <TextDisplayControls model={model} />
+              <p>
+                Взрослому: речь распознаётся на устройстве. Голос не
+                отправляется и не сохраняется.
+              </p>
               <TaskInstruction
                 text={
                   showQuestion
@@ -522,405 +471,555 @@ export default function TextExercise({
                       : 'Включи микрофон и читай с выделенной строки. Можно не спешить; прочитанное начало сохраняется.'
                 }
                 sound={model.settings.sound}
-                speak={model.speak}
+                speak={speak}
               />
-
-              {(textIllustrations[item.id] ||
-                item.lineIllustrations?.length) && (
-                <details
-                  className="text-illustration"
-                  key={item.id}
-                  open={pictureOpen}
-                  onToggle={(event) => setPictureOpen(event.currentTarget.open)}
-                >
-                  <summary>Показать картинку к тексту</summary>
-                  {pictureOpen &&
-                    (item.lineIllustrations?.[line] ? (
-                      <div className="illustration-gallery illustration-landscape">
-                        <img
-                          className="reviewed-illustration"
-                          src={item.lineIllustrations[line].src + '?v=2'}
-                          srcSet={
-                            illustrationSources[
-                              item.lineIllustrations[line].src
-                            ]
-                          }
-                          sizes={illustrationSizes('scene-story')}
-                          loading="eager"
-                          decoding="async"
-                          alt={item.lineIllustrations[line].alt}
-                          width={560}
-                          height={315}
-                        />
-                      </div>
-                    ) : (
-                      <IllustrationGallery
-                        assetId={textIllustrations[item.id]}
-                      />
-                    ))}
-                </details>
+              {mode === 'read' && (
+                <label className="text-question-option">
+                  <input
+                    type="checkbox"
+                    checked={ask}
+                    onChange={(e) => setAsk(e.target.checked)}
+                  />{' '}
+                  Задать вопрос после прочтения
+                </label>
               )}
-              {showQuestion ? (
-                <div className="text-reference">
-                  {item.lines.map((text, i) => (
-                    <p key={i}>
-                      <button
-                        aria-label={`Послушать строку ${i + 1}`}
-                        disabled={!model.settings.sound}
-                        onClick={() => model.speak(text)}
-                      >
-                        <Volume2 size={18} />
-                      </button>
-                      <span>{text}</span>
-                    </p>
-                  ))}
-                </div>
-              ) : (
+              {mode === 'read' && !showQuestion && !done && (
                 <>
-                  <p>
-                    Строка {line + 1} из {item.lines.length} ·{' '}
-                    {mode === 'write' ? 'Перепиши строку' : 'Прочитай вслух'}
-                  </p>
-                  <div className="full-reading-text">
-                    {item.lines.map(
-                      (text, i) =>
-                        (model.settings.showFullText !== false ||
-                          i === line) && (
-                          <div
-                            key={i}
-                            className={
-                              'full-text-line' +
-                              (i === line ? ' active-line' : '')
-                            }
-                          >
-                            {model.settings.sound && (
-                              <button
-                                className="quiet"
-                                aria-label={
-                                  i === line
-                                    ? 'Послушать строку'
-                                    : `Послушать строку ${i + 1}`
-                                }
-                                onClick={() => {
-                                  setMic(false);
-                                  model.speak(text);
-                                }}
-                              >
-                                <Volume2 size={18} />
-                              </button>
-                            )}
-                            {i === line && mode === 'read' ? (
-                              <ReadingGuide
-                                text={text}
-                                color={model.settings.color}
-                                focus={readingFocus}
-                                highlight={
-                                  model.settings.readingHighlight !== false ||
-                                  speech.needsHelp
-                                }
-                                progress={
-                                  letterOffset(text, readStart) +
-                                  Math.max(
-                                    speech.progress,
-                                    speech.previewProgress ?? 0,
-                                  )
-                                }
-                                onSelect={choosePart}
-                              />
-                            ) : (
-                              <span>{text}</span>
-                            )}
-                          </div>
-                        ),
-                    )}
+                  <div className="text-flow-controls">
+                    <label>
+                      Чтение{' '}
+                      <select
+                        aria-label="Ведение по тексту"
+                        value={model.settings.textFlow}
+                        onChange={(e) =>
+                          model.update(
+                            'textFlow',
+                            e.target.value as 'auto' | 'manual',
+                          )
+                        }
+                      >
+                        <option value="auto">Автоматическое</option>
+                        <option value="manual">Ручное</option>
+                      </select>
+                    </label>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={model.settings.showFullText !== false}
+                        onChange={(e) =>
+                          model.update('showFullText', e.target.checked)
+                        }
+                      />
+                      Показать весь текст
+                    </label>
                   </div>
-                  {mode === 'read' && speech.needsHelp && !accepted && (
-                    <div className="text-error-place" role="status">
-                      {readingFocus === 'syllable'
-                        ? 'Продолжи со слога «'
-                        : readingFocus === 'line'
-                          ? 'Продолжи строку «'
-                          : 'Продолжи со слова «'}
-                      {
-                        guideParts(item.lines[line], readingFocus).find(
-                          (p) =>
-                            p.letters &&
-                            letterOffset(item.lines[line], p.end) >
-                              letterOffset(item.lines[line], readStart) +
-                                speech.progress,
-                        )?.text
-                      }
-                      ».
-                      {speech.progress > 0 && ' Прочитанное начало сохранено.'}
-                    </div>
-                  )}
+                  <ReadingGuideControls
+                    model={model}
+                    wordOnly={item.lines.length === 1}
+                  />
+
+                  {item.lines.length > 1 &&
+                    model.settings.textFlow !== 'auto' && (
+                      <div
+                        className="reading-line-picker"
+                        aria-label="Выбор строки"
+                      >
+                        {item.lines.map((_, i) => (
+                          <button
+                            key={i}
+                            aria-current={line === i ? 'step' : undefined}
+                            onClick={() => chooseLine(i)}
+                          >
+                            Строка {i + 1}
+                            {readLines.includes(i) ? ' ✓' : ''}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                 </>
               )}
-              {!done && showQuestion ? (
-                <>
-                  <h3 className="spoken-heading">
+            </PracticeMenu>
+          )}
+        </div>
+        {mode === 'questions' && additional.available && (
+          <QuestionSource
+            selected={showingAdditional}
+            onChange={(selected) => {
+              model.stop();
+              setMic(false);
+              additional.setSelected(selected);
+            }}
+          />
+        )}
+        {showingAdditional ? (
+          <AdditionalQuestions model={model} />
+        ) : (
+          <div
+            className="exercise task-card text-exercise"
+            data-text-mode={done ? 'done' : showQuestion ? 'questions' : mode}
+          >
+            <ExerciseHeader
+              number={taskNumber}
+              total={taskTotal}
+              completed={completedTasks}
+            />
+            <TaskCardBody
+              className="task-card-body text-task-body"
+              aria-label="Текст и задание"
+            >
+              <div className="task-card-material" hidden={done}>
+                <div className="text-title-row">
+                  <h2 className="spoken-heading">
                     {model.settings.sound && (
                       <button
-                        aria-label="Послушать вопрос"
-                        onClick={() => model.speak(item.question)}
+                        className="speak-button"
+                        aria-label="Послушать название текста"
+                        disabled={model.speaking}
+                        onClick={() => speak(item.title)}
                       >
                         <Volume2 size={18} />
                       </button>
                     )}
-                    <span>{item.question}</span>
-                  </h3>
-                  <div className="text-options">
-                    {options.map((option) => (
-                      <span className="answer-option" key={option}>
+                    <span>{item.title}</span>
+                  </h2>
+                  {(textIllustrations[item.id] ||
+                    item.lineIllustrations?.length) && (
+                    <details
+                      className="text-illustration"
+                      key={item.id}
+                      open={pictureOpen}
+                      onToggle={(event) =>
+                        setPictureOpen(event.currentTarget.open)
+                      }
+                    >
+                      <summary>Показать картинку к тексту</summary>
+                      {pictureOpen && (
+                        <RetainedTextFrame
+                          key={`${item.id}:${line}`}
+                          ready={
+                            pictureExposure.ready &&
+                            visiblePassages.key === targetKey &&
+                            visiblePassages.texts.length > 0
+                          }
+                          blocker={pictureExposure.blocker}
+                        >
+                          {item.lineIllustrations?.[line] ? (
+                            <div className="illustration-gallery illustration-landscape">
+                              <img
+                                className="reviewed-illustration"
+                                src={item.lineIllustrations[line].src + '?v=2'}
+                                srcSet={
+                                  illustrationSources[
+                                    item.lineIllustrations[line].src
+                                  ]
+                                }
+                                sizes={illustrationSizes('scene-story')}
+                                loading="eager"
+                                decoding="async"
+                                alt={item.lineIllustrations[line].alt}
+                                width={560}
+                                height={315}
+                              />
+                            </div>
+                          ) : (
+                            <IllustrationGallery
+                              assetId={textIllustrations[item.id]}
+                            />
+                          )}
+                        </RetainedTextFrame>
+                      )}
+                    </details>
+                  )}
+                </div>
+                <div className="text-status-row">
+                  {!showQuestion && (
+                    <p className="text-line-status">
+                      Строка {line + 1} из {item.lines.length} ·{' '}
+                      {mode === 'write' ? 'Перепиши строку' : 'Прочитай вслух'}
+                    </p>
+                  )}
+                  <div className="text-save-slot" ref={setNoticeTarget} />
+                </div>
+                <TextReadingViewport
+                  key={item.id}
+                  lines={item.lines}
+                  enabled={!done}
+                  activeLine={line}
+                  activeOffset={
+                    guideParts(item.lines[line], 'word').find(
+                      (p) =>
+                        p.letters &&
+                        letterOffset(item.lines[line], p.end) >
+                          letterOffset(item.lines[line], readStart) +
+                            Math.max(
+                              speech.progress,
+                              speech.previewProgress ?? 0,
+                            ),
+                    )?.start ?? Math.max(readStart, item.lines[line].length - 1)
+                  }
+                  targetKey={targetKey}
+                  onTargetReady={setAuthorizedTarget}
+                  onVisibleTexts={setVisiblePassages}
+                  fontSize={model.settings.textFontSize ?? 28}
+                  sound={model.settings.sound}
+                  presentation={model.settings.textPresentation ?? 'scroll'}
+                  fullText={
+                    showQuestion || model.settings.showFullText !== false
+                  }
+                  prompted={readingHelp || speech.needsHelp ? [line] : []}
+                  progressKey={`${readStart}:${speech.progress}:${speech.previewProgress}`}
+                  renderLine={(i, start, end) => {
+                    const text = item.lines[i].slice(start, end);
+                    return (
+                      <div
+                        key={`${i}:${start}`}
+                        data-source-start={start}
+                        data-source-end={end}
+                        data-source-line={i}
+                        className={
+                          'full-text-line' + (i === line ? ' active-line' : '')
+                        }
+                      >
                         {model.settings.sound && (
                           <button
                             className="quiet"
-                            aria-label={`Послушать ответ: ${option}`}
-                            onClick={() => model.speak(option)}
+                            aria-label={
+                              i === line
+                                ? 'Послушать строку'
+                                : `Послушать строку ${i + 1}`
+                            }
+                            onClick={() => {
+                              setMic(false);
+                              speak(text);
+                            }}
                           >
                             <Volume2 size={18} />
                           </button>
                         )}
-                        <button
-                          onClick={() => {
-                            if (option === item.answer) finish();
-                            else
-                              setMessage(
-                                'Давай найдём ответ в тексте. ' + item.hint,
-                              );
-                          }}
-                        >
-                          {option}
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                !done && (
-                  <>
-                    {mode === 'read' && !accepted && (
-                      <>
-                        <progress
-                          className="text-read-progress"
-                          aria-label="Прочитанная часть строки"
-                          max={readingLetters(item.lines[line]).length}
-                          value={
-                            letterOffset(item.lines[line], readStart) +
-                            speech.progress
-                          }
-                        />
-                        {mic && (
-                          <>
-                            <meter
-                              min={0}
-                              max={1}
-                              value={speech.level}
-                              aria-label="Уровень микрофона"
-                            />
-                            <p role="status">{speech.status}</p>
-                          </>
-                        )}
-                        {!model.settings.micConsent ? (
-                          <div className="text-mic-consent">
-                            <p>
-                              Взрослому: речь распознаётся на устройстве. Голос
-                              не отправляется и не сохраняется.
-                            </p>
-                            <button
-                              className="task-card-primary"
-                              onClick={() => {
-                                model.update('micConsent', true);
-                                setMic(true);
-                              }}
-                            >
-                              Разрешить микрофон и начать
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            className="primary task-card-primary"
-                            onClick={() => setMic((v) => !v)}
-                          >
-                            {mic
-                              ? 'Выключить микрофон'
-                              : 'Начать чтение с микрофоном'}
-                          </button>
-                        )}
-                        <details>
-                          <summary>Проверить вместе со взрослым</summary>
-                          <button
-                            onClick={() => {
-                              setAccepted(true);
-                              setReadLines((v) => [...new Set([...v, line])]);
-                              setMessage(
-                                'Строка прочитана вместе со взрослым.',
-                              );
-                            }}
-                          >
-                            Строка прочитана верно
-                          </button>
-                        </details>
-                      </>
-                    )}
-                    {mode === 'write' && (
-                      <>
-                        <label className="text-writing-label">
-                          Твоя строка
-                          <textarea
-                            aria-label="Твоя строка"
-                            ref={input}
-                            rows={3}
-                            value={answer}
-                            disabled={accepted}
-                            onChange={(e) => {
-                              setAnswer(e.target.value);
-                              setHint(undefined);
-                            }}
-                            onKeyDown={(e) => {
-                              if (
-                                e.key === 'Enter' &&
-                                !e.shiftKey &&
-                                !e.repeat &&
-                                !e.nativeEvent.isComposing
-                              ) {
-                                e.preventDefault();
-                                check();
-                              }
-                            }}
+                        {i === line && mode === 'read' && !showQuestion ? (
+                          <ReadingGuide
+                            text={text}
+                            color={model.settings.color}
+                            focus={readingFocus}
+                            highlight={
+                              model.settings.readingHighlight !== false ||
+                              speech.needsHelp
+                            }
+                            progress={
+                              letterOffset(item.lines[i], readStart) -
+                              letterOffset(item.lines[i], start) +
+                              Math.max(
+                                speech.progress,
+                                speech.previewProgress ?? 0,
+                              )
+                            }
+                            onSelect={(source) => choosePart(start + source)}
                           />
-                        </label>
-                        {hint && (
-                          <div
-                            className="text-typo"
-                            aria-label="Подсказка по буквам"
-                          >
-                            {hint.cells.map((cell, i) => (
-                              <span
-                                key={i}
-                                className={cell.changed ? 'changed' : ''}
-                              >
-                                {cell.changed
-                                  ? `${cell.before || '□'} → ${cell.after || 'убрать'}`
-                                  : cell.before}
-                              </span>
-                            ))}
-                          </div>
+                        ) : (
+                          <span>{text}</span>
                         )}
-                        {!accepted && (
-                          <button
-                            className="primary task-card-primary"
-                            onClick={check}
-                            disabled={!answer.trim()}
-                          >
-                            Проверить · Enter
-                          </button>
-                        )}
-                        <p className="muted">
-                          Регистр и знаки препинания пока не проверяем.
-                        </p>
-                      </>
-                    )}
-                    {accepted && (
-                      <button
-                        className="primary task-card-primary"
-                        ref={nextButton}
-                        onKeyDown={(e) => {
-                          if (e.repeat) e.preventDefault();
-                        }}
-                        onClick={next}
-                      >
-                        {line + 1 < item.lines.length
-                          ? 'Следующая строка →'
-                          : mode === 'read' && ask
-                            ? 'Ответить на вопрос →'
-                            : 'Завершить →'}
-                        <AutoAdvance
-                          key={`${line}-${question}`}
-                          inline
-                          enabled={
-                            model.settings.autoAdvance &&
-                            (mode !== 'read' ||
-                              model.settings.textFlow !== 'auto')
-                          }
-                          seconds={model.settings.autoAdvanceSeconds}
-                          blocked={
-                            model.parent ||
-                            model.paused ||
-                            model.rest ||
-                            model.speaking
-                          }
-                          onNext={next}
-                        />
-                      </button>
+                      </div>
+                    );
+                  }}
+                />
+                {!showQuestion && (
+                  <>
+                    {mode === 'read' && speech.needsHelp && !accepted && (
+                      <div className="text-error-place" role="status">
+                        {readingFocus === 'syllable'
+                          ? 'Продолжи со слога «'
+                          : readingFocus === 'line'
+                            ? 'Продолжи строку «'
+                            : 'Продолжи со слова «'}
+                        {
+                          guideParts(item.lines[line], readingFocus).find(
+                            (p) =>
+                              p.letters &&
+                              letterOffset(item.lines[line], p.end) >
+                                letterOffset(item.lines[line], readStart) +
+                                  speech.progress,
+                          )?.text
+                        }
+                        ».
+                        {speech.progress > 0 &&
+                          ' Прочитанное начало сохранено.'}
+                      </div>
                     )}
                   </>
-                )
+                )}
+                <div
+                  className="text-task-controls"
+                  inert={
+                    !allMaterialReady ||
+                    !ready ||
+                    (!showQuestion && authorizedTarget !== targetKey)
+                  }
+                >
+                  {!done && showQuestion ? (
+                    <>
+                      <h3 className="spoken-heading">
+                        {model.settings.sound && (
+                          <button
+                            aria-label="Послушать вопрос"
+                            onClick={() => speak(item.question)}
+                          >
+                            <Volume2 size={18} />
+                          </button>
+                        )}
+                        <span>{item.question}</span>
+                      </h3>
+                      <div className="text-options">
+                        {options.map((option) => (
+                          <span className="answer-option" key={option}>
+                            {model.settings.sound && (
+                              <button
+                                className="quiet"
+                                aria-label={`Послушать ответ: ${option}`}
+                                onClick={() => speak(option)}
+                              >
+                                <Volume2 size={18} />
+                              </button>
+                            )}
+                            <button
+                              onClick={() => {
+                                if (option === item.answer) finish();
+                                else
+                                  setMessage(
+                                    'Давай найдём ответ в тексте. ' + item.hint,
+                                  );
+                              }}
+                            >
+                              {option}
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    !done && (
+                      <>
+                        {mode === 'read' && !accepted && (
+                          <>
+                            <progress
+                              className="text-read-progress"
+                              aria-label="Прочитанная часть строки"
+                              max={readingLetters(item.lines[line]).length}
+                              value={
+                                letterOffset(item.lines[line], readStart) +
+                                speech.progress
+                              }
+                            />
+                            {mic && (
+                              <>
+                                <meter
+                                  min={0}
+                                  max={1}
+                                  value={speech.level}
+                                  aria-label="Уровень микрофона"
+                                />
+                                <p role="status">{speech.status}</p>
+                              </>
+                            )}
+                            {!model.settings.micConsent ? (
+                              <div className="text-mic-consent">
+                                <button
+                                  className="task-card-primary"
+                                  onClick={() => {
+                                    model.update('micConsent', true);
+                                    setMic(true);
+                                  }}
+                                >
+                                  Разрешить микрофон и начать
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                className="primary task-card-primary"
+                                onClick={() => setMic((v) => !v)}
+                              >
+                                {mic
+                                  ? 'Выключить микрофон'
+                                  : 'Начать чтение с микрофоном'}
+                              </button>
+                            )}
+                            <details>
+                              <summary>Проверить вместе со взрослым</summary>
+                              <button
+                                onClick={() => {
+                                  setAccepted(true);
+                                  setReadLines((v) => [
+                                    ...new Set([...v, line]),
+                                  ]);
+                                  setMessage(
+                                    'Строка прочитана вместе со взрослым.',
+                                  );
+                                }}
+                              >
+                                Строка прочитана верно
+                              </button>
+                            </details>
+                          </>
+                        )}
+                        {mode === 'write' && (
+                          <>
+                            <label className="text-writing-label">
+                              Твоя строка
+                              <textarea
+                                aria-label="Твоя строка"
+                                ref={input}
+                                rows={3}
+                                value={answer}
+                                disabled={accepted}
+                                onChange={(e) => {
+                                  setAnswer(e.target.value);
+                                  setHint(undefined);
+                                }}
+                                onKeyDown={(e) => {
+                                  if (
+                                    e.key === 'Enter' &&
+                                    !e.shiftKey &&
+                                    !e.repeat &&
+                                    !e.nativeEvent.isComposing
+                                  ) {
+                                    e.preventDefault();
+                                    check();
+                                  }
+                                }}
+                              />
+                            </label>
+                            {hint && (
+                              <div
+                                className="text-typo"
+                                aria-label="Подсказка по буквам"
+                              >
+                                {hint.cells.map((cell, i) => (
+                                  <span
+                                    key={i}
+                                    className={cell.changed ? 'changed' : ''}
+                                  >
+                                    {cell.changed
+                                      ? `${cell.before || '□'} → ${cell.after || 'убрать'}`
+                                      : cell.before}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                            {!accepted && (
+                              <button
+                                className="primary task-card-primary"
+                                onClick={check}
+                                disabled={!answer.trim()}
+                              >
+                                Проверить · Enter
+                              </button>
+                            )}
+                            <p className="muted">
+                              Регистр и знаки препинания пока не проверяем.
+                            </p>
+                          </>
+                        )}
+                        {accepted && (
+                          <button
+                            className="primary task-card-primary"
+                            ref={nextButton}
+                            onKeyDown={(e) => {
+                              if (e.repeat) e.preventDefault();
+                            }}
+                            onClick={next}
+                          >
+                            {line + 1 < item.lines.length
+                              ? 'Следующая строка →'
+                              : mode === 'read' && ask
+                                ? 'Ответить на вопрос →'
+                                : 'Завершить →'}
+                            <AutoAdvance
+                              key={`${line}-${question}`}
+                              inline
+                              enabled={
+                                model.settings.autoAdvance &&
+                                (mode !== 'read' ||
+                                  model.settings.textFlow !== 'auto')
+                              }
+                              seconds={model.settings.autoAdvanceSeconds}
+                              blocked={
+                                model.parent ||
+                                model.paused ||
+                                model.rest ||
+                                model.speaking
+                              }
+                              onNext={next}
+                            />
+                          </button>
+                        )}
+                      </>
+                    )
+                  )}
+                </div>
+              </div>
+              {done && (
+                <div className="text-success" role="status">
+                  ⭐ Молодец! Задание выполнено. ⭐
+                </div>
+              )}
+              {!done &&
+                message &&
+                message !== 'Текст прочитан. Теперь ответь на вопрос.' && (
+                  <div className="spoken-feedback">
+                    {model.settings.sound && (
+                      <button
+                        className="speak-button"
+                        aria-label="Послушать пояснение"
+                        disabled={model.speaking}
+                        onClick={() => speak(message)}
+                      >
+                        <Volume2 size={18} />
+                      </button>
+                    )}
+                    <p role="status">{message}</p>
+                  </div>
+                )}
+              {done &&
+                completedTasks >= taskTotal &&
+                !model.settings.autoAdvance && (
+                  <div className="auto-offer">
+                    <p>Продолжать автоматически?</p>
+                    <AutoAdvanceSettings model={model} />
+                  </div>
+                )}
+            </TaskCardBody>
+            <div className="exercise-footer task-card-actions">
+              <button className="text-button" onClick={repeatExercise}>
+                <RotateCcw size={16} />
+                Повторить задание
+              </button>
+              <button className="text-button" onClick={onBack}>
+                Пропустить →
+              </button>
+              {done && (
+                <button
+                  className="primary task-card-primary"
+                  onClick={onNext ?? onBack}
+                >
+                  Следующий текст →
+                  <AutoAdvance
+                    inline
+                    enabled={model.settings.autoAdvance}
+                    seconds={model.settings.autoAdvanceSeconds}
+                    blocked={
+                      !ready ||
+                      model.parent ||
+                      model.paused ||
+                      model.rest ||
+                      model.speaking
+                    }
+                    onNext={onNext ?? onBack}
+                  />
+                </button>
               )}
             </div>
-            {done && (
-              <div className="text-success" role="status">
-                ⭐ Молодец! Задание выполнено. ⭐
-              </div>
-            )}
-            {!done &&
-              message &&
-              message !== 'Текст прочитан. Теперь ответь на вопрос.' && (
-                <div className="spoken-feedback">
-                  {model.settings.sound && (
-                    <button
-                      className="speak-button"
-                      aria-label="Послушать пояснение"
-                      disabled={model.speaking}
-                      onClick={() => model.speak(message)}
-                    >
-                      <Volume2 size={18} />
-                    </button>
-                  )}
-                  <p role="status">{message}</p>
-                </div>
-              )}
-            {done &&
-              completedTasks >= taskTotal &&
-              !model.settings.autoAdvance && (
-                <div className="auto-offer">
-                  <p>Продолжать автоматически?</p>
-                  <AutoAdvanceSettings model={model} />
-                </div>
-              )}
-          </TaskCardBody>
-          <div className="exercise-footer task-card-actions">
-            <button className="text-button" onClick={repeatExercise}>
-              <RotateCcw size={16} />
-              Повторить задание
-            </button>
-            <button className="text-button" onClick={onBack}>
-              Пропустить →
-            </button>
-            {done && (
-              <button
-                className="primary task-card-primary"
-                onClick={onNext ?? onBack}
-              >
-                Следующий текст →
-                <AutoAdvance
-                  inline
-                  enabled={model.settings.autoAdvance}
-                  seconds={model.settings.autoAdvanceSeconds}
-                  blocked={
-                    !ready ||
-                    model.parent ||
-                    model.paused ||
-                    model.rest ||
-                    model.speaking
-                  }
-                  onNext={onNext ?? onBack}
-                />
-              </button>
-            )}
           </div>
-        </div>
-      )}
-    </FreeExposureFrame>
+        )}
+      </RetainedTextFrame>
+    </TextSaveNoticeContext.Provider>
   );
 }

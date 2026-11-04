@@ -284,5 +284,32 @@ await test('storage read denial surfaces without resetting registry', () => {
   assert.equal(t.local.data.size, 1);
   assert.equal(t.session.getItem(selectedKey), null);
 });
+await test('text preferences survive profile switching and JSON transfer without crossing namespaces', () => {
+  const local = storage({
+    [record(a)]: JSON.stringify(profile),
+    [record(b)]: JSON.stringify({ ...profile, name: 'Второй' }),
+  });
+  const first = tab(local, storage({ [selectedKey]: a }));
+  first.api.bootProfile();
+  const firstProgress = { settings: { textFontSize: 40, textPresentation: 'pages', interfaceScale: 100 }, stars: 7 };
+  first.api.browserStorage.setItem('reading-steps-v3', JSON.stringify(firstProgress));
+  first.api.chooseProfile(b);
+  const second = tab(local, first.session);
+  second.api.bootProfile();
+  assert.equal(second.api.browserStorage.getItem('reading-steps-v3'), null);
+  const secondProgress = { settings: { textFontSize: 24, textPresentation: 'scroll', interfaceScale: 140 }, stars: 2 };
+  second.api.browserStorage.setItem('reading-steps-v3', JSON.stringify(secondProgress));
+  second.api.chooseProfile(a);
+  const back = tab(local, second.session);
+  back.api.bootProfile();
+  assert.deepEqual(JSON.parse(back.api.browserStorage.getItem('reading-steps-v3')), firstProgress);
+  // A JSON snapshot written through the profile adapter only replaces the selected profile.
+  const transferred = JSON.stringify({ ...firstProgress, settings: { ...firstProgress.settings, textFontSize: 32 } });
+  back.api.browserStorage.setItem('reading-steps-v3', transferred);
+  const reloaded = tab(local, back.session);
+  reloaded.api.bootProfile();
+  assert.equal(JSON.parse(reloaded.api.browserStorage.getItem('reading-steps-v3')).settings.textFontSize, 32);
+  assert.deepEqual(JSON.parse(second.api.browserStorage.getItem('reading-steps-v3')), secondProgress);
+});
 console.log(`Local profiles: ${passed} passed, ${failed} failed`);
 if (failed) process.exitCode = 1;

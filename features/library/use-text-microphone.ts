@@ -13,6 +13,7 @@ export function useTextMicrophone(
   onComplete: () => void,
   onRest: () => void,
   options: SpeechOptions = {},
+  canAccept: () => boolean = () => true,
 ) {
   const [progress, setProgress] = useState(0),
     [level, setLevel] = useState(0),
@@ -22,8 +23,8 @@ export function useTextMicrophone(
   const [progressKey, setProgressKey] = useState(resetKey);
   const position = useRef(0),
     completed = useRef(false),
-    callbacks = useRef({ onComplete, onRest });
-  callbacks.current = { onComplete, onRest };
+    callbacks = useRef({ onComplete, onRest, canAccept });
+  callbacks.current = { onComplete, onRest, canAccept };
   useEffect(() => {
     position.current = 0;
     completed.current = false;
@@ -53,7 +54,7 @@ export function useTextMicrophone(
         if (active) setStatus('Я слушаю. Читай в своём темпе.');
       },
       onPartial: (text) => {
-        if (active && !completed.current)
+        if (active && !completed.current && callbacks.current.canAccept())
           setPreviewProgress(
             advanceFinalReading(text, target, position.current),
           );
@@ -65,7 +66,7 @@ export function useTextMicrophone(
         if (active) setStatus(value);
       },
       onResult: (result) => {
-        if (!active || completed.current) return;
+        if (!active || completed.current || !callbacks.current.canAccept()) return;
         setPreviewProgress(0);
         if (result.experimental) {
           if (classifyUtterance(result.text ?? '', 0, '', []).kind === 'rest') {

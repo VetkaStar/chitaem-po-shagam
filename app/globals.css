@@ -7024,3 +7024,78 @@ meter::-webkit-meter-optimum-value {
   .task-card[data-mode='fly'] .task-card-material { gap: 0; }
   .task-card[data-mode='fly'] .task-card-body { gap: 4px; }
 }
+
+/* Text practice: the reading surface alone scrolls; controls retain their place. */
+.retained-text-frame { position: relative; min-height: 0; }
+.retained-text-content { min-height: 0; }
+.retained-text-notice { position: relative; padding: 2px 4px; }
+.retained-text-notice:not(.is-initial):not(:has([role="alert"])) { display: none; }
+.retained-text-notice .curriculum-step { margin: 0; padding: 0; }
+.retained-text-notice p { margin: 0; }
+.task-card.text-exercise .text-task-body { overflow: visible; justify-content: start; gap: 4px; padding: 0; }
+.task-card.text-exercise .text-task-body > .task-card-material { flex: 1 1 0; min-height: 0; gap: 2px; align-items: stretch; }
+.text-exercise .text-task-body .spoken-heading { justify-content: center; font-size: 21px; }
+.text-exercise .text-task-body .task-instruction { font-size: 14px; line-height: 1.35; }
+.text-exercise .text-line-status { font-size: 14px; text-align: center; line-height: 1.3; }
+.text-exercise .text-task-controls { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 10px; }
+.text-exercise .text-task-controls > * { margin-block: 0; }
+.text-exercise .text-task-controls > details { font-size: 14px; }
+.text-exercise .text-task-controls p { font-size: 14px; line-height: 1.35; }
+.text-exercise .text-task-controls .text-read-progress { flex-basis: 100%; height: 3px; margin: 0; }
+.text-exercise .text-task-controls .text-mic-consent { padding: 4px 8px; }
+.text-exercise .text-task-controls .text-writing-label { width: 100%; gap: 2px; margin: 0; font-size: 14px; }
+.text-exercise .text-task-controls textarea { height: 65px; min-height: 48px; padding: 6px 10px; resize: none; font-size: 22px; }
+.text-exercise .text-task-controls .text-typo { margin: 0; gap: 2px; }
+.text-exercise .text-task-controls .text-typo span { padding: 2px; }
+.text-exercise .text-task-controls .text-options { gap: 4px; }
+.text-exercise .text-task-body .spoken-feedback { flex-shrink: 0; font-size: 14px; line-height: 1.35; }
+.text-exercise .text-error-place { font-size: 14px; padding: 4px; margin: 0; }
+.task-card .task-card-material > .text-reading-viewport { flex: 1 1 0; min-height: 50px; width: 100%; display: flex; flex-direction: column; }
+.text-reading-viewport { --text-font-size: 28px; }
+.text-reading-viewport[data-text-font-size='24'] { --text-font-size: 24px; }
+.text-reading-viewport[data-text-font-size='32'] { --text-font-size: 32px; }
+.text-reading-viewport[data-text-font-size='40'] { --text-font-size: 40px; }
+.text-reading-scroll { position: relative; flex: 1 1 0; min-height: 0; overflow: auto; overscroll-behavior: contain; scrollbar-gutter: stable both-edges; }
+.text-reading-scroll .full-text-line { font-size: var(--text-font-size); line-height: 1.3; text-align: left; padding: 1px 8px; margin: 0; border-left: 4px solid transparent; border-radius: 8px; gap: 6px; min-height: 0; }
+.text-reading-scroll .full-text-line.active-line { border-left-color: #377c60; }
+.text-reading-scroll .full-text-line > button.quiet { height: 36px; min-height: 36px; padding-block: 0; }
+.text-reading-scroll .reading-guide { font-size: inherit; line-height: inherit; text-align: left; }
+.text-reading-scroll .reading-guide button { font-size: inherit; line-height: inherit; padding: 0; min-height: 0; }
+.text-reading-measure { position: absolute; top: 0; left: 0; right: 0; visibility: hidden; pointer-events: none; height: 0; overflow: hidden; }
+.text-page-controls { flex-shrink: 0; display: flex; justify-content: center; align-items: center; gap: 12px; font-size: 13px; }
+.text-page-controls > span { min-width: 20ch; font-variant-numeric: tabular-nums; text-align: center; }
+.text-page-controls button { padding: 2px 12px; min-height: 28px; }
+.text-exercise .text-illustration { position: relative; font-size: 14px; }
+.text-exercise .text-illustration[open] > :not(summary) { position: absolute; z-index: 3; top: 24px; right: 0; margin: 0; max-height: 220px; overflow: auto; background: var(--surface, #fff); }
+.lesson.library:has(.text-exercise) .lesson-top { display: flex; align-items: center; justify-content: space-between; min-height: 40px; margin: 0; gap: 8px; }
+.lesson.library:has(.text-exercise) .lesson-top > div { display: flex; align-items: baseline; gap: 12px; }
+.lesson.library:has(.text-exercise) .lesson-top h1 { margin: 0; font-size: 26px; }
+.lesson.library:has(.text-exercise) .lesson-top small { font-size: 10px; }
+.lesson.library:has(.text-exercise) .lesson-controls { margin: 0; }
+@media (min-width: 601px) {
+  :root .lesson .exercise.task-card.text-exercise { grid-template-rows: auto minmax(0, 1fr) 106px; }
+  :root .lesson .task-card.text-exercise .task-card-primary { bottom: 60px; height: 42px; min-height: 42px; }
+}
+.text-reading-viewport[data-presentation='pages'] .text-reading-scroll { overflow-y: hidden; }
+.lesson.library:has(.text-exercise) .lesson-controls > .practice-menu { margin-top: 0; }
+.lesson.library:has(.text-exercise) > .retained-text-frame > .retained-text-content { gap: 6px; }
+.text-exercise .text-title-row { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 4px 12px; }
+.text-exercise .text-title-row > .text-illustration { margin: 0; }
+.text-exercise .text-title-row .spoken-heading { margin: 0; }
+
+.text-exercise .text-status-row { position: relative; height: 30px; min-height: 30px; display: flex; align-items: center; justify-content: center; }
+.text-exercise .text-status-row:has([role='alert']) > .text-line-status { visibility: hidden; }
+.text-save-slot { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; gap: 4px; }
+.text-save-slot:empty { pointer-events: none; }
+.text-save-slot .retained-text-notice [role='alert'] { display: flex; align-items: center; gap: 6px; }
+.text-save-slot .retained-text-notice p { font-size: 12px; line-height: 1.2; }
+.text-save-slot .retained-text-notice p:last-child { display: none; }
+.text-save-slot .retained-text-notice button { min-height: 28px; padding: 2px 8px; font-size: 13px; white-space: nowrap; }
+:root .lesson .exercise.task-card.text-exercise { gap: 2px; padding-top: 8px; }
+@media (max-width: 600px) {
+  .text-save-slot .retained-text-notice p { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+}
+/* The desktop focus header is 76px; text practice uses the remaining viewport. */
+@media (min-width: 1100px) {
+  :root[data-layout='focus'] .app-layout:has(.text-exercise) { margin-top: 0; height: calc(100dvh / var(--zoom) - 76px); }
+}

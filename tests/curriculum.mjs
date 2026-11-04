@@ -150,6 +150,22 @@ await test('invalid imports leave state unchanged; valid import backs up current
   assert.deepEqual(store.backups[0], previous);
   assert.ok(ctl.snapshot().storageRevision > previous.storageRevision);
 });
+await test('imports preserve old and new text preferences in the legacy snapshot', async () => {
+  for (const settings of [
+    { sound: false },
+    { textFontSize: 24, textPresentation: 'scroll', interfaceScale: 140 },
+    { textFontSize: 40, textPresentation: 'pages', interfaceScale: 100 },
+    { textFontSize: 'bad', textPresentation: 'unknown' },
+  ]) {
+    const raw = JSON.stringify({ settings, stars: 7 });
+    const stored = { getItem: (key) => key === 'reading-steps-v3' ? raw : legacy.getItem(key) };
+    const original = await CurriculumController.open(supply, new Store(), stored);
+    const { ctl } = await setup();
+    await ctl.import(await original.export());
+    // This is an archived legacy snapshot, not a second owner of live settings.
+    assert.equal(ctl.snapshot().legacy.values['reading-steps-v3'], raw);
+  }
+});
 await test('hostile nested imports rejected', async () => {
   const base = createState(supply, legacy);
   const edits = [

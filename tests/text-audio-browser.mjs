@@ -36,7 +36,7 @@ try {
     await page.getByRole('button',{name:'Послушать название текста',exact:true}).click();
     await page.waitForFunction(title => window.spoken.includes(title),title);
     assert.equal(await page.getByRole('button',{name:'Озвучить задание',exact:true}).count(),0,'no duplicate instruction audio');
-    assert(await page.locator('.full-text-line').evaluateAll(lines => lines.every(line => line.firstElementChild.tagName === 'BUTTON')),'line audio precedes text in DOM');
+    assert(await page.locator('.full-reading-text .full-text-line').evaluateAll(lines => lines.length > 0 && lines.every(line => line.firstElementChild.tagName === 'BUTTON')),'line audio precedes text in the learner viewport DOM');
     await page.getByLabel('Твоя строка',{exact:true}).fill('абвгдежз');
     await page.getByRole('button',{name:/^Проверить/}).click();
     const message = await page.locator('.spoken-feedback [role=status]').textContent();

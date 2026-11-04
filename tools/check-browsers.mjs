@@ -10,6 +10,7 @@ const selected = names.length ? names : [
   'entry08', 'speech-settings', 'rest', 'release-review',
   'task-card-layout', 'home-actions', 'task-card-text', 'task-card-scale',
   'task-card-audio-layout', 'task-card-letters', 'task-card-modes', 'task-card-short-controls',
+  'text-reading-layout', 'text-reading-viewport',
 ];
 const output = path.resolve('.local/release-review/browser');
 fs.mkdirSync(output, { recursive: true });
@@ -23,7 +24,7 @@ for (const name of selected) {
   const started = Date.now();
   const code = await new Promise((resolve) => {
     const child = spawn(process.execPath, [file], { env: process.env, stdio: ['ignore', log, log], windowsHide: true });
-    const timer = setTimeout(() => { child.kill(); }, name.startsWith('task-card-') ? 600000 : 180000);
+    const timer = setTimeout(() => { child.kill(); }, /^(task-card-|text-reading-)/.test(name) ? 600000 : 180000);
     child.on('error', () => { clearTimeout(timer); resolve(-1); });
     child.on('exit', (code) => { clearTimeout(timer); resolve(code ?? -1); });
   });

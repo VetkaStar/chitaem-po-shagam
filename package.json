@@ -31,8 +31,9 @@
     "test:curriculum:free": "node tests/curriculum-free-browser.mjs && node tests/curriculum-free-app-browser.mjs",
     "test:entry08": "node tests/entry08-integration.mjs && node tests/entry08-media.mjs && node tests/entry08-personal.mjs && node tests/entry08-browser.mjs",
     "test:c01": "node tools/create-c01-patch.mjs --check && node tests/c01-browser.mjs",
-    "test:production": "npm run build && node tests/production-browser.mjs",
-    "test:layout": "node tests/task-card-layout-browser.mjs && node tests/home-actions-browser.mjs && node tests/task-card-text-browser.mjs && node tests/task-card-scale-browser.mjs && node tests/task-card-audio-layout-browser.mjs && node tests/task-card-letters-browser.mjs && node tests/task-card-modes-browser.mjs && node tests/task-card-short-controls-browser.mjs"
+    "test:production": "npm run build && node tests/production-browser.mjs && node tests/text-reading-production-browser.mjs",
+    "test:text-reading": "node tests/text-reading-viewport-browser.mjs && node tests/text-reading-layout-browser.mjs",
+    "test:layout": "node tests/task-card-layout-browser.mjs && node tests/home-actions-browser.mjs && node tests/task-card-text-browser.mjs && node tests/task-card-scale-browser.mjs && node tests/task-card-audio-layout-browser.mjs && node tests/task-card-letters-browser.mjs && node tests/task-card-modes-browser.mjs && node tests/task-card-short-controls-browser.mjs && npm run test:text-reading"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",

@@ -169,6 +169,90 @@ function act(fn) {
   return render();
 }
 render();
+// Text preferences use the same owner and durable profile settings as the UI scale.
+assert.equal(model.settings.textFontSize, 28);
+assert.equal(model.settings.textPresentation, 'scroll');
+const textSettingsScale = model.settings.interfaceScale;
+for (const size of [24, 28, 32, 40]) {
+  for (const presentation of ['scroll', 'pages']) {
+    act((m) => {
+      m.update('textFontSize', size);
+      m.update('textPresentation', presentation);
+    });
+    const saved = JSON.parse(storage.get('reading-steps-v3'));
+    assert.equal(saved.settings.textFontSize, size);
+    assert.equal(saved.settings.textPresentation, presentation);
+    assert.equal(model.settings.interfaceScale, textSettingsScale);
+    assert.equal(saved.settings.interfaceScale, textSettingsScale);
+  }
+}
+const { restoreLessonProgress } = load(path.join(root, 'features/lesson/lesson-storage.ts'));
+const savedTextSettings = storage.get('reading-steps-v3');
+function restoredTextSettings(settings) {
+  storage.set('reading-steps-v3', JSON.stringify({ settings, stars: 7, history: [], recentWords: [] }));
+  let restored;
+  restoreLessonProgress({
+    setSettings: (value) => { restored = value; },
+    setRecentWords() {}, setStars(value) { assert.equal(value, 7); }, setHistory() {},
+    setStorageWarning(message) { assert.fail(message); },
+  });
+  return restored;
+}
+for (const size of [24, 28, 32, 40]) {
+  for (const presentation of ['scroll', 'pages']) {
+    const restored = restoredTextSettings({ textFontSize: size, textPresentation: presentation, interfaceScale: 140 });
+    assert.equal(restored.textFontSize, size);
+    assert.equal(restored.textPresentation, presentation);
+    assert.equal(restored.interfaceScale, 140);
+  }
+}
+// Old saves and imported malformed fields fall back independently; no coercion.
+for (const value of [undefined, null, '40', 0, -1, 25, 28.5, 160, true, {}, []]) {
+  const restored = restoredTextSettings({ textFontSize: value, textPresentation: 'pages' });
+  assert.equal(restored.textFontSize, 28);
+  assert.equal(restored.textPresentation, 'pages');
+}
+for (const value of [undefined, null, 'auto', 'page', 'PAGES', 40, true, {}, []]) {
+  const restored = restoredTextSettings({ textFontSize: 32, textPresentation: value });
+  assert.equal(restored.textFontSize, 32);
+  assert.equal(restored.textPresentation, 'scroll');
+}
+const oldTextSettings = restoredTextSettings({ interfaceScale: 120 });
+assert.equal(oldTextSettings.textFontSize, 28);
+assert.equal(oldTextSettings.textPresentation, 'scroll');
+assert.equal(oldTextSettings.interfaceScale, 120);
+storage.set('reading-steps-v3', savedTextSettings);
+function loadControls(name) {
+  const componentModule = { exports: {} };
+  vm.runInNewContext(ts.transpileModule(
+    fs.readFileSync(path.join(root, 'features/lesson', name + '.tsx'), 'utf8'),
+    { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } },
+  ).outputText, { module: componentModule, exports: componentModule.exports, require });
+  return componentModule.exports.default;
+}
+const ReadingGuideControls = loadControls('ReadingGuideControls');
+const TextDisplayControls = loadControls('TextDisplayControls');
+const { renderToStaticMarkup } = require('react-dom/server');
+const guideMarkup = renderToStaticMarkup(TextDisplayControls({ model }));
+assert.match(guideMarkup, /Размер текста/);
+assert.match(guideMarkup, /Длинный текст/);
+assert.match(guideMarkup, /Прокрутка/);
+assert.match(guideMarkup, /Страницы/);
+const shortGuideMarkup = renderToStaticMarkup(ReadingGuideControls({ model, wordOnly: true }));
+assert.doesNotMatch(shortGuideMarkup, /Размер текста|Длинный текст|Прокрутка|Страницы/);
+function guideSelects(node) {
+  if (!node || typeof node !== 'object') return [];
+  if (Array.isArray(node)) return node.flatMap(guideSelects);
+  return [...(node.type === 'select' ? [node] : []), ...guideSelects(node.props?.children)];
+}
+const guideFields = guideSelects(TextDisplayControls({ model }));
+act(() => guideFields[0].props.onChange({ target: { value: '32' } }));
+act(() => guideFields[1].props.onChange({ target: { value: 'pages' } }));
+const guideSaved = JSON.parse(storage.get('reading-steps-v3')).settings;
+assert.equal(guideSaved.textFontSize, 32);
+assert.equal(guideSaved.textPresentation, 'pages');
+assert.equal(guideSaved.interfaceScale, textSettingsScale);
+console.log('PASS text settings: defaults, real update persistence, validation and independent UI scale');
 act((m) => {
   m.setLessonActive(true);
   m.navigate('pictures', 'type');

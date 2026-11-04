@@ -23,6 +23,9 @@ export type Settings = {
   readingFocus: 'line' | 'word' | 'syllable';
   readingHighlight: boolean;
   textFlow: 'auto' | 'manual';
+  /** Long-text font size in CSS px; independent of interfaceScale. */
+  textFontSize: 24 | 28 | 32 | 40;
+  textPresentation: 'scroll' | 'pages';
   showFullText: boolean;
   flySpeed: number;
   motion: boolean;
@@ -69,6 +72,8 @@ export const defaults: Settings = {
   readingFocus: 'word',
   readingHighlight: true,
   textFlow: 'auto',
+  textFontSize: 28,
+  textPresentation: 'scroll',
   showFullText: true,
   flySpeed: 1,
   motion: true,

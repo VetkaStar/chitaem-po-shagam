@@ -6539,7 +6539,9 @@ meter::-webkit-meter-optimum-value {
   gap: 12px;
 }
 .curriculum-illustration-frames img {
+  width: min(100%, 320px);
   max-width: 100%;
+  max-height: min(240px, 35dvh);
   height: auto;
   border-radius: 12px;
   object-fit: contain;
@@ -6870,6 +6872,35 @@ meter::-webkit-meter-optimum-value {
 .lesson .task-card .word-bridge { gap: 6px; padding: 8px; }
 .task-card .word-bridge [role='status']:empty { display: none; }
 
+/* Free word families share the existing body and permanent action shelf. */
+.lesson .task-card[data-family-picker='true'] .task-card-body {
+  justify-content: flex-start;
+  align-content: start;
+}
+.lesson .task-card .family-selector {
+  margin: 0;
+  padding: 0;
+  gap: 6px;
+  font-size: 14px;
+  line-height: 1.3;
+}
+.lesson .task-card .family-selector label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+}
+.lesson .task-card .family-selector select {
+  min-height: 36px;
+  max-width: 100%;
+  padding-block: 4px;
+}
+.lesson .task-card[data-family-picker='true'] .word-bridge {
+  padding: 6px 8px;
+}
+
 /* Letter names and explanatory sound notes are part of the same short target. */
 .task-card .letter-display { max-width: 240px; }
 .lesson .task-card .letter-display > p { text-align: center; }
@@ -7078,6 +7109,16 @@ meter::-webkit-meter-optimum-value {
 }
 .text-reading-viewport[data-presentation='pages'] .text-reading-scroll { overflow-y: hidden; }
 .lesson.library:has(.text-exercise) .lesson-controls > .practice-menu { margin-top: 0; }
+/* Library menus share the controls row as their anchor, including the middle
+   preparation button. An end-aligned panel must not extend past the phone edge. */
+.lesson.library .lesson-controls { position: relative; }
+.lesson.library .lesson-controls > .practice-menu { position: static; flex-shrink: 0; }
+:root .lesson.library .lesson-controls > .practice-menu > .practice-menu-panel {
+  left: auto;
+  right: 0;
+  transform: none;
+  width: min(460px, 100%);
+}
 .lesson.library:has(.text-exercise) > .retained-text-frame > .retained-text-content { gap: 6px; }
 .text-exercise .text-title-row { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 4px 12px; }
 .text-exercise .text-title-row > .text-illustration { margin: 0; }
@@ -7099,3 +7140,15 @@ meter::-webkit-meter-optimum-value {
 @media (min-width: 1100px) {
   :root[data-layout='focus'] .app-layout:has(.text-exercise) { margin-top: 0; height: calc(100dvh / var(--zoom) - 76px); }
 }
+
+/* The requested picture uses the existing card's material area, without pushing the word below it. */
+.task-card[data-word-picture='true'] .task-card-body { justify-content: start; align-content: start; }
+.task-card[data-word-picture='true'] .family-selector,
+.task-card[data-word-picture='true'] .task-card-material > :is(.task-line, .task-instruction) { display: none; }
+.task-card[data-word-picture='true'][data-stage='words'] .task-card-material { display: grid; grid-template-columns: minmax(0, 1fr) 144px; gap: 4px 12px; align-items: center; }
+:root .lesson .task-card[data-word-picture='true'][data-stage='words']:not([data-mode='fly']) .task-card-material > .reading { grid-column: 1; grid-row: 1; --size: 36px; line-height: 1.2; min-width: 0; }
+.task-card[data-word-picture='true'][data-stage='words'] .task-card-material > .material-tools { grid-column: 1; grid-row: 2; }
+.task-card[data-word-picture='true'] .material-tools button { min-width: 0; max-width: 100%; height: auto; white-space: normal; overflow-wrap: anywhere; }
+:root .lesson .task-card[data-word-picture='true'] .task-card-material > .illustration-gallery { grid-column: 2; grid-row: 1 / 3; display: flex; flex-direction: column; width: 144px; gap: 4px; }
+.task-card[data-word-picture='true'] .illustration-gallery .reviewed-illustration { width: 112px; height: 112px; }
+.task-card[data-word-picture='true'] .illustration-navigation { gap: 2px; }

@@ -1,0 +1,2401 @@
+{
+  "revision": "0.7.0+program-pilot.1",
+  "baseCurriculumSha256": "c8c2dc402c938e13f3d2e6d226997045d7099976a580b1e24d53806cce524f29",
+  "items": {
+    "task.pilot.v1.mama.compose": {
+      "id": "task.pilot.v1.mama.compose",
+      "contentVersion": "0.7.0",
+      "kind": "compose",
+      "learnerText": "МАМА",
+      "assistantPrompt": "Собери слово из частей. Затем прочитай его целиком.",
+      "answer": {
+        "kind": "ordered_parts",
+        "joined": "МАМА",
+        "joiner": ""
+      },
+      "options": [],
+      "parts": [
+        "МА",
+        "МА"
+      ],
+      "partTokens": [
+        {
+          "tokenId": "t0",
+          "text": "МА"
+        },
+        {
+          "tokenId": "t1",
+          "text": "МА"
+        }
+      ],
+      "hints": [
+        "Можно попросить взрослого прочитать вместе."
+      ],
+      "requiredLetters": "АМ",
+      "requiredCapabilities": [],
+      "requiredPatterns": [],
+      "allowedModes": [
+        "read",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "analysis",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "МАМА"
+      ],
+      "exposureFamily": "pilot.v1.МАМА",
+      "skillIds": [],
+      "contentHash": "913bbd5deefba24c6dda9430bff4af944363335b6bf77acbf03dd307f514b83b"
+    },
+    "task.pilot.v1.mama.read": {
+      "id": "task.pilot.v1.mama.read",
+      "contentVersion": "0.7.0",
+      "kind": "read",
+      "learnerText": "МАМА",
+      "assistantPrompt": "Прочитай. Взрослый поможет отметить результат.",
+      "answer": {
+        "kind": "companion_reading",
+        "expected": "МАМА"
+      },
+      "options": [],
+      "parts": [],
+      "partTokens": [],
+      "hints": [
+        "Можно попросить взрослого прочитать вместе."
+      ],
+      "requiredLetters": "АМ",
+      "requiredCapabilities": [],
+      "requiredPatterns": [],
+      "allowedModes": [
+        "read",
+        "listen",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "decoding",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "МАМА"
+      ],
+      "exposureFamily": "pilot.v1.МАМА",
+      "skillIds": [],
+      "mediaPolicy": "text_first_optional_illustration",
+      "meaningKey": "МАМА",
+      "contentHash": "dbc195639943c379720a3add2d5fce31bbd76b0f2d3d783298f0a4fa0fa0f9ff"
+    },
+    "task.pilot.v1.mukha.compose": {
+      "id": "task.pilot.v1.mukha.compose",
+      "contentVersion": "0.7.0",
+      "kind": "compose",
+      "learnerText": "МУХА",
+      "assistantPrompt": "Собери слово из частей. Затем прочитай его целиком.",
+      "answer": {
+        "kind": "ordered_parts",
+        "joined": "МУХА",
+        "joiner": ""
+      },
+      "options": [],
+      "parts": [
+        "МУ",
+        "ХА"
+      ],
+      "partTokens": [
+        {
+          "tokenId": "t0",
+          "text": "МУ"
+        },
+        {
+          "tokenId": "t1",
+          "text": "ХА"
+        }
+      ],
+      "hints": [
+        "Можно попросить взрослого прочитать вместе."
+      ],
+      "requiredLetters": "АМУХ",
+      "requiredCapabilities": [],
+      "requiredPatterns": [],
+      "allowedModes": [
+        "read",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "analysis",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "МУХА"
+      ],
+      "exposureFamily": "pilot.v1.МУХА",
+      "skillIds": [],
+      "contentHash": "25aef82c330e64c7e28a01d787365650ce226b2ec56170d5c27e2eadb40e7e17"
+    },
+    "task.pilot.v1.mukha.read": {
+      "id": "task.pilot.v1.mukha.read",
+      "contentVersion": "0.7.0",
+      "kind": "read",
+      "learnerText": "МУХА",
+      "assistantPrompt": "Прочитай. Взрослый поможет отметить результат.",
+      "answer": {
+        "kind": "companion_reading",
+        "expected": "МУХА"
+      },
+      "options": [],
+      "parts": [],
+      "partTokens": [],
+      "hints": [
+        "Можно попросить взрослого прочитать вместе."
+      ],
+      "requiredLetters": "АМУХ",
+      "requiredCapabilities": [],
+      "requiredPatterns": [],
+      "allowedModes": [
+        "read",
+        "listen",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "decoding",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "МУХА"
+      ],
+      "exposureFamily": "pilot.v1.МУХА",
+      "skillIds": [],
+      "mediaPolicy": "text_first_optional_illustration",
+      "meaningKey": "МУХА",
+      "contentHash": "37653024729e31138e0530b132d3febdaff8504844aa2546d0531f202b01b844"
+    },
+    "task.pilot.v1.luna.compose": {
+      "id": "task.pilot.v1.luna.compose",
+      "contentVersion": "0.7.0",
+      "kind": "compose",
+      "learnerText": "ЛУНА",
+      "assistantPrompt": "Собери слово из частей. Затем прочитай его целиком.",
+      "answer": {
+        "kind": "ordered_parts",
+        "joined": "ЛУНА",
+        "joiner": ""
+      },
+      "options": [],
+      "parts": [
+        "ЛУ",
+        "НА"
+      ],
+      "partTokens": [
+        {
+          "tokenId": "t0",
+          "text": "ЛУ"
+        },
+        {
+          "tokenId": "t1",
+          "text": "НА"
+        }
+      ],
+      "hints": [
+        "Можно попросить взрослого прочитать вместе."
+      ],
+      "requiredLetters": "АЛНУ",
+      "requiredCapabilities": [],
+      "requiredPatterns": [],
+      "allowedModes": [
+        "read",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "analysis",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "ЛУНА"
+      ],
+      "exposureFamily": "pilot.v1.ЛУНА",
+      "skillIds": [],
+      "contentHash": "b0cf551aec4703b75968bbe525fab445a1f5c6f0722badf45247440418ed705f"
+    },
+    "task.pilot.v1.luna.read": {
+      "id": "task.pilot.v1.luna.read",
+      "contentVersion": "0.7.0",
+      "kind": "read",
+      "learnerText": "ЛУНА",
+      "assistantPrompt": "Прочитай. Взрослый поможет отметить результат.",
+      "answer": {
+        "kind": "companion_reading",
+        "expected": "ЛУНА"
+      },
+      "options": [],
+      "parts": [],
+      "partTokens": [],
+      "hints": [
+        "Можно попросить взрослого прочитать вместе."
+      ],
+      "requiredLetters": "АЛНУ",
+      "requiredCapabilities": [],
+      "requiredPatterns": [],
+      "allowedModes": [
+        "read",
+        "listen",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "decoding",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "ЛУНА"
+      ],
+      "exposureFamily": "pilot.v1.ЛУНА",
+      "skillIds": [],
+      "mediaPolicy": "text_first_optional_illustration",
+      "meaningKey": "ЛУНА",
+      "contentHash": "2bb848881a8c07eef6f6b9bb9eeb968a6f1f4581e5fa7a0ac3522f6898885aff"
+    },
+    "task.pilot.v1.sumka.compose": {
+      "id": "task.pilot.v1.sumka.compose",
+      "contentVersion": "0.7.0",
+      "kind": "compose",
+      "learnerText": "СУМКА",
+      "assistantPrompt": "Собери слово из частей. Затем прочитай его целиком.",
+      "answer": {
+        "kind": "ordered_parts",
+        "joined": "СУМКА",
+        "joiner": ""
+      },
+      "options": [],
+      "parts": [
+        "СУМ",
+        "КА"
+      ],
+      "partTokens": [
+        {
+          "tokenId": "t0",
+          "text": "СУМ"
+        },
+        {
+          "tokenId": "t1",
+          "text": "КА"
+        }
+      ],
+      "hints": [
+        "Можно попросить взрослого прочитать вместе."
+      ],
+      "requiredLetters": "АКМСУ",
+      "requiredCapabilities": [
+        "cluster.medial.2"
+      ],
+      "requiredPatterns": [
+        "cluster.medial.2"
+      ],
+      "allowedModes": [
+        "read",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "analysis",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "СУМКА"
+      ],
+      "exposureFamily": "pilot.v1.СУМКА",
+      "skillIds": [],
+      "contentHash": "b21ac8ff9d03c75272a0b1d8b14f8699ee733b05ffc6ea3739275ca3257af1dc"
+    },
+    "task.pilot.v1.sumka.read": {
+      "id": "task.pilot.v1.sumka.read",
+      "contentVersion": "0.7.0",
+      "kind": "read",
+      "learnerText": "СУМКА",
+      "assistantPrompt": "Прочитай. Взрослый поможет отметить результат.",
+      "answer": {
+        "kind": "companion_reading",
+        "expected": "СУМКА"
+      },
+      "options": [],
+      "parts": [],
+      "partTokens": [],
+      "hints": [
+        "Можно попросить взрослого прочитать вместе."
+      ],
+      "requiredLetters": "АКМСУ",
+      "requiredCapabilities": [
+        "cluster.medial.2"
+      ],
+      "requiredPatterns": [
+        "cluster.medial.2"
+      ],
+      "allowedModes": [
+        "read",
+        "listen",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "decoding",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "СУМКА"
+      ],
+      "exposureFamily": "pilot.v1.СУМКА",
+      "skillIds": [],
+      "mediaPolicy": "text_first_optional_illustration",
+      "meaningKey": "СУМКА",
+      "contentHash": "e7c95c7f8f4b058ea38752c4701f014dd4e3503d998673eee28363f3aaae60cf"
+    },
+    "task.pilot.v1.lampa.compose": {
+      "id": "task.pilot.v1.lampa.compose",
+      "contentVersion": "0.7.0",
+      "kind": "compose",
+      "learnerText": "ЛАМПА",
+      "assistantPrompt": "Собери слово из частей. Затем прочитай его целиком.",
+      "answer": {
+        "kind": "ordered_parts",
+        "joined": "ЛАМПА",
+        "joiner": ""
+      },
+      "options": [],
+      "parts": [
+        "ЛАМ",
+        "ПА"
+      ],
+      "partTokens": [
+        {
+          "tokenId": "t0",
+          "text": "ЛАМ"
+        },
+        {
+          "tokenId": "t1",
+          "text": "ПА"
+        }
+      ],
+      "hints": [
+        "Можно попросить взрослого прочитать вместе."
+      ],
+      "requiredLetters": "АЛМП",
+      "requiredCapabilities": [
+        "cluster.medial.2"
+      ],
+      "requiredPatterns": [
+        "cluster.medial.2"
+      ],
+      "allowedModes": [
+        "read",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "analysis",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "ЛАМПА"
+      ],
+      "exposureFamily": "pilot.v1.ЛАМПА",
+      "skillIds": [],
+      "contentHash": "bec67f8e1df1822a98f61600d33a289e3325de9151f8543d74b6c9864e116d62"
+    },
+    "task.pilot.v1.lampa.read": {
+      "id": "task.pilot.v1.lampa.read",
+      "contentVersion": "0.7.0",
+      "kind": "read",
+      "learnerText": "ЛАМПА",
+      "assistantPrompt": "Прочитай. Взрослый поможет отметить результат.",
+      "answer": {
+        "kind": "companion_reading",
+        "expected": "ЛАМПА"
+      },
+      "options": [],
+      "parts": [],
+      "partTokens": [],
+      "hints": [
+        "Можно попросить взрослого прочитать вместе."
+      ],
+      "requiredLetters": "АЛМП",
+      "requiredCapabilities": [
+        "cluster.medial.2"
+      ],
+      "requiredPatterns": [
+        "cluster.medial.2"
+      ],
+      "allowedModes": [
+        "read",
+        "listen",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "decoding",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "ЛАМПА"
+      ],
+      "exposureFamily": "pilot.v1.ЛАМПА",
+      "skillIds": [],
+      "mediaPolicy": "text_first_optional_illustration",
+      "meaningKey": "ЛАМПА",
+      "contentHash": "372926f85892b731b6214573d859dd32fb6046eca1f87db0c7e6c7fdad6264e8"
+    },
+    "task.pilot.v1.krupa.compose": {
+      "id": "task.pilot.v1.krupa.compose",
+      "contentVersion": "0.7.0",
+      "kind": "compose",
+      "learnerText": "КРУПА",
+      "assistantPrompt": "Собери слово из частей. Затем прочитай его целиком.",
+      "answer": {
+        "kind": "ordered_parts",
+        "joined": "КРУПА",
+        "joiner": ""
+      },
+      "options": [],
+      "parts": [
+        "КРУ",
+        "ПА"
+      ],
+      "partTokens": [
+        {
+          "tokenId": "t0",
+          "text": "КРУ"
+        },
+        {
+          "tokenId": "t1",
+          "text": "ПА"
+        }
+      ],
+      "hints": [
+        "Можно попросить взрослого прочитать вместе."
+      ],
+      "requiredLetters": "АКПРУ",
+      "requiredCapabilities": [
+        "cluster.initial.2"
+      ],
+      "requiredPatterns": [
+        "cluster.initial.2"
+      ],
+      "allowedModes": [
+        "read",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "analysis",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "КРУПА"
+      ],
+      "exposureFamily": "pilot.v1.КРУПА",
+      "skillIds": [],
+      "contentHash": "eae2296f6251a9a2b80a1099ef860e8becbdfa5d1d9a0b1482d53224703bb7bb"
+    },
+    "task.pilot.v1.krupa.read": {
+      "id": "task.pilot.v1.krupa.read",
+      "contentVersion": "0.7.0",
+      "kind": "read",
+      "learnerText": "КРУПА",
+      "assistantPrompt": "Прочитай. Взрослый поможет отметить результат.",
+      "answer": {
+        "kind": "companion_reading",
+        "expected": "КРУПА"
+      },
+      "options": [],
+      "parts": [],
+      "partTokens": [],
+      "hints": [
+        "Можно попросить взрослого прочитать вместе."
+      ],
+      "requiredLetters": "АКПРУ",
+      "requiredCapabilities": [
+        "cluster.initial.2"
+      ],
+      "requiredPatterns": [
+        "cluster.initial.2"
+      ],
+      "allowedModes": [
+        "read",
+        "listen",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "decoding",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "КРУПА"
+      ],
+      "exposureFamily": "pilot.v1.КРУПА",
+      "skillIds": [],
+      "mediaPolicy": "text_first_optional_illustration",
+      "meaningKey": "КРУПА",
+      "contentHash": "ad94a7c196e5144ba53efbaa376659b9376740e2c6dde3978f11e0d7af9f90b0"
+    },
+    "task.pilot.v1.story-catfish.passage": {
+      "id": "task.pilot.v1.story-catfish.passage",
+      "contentVersion": "0.7.0",
+      "kind": "passage",
+      "learnerText": "У нас сом. У сома усы.",
+      "assistantPrompt": "Прочитай короткий текст. Затем ответь на вопрос. Вопрос и варианты может прочитать взрослый.",
+      "answer": {
+        "kind": "question_set",
+        "questions": [
+          {
+            "id": "q1",
+            "prompt": "У кого усы?",
+            "options": [
+              {
+                "id": "o0",
+                "text": "У сома"
+              },
+              {
+                "id": "o1",
+                "text": "У осы"
+              }
+            ],
+            "correctOptionIds": [
+              "o0"
+            ],
+            "support": "У нас сом. У сома усы.",
+            "skillIds": [
+              "text.stated"
+            ],
+            "readQuestionAloudAllowed": true
+          }
+        ],
+        "readingScoredSeparately": true
+      },
+      "options": [],
+      "parts": [],
+      "partTokens": [],
+      "hints": [
+        "Вернись к тексту и найди место, которое отвечает на вопрос."
+      ],
+      "requiredLetters": "АМНОСУЫ",
+      "requiredCapabilities": [
+        "print.lowercase"
+      ],
+      "requiredPatterns": [
+        "print.lowercase"
+      ],
+      "allowedModes": [
+        "read",
+        "listen",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "text.stated",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "У",
+        "НАС",
+        "СОМ",
+        "У",
+        "СОМА",
+        "УСЫ"
+      ],
+      "exposureFamily": "pilot.v1.У нас сом. У сома усы.",
+      "skillIds": [],
+      "lines": [
+        "У нас сом.",
+        "У сома усы."
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "У кого усы?",
+          "options": [
+            {
+              "id": "o0",
+              "text": "У сома"
+            },
+            {
+              "id": "o1",
+              "text": "У осы"
+            }
+          ],
+          "correctOptionIds": [
+            "o0"
+          ],
+          "support": "У нас сом. У сома усы.",
+          "skillIds": [
+            "text.stated"
+          ],
+          "readQuestionAloudAllowed": true
+        }
+      ],
+      "independentReadingVerifier": "companion",
+      "optionsReadByAssistant": true,
+      "questionAudioPolicy": "allowed; log target-revealing audio",
+      "mediaPolicy": "text_first_optional_illustration",
+      "meaningKey": "У нас сом. У сома усы.",
+      "contentHash": "bf87fad3d5f442ce5cfcc0b2651d06df1b642e1f5d72e01699c3299e6995bf11"
+    },
+    "task.pilot.v1.story-sled.passage": {
+      "id": "task.pilot.v1.story-sled.passage",
+      "contentVersion": "0.7.0",
+      "kind": "passage",
+      "learnerText": "У Иры сани. Ира катит сани.",
+      "assistantPrompt": "Прочитай короткий текст. Затем ответь на вопрос. Вопрос и варианты может прочитать взрослый.",
+      "answer": {
+        "kind": "question_set",
+        "questions": [
+          {
+            "id": "q1",
+            "prompt": "Что катит Ира?",
+            "options": [
+              {
+                "id": "o0",
+                "text": "Сани"
+              },
+              {
+                "id": "o1",
+                "text": "Сумку"
+              }
+            ],
+            "correctOptionIds": [
+              "o0"
+            ],
+            "support": "У Иры сани. Ира катит сани.",
+            "skillIds": [
+              "text.stated"
+            ],
+            "readQuestionAloudAllowed": true
+          }
+        ],
+        "readingScoredSeparately": true
+      },
+      "options": [],
+      "parts": [],
+      "partTokens": [],
+      "hints": [
+        "Вернись к тексту и найди место, которое отвечает на вопрос."
+      ],
+      "requiredLetters": "АИКМНРСТУЫ",
+      "requiredCapabilities": [
+        "print.lowercase",
+        "vowel.i.after_consonant",
+        "cluster.medial.2"
+      ],
+      "requiredPatterns": [
+        "print.lowercase",
+        "vowel.i.after_consonant",
+        "cluster.medial.2"
+      ],
+      "allowedModes": [
+        "read",
+        "listen",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "text.stated",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "У",
+        "ИРЫ",
+        "САНИ",
+        "ИРА",
+        "КАТИТ",
+        "САНИ"
+      ],
+      "exposureFamily": "pilot.v1.У Иры сани. Ира катит сани.",
+      "skillIds": [],
+      "lines": [
+        "У Иры сани.",
+        "Ира катит сани."
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "Что катит Ира?",
+          "options": [
+            {
+              "id": "o0",
+              "text": "Сани"
+            },
+            {
+              "id": "o1",
+              "text": "Сумку"
+            }
+          ],
+          "correctOptionIds": [
+            "o0"
+          ],
+          "support": "У Иры сани. Ира катит сани.",
+          "skillIds": [
+            "text.stated"
+          ],
+          "readQuestionAloudAllowed": true
+        }
+      ],
+      "independentReadingVerifier": "companion",
+      "optionsReadByAssistant": true,
+      "questionAudioPolicy": "allowed; log target-revealing audio",
+      "mediaPolicy": "text_first_optional_illustration",
+      "meaningKey": "У Иры сани. Ира катит сани.",
+      "contentHash": "c4892dd33e072a375f48e989d0dba3d381518238a9f99bb36f2bcb1954663252"
+    },
+    "task.pilot.v1.story-bag.passage": {
+      "id": "task.pilot.v1.story-bag.passage",
+      "contentVersion": "0.7.0",
+      "kind": "passage",
+      "learnerText": "У мамы сумка. Там крупа.",
+      "assistantPrompt": "Прочитай короткий текст. Затем ответь на вопрос. Вопрос и варианты может прочитать взрослый.",
+      "answer": {
+        "kind": "question_set",
+        "questions": [
+          {
+            "id": "q1",
+            "prompt": "Что в сумке?",
+            "options": [
+              {
+                "id": "o0",
+                "text": "Крупа"
+              },
+              {
+                "id": "o1",
+                "text": "Лампа"
+              }
+            ],
+            "correctOptionIds": [
+              "o0"
+            ],
+            "support": "У мамы сумка. Там крупа.",
+            "skillIds": [
+              "text.stated"
+            ],
+            "readQuestionAloudAllowed": true
+          }
+        ],
+        "readingScoredSeparately": true
+      },
+      "options": [],
+      "parts": [],
+      "partTokens": [],
+      "hints": [
+        "Вернись к тексту и найди место, которое отвечает на вопрос."
+      ],
+      "requiredLetters": "АКЛМПРСТУЫ",
+      "requiredCapabilities": [
+        "print.lowercase",
+        "cluster.medial.2",
+        "cluster.initial.2"
+      ],
+      "requiredPatterns": [
+        "print.lowercase",
+        "cluster.medial.2",
+        "cluster.initial.2"
+      ],
+      "allowedModes": [
+        "read",
+        "listen",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "text.stated",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "У",
+        "МАМЫ",
+        "СУМКА",
+        "ТАМ",
+        "КРУПА"
+      ],
+      "exposureFamily": "pilot.v1.У мамы сумка. Там крупа.",
+      "skillIds": [],
+      "lines": [
+        "У мамы сумка.",
+        "Там крупа."
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "Что в сумке?",
+          "options": [
+            {
+              "id": "o0",
+              "text": "Крупа"
+            },
+            {
+              "id": "o1",
+              "text": "Лампа"
+            }
+          ],
+          "correctOptionIds": [
+            "o0"
+          ],
+          "support": "У мамы сумка. Там крупа.",
+          "skillIds": [
+            "text.stated"
+          ],
+          "readQuestionAloudAllowed": true
+        }
+      ],
+      "independentReadingVerifier": "companion",
+      "optionsReadByAssistant": true,
+      "questionAudioPolicy": "allowed; log target-revealing audio",
+      "mediaPolicy": "text_first_optional_illustration",
+      "meaningKey": "У мамы сумка. Там крупа.",
+      "contentHash": "d4eee25a0354e62bd9504ba79669b60ad464297af96826baa9ae19d0a71f4a4c"
+    },
+    "task.pilot.reserve.v1.kino.read": {
+      "id": "task.pilot.reserve.v1.kino.read",
+      "contentVersion": "0.7.0",
+      "kind": "read",
+      "learnerText": "КИНО",
+      "assistantPrompt": "Прочитай. Взрослый поможет отметить результат.",
+      "answer": {
+        "kind": "companion_reading",
+        "expected": "КИНО"
+      },
+      "options": [],
+      "parts": [],
+      "partTokens": [],
+      "hints": [
+        "Можно попросить взрослого прочитать вместе."
+      ],
+      "requiredLetters": "ИКНО",
+      "requiredCapabilities": [
+        "vowel.i.after_consonant"
+      ],
+      "requiredPatterns": [
+        "vowel.i.after_consonant"
+      ],
+      "allowedModes": [
+        "read",
+        "listen",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "decoding",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "КИНО"
+      ],
+      "exposureFamily": "pilot.v1.КИНО",
+      "skillIds": [],
+      "contentHash": "02bb02cee692c6dd333e9f313fe1560fcae07af50bf3609b4ed8e9b72b28d728"
+    },
+    "task.pilot.reserve.v1.kino.compose": {
+      "id": "task.pilot.reserve.v1.kino.compose",
+      "contentVersion": "0.7.0",
+      "kind": "compose",
+      "learnerText": "КИНО",
+      "assistantPrompt": "Собери слово из частей. Затем прочитай его целиком.",
+      "answer": {
+        "kind": "ordered_parts",
+        "joined": "КИНО",
+        "joiner": ""
+      },
+      "options": [],
+      "parts": [
+        "КИ",
+        "НО"
+      ],
+      "partTokens": [
+        {
+          "tokenId": "t0",
+          "text": "КИ"
+        },
+        {
+          "tokenId": "t1",
+          "text": "НО"
+        }
+      ],
+      "hints": [
+        "Можно попросить взрослого прочитать вместе."
+      ],
+      "requiredLetters": "ИКНО",
+      "requiredCapabilities": [
+        "vowel.i.after_consonant"
+      ],
+      "requiredPatterns": [
+        "vowel.i.after_consonant"
+      ],
+      "allowedModes": [
+        "read",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "analysis",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "КИНО"
+      ],
+      "exposureFamily": "pilot.v1.КИНО",
+      "skillIds": [],
+      "contentHash": "96a63954136644e45f459213bb62a3b65695425cffd1d723c465b1d1b9a85f24"
+    },
+    "task.pilot.reserve.v1.sito.read": {
+      "id": "task.pilot.reserve.v1.sito.read",
+      "contentVersion": "0.7.0",
+      "kind": "read",
+      "learnerText": "СИТО",
+      "assistantPrompt": "Прочитай. Взрослый поможет отметить результат.",
+      "answer": {
+        "kind": "companion_reading",
+        "expected": "СИТО"
+      },
+      "options": [],
+      "parts": [],
+      "partTokens": [],
+      "hints": [
+        "Можно попросить взрослого прочитать вместе."
+      ],
+      "requiredLetters": "ИОСТ",
+      "requiredCapabilities": [
+        "vowel.i.after_consonant"
+      ],
+      "requiredPatterns": [
+        "vowel.i.after_consonant"
+      ],
+      "allowedModes": [
+        "read",
+        "listen",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "decoding",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "СИТО"
+      ],
+      "exposureFamily": "pilot.v1.СИТО",
+      "skillIds": [],
+      "contentHash": "9b7ae57b25fc9609d3d81ff2acc947e967b75de68891ef8c37be1526908d8ad7"
+    },
+    "task.pilot.reserve.v1.sito.compose": {
+      "id": "task.pilot.reserve.v1.sito.compose",
+      "contentVersion": "0.7.0",
+      "kind": "compose",
+      "learnerText": "СИТО",
+      "assistantPrompt": "Собери слово из частей. Затем прочитай его целиком.",
+      "answer": {
+        "kind": "ordered_parts",
+        "joined": "СИТО",
+        "joiner": ""
+      },
+      "options": [],
+      "parts": [
+        "СИ",
+        "ТО"
+      ],
+      "partTokens": [
+        {
+          "tokenId": "t0",
+          "text": "СИ"
+        },
+        {
+          "tokenId": "t1",
+          "text": "ТО"
+        }
+      ],
+      "hints": [
+        "Можно попросить взрослого прочитать вместе."
+      ],
+      "requiredLetters": "ИОСТ",
+      "requiredCapabilities": [
+        "vowel.i.after_consonant"
+      ],
+      "requiredPatterns": [
+        "vowel.i.after_consonant"
+      ],
+      "allowedModes": [
+        "read",
+        "shared"
+      ],
+      "freeTrainerVisible": false,
+      "evidenceType": "analysis",
+      "interestTags": [
+        "neutral"
+      ],
+      "targetWords": [
+        "СИТО"
+      ],
+      "exposureFamily": "pilot.v1.СИТО",
+      "skillIds": [],
+      "contentHash": "5c11dff5074d7f0a4b49385a6228a5362f1183941583006f39381cae668941ea"
+    }
+  },
+  "branches": [
+    {
+      "id": "program-pilot:p1:mama:v1",
+      "blockId": "mama",
+      "method": "p1",
+      "programId": "method_syllable_first",
+      "anchorNodeId": "p1.C01",
+      "title": "МАМА",
+      "steps": [
+        {
+          "id": "parts",
+          "itemId": "task.pilot.v1.mama.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части по очереди. Затем соедините их.",
+            "texts": [
+              "МА",
+              "МА"
+            ],
+            "promptedTexts": [
+              "МА",
+              "МА"
+            ]
+          }
+        },
+        {
+          "id": "compose",
+          "itemId": "task.pilot.v1.mama.compose",
+          "mode": "read"
+        },
+        {
+          "id": "read",
+          "itemId": "task.pilot.v1.mama.read",
+          "mode": "read"
+        },
+        {
+          "id": "meaning",
+          "itemId": "task.pilot.v1.mama.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Мама - близкий человек.",
+            "texts": [
+              "МАМА",
+              "Мама - близкий человек."
+            ],
+            "promptedTexts": [
+              "МАМА"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "program-pilot:p2:mama:v1",
+      "blockId": "mama",
+      "method": "p2",
+      "programId": "method_word_first",
+      "anchorNodeId": "p2.P04",
+      "title": "МАМА",
+      "steps": [
+        {
+          "id": "meaning",
+          "itemId": "task.pilot.v1.mama.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Мама - близкий человек.",
+            "texts": [
+              "МАМА",
+              "Мама - близкий человек."
+            ],
+            "promptedTexts": [
+              "МАМА"
+            ]
+          }
+        },
+        {
+          "id": "parts",
+          "itemId": "task.pilot.v1.mama.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части по очереди. Затем соедините их.",
+            "texts": [
+              "МА",
+              "МА"
+            ],
+            "promptedTexts": [
+              "МА",
+              "МА"
+            ]
+          }
+        },
+        {
+          "id": "compose",
+          "itemId": "task.pilot.v1.mama.compose",
+          "mode": "read"
+        },
+        {
+          "id": "read",
+          "itemId": "task.pilot.v1.mama.read",
+          "mode": "read"
+        }
+      ]
+    },
+    {
+      "id": "program-pilot:p1:mukha:v1",
+      "blockId": "mukha",
+      "method": "p1",
+      "programId": "method_syllable_first",
+      "anchorNodeId": "p1.C01",
+      "title": "МУХА",
+      "steps": [
+        {
+          "id": "parts",
+          "itemId": "task.pilot.v1.mukha.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части по очереди. Затем соедините их.",
+            "texts": [
+              "МУ",
+              "ХА"
+            ],
+            "promptedTexts": [
+              "МУ",
+              "ХА"
+            ]
+          }
+        },
+        {
+          "id": "compose",
+          "itemId": "task.pilot.v1.mukha.compose",
+          "mode": "read"
+        },
+        {
+          "id": "read",
+          "itemId": "task.pilot.v1.mukha.read",
+          "mode": "read"
+        },
+        {
+          "id": "meaning",
+          "itemId": "task.pilot.v1.mukha.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Муха - маленькое насекомое.",
+            "texts": [
+              "МУХА",
+              "Муха - маленькое насекомое."
+            ],
+            "promptedTexts": [
+              "МУХА"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "program-pilot:p2:mukha:v1",
+      "blockId": "mukha",
+      "method": "p2",
+      "programId": "method_word_first",
+      "anchorNodeId": "p2.P04",
+      "title": "МУХА",
+      "steps": [
+        {
+          "id": "meaning",
+          "itemId": "task.pilot.v1.mukha.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Муха - маленькое насекомое.",
+            "texts": [
+              "МУХА",
+              "Муха - маленькое насекомое."
+            ],
+            "promptedTexts": [
+              "МУХА"
+            ]
+          }
+        },
+        {
+          "id": "parts",
+          "itemId": "task.pilot.v1.mukha.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части по очереди. Затем соедините их.",
+            "texts": [
+              "МУ",
+              "ХА"
+            ],
+            "promptedTexts": [
+              "МУ",
+              "ХА"
+            ]
+          }
+        },
+        {
+          "id": "compose",
+          "itemId": "task.pilot.v1.mukha.compose",
+          "mode": "read"
+        },
+        {
+          "id": "read",
+          "itemId": "task.pilot.v1.mukha.read",
+          "mode": "read"
+        }
+      ]
+    },
+    {
+      "id": "program-pilot:p1:luna:v1",
+      "blockId": "luna",
+      "method": "p1",
+      "programId": "method_syllable_first",
+      "anchorNodeId": "p1.C01",
+      "title": "ЛУНА",
+      "steps": [
+        {
+          "id": "parts",
+          "itemId": "task.pilot.v1.luna.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части по очереди. Затем соедините их.",
+            "texts": [
+              "ЛУ",
+              "НА"
+            ],
+            "promptedTexts": [
+              "ЛУ",
+              "НА"
+            ]
+          }
+        },
+        {
+          "id": "compose",
+          "itemId": "task.pilot.v1.luna.compose",
+          "mode": "read"
+        },
+        {
+          "id": "read",
+          "itemId": "task.pilot.v1.luna.read",
+          "mode": "read"
+        },
+        {
+          "id": "meaning",
+          "itemId": "task.pilot.v1.luna.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Луну видно в ночном небе.",
+            "texts": [
+              "ЛУНА",
+              "Луну видно в ночном небе."
+            ],
+            "promptedTexts": [
+              "ЛУНА"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "program-pilot:p2:luna:v1",
+      "blockId": "luna",
+      "method": "p2",
+      "programId": "method_word_first",
+      "anchorNodeId": "p2.P04",
+      "title": "ЛУНА",
+      "steps": [
+        {
+          "id": "meaning",
+          "itemId": "task.pilot.v1.luna.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Луну видно в ночном небе.",
+            "texts": [
+              "ЛУНА",
+              "Луну видно в ночном небе."
+            ],
+            "promptedTexts": [
+              "ЛУНА"
+            ]
+          }
+        },
+        {
+          "id": "parts",
+          "itemId": "task.pilot.v1.luna.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части по очереди. Затем соедините их.",
+            "texts": [
+              "ЛУ",
+              "НА"
+            ],
+            "promptedTexts": [
+              "ЛУ",
+              "НА"
+            ]
+          }
+        },
+        {
+          "id": "compose",
+          "itemId": "task.pilot.v1.luna.compose",
+          "mode": "read"
+        },
+        {
+          "id": "read",
+          "itemId": "task.pilot.v1.luna.read",
+          "mode": "read"
+        }
+      ]
+    },
+    {
+      "id": "program-pilot:p1:sumka:v1",
+      "blockId": "sumka",
+      "method": "p1",
+      "programId": "method_syllable_first",
+      "anchorNodeId": "p1.C05",
+      "title": "СУМКА",
+      "steps": [
+        {
+          "id": "parts",
+          "itemId": "task.pilot.v1.sumka.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части по очереди. Затем соедините их.",
+            "texts": [
+              "СУМ",
+              "КА"
+            ],
+            "promptedTexts": [
+              "СУМ",
+              "КА"
+            ]
+          }
+        },
+        {
+          "id": "compose",
+          "itemId": "task.pilot.v1.sumka.compose",
+          "mode": "read"
+        },
+        {
+          "id": "read",
+          "itemId": "task.pilot.v1.sumka.read",
+          "mode": "read"
+        },
+        {
+          "id": "meaning",
+          "itemId": "task.pilot.v1.sumka.read",
+          "mode": "read",
+          "information": {
+            "instruction": "В сумке удобно носить вещи.",
+            "texts": [
+              "СУМКА",
+              "В сумке удобно носить вещи."
+            ],
+            "promptedTexts": [
+              "СУМКА"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "program-pilot:p2:sumka:v1",
+      "blockId": "sumka",
+      "method": "p2",
+      "programId": "method_word_first",
+      "anchorNodeId": "p2.BR01",
+      "title": "СУМКА",
+      "steps": [
+        {
+          "id": "meaning",
+          "itemId": "task.pilot.v1.sumka.read",
+          "mode": "read",
+          "information": {
+            "instruction": "В сумке удобно носить вещи.",
+            "texts": [
+              "СУМКА",
+              "В сумке удобно носить вещи."
+            ],
+            "promptedTexts": [
+              "СУМКА"
+            ]
+          }
+        },
+        {
+          "id": "parts",
+          "itemId": "task.pilot.v1.sumka.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части по очереди. Затем соедините их.",
+            "texts": [
+              "СУМ",
+              "КА"
+            ],
+            "promptedTexts": [
+              "СУМ",
+              "КА"
+            ]
+          }
+        },
+        {
+          "id": "compose",
+          "itemId": "task.pilot.v1.sumka.compose",
+          "mode": "read"
+        },
+        {
+          "id": "read",
+          "itemId": "task.pilot.v1.sumka.read",
+          "mode": "read"
+        }
+      ]
+    },
+    {
+      "id": "program-pilot:p1:lampa:v1",
+      "blockId": "lampa",
+      "method": "p1",
+      "programId": "method_syllable_first",
+      "anchorNodeId": "p1.C05",
+      "title": "ЛАМПА",
+      "steps": [
+        {
+          "id": "parts",
+          "itemId": "task.pilot.v1.lampa.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части по очереди. Затем соедините их.",
+            "texts": [
+              "ЛАМ",
+              "ПА"
+            ],
+            "promptedTexts": [
+              "ЛАМ",
+              "ПА"
+            ]
+          }
+        },
+        {
+          "id": "compose",
+          "itemId": "task.pilot.v1.lampa.compose",
+          "mode": "read"
+        },
+        {
+          "id": "read",
+          "itemId": "task.pilot.v1.lampa.read",
+          "mode": "read"
+        },
+        {
+          "id": "meaning",
+          "itemId": "task.pilot.v1.lampa.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Лампа освещает комнату.",
+            "texts": [
+              "ЛАМПА",
+              "Лампа освещает комнату."
+            ],
+            "promptedTexts": [
+              "ЛАМПА"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "program-pilot:p2:lampa:v1",
+      "blockId": "lampa",
+      "method": "p2",
+      "programId": "method_word_first",
+      "anchorNodeId": "p2.BR01",
+      "title": "ЛАМПА",
+      "steps": [
+        {
+          "id": "meaning",
+          "itemId": "task.pilot.v1.lampa.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Лампа освещает комнату.",
+            "texts": [
+              "ЛАМПА",
+              "Лампа освещает комнату."
+            ],
+            "promptedTexts": [
+              "ЛАМПА"
+            ]
+          }
+        },
+        {
+          "id": "parts",
+          "itemId": "task.pilot.v1.lampa.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части по очереди. Затем соедините их.",
+            "texts": [
+              "ЛАМ",
+              "ПА"
+            ],
+            "promptedTexts": [
+              "ЛАМ",
+              "ПА"
+            ]
+          }
+        },
+        {
+          "id": "compose",
+          "itemId": "task.pilot.v1.lampa.compose",
+          "mode": "read"
+        },
+        {
+          "id": "read",
+          "itemId": "task.pilot.v1.lampa.read",
+          "mode": "read"
+        }
+      ]
+    },
+    {
+      "id": "program-pilot:p1:krupa:v1",
+      "blockId": "krupa",
+      "method": "p1",
+      "programId": "method_syllable_first",
+      "anchorNodeId": "p1.C06",
+      "title": "КРУПА",
+      "steps": [
+        {
+          "id": "parts",
+          "itemId": "task.pilot.v1.krupa.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части по очереди. Затем соедините их.",
+            "texts": [
+              "КРУ",
+              "ПА"
+            ],
+            "promptedTexts": [
+              "КРУ",
+              "ПА"
+            ]
+          }
+        },
+        {
+          "id": "compose",
+          "itemId": "task.pilot.v1.krupa.compose",
+          "mode": "read"
+        },
+        {
+          "id": "read",
+          "itemId": "task.pilot.v1.krupa.read",
+          "mode": "read"
+        },
+        {
+          "id": "meaning",
+          "itemId": "task.pilot.v1.krupa.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Из крупы варят кашу.",
+            "texts": [
+              "КРУПА",
+              "Из крупы варят кашу."
+            ],
+            "promptedTexts": [
+              "КРУПА"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "program-pilot:p2:krupa:v1",
+      "blockId": "krupa",
+      "method": "p2",
+      "programId": "method_word_first",
+      "anchorNodeId": "p2.BR02",
+      "title": "КРУПА",
+      "steps": [
+        {
+          "id": "meaning",
+          "itemId": "task.pilot.v1.krupa.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Из крупы варят кашу.",
+            "texts": [
+              "КРУПА",
+              "Из крупы варят кашу."
+            ],
+            "promptedTexts": [
+              "КРУПА"
+            ]
+          }
+        },
+        {
+          "id": "parts",
+          "itemId": "task.pilot.v1.krupa.read",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части по очереди. Затем соедините их.",
+            "texts": [
+              "КРУ",
+              "ПА"
+            ],
+            "promptedTexts": [
+              "КРУ",
+              "ПА"
+            ]
+          }
+        },
+        {
+          "id": "compose",
+          "itemId": "task.pilot.v1.krupa.compose",
+          "mode": "read"
+        },
+        {
+          "id": "read",
+          "itemId": "task.pilot.v1.krupa.read",
+          "mode": "read"
+        }
+      ]
+    },
+    {
+      "id": "program-pilot:p1:story-catfish:v1",
+      "blockId": "story-catfish",
+      "method": "p1",
+      "programId": "method_syllable_first",
+      "anchorNodeId": "p1.F02",
+      "title": "Текст «Сом»",
+      "steps": [
+        {
+          "id": "prepare-0",
+          "itemId": "task.pilot.v1.story-catfish.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "У"
+            ],
+            "promptedTexts": [
+              "У"
+            ]
+          }
+        },
+        {
+          "id": "prepare-1",
+          "itemId": "task.pilot.v1.story-catfish.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "НАС"
+            ],
+            "promptedTexts": [
+              "НАС"
+            ]
+          }
+        },
+        {
+          "id": "prepare-2",
+          "itemId": "task.pilot.v1.story-catfish.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "СОМ"
+            ],
+            "promptedTexts": [
+              "СОМ"
+            ]
+          }
+        },
+        {
+          "id": "prepare-3",
+          "itemId": "task.pilot.v1.story-catfish.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "СО",
+              "МА",
+              "СОМА"
+            ],
+            "promptedTexts": [
+              "СОМА",
+              "СО",
+              "МА"
+            ]
+          }
+        },
+        {
+          "id": "prepare-4",
+          "itemId": "task.pilot.v1.story-catfish.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "У",
+              "СЫ",
+              "УСЫ"
+            ],
+            "promptedTexts": [
+              "УСЫ",
+              "У",
+              "СЫ"
+            ]
+          }
+        },
+        {
+          "id": "prepare-5",
+          "itemId": "task.pilot.v1.story-catfish.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "О",
+              "СЫ",
+              "ОСЫ"
+            ],
+            "promptedTexts": [
+              "ОСЫ",
+              "О",
+              "СЫ"
+            ]
+          }
+        },
+        {
+          "id": "passage",
+          "itemId": "task.pilot.v1.story-catfish.passage",
+          "mode": "read"
+        }
+      ]
+    },
+    {
+      "id": "program-pilot:p2:story-catfish:v1",
+      "blockId": "story-catfish",
+      "method": "p2",
+      "programId": "method_word_first",
+      "anchorNodeId": "p2.R02",
+      "title": "Текст «Сом»",
+      "steps": [
+        {
+          "id": "prepare-0",
+          "itemId": "task.pilot.v1.story-catfish.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "У"
+            ],
+            "promptedTexts": [
+              "У"
+            ]
+          }
+        },
+        {
+          "id": "prepare-1",
+          "itemId": "task.pilot.v1.story-catfish.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "НАС"
+            ],
+            "promptedTexts": [
+              "НАС"
+            ]
+          }
+        },
+        {
+          "id": "prepare-2",
+          "itemId": "task.pilot.v1.story-catfish.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "СОМ"
+            ],
+            "promptedTexts": [
+              "СОМ"
+            ]
+          }
+        },
+        {
+          "id": "prepare-3",
+          "itemId": "task.pilot.v1.story-catfish.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "СОМА",
+              "СО",
+              "МА"
+            ],
+            "promptedTexts": [
+              "СОМА",
+              "СО",
+              "МА"
+            ]
+          }
+        },
+        {
+          "id": "prepare-4",
+          "itemId": "task.pilot.v1.story-catfish.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "УСЫ",
+              "У",
+              "СЫ"
+            ],
+            "promptedTexts": [
+              "УСЫ",
+              "У",
+              "СЫ"
+            ]
+          }
+        },
+        {
+          "id": "prepare-5",
+          "itemId": "task.pilot.v1.story-catfish.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "ОСЫ",
+              "О",
+              "СЫ"
+            ],
+            "promptedTexts": [
+              "ОСЫ",
+              "О",
+              "СЫ"
+            ]
+          }
+        },
+        {
+          "id": "passage",
+          "itemId": "task.pilot.v1.story-catfish.passage",
+          "mode": "read"
+        }
+      ]
+    },
+    {
+      "id": "program-pilot:p1:story-sled:v1",
+      "blockId": "story-sled",
+      "method": "p1",
+      "programId": "method_syllable_first",
+      "anchorNodeId": "p1.F02",
+      "title": "Текст «Сани»",
+      "steps": [
+        {
+          "id": "prepare-0",
+          "itemId": "task.pilot.v1.story-sled.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "У"
+            ],
+            "promptedTexts": [
+              "У"
+            ]
+          }
+        },
+        {
+          "id": "prepare-1",
+          "itemId": "task.pilot.v1.story-sled.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "И",
+              "РА",
+              "ИРА"
+            ],
+            "promptedTexts": [
+              "ИРА",
+              "И",
+              "РА"
+            ]
+          }
+        },
+        {
+          "id": "prepare-2",
+          "itemId": "task.pilot.v1.story-sled.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "И",
+              "РЫ",
+              "ИРЫ"
+            ],
+            "promptedTexts": [
+              "ИРЫ",
+              "И",
+              "РЫ"
+            ]
+          }
+        },
+        {
+          "id": "prepare-3",
+          "itemId": "task.pilot.v1.story-sled.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "СА",
+              "НИ",
+              "САНИ"
+            ],
+            "promptedTexts": [
+              "САНИ",
+              "СА",
+              "НИ"
+            ]
+          }
+        },
+        {
+          "id": "prepare-4",
+          "itemId": "task.pilot.v1.story-sled.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "КА",
+              "ТИТ",
+              "КАТИТ"
+            ],
+            "promptedTexts": [
+              "КАТИТ",
+              "КА",
+              "ТИТ"
+            ]
+          }
+        },
+        {
+          "id": "prepare-5",
+          "itemId": "task.pilot.v1.story-sled.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "СУМ",
+              "КУ",
+              "СУМКУ"
+            ],
+            "promptedTexts": [
+              "СУМКУ",
+              "СУМ",
+              "КУ"
+            ]
+          }
+        },
+        {
+          "id": "passage",
+          "itemId": "task.pilot.v1.story-sled.passage",
+          "mode": "read"
+        }
+      ]
+    },
+    {
+      "id": "program-pilot:p2:story-sled:v1",
+      "blockId": "story-sled",
+      "method": "p2",
+      "programId": "method_word_first",
+      "anchorNodeId": "p2.R02",
+      "title": "Текст «Сани»",
+      "steps": [
+        {
+          "id": "prepare-0",
+          "itemId": "task.pilot.v1.story-sled.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "У"
+            ],
+            "promptedTexts": [
+              "У"
+            ]
+          }
+        },
+        {
+          "id": "prepare-1",
+          "itemId": "task.pilot.v1.story-sled.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "ИРА",
+              "И",
+              "РА"
+            ],
+            "promptedTexts": [
+              "ИРА",
+              "И",
+              "РА"
+            ]
+          }
+        },
+        {
+          "id": "prepare-2",
+          "itemId": "task.pilot.v1.story-sled.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "ИРЫ",
+              "И",
+              "РЫ"
+            ],
+            "promptedTexts": [
+              "ИРЫ",
+              "И",
+              "РЫ"
+            ]
+          }
+        },
+        {
+          "id": "prepare-3",
+          "itemId": "task.pilot.v1.story-sled.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "САНИ",
+              "СА",
+              "НИ"
+            ],
+            "promptedTexts": [
+              "САНИ",
+              "СА",
+              "НИ"
+            ]
+          }
+        },
+        {
+          "id": "prepare-4",
+          "itemId": "task.pilot.v1.story-sled.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "КАТИТ",
+              "КА",
+              "ТИТ"
+            ],
+            "promptedTexts": [
+              "КАТИТ",
+              "КА",
+              "ТИТ"
+            ]
+          }
+        },
+        {
+          "id": "prepare-5",
+          "itemId": "task.pilot.v1.story-sled.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "СУМКУ",
+              "СУМ",
+              "КУ"
+            ],
+            "promptedTexts": [
+              "СУМКУ",
+              "СУМ",
+              "КУ"
+            ]
+          }
+        },
+        {
+          "id": "passage",
+          "itemId": "task.pilot.v1.story-sled.passage",
+          "mode": "read"
+        }
+      ]
+    },
+    {
+      "id": "program-pilot:p1:story-bag:v1",
+      "blockId": "story-bag",
+      "method": "p1",
+      "programId": "method_syllable_first",
+      "anchorNodeId": "p1.F02",
+      "title": "Текст «Сумка»",
+      "steps": [
+        {
+          "id": "prepare-0",
+          "itemId": "task.pilot.v1.story-bag.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "У"
+            ],
+            "promptedTexts": [
+              "У"
+            ]
+          }
+        },
+        {
+          "id": "prepare-1",
+          "itemId": "task.pilot.v1.story-bag.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "МА",
+              "МА",
+              "МАМА"
+            ],
+            "promptedTexts": [
+              "МАМА",
+              "МА",
+              "МА"
+            ]
+          }
+        },
+        {
+          "id": "prepare-2",
+          "itemId": "task.pilot.v1.story-bag.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "МА",
+              "МЫ",
+              "МАМЫ"
+            ],
+            "promptedTexts": [
+              "МАМЫ",
+              "МА",
+              "МЫ"
+            ]
+          }
+        },
+        {
+          "id": "prepare-3",
+          "itemId": "task.pilot.v1.story-bag.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "СУМ",
+              "КА",
+              "СУМКА"
+            ],
+            "promptedTexts": [
+              "СУМКА",
+              "СУМ",
+              "КА"
+            ]
+          }
+        },
+        {
+          "id": "prepare-4",
+          "itemId": "task.pilot.v1.story-bag.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "ТАМ"
+            ],
+            "promptedTexts": [
+              "ТАМ"
+            ]
+          }
+        },
+        {
+          "id": "prepare-5",
+          "itemId": "task.pilot.v1.story-bag.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "КРУ",
+              "ПА",
+              "КРУПА"
+            ],
+            "promptedTexts": [
+              "КРУПА",
+              "КРУ",
+              "ПА"
+            ]
+          }
+        },
+        {
+          "id": "prepare-6",
+          "itemId": "task.pilot.v1.story-bag.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте части, затем слово.",
+            "texts": [
+              "ЛАМ",
+              "ПА",
+              "ЛАМПА"
+            ],
+            "promptedTexts": [
+              "ЛАМПА",
+              "ЛАМ",
+              "ПА"
+            ]
+          }
+        },
+        {
+          "id": "passage",
+          "itemId": "task.pilot.v1.story-bag.passage",
+          "mode": "read"
+        }
+      ]
+    },
+    {
+      "id": "program-pilot:p2:story-bag:v1",
+      "blockId": "story-bag",
+      "method": "p2",
+      "programId": "method_word_first",
+      "anchorNodeId": "p2.R02",
+      "title": "Текст «Сумка»",
+      "steps": [
+        {
+          "id": "prepare-0",
+          "itemId": "task.pilot.v1.story-bag.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "У"
+            ],
+            "promptedTexts": [
+              "У"
+            ]
+          }
+        },
+        {
+          "id": "prepare-1",
+          "itemId": "task.pilot.v1.story-bag.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "МАМА",
+              "МА",
+              "МА"
+            ],
+            "promptedTexts": [
+              "МАМА",
+              "МА",
+              "МА"
+            ]
+          }
+        },
+        {
+          "id": "prepare-2",
+          "itemId": "task.pilot.v1.story-bag.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "МАМЫ",
+              "МА",
+              "МЫ"
+            ],
+            "promptedTexts": [
+              "МАМЫ",
+              "МА",
+              "МЫ"
+            ]
+          }
+        },
+        {
+          "id": "prepare-3",
+          "itemId": "task.pilot.v1.story-bag.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "СУМКА",
+              "СУМ",
+              "КА"
+            ],
+            "promptedTexts": [
+              "СУМКА",
+              "СУМ",
+              "КА"
+            ]
+          }
+        },
+        {
+          "id": "prepare-4",
+          "itemId": "task.pilot.v1.story-bag.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "ТАМ"
+            ],
+            "promptedTexts": [
+              "ТАМ"
+            ]
+          }
+        },
+        {
+          "id": "prepare-5",
+          "itemId": "task.pilot.v1.story-bag.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "КРУПА",
+              "КРУ",
+              "ПА"
+            ],
+            "promptedTexts": [
+              "КРУПА",
+              "КРУ",
+              "ПА"
+            ]
+          }
+        },
+        {
+          "id": "prepare-6",
+          "itemId": "task.pilot.v1.story-bag.passage",
+          "mode": "read",
+          "information": {
+            "instruction": "Прочитайте знакомое слово, затем найдите его части.",
+            "texts": [
+              "ЛАМПА",
+              "ЛАМ",
+              "ПА"
+            ],
+            "promptedTexts": [
+              "ЛАМПА",
+              "ЛАМ",
+              "ПА"
+            ]
+          }
+        },
+        {
+          "id": "passage",
+          "itemId": "task.pilot.v1.story-bag.passage",
+          "mode": "read"
+        }
+      ]
+    }
+  ],
+  "reserves": [
+    {
+      "itemId": "task.pilot.reserve.v1.kino.read",
+      "taskSetId": "new_no_image"
+    },
+    {
+      "itemId": "task.pilot.reserve.v1.kino.compose",
+      "taskSetId": "build_parts"
+    },
+    {
+      "itemId": "task.pilot.reserve.v1.sito.read",
+      "taskSetId": "new_no_image"
+    },
+    {
+      "itemId": "task.pilot.reserve.v1.sito.compose",
+      "taskSetId": "build_parts"
+    }
+  ]
+}

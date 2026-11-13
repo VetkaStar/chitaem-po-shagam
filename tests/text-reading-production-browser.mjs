@@ -40,6 +40,7 @@ async function openStory(page) {
   await page.locator('#home-trainers .portal-card').filter({ has: page.locator('b', { hasText: /^Тексты$/ }) }).click();
   await page.getByRole('region', { name: 'Тренажёры раздела Тексты', exact: true })
     .getByRole('button', { name: 'Рассказы', exact: true }).click();
+  await ready(page);
   const picker = page.locator('details.practice-menu').filter({ has: page.locator('summary', { hasText: 'Выбрать текст' }) });
   await picker.locator('summary').click();
   await picker.getByRole('button', { name: 'Росток', exact: true }).click();

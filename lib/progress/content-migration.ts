@@ -3,9 +3,23 @@ import type { QuestionResult, TaskInstance } from '../curriculum/contracts.js';
 import { c01Patch } from '../curriculum/editorial.js';
 import { object } from '../curriculum/loader.js';
 import { validateState } from './validation.js';
+import { backfillPilotPreparation } from './pilot-exposure-migration.js';
 
 /** Validate against the exact old snapshot before changing any data. No mastery is awarded. */
 export function upgradeProgress(value: unknown, supply: Supply): { state: ProgressState; migrated: boolean } {
+  if (object(value) && object(value.supply) && value.supply.curriculumSha256 === supply.registry.curriculumSha256) {
+    validateState(value, supply);
+    return { state: value, migrated: false };
+  }
+  if (!supply.previous) {
+    validateState(value, supply);
+    return { state: value, migrated: false };
+  }
+  const prior = upgradeProgress(value, supply.previous);
+  return upgradeOne(prior.state, supply);
+}
+
+function upgradeOne(value: unknown, supply: Supply): { state: ProgressState; migrated: boolean } {
   const legacy = supply.previous;
   if (!legacy || !object(value) || !object(value.supply) ||
       value.supply.curriculumSha256 !== legacy.registry.curriculumSha256) {
@@ -14,6 +28,15 @@ export function upgradeProgress(value: unknown, supply: Supply): { state: Progre
   }
   validateState(value, legacy);
   const state = structuredClone(value);
+  if (supply.registry.curriculumSha256 !== c01Patch.curriculumSha256) {
+    // Additive pilot: every existing item, cursor, receipt and parked instance remains byte-for-byte intact.
+    state.supply.curriculumSha256 = supply.registry.curriculumSha256;
+    state.onboarding.curriculumSha256 = supply.registry.curriculumSha256;
+    backfillPilotPreparation(state, supply);
+    state.profile.revision++;
+    validateState(state, supply);
+    return { state, migrated: true };
+  }
   const originals: TaskInstance[] = [];
   const updateResults = (results: QuestionResult[]) => results.map(result => {
     const change = c01Patch.changes.find(change => change.questionId === result.questionId);
@@ -53,5 +76,7 @@ export function upgradeProgress(value: unknown, supply: Supply): { state: Progre
 /** Backups retain their original bytes and schema; reading one never migrates it in place. */
 export function validateStoredSnapshot(value: unknown, supply: Supply): void {
   const candidate = object(value) && object(value.supply) ? value.supply.curriculumSha256 : null;
-  validateState(value, supply.previous && candidate === supply.previous.registry.curriculumSha256 ? supply.previous : supply);
+  let snapshot = supply;
+  while (snapshot.previous && snapshot.registry.curriculumSha256 !== candidate) snapshot = snapshot.previous;
+  validateState(value, snapshot);
 }

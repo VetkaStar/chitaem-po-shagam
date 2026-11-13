@@ -1,5 +1,7 @@
 import type { Profile } from '../curriculum/contracts.js';
 import type { Supply } from '../curriculum/types.js';
+import { canonicalJson } from '../curriculum/editorial.js';
+import { programPracticeBranches } from '../curriculum/program-pilot.js';
 import {
   demand,
   object,
@@ -50,6 +52,9 @@ export function validatePlatform(
     'study mode',
   );
   demand(object(s.customRoutes), 'custom routes');
+  if (s.programPracticeDismissed !== undefined) demand(strings(s.programPracticeDismissed) &&
+    new Set(s.programPracticeDismissed).size === s.programPracticeDismissed.length &&
+    s.programPracticeDismissed.every(id => programPracticeBranches.some(branch => branch.id === id)), 'practice dismissed');
   for (const [id, r] of Object.entries(s.customRoutes)) {
     demand(
       object(r) &&
@@ -76,6 +81,32 @@ export function validatePlatform(
         'custom step',
       );
       ids.add(step.id);
+      if (step.information !== undefined) demand(object(step.information) &&
+        isText(step.information.instruction) && strings(step.information.texts) &&
+        strings(step.information.promptedTexts), 'custom information step');
+    }
+    if (r.activeInfo !== undefined && r.activeInfo !== null) demand(isText(r.activeInfo) &&
+      object(r.steps[r.position as number]?.information) && !r.suspendedInstance, 'custom active information');
+    if (r.programPractice !== undefined) {
+      const practice = r.programPractice;
+      demand(object(practice), 'program practice');
+      const branch = programPracticeBranches.find(branch => branch.id === id);
+      demand(branch && practice.branchId === id && r.version === 1 &&
+        canonicalJson(r.steps) === canonicalJson(branch.steps), 'immutable practice steps');
+      demand(object(practice.returnTo) && ['free','recommended','custom','demonstration','entry'].includes(practice.returnTo.studyMode as string), 'practice return mode');
+      const back = practice.returnTo;
+      demand(back.programId === null || prog(back.programId), 'practice return program');
+      if (back.studyMode !== 'free') {
+        demand(object(back.route) && back.route.source === back.studyMode && natural(back.route.version) && back.route.version > 0, 'practice return route');
+        if (back.studyMode === 'recommended') demand(prog(back.route.routeId) && back.route.routeId === back.programId, 'practice return recommended');
+        if (back.studyMode === 'custom') {
+          const previous = s.customRoutes[String(back.route.routeId)];
+          demand(typeof back.route.routeId === 'string' && back.route.routeId !== id &&
+            object(previous) && !previous.programPractice && previous.version === back.route.version, 'practice return custom');
+        }
+        if (back.studyMode === 'demonstration') demand(['p1','p2'].includes(back.route.routeId as string) && back.route.version === 1, 'practice return demo');
+        if (back.studyMode === 'entry') demand(back.route.routeId === 'onboarding' && back.route.version === 1, 'practice return entry');
+      }
     }
   }
   for (const route of Object.values(s.customRoutes)) {

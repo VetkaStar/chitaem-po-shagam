@@ -23,11 +23,14 @@ import ExerciseActions from './ExerciseActions';
 import ExerciseMaterial from './ExerciseMaterial';
 import ExerciseAnswerInput from './ExerciseAnswerInput';
 import WordBridge from './WordBridge';
+import FamilySelector from './FamilySelector';
+import type { LessonModel } from './use-lesson';
 import type { ExerciseModel } from './exercise-types';
 
 const partsHelp = 'Читай по слогам. Потом соединим их в слово.';
 
-export default function ExerciseCard({ model }: { model: ExerciseModel }) {
+export default function ExerciseCard({ model }: { model: ExerciseModel & Partial<Pick<LessonModel,
+  'family' | 'familyAssembled' | 'availableFamilies' | 'selectFamily' | 'readFamilyWord' | 'completeFamilyAssembly'>> }) {
   const {
     feedback,
     count,
@@ -95,8 +98,8 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
   const showBridge =
     stage === 'syllables' &&
     feedback.kind === 'success' &&
-    (count + 1) % 2 === 0 &&
-    availableBridges(levels[settings.unit].letters).length > 0;
+    (model.family ? count === model.family.parts.length - 1 : (count + 1) % 2 === 0) &&
+    availableBridges(levels[settings.unit].letters, target, model.family?.id).length > 0;
   const advanceSeconds = showBridge
     ? Math.max(15, settings.autoAdvanceSeconds)
     : settings.autoAdvanceSeconds;
@@ -200,11 +203,13 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
       !done &&
       !paused &&
       !parent &&
-      !rest
+      !rest &&
+      (!model.family || !showBridge || model.familyAssembled)
     )
       nextButton.current?.focus({ preventScroll: true });
-  }, [exposure.ready, feedback.kind, done, paused, parent, rest]);
-  const blocked = parent || paused || rest || speaking || !exposure.ready;
+  }, [exposure.ready, feedback.kind, done, paused, parent, rest, model.family, showBridge, model.familyAssembled]);
+  const blocked = parent || paused || rest || speaking || !exposure.ready ||
+    (!!model.family && showBridge && !model.familyAssembled);
   const displayedTask = mode === 'fly' ? 'Поймай карточку' : task;
   const answerInput = (
     <ExerciseAnswerInput
@@ -237,6 +242,8 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
         className={'exercise task-card ' + feedback.kind}
         data-stage={stage}
         data-mode={mode}
+        data-word-picture={wordRead && showWordPicture}
+        data-family-picker={!!model.selectFamily && ((stage === 'syllables' && mode === 'read') || !!model.family)}
       >
         <ExerciseHeader
           number={Math.min(count + 1, model.lessonLength)}
@@ -249,6 +256,11 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
           className="task-card-body"
           aria-label="Содержимое задания"
         >
+          {model.selectFamily && model.availableFamilies &&
+            ((stage === 'syllables' && mode === 'read') || model.family) && (
+              <FamilySelector model={{ family: model.family,
+                availableFamilies: model.availableFamilies, selectFamily: model.selectFamily }} />
+            )}
           {done ? (
             <div className="completion">
               <Star className="completion-star" aria-hidden="true" />
@@ -453,13 +465,15 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
               )}
               {showBridge && (
                 <WordBridge
-                  key={`${index}-${target}-${settings.unit}`}
+                  key={`${index}-${target}-${settings.unit}-${model.repeatEpoch}-${model.family?.id ?? ''}`}
                   onInteract={stopAdvance}
                   onComplete={() => {
+                    model.completeFamilyAssembly?.();
                     if (!done && !paused && !parent && !rest)
                       nextButton.current?.focus({ preventScroll: true });
                   }}
                   unit={settings.unit}
+                  familyId={model.family?.id}
                   target={target}
                   speak={speak}
                   sound={settings.sound}
@@ -495,6 +509,8 @@ export default function ExerciseCard({ model }: { model: ExerciseModel }) {
           feedback={feedback}
           nextButton={nextButton}
           next={next}
+          nextLabel={model.family && showBridge ? 'Читать слово целиком' : undefined}
+          nextDisabled={!!model.family && showBridge && !model.familyAssembled}
           mode={mode}
           hint={hint}
           canSubmit={

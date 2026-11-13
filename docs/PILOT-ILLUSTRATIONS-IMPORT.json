@@ -1,0 +1,212 @@
+{
+  "workflow": "Pillow LANCZOS, RGB, WebP quality=78 method=6; no crop",
+  "sources": [
+    {
+      "path": ".local/program-pilot-plan-20261104/generated/lamp-main.png",
+      "sha256": "6d95eb53aeb20ef273bb5486da061b63f16488f7627b90a96ff8c06803871d16"
+    },
+    {
+      "path": ".local/program-pilot-plan-20261104/generated/lamp-alternate.png",
+      "sha256": "f785ed2e4cb9ab9dfc27c923b897c9a057946c6d3564dbc71bd346f1a22d47e5"
+    },
+    {
+      "path": ".local/program-pilot-plan-20261104/generated/lamp-context.png",
+      "sha256": "4d1e0ed3ed617f00b75f90f1f13a8f03e065b97d94cb19fe7139e949c8577ae8"
+    },
+    {
+      "path": ".local/program-pilot-plan-20261104/generated/grain-main.png",
+      "sha256": "a7c6b85c62a9b773cf1d8e301dc00b6370fcec0a057dc35bf251ccf2e2d5fbc5"
+    },
+    {
+      "path": ".local/program-pilot-plan-20261104/generated/grain-alternate.png",
+      "sha256": "26adcc5d6fe141e4f2a4d8cc2b0115b57d61a5829c56de66a143a9aaaa164ecb"
+    },
+    {
+      "path": ".local/program-pilot-plan-20261104/generated/grain-context.png",
+      "sha256": "0a805fa7dc9c706d490b7f2a18b27fb4771820723e5f0095bda846333f4803dc"
+    },
+    {
+      "path": ".local/program-pilot-plan-20261104/generated/story-catfish.png",
+      "sha256": "001194ccc681230a02407b8237b292424338d7801d85ff321d52e716d3f3c6e1"
+    },
+    {
+      "path": ".local/program-pilot-plan-20261104/generated/story-sled-v2.png",
+      "sha256": "9509b2730f8cb6ed8a317984c42d3d456d5d57e1dc751e2dfff5ab0e6f071691"
+    },
+    {
+      "path": ".local/program-pilot-plan-20261104/generated/story-bag.png",
+      "sha256": "31e57ae153defb5dd51d1f55171dd15fd7830df894da5e5fb4c48ca6ecbfdf9e"
+    }
+  ],
+  "images": [
+    {
+      "src": "illustrations/pilot-v1/lamp-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 5256,
+      "sha256": "c16940eaf6765966f6fdd01044922c78b9a23a31e10f1894903c44a1693a308d",
+      "source": ".local/program-pilot-plan-20261104/generated/lamp-main.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/lamp-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 14708,
+      "sha256": "a1ca1df43dfd3c3920c8b7426d3d9c92155c3da1796877a33c219422ce2aeb62",
+      "source": ".local/program-pilot-plan-20261104/generated/lamp-main.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/lamp-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 5262,
+      "sha256": "18867dd59878008280eb43272534462df106d3e3e2ae1356464c2074bab92d03",
+      "source": ".local/program-pilot-plan-20261104/generated/lamp-alternate.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/lamp-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 15162,
+      "sha256": "f5b8914490d8c07a6a976a5130f49d5e6506ffbc526e31cd098a3f13dc70b1ec",
+      "source": ".local/program-pilot-plan-20261104/generated/lamp-alternate.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/lamp-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 7900,
+      "sha256": "ed19beaa1070a02ff1bec25ad047bd52d4a594785e2e8d611ac5d966d701ce18",
+      "source": ".local/program-pilot-plan-20261104/generated/lamp-context.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/lamp-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 23186,
+      "sha256": "4c3eb345da911de0a955eba54050bb6cca58af55ff0c16ce26d6c8841f9fd677",
+      "source": ".local/program-pilot-plan-20261104/generated/lamp-context.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/grain-main.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 11536,
+      "sha256": "c7377c5dce28a27df2d286bde46dd5ab7127515ef1e816826b844e04b7d7b105",
+      "source": ".local/program-pilot-plan-20261104/generated/grain-main.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/grain-main-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 36410,
+      "sha256": "34194638f23fcf3a14c8fa0beaa1de3eda0602b9f9b59d40d3b20ec3f2a5f50b",
+      "source": ".local/program-pilot-plan-20261104/generated/grain-main.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/grain-alternate.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 14290,
+      "sha256": "8b35621813aff9585b770ce232f6cb627ff692e06fecdbdaa886609097b422d7",
+      "source": ".local/program-pilot-plan-20261104/generated/grain-alternate.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/grain-alternate-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 46278,
+      "sha256": "1117a1f9440a6b926bd318cc383666daf74a2b28ca235d58707b9c0803c4afe8",
+      "source": ".local/program-pilot-plan-20261104/generated/grain-alternate.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/grain-context.webp",
+      "width": 320,
+      "height": 320,
+      "bytes": 15594,
+      "sha256": "326d0e41d97681627f5e296c980a1c617200c79b5d99293ebfc38d27b667a192",
+      "source": ".local/program-pilot-plan-20261104/generated/grain-context.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/grain-context-640w.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 52802,
+      "sha256": "7a6755f15f0cb6ec6599e89a737d603007a7ef4e3df10eb31f1f83186769e374",
+      "source": ".local/program-pilot-plan-20261104/generated/grain-context.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/story-catfish.webp",
+      "width": 560,
+      "height": 315,
+      "bytes": 29768,
+      "sha256": "8229c7fea59100373aa058e9347fbd78ccedb59971165af3296a89b566368c0e",
+      "source": ".local/program-pilot-plan-20261104/generated/story-catfish.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/story-catfish-320w.webp",
+      "width": 320,
+      "height": 180,
+      "bytes": 11580,
+      "sha256": "364a75c3fd0cd67089fca9c93195ccc1e1eb77892cfae3c086ab8e249c8a6f77",
+      "source": ".local/program-pilot-plan-20261104/generated/story-catfish.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/story-catfish-1120w.webp",
+      "width": 1120,
+      "height": 630,
+      "bytes": 99622,
+      "sha256": "1ae95f430e9f93f15844b4108e222100492d025c0399de25c0bb63e6c8ce053b",
+      "source": ".local/program-pilot-plan-20261104/generated/story-catfish.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/story-sled.webp",
+      "width": 560,
+      "height": 315,
+      "bytes": 27510,
+      "sha256": "8950cd17dc3dd4b476e1dc3f458ca2208af14d368b15960938985d0d89aa74bd",
+      "source": ".local/program-pilot-plan-20261104/generated/story-sled-v2.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/story-sled-320w.webp",
+      "width": 320,
+      "height": 180,
+      "bytes": 11472,
+      "sha256": "f784156dbbf79bcc54e090adfa9045097b989542af2c6b6100a15a2009378f99",
+      "source": ".local/program-pilot-plan-20261104/generated/story-sled-v2.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/story-sled-1120w.webp",
+      "width": 1120,
+      "height": 630,
+      "bytes": 75212,
+      "sha256": "a994325656afed978e9f7878be8c4bd558fe737cf90e05bce32b45eb67937a12",
+      "source": ".local/program-pilot-plan-20261104/generated/story-sled-v2.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/story-bag.webp",
+      "width": 560,
+      "height": 315,
+      "bytes": 20558,
+      "sha256": "ceb74d0ad4818d49342b66aa535a9ca5d2baff8cfe07df6811eeae4b3d631ae0",
+      "source": ".local/program-pilot-plan-20261104/generated/story-bag.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/story-bag-320w.webp",
+      "width": 320,
+      "height": 180,
+      "bytes": 8818,
+      "sha256": "01d54a58b2ff5a22be89e8c3cbfb76d2a50d1f602b66ad88c6c0ea8448bbf716",
+      "source": ".local/program-pilot-plan-20261104/generated/story-bag.png"
+    },
+    {
+      "src": "illustrations/pilot-v1/story-bag-1120w.webp",
+      "width": 1120,
+      "height": 630,
+      "bytes": 64932,
+      "sha256": "c7d6a2634e138a7d5d8e15c2a13f4309dd8455cc56485804494b85d4519778d8",
+      "source": ".local/program-pilot-plan-20261104/generated/story-bag.png"
+    }
+  ],
+  "sourceHashesUnchanged": true
+}

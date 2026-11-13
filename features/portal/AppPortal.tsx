@@ -206,7 +206,7 @@ export default function AppPortal({
       go('lesson');
     } else go(id);
   }
-  function save(p: Profile) {
+  async function save(p: Profile) {
     const creating = !profile;
     try {
       if (creating) browserStorage.setItem(firstEntryKey, 'pending');
@@ -217,6 +217,14 @@ export default function AppPortal({
     } catch {
       setWarning('Браузер не разрешил сохранить профиль. Попробуйте ещё раз.');
       return;
+    }
+    if (!creating && profile?.age !== p.age) {
+      try {
+        const { persistProfileAge } = await import('../entry08/profile-age-storage');
+        await persistProfileAge(p.age);
+      } catch {
+        setWarning('Профиль сохранён. Возраст дорожки обновится при следующем открытии.');
+      }
     }
     go(creating ? 'curriculum' : 'cabinet');
   }

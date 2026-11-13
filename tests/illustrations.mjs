@@ -79,12 +79,12 @@ for (const word of [
   'СОБАКА',
 ])
   assert(illustrations[wordIllustrations[word]], word);
-for (const id of Object.values(textIllustrations))
-  assert(id.startsWith('scene-') && illustrations[id]);
-assert.equal(Object.keys(textIllustrations).length, 9);
+for (const [textId, id] of Object.entries(textIllustrations))
+  assert(illustrations[id] && (id.startsWith('scene-') || (textId === 'topic-story-echo' && id === 'word-01')));
+assert.equal(Object.keys(textIllustrations).length, 10);
 assert(wordIllustrations['МАМА'] && wordIllustrations['ПАПА']);
 console.log(
-  'PASS catalog: 117 original + 5 pilot groups, unchanged original checksums, 21 pilot WebP, 9 text mappings and exact variant counts',
+  'PASS catalog: 117 original + 5 pilot groups, unchanged original checksums, 21 pilot WebP, 10 text mappings and exact variant counts',
 );
 
 assert.equal(newAudit.images.length, 174);

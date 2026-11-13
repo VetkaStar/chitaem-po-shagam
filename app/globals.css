@@ -7086,7 +7086,9 @@ meter::-webkit-meter-optimum-value {
 .text-reading-viewport[data-text-font-size='24'] { --text-font-size: 24px; }
 .text-reading-viewport[data-text-font-size='32'] { --text-font-size: 32px; }
 .text-reading-viewport[data-text-font-size='40'] { --text-font-size: 40px; }
-.text-reading-scroll { position: relative; flex: 1 1 0; min-height: 0; overflow: auto; overscroll-behavior: contain; scrollbar-gutter: stable both-edges; }
+.text-reading-scroll { position: relative; display: flex; flex-direction: column; flex: 1 1 0; min-height: 0; overflow: auto; overscroll-behavior: contain; scrollbar-gutter: stable both-edges; }
+/* Auto margins center short passages and collapse to zero for overflowing text. */
+.text-reading-scroll > .retained-text-frame { flex: 0 0 auto; width: 100%; margin-block: auto; }
 .text-reading-scroll .full-text-line { font-size: var(--text-font-size); line-height: 1.3; text-align: left; padding: 1px 8px; margin: 0; border-left: 4px solid transparent; border-radius: 8px; gap: 6px; min-height: 0; }
 .text-reading-scroll .full-text-line.active-line { border-left-color: #377c60; }
 .text-reading-scroll .full-text-line > button.quiet { height: 36px; min-height: 36px; padding-block: 0; }
@@ -7097,7 +7099,35 @@ meter::-webkit-meter-optimum-value {
 .text-page-controls > span { min-width: 20ch; font-variant-numeric: tabular-nums; text-align: center; }
 .text-page-controls button { padding: 2px 12px; min-height: 28px; }
 .text-exercise .text-illustration { position: relative; font-size: 14px; }
-.text-exercise .text-illustration[open] > :not(summary) { position: absolute; z-index: 3; top: 24px; right: 0; margin: 0; max-height: 220px; overflow: auto; background: var(--surface, #fff); }
+.text-exercise .task-card-material:has(.text-illustration[open]) {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto 30px minmax(50px, 1fr) auto; gap: 4px 20px;
+}
+.text-exercise .task-card-material:has(.text-illustration[open]) > .text-title-row { display: contents; }
+.text-exercise .task-card-material:has(.text-illustration[open]) .spoken-heading { grid-column: 1; grid-row: 1; }
+.text-exercise .task-card-material:has(.text-illustration[open]) > .text-status-row { grid-column: 1; grid-row: 2; }
+.text-exercise .task-card-material:has(.text-illustration[open]) > .text-reading-viewport { grid-column: 1; grid-row: 3; }
+.text-exercise .task-card-material:has(.text-illustration[open]) > :is(.text-task-controls, .text-error-place) { grid-column: 1 / -1; }
+.text-exercise .text-illustration[open] { grid-column: 2; grid-row: 1 / 4; min-height: 0; display: flex; flex-direction: column; }
+.text-exercise .text-illustration[open] > summary { flex-shrink: 0; text-align: center; }
+.text-exercise .text-illustration[open]::details-content { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.text-exercise .text-illustration[open] > .retained-text-frame { flex: 1; min-height: 0; margin: 0; overflow: auto; }
+.text-exercise .text-illustration[open] .retained-text-content { height: 100%; min-height: 0; }
+:root .lesson .text-exercise .text-illustration[open] .illustration-gallery { display: flex; flex-direction: column; width: 100%; height: 100%; min-height: 0; margin: 0; }
+:root .lesson .text-exercise .text-illustration[open] .reviewed-illustration { flex: 1; min-height: 0; width: 100%; height: 0; object-fit: contain; aspect-ratio: auto; }
+.text-exercise .text-illustration[open] .illustration-navigation { flex-shrink: 0; }
+:root .lesson .text-exercise .text-illustration[open] .illustration-gallery:has(.illustration-navigation) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(120px, .4fr); grid-template-rows: minmax(0, 1fr); gap: 8px; align-items: center; }
+:root .lesson .text-exercise .text-illustration[open] .illustration-gallery:has(.illustration-navigation) .reviewed-illustration { height: 100%; }
+@media (min-width: 1800px) and (min-height: 900px) {
+  :root[data-layout='order'] .app-layout:has(.text-exercise) { grid-template-columns: 220px minmax(0, 1fr); max-width: 1800px; }
+  :root[data-layout='focus'] .app-layout:has(.text-exercise) { max-width: 1600px; }
+}
+@media (max-width: 699px) {
+  .text-exercise .task-card-material:has(.text-illustration[open]) { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 30px minmax(80px, 1.4fr) minmax(50px, 1fr) auto; gap: 2px; }
+  .text-exercise .text-illustration[open] { grid-column: 1; grid-row: 3; }
+  .text-exercise .task-card-material:has(.text-illustration[open]) > .text-reading-viewport { grid-row: 4; }
+  :root .lesson .text-exercise .text-illustration[open] .illustration-gallery:has(.illustration-navigation) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
 .lesson.library:has(.text-exercise) .lesson-top { display: flex; align-items: center; justify-content: space-between; min-height: 40px; margin: 0; gap: 8px; }
 .lesson.library:has(.text-exercise) .lesson-top > div { display: flex; align-items: baseline; gap: 12px; }
 .lesson.library:has(.text-exercise) .lesson-top h1 { margin: 0; font-size: 26px; }
@@ -7139,4 +7169,110 @@ meter::-webkit-meter-optimum-value {
 /* The desktop focus header is 76px; text practice uses the remaining viewport. */
 @media (min-width: 1100px) {
   :root[data-layout='focus'] .app-layout:has(.text-exercise) { margin-top: 0; height: calc(100dvh / var(--zoom) - 76px); }
+}
+
+/* Only the optional picture in the free word-reading card. */
+:root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-body {
+  justify-content: start;
+  overflow-y: auto;
+}
+:root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 180px;
+  gap: 4px 10px;
+  align-items: center;
+}
+:root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material > :is(.task-line, .task-instruction, .material-tools) {
+  grid-column: 1;
+  grid-row: auto;
+}
+:root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material > .reading:not(.trainer-material):not(.answer-material) {
+  grid-column: 2;
+  grid-row: 1 / 4;
+  --size: 52px;
+  line-height: 1.2;
+  min-width: 0;
+}
+:root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material > :is(.illustration-gallery, .word-picture) {
+  grid-column: 3;
+  grid-row: 1 / 4;
+  display: flex;
+  flex-direction: column;
+  width: 180px;
+  gap: 2px;
+}
+:root .lesson .task-card[data-stage='words'][data-word-picture='true'] .illustration-gallery .reviewed-illustration {
+  width: 160px;
+  height: 160px;
+}
+:root .lesson .task-card[data-stage='words'][data-word-picture='true'] .material-tools button {
+  min-width: 0;
+  max-width: 100%;
+  height: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1000px) {
+  :root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material > .reading:not(.trainer-material):not(.answer-material) { --size: 36px; }
+}
+@media (max-width: 699px) {
+  :root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material {
+    grid-template-columns: minmax(0, 1fr) 112px;
+  }
+  :root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material > :is(.task-line, .task-instruction) {
+    grid-column: 1 / -1;
+  }
+  :root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material > .reading:not(.trainer-material):not(.answer-material) {
+    grid-column: 1;
+    grid-row: 3;
+    --size: 28px;
+  }
+  :root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material > .material-tools {
+    grid-column: 1;
+    grid-row: 4;
+  }
+  :root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material > :is(.illustration-gallery, .word-picture) {
+    grid-column: 2;
+    grid-row: 3 / 5;
+    width: 112px;
+  }
+  :root .lesson .task-card[data-stage='words'][data-word-picture='true'] .illustration-gallery .reviewed-illustration {
+    width: 104px;
+    height: 104px;
+  }
+}
+
+@media (min-width: 1500px) and (min-height: 900px) {
+  :root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material { grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr) clamp(240px, 18vh, 280px); }
+  :root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material > :is(.illustration-gallery, .word-picture) { width: clamp(240px, 18vh, 280px); }
+  :root .lesson .task-card[data-stage='words'][data-word-picture='true'] .illustration-gallery .reviewed-illustration { width: clamp(240px, 18vh, 280px); height: clamp(240px, 18vh, 280px); }
+  :root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material > .reading:not(.trainer-material):not(.answer-material) { --size: clamp(60px, 4.5vh, 72px); }
+}
+/* Keep the reading prompt and actions full-width above and below the material. */
+@media (min-width: 700px) and (min-height: 900px) {
+  :root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  :root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material > .task-line {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  :root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material > .task-instruction {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  :root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material > .reading:not(.trainer-material):not(.answer-material) {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  :root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material > :is(.illustration-gallery, .word-picture) {
+    grid-column: 2;
+    grid-row: 3;
+    justify-self: center;
+  }
+  :root .lesson .task-card[data-stage='words'][data-word-picture='true'] .task-card-material > .material-tools {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    justify-content: center;
+  }
 }

@@ -9,6 +9,8 @@ import { createServer } from 'vite';
 const root = path.resolve(import.meta.dirname, '..');
 const output = path.join(root, '.local/pilot-media-20261105');
 fs.mkdirSync(output, { recursive: true });
+const quickPhone = process.argv.includes('--phone-button');
+const large = process.argv.includes('--large');
 const report = { cases: [], errors: [], failures: [], scope: 'Real free-word card opening with no manual scroll; new browser contexts; preview5184 untouched.' };
 const server = await createServer({ configFile: path.join(root, 'vite.pages.config.ts'), cacheDir: path.join(output, 'card-vite-cache'), server: { host: '127.0.0.1', port: 0, hmr: false, forwardConsole: false }, logLevel: 'error' });
 let browser;
@@ -21,8 +23,7 @@ try {
   browser = await chromium.launch({ headless: true, channel: 'msedge' });
   const fixture = path.join(root, 'tests/fixtures/content-pilot.tsx').replaceAll('\\', '/');
   const html = await server.transformIndexHtml('/__pilot-card.html', `<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><div id="root"></div><script type="module" src="/@fs/${fixture}"></script></body></html>`);
-  const quickPhone = process.argv.includes('--phone-button');
-  for (const viewport of quickPhone ? [{ width: 390, height: 844 }] : [{ width: 1280, height: 720 }, { width: 820, height: 1180 }, { width: 390, height: 844 }]) {
+  for (const viewport of quickPhone ? [{ width: 390, height: 844 }] : large ? [{ width: 2560, height: 1440 }] : [{ width: 1280, height: 720 }, { width: 820, height: 1180 }, { width: 390, height: 844 }]) {
     const page = await browser.newPage({ viewport, reducedMotion: 'reduce' });
     page.setDefaultTimeout(12000);
     page.on('pageerror', (error) => { if (!report.errors.includes(error.stack)) report.errors.push(error.stack); });
@@ -98,19 +99,26 @@ try {
       if (geometry.reading && geometry.reading.visibleHeight < geometry.reading.height - 1) report.failures.push(`${viewport.width}/${id}: reading visible ${geometry.reading.visibleHeight} of ${geometry.reading.height}`);
       if (geometry.actions.bottom > viewport.height + 1 || geometry.actions.top < 0) report.failures.push(`${viewport.width}/${id}: actions outside viewport`);
       if (geometry.right > viewport.width + 1 || geometry.left < 0 || geometry.documentWidth > viewport.width) report.failures.push(`${viewport.width}/${id}: horizontal overflow`);
+      if (large && geometry.imageWidth < 240) report.failures.push(`${viewport.width}/${id}: image smaller than 240px`);
       await page.screenshot({ path: path.join(output, `word-card-${id}-${viewport.width}.png`) });
+      const alternate = page.getByRole('button', { name: 'Посмотреть другую картинку', exact: true });
+      if (await alternate.count()) {
+        const previous = await page.locator('.task-card .illustration-gallery img').getAttribute('src');
+        await alternate.click();
+        assert.notEqual(await page.locator('.task-card .illustration-gallery img').getAttribute('src'), previous);
+      }
       await page.getByRole('button', { name: 'Скрыть картинку', exact: true }).click();
       await ready();
     }
     await page.close();
   }
-  assert.equal(report.cases.length, quickPhone ? 1 : 9);
+  assert.equal(report.cases.length, quickPhone ? 1 : large ? 3 : 9);
   assert.deepEqual(report.errors, []);
   assert.deepEqual(report.failures, []);
 } catch (error) { report.errors.push(error.stack ?? String(error)); process.exitCode = 1; }
 finally {
   await browser?.close();
   await server.close();
-  fs.writeFileSync(path.join(output, process.argv.includes('--phone-button') ? 'word-card-phone-button.json' : 'word-card-browser.json'), JSON.stringify(report, null, 2));
+  fs.writeFileSync(path.join(output, quickPhone ? 'word-card-phone-button.json' : large ? 'word-card-large.json' : 'word-card-browser.json'), JSON.stringify(report, null, 2));
   console.log(JSON.stringify({ cases: report.cases.length, errors: report.errors, failures: report.failures }, null, 2));
 }

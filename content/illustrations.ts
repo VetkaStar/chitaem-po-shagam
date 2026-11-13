@@ -1546,6 +1546,7 @@ export const wordIllustrations: Record<string, IllustrationId> = {
 };
 export const textIllustrations: Record<string, IllustrationId> = {
   ...pilotTextIllustrations,
+  'topic-story-echo': 'word-01',
   'story-cat': 'scene-01',
   'story-boat': 'scene-02',
   'story-seed': 'scene-03',

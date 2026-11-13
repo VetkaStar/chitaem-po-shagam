@@ -63,8 +63,7 @@ export default function Welcome({
               <option value="" disabled>
                 Выберите возраст
               </option>
-              {age === '12+' && <option value="12+">12+ (уточните возраст)</option>}
-              {['3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13+'].map(
+              {['3', '4', '5', '6', '7', '8', '9', '10', '11', '12+'].map(
                 (v) => (
                   <option key={v} value={v}>
                     {v}

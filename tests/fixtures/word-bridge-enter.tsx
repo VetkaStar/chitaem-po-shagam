@@ -5,10 +5,6 @@ import ExerciseCard from '../../features/lesson/ExerciseCard';
 import { FreeExposureContext } from '../../features/free-practice/use-free-exposure';
 import type { FreeExposure } from '../../lib/curriculum/free-exposure';
 import '../../app/globals.css';
-import { levels } from '../../lib/learning';
-// This fixture isolates keyboard/focus behavior on a related bridge. Content
-// coverage and the absence of unrelated fallbacks are tested by the pilot suite.
-if (new URLSearchParams(location.search).has('keyboard')) levels[0].syllables = ['МА'];
 let release: (() => void) | undefined;
 const exposure = {
   pending: false,

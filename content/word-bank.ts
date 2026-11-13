@@ -1,6 +1,4 @@
 export const wordBank = [
-  { word: 'ЛАМПА', parts: ['ЛАМ', 'ПА'], icon: '' },
-  { word: 'КРУПА', parts: ['КРУ', 'ПА'], icon: '' },
   { word: 'СОН', parts: ['СОН'], icon: '' },
   { word: 'КРОТ', parts: ['КРОТ'], icon: '' },
   {

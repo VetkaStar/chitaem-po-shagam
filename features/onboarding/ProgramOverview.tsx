@@ -2,7 +2,6 @@ import type { CurriculumController } from '../curriculum/controller';
 import type { Supply } from '../../lib/curriculum/types';
 import { useCurriculumSession } from '../curriculum/use-curriculum-session';
 import Roadmap from '../roadmap/Roadmap';
-import { ProgramPracticeList } from '../curriculum/ProgramPracticeList';
 
 export default function ProgramOverview({ controller, supply, onContinue, onPersonal, onExit }: {
   controller: CurriculumController;
@@ -21,7 +20,5 @@ export default function ProgramOverview({ controller, supply, onContinue, onPers
       onProgram={(id) => act(() => controller.selectProgram(id))}
       onInterests={(tags) => act(() => controller.updateInterests(tags))}
       onSetup={onPersonal} onExit={onExit} />
-    <ProgramPracticeList controller={controller} busy={busy}
-      onSelect={id => act(async () => { await controller.selectProgramPractice(id); onContinue(); })} />
   </>;
 }

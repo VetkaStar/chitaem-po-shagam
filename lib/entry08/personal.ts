@@ -1,11 +1,9 @@
-import type { EntryState } from './types';
 import type {
   Episode,
   Node,
   Task,
   Segment,
   Option,
-  Profile,
 } from '../curriculum/contracts';
 import {
   learningPlan,
@@ -16,7 +14,6 @@ export interface PersonalCurriculum {
   items: Record<string, Task>;
   episodes: Record<string, Episode>;
   nodes: Record<string, Node>;
-  capabilitySupports?: Record<string, unknown>;
 }
 export interface PersonalObservation {
   instanceId: string;
@@ -27,7 +24,7 @@ export interface PersonalObservation {
   result: 'correct' | 'incorrect' | 'unassessed' | 'skipped';
   assisted: boolean;
   reading: 'observed' | 'assisted' | 'unassessed' | null;
-  verifier: 'asr' | 'companion' | 'deterministic' | 'none';
+  verifier: 'asr' | 'deterministic' | 'none';
   meaning?: 'correct' | 'incorrect';
 }
 export interface PersonalSpeechIssue {
@@ -65,7 +62,6 @@ export interface PersonalRun {
     assisted: boolean;
     played: boolean;
     reading: PersonalObservation['reading'];
-    readingVerifier?: 'asr' | 'companion';
     questionIndex: number;
     meaningCorrect: boolean;
     result: PersonalObservation['result'] | null;
@@ -85,7 +81,6 @@ export type PersonalAnswer = {
   instanceId: string;
   kind:
     | 'speech'
-    | 'companion'
     | 'choice'
     | 'compose'
     | 'find_part'
@@ -95,8 +90,6 @@ export type PersonalAnswer = {
     | 'help'
     | 'info'
     | 'unassessed';
-  actor?: 'adult';
-  correct?: boolean;
   value?: string;
   optionIds?: string[];
   tokenIds?: string[];
@@ -134,8 +127,6 @@ export interface PersonalView {
   questionId: string | null;
   sourceTaskId: string | null;
   mode: 'read' | 'listen' | 'shared';
-  nextTitle?: string | null;
-  nextBlockedReason?: string | null;
   transformText?: string;
   speechIssue?: PersonalSpeechIssue | null;
 }
@@ -293,20 +284,16 @@ function observe(
   active.audio = null;
   return touched(run);
 }
-function independentAt(run: PersonalRun, nodeId: string, c: PersonalCurriculum) {
-  const node = c.nodes[nodeId];
-  const taskIds = new Set((node?.episodeIds ?? []).flatMap(id => c.episodes[id]?.steps.flatMap(step => step.itemId ? [step.itemId] : []) ?? []));
+function proposed(run: PersonalRun, c: PersonalCurriculum) {
   const good = run.observations.filter(
     (o) =>
-      o.nodeId === nodeId &&
-      taskIds.has(o.taskId) && !!c.items[o.taskId] &&
-      normalized(o.target) === normalized(target(c.items[o.taskId])) &&
+      o.nodeId === run.cursor.nodeId &&
       o.result === 'correct' &&
       !o.assisted &&
-      ['asr', 'companion'].includes(o.verifier) &&
+      o.verifier === 'asr' &&
       o.reading === 'observed',
   );
-  return good.some((a) =>
+  const enough = good.some((a) =>
     good.some(
       (b) =>
         a.taskId !== b.taskId &&
@@ -314,71 +301,9 @@ function independentAt(run: PersonalRun, nodeId: string, c: PersonalCurriculum) 
         normalized(a.target) !== normalized(b.target),
     ),
   );
-}
-function proposed(run: PersonalRun, c: PersonalCurriculum) {
-  const enough = independentAt(run, run.cursor.nodeId, c);
   const next = c.nodes[run.cursor.nodeId]?.defaultNext;
   // Teaching progression is provisional; this never writes confirmedSkills or completedNodes.
   return enough && next && c.nodes[next] ? next : null;
-}
-
-export type PersonalReadiness = Pick<Profile,
-  'knownLetters' | 'availableCapabilities' | 'confirmedSkills' | 'skillBasis'> & {
-    entry08?: EntryState;
-  };
-
-/** A provisional readiness check; never writes confirmed skills or assumes letter/function knowledge. */
-export function personalNextReadiness(
-  run: PersonalRun, c: PersonalCurriculum, profile?: PersonalReadiness,
-): { available: { nodeId: string; episodeIds: string[] } | null; reason: string | null } {
-  const nodeId = proposed(run, c);
-  if (!nodeId) return { available: null, reason: null };
-  if (!profile) return { available: null, reason: 'Не удалось проверить подготовку. Откройте дорожку ещё раз.' };
-  const node = c.nodes[nodeId];
-  // Guided teaching uses explicit restrictions, as the Entry08 start selector does.
-  // Empty formal assessment readiness is not evidence that a letter/function is unavailable.
-  const history = profile.entry08?.history as {
-    unavailableLetters?: string[]; unavailableCapabilities?: string[];
-  } | undefined;
-  const unavailableLetters = history?.unavailableLetters ?? [];
-  const unavailableCapabilities = history?.unavailableCapabilities ?? [];
-  const candidates = node.episodeIds.flatMap((id) => {
-    const episode = c.episodes[id];
-    if (!episode || episode.nodeId !== nodeId) return [];
-    const letters = new Set<string>(), capabilities = new Set<string>();
-    let missingTask = false;
-    for (const step of episode.steps) {
-      if (!step.itemId) {
-        for (const letter of (step.visibleText ?? '').toUpperCase().match(/[А-ЯЁ]/g) ?? [])
-          if (unavailableLetters.includes(letter)) letters.add(letter);
-        continue;
-      }
-      const task = c.items[step.itemId];
-      if (!task) { missingTask = true; continue; }
-      if (step.mode === 'listen') continue;
-      for (const letter of Array.from(task.requiredLetters))
-        if (unavailableLetters.includes(letter)) letters.add(letter);
-      for (const capability of task.requiredCapabilities)
-        if (unavailableCapabilities.includes(capability)) capabilities.add(capability);
-    }
-    return [{ id, letters: [...letters], capabilities: [...capabilities], missingTask }];
-  });
-  const episodeIds = candidates.filter((item) =>
-    !item.missingTask && !item.letters.length && !item.capabilities.length).map((item) => item.id);
-  if (episodeIds.length)
-    return { available: { nodeId, episodeIds }, reason: null };
-  const closest = [...candidates].filter((item) => !item.missingTask).sort((a, b) =>
-    a.letters.length + a.capabilities.length - b.letters.length - b.capabilities.length)[0];
-  const preparation: string[] = [];
-  if (closest?.letters.length) preparation.push(`проверить буквы: ${closest.letters.join(', ')}`);
-  if (closest?.capabilities.length) preparation.push(`проверить: ${closest.capabilities.map((id) =>
-    (c.capabilitySupports?.[id] as { title?: string } | undefined)?.title ?? 'нужный способ чтения').join(', ')}`);
-  return { available: null, reason: preparation.length
-    ? `Перед следующим шагом нужно ${preparation.join('; ')}. Можно продолжить здесь или открыть тренажёры для подготовки.`
-    : 'Следующий шаг пока недоступен. Можно продолжить на этом уровне.' };
-}
-export function availablePersonalNext(run: PersonalRun, c: PersonalCurriculum, profile?: PersonalReadiness) {
-  return personalNextReadiness(run, c, profile).available;
 }
 
 /** Opening reserves the first answer; subsequent questions reserve their own units. */
@@ -389,8 +314,6 @@ export function nextPersonal(
     newVisit?: boolean;
     continueEpisode?: boolean;
     acceptProposed?: boolean;
-    profile?: PersonalReadiness;
-    visitBudget?: 3 | 5;
   } = {},
 ): PersonalRun {
   const run = clone(previous);
@@ -401,7 +324,6 @@ export function nextPersonal(
       number: run.visit.number + 1,
       id: `${run.entryId}:personal:v${run.visit.number + 1}`,
       used: 0,
-      budget: options.visitBudget ?? run.visit.budget,
     };
     run.paused = false;
     run.promptedTargets = [];
@@ -420,16 +342,13 @@ export function nextPersonal(
   }
   if (run.episodeComplete) {
     if (!options.continueEpisode && !options.acceptProposed) return run;
-    const available = options.acceptProposed ? availablePersonalNext(run, c, options.profile) : null;
-    // Recheck current profile at acceptance: a saved offer may be stale.
-    if (options.acceptProposed && !available) {
-      run.proposedNodeId = null;
-      return touched(run);
-    }
-    const nodeId = available?.nodeId ?? run.cursor.nodeId;
+    const nodeId =
+      options.acceptProposed && run.proposedNodeId
+        ? run.proposedNodeId
+        : run.cursor.nodeId;
     const node = c.nodes[nodeId];
     if (!node) throw new Error('PERSONAL_NODE_MISSING');
-    const episodes = available?.episodeIds ?? node.episodeIds.filter((id) => c.episodes[id]);
+    const episodes = node.episodeIds.filter((id) => c.episodes[id]);
     const unseen = episodes.find((id) => !run.completedEpisodes.includes(id));
     const currentIndex = episodes.indexOf(run.cursor.episodeId);
     const episodeId = unseen ?? episodes[(currentIndex + 1) % episodes.length];
@@ -516,11 +435,9 @@ const TASK_INSTRUCTIONS: Partial<Record<Task['kind'], string>> = {
 export function personalView(
   run: PersonalRun,
   c: PersonalCurriculum,
-  profile?: PersonalReadiness,
 ): PersonalView {
   const { episode, step, task } = source(run, c),
     active = run.active;
-  const readiness = run.episodeComplete ? personalNextReadiness(run, c, profile) : null;
   const question =
     task?.answer.kind === 'question_set'
       ? task.answer.questions[active?.questionIndex ?? 0]
@@ -540,8 +457,6 @@ export function personalView(
             : 'info',
     instanceId: active?.instanceId ?? null,
     title: episode.title,
-    nextTitle: readiness?.available ? c.nodes[readiness.available.nodeId].title : null,
-    nextBlockedReason: readiness?.reason ?? null,
     instruction:
       active?.phase === 'question'
         ? (question?.prompt ?? task?.assistantPrompt ?? 'Выбери ответ.')
@@ -675,15 +590,6 @@ export function answerPersonal(
       'none',
     );
   }
-  if (answer.kind === 'companion') {
-    if (answer.actor !== 'adult' || typeof answer.correct !== 'boolean' || a.phase !== 'read') return previous;
-    a.captureId = null;
-    a.audio = null;
-    a.readingVerifier = 'companion';
-    a.reading = answer.correct ? (a.assisted ? 'assisted' : 'observed') : 'unassessed';
-    if (answer.correct && questionTask(task)) return openQuestion(run);
-    return observe(run, task, answer.correct ? 'correct' : 'incorrect', 'companion');
-  }
   if (answer.kind === 'speech') {
     if (
       !answer.captureId ||
@@ -727,7 +633,6 @@ export function answerPersonal(
       return speechFailure(run, task, 'asr_uncertain');
     }
     a.reading = a.assisted ? 'assisted' : 'observed';
-    a.readingVerifier = 'asr';
     if (questionTask(task)) {
       a.retries = 0;
       return openQuestion(run);
@@ -767,7 +672,7 @@ export function answerPersonal(
       task,
       a.meaningCorrect ? 'correct' : 'incorrect',
       a.reading === 'observed' || a.reading === 'assisted'
-        ? (a.readingVerifier ?? 'asr')
+        ? 'asr'
         : 'deterministic',
       questionTask(task)
         ? a.meaningCorrect

@@ -53,8 +53,6 @@ import { EntryCommands } from '../onboarding/entry-commands.js';
 import { mergeEntry } from '../../lib/entry08/profile';
 import type { EntryState, EntryUi } from '../../lib/entry08/types';
 import type { PersonalRun } from '../../lib/entry08/personal';
-import { practiceBranches, practiceReadiness, practiceOffer, enterPractice, returnFromPractice,
-  selectedPractice, customInformation, launchCustomInformation, acknowledgeCustomInformation } from './program-practice.js';
 export interface PlanToken {
   storageRevision: number;
   kind: string;
@@ -129,8 +127,6 @@ export class CurriculumController extends EntryCommands {
     });
   }
   visible() {
-    const customInfo = customInformation(this.state);
-    if (customInfo) return customInfo;
     if (this.state.studyMode === 'demonstration')
       return this.state.profile.activeInstance
         ? presentation(this.state.profile, this.supply)
@@ -148,32 +144,6 @@ export class CurriculumController extends EntryCommands {
       this.state.studyMode === 'demonstration' &&
       !currentDemo(this.state, this.supply).step
     );
-  }
-  programPracticeOptions() {
-    return practiceBranches(this.supply).map(branch => ({ ...branch,
-      label: branch.blockId.startsWith('story-') ? 'Короткий текст ' + (['story-catfish', 'story-sled', 'story-bag'].indexOf(branch.blockId) + 1)
-        : 'Слово ' + (['mama', 'mukha', 'luna', 'sumka', 'lampa', 'krupa'].indexOf(branch.blockId) + 1),
-      missing: practiceReadiness(this.state, this.supply, branch),
-      position: this.state.customRoutes[branch.id]?.position ?? 0 }));
-  }
-  programPracticeOffer() { return practiceOffer(this.state, this.supply); }
-  currentProgramPractice() {
-    const selected = selectedPractice(this.state);
-    return selected ? practiceBranches(this.supply).find(branch => branch.id === selected.branchId) : undefined;
-  }
-  selectProgramPractice(branchId: string) {
-    return this.serial(async () => { const s = this.snapshot(); enterPractice(s, this.supply, branchId); return this.save(s); });
-  }
-  returnToProgram() {
-    return this.serial(async () => { const s = this.snapshot(); returnFromPractice(s); return this.save(s); });
-  }
-  dismissProgramPractice(branchId: string) {
-    return this.serial(async () => {
-      const s = this.snapshot();
-      if (practiceOffer(s, this.supply)?.id !== branchId) throw new Error('STALE_PRACTICE_OFFER');
-      s.programPracticeDismissed = [...(s.programPracticeDismissed ?? []), branchId];
-      return this.save(s);
-    });
   }
   protected changeEntry(fn: (s: ProgressState) => void) {
     return this.serial(async () => {
@@ -388,10 +358,6 @@ export class CurriculumController extends EntryCommands {
           this.supply,
         );
       s.profile = selected.profile;
-      if (s.studyMode === 'recommended' && ['episode_task', 'episode_info', 'context_info', 'check', 'application', 'capability_support_needed', 'blocked'].includes(selected.action.kind)) {
-        const offer = practiceOffer(s, this.supply, selected.action.nodeId);
-        if (offer) selected.action = { kind: 'program_practice_offer', branchId: offer.id };
-      }
       await this.save(s); // nextAction can reconcile evidence/teachingOrder; save even before launching.
       const token = {
         storageRevision: this.state.storageRevision,
@@ -429,9 +395,7 @@ export class CurriculumController extends EntryCommands {
         launchEntry(s, this.supply, a, instanceId, companionObserved);
       else if (s.studyMode === 'demonstration')
         launchDemonstration(s, this.supply, a, instanceId);
-      else if (a.kind === 'custom_info')
-        launchCustomInformation(s, this.supply, a.planId!);
-      else if (a.kind === 'custom_task') {
+      else if (a.kind === 'custom_task')
         s.profile = launchFreeProfile(
           s,
           this.supply,
@@ -439,9 +403,6 @@ export class CurriculumController extends EntryCommands {
           a.mode!,
           instanceId,
         );
-        if (selectedPractice(s)) s.profile = engine.commitExposure(s.profile,
-          exposureInput(this.supply, { texts: [this.supply.curriculum.items[a.itemId!].learnerText] }));
-      }
       else
         s.profile = routeEngine.launchAction(
           s.profile,
@@ -531,16 +492,10 @@ export class CurriculumController extends EntryCommands {
   }
   acknowledge(planId: string) {
     return this.serial(async () => {
-      if (!['recommended', 'demonstration', 'custom'].includes(this.state.studyMode))
+      if (!['recommended', 'demonstration'].includes(this.state.studyMode))
         throw new Error('NOT_RECOMMENDED_ROUTE');
       const s = this.snapshot();
-      if (s.studyMode === 'custom') {
-        const route = s.customRoutes[s.route!.routeId];
-        if (!route.programPractice && !route.steps[route.position]?.information)
-          throw new Error('NOT_RECOMMENDED_ROUTE');
-      }
-      if (s.studyMode === 'custom') acknowledgeCustomInformation(s, planId);
-      else if (s.studyMode === 'demonstration') {
+      if (s.studyMode === 'demonstration') {
         const step = currentDemo(s, this.supply).step!;
         acknowledgeDemonstration(s, this.supply, planId);
         logSource(s, 'demonstration_step', null);

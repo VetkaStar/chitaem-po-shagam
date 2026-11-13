@@ -26,11 +26,8 @@ export default function IllustrationGallery({
   const [selected, setSelected] = useState<IllustrationVariant>('main');
   const variant = context ? 'context' : selected;
   const item = illustrations[assetId];
-  const availableVariants = variants.filter((name, index) =>
-    variants.findIndex((candidate) => item.variants[candidate].src === item.variants[name].src) === index,
-  );
   const picture = item.variants[variant];
-  const index = availableVariants.findIndex((name) => item.variants[name].src === picture.src);
+  const index = variants.indexOf(variant);
   return (
     <div
       className={
@@ -49,16 +46,16 @@ export default function IllustrationGallery({
         loading="eager"
         decoding="async"
       />
-      {availableVariants.length > 1 && <div className="illustration-navigation">
+      <div className="illustration-navigation">
         <span className="illustration-position" aria-live="polite">
-          Картинка {index + 1} из {availableVariants.length}
+          Картинка {index + 1} из 3
           {variant === 'context' ? ' · в окружении' : ''}
         </span>
         <button
           type="button"
           className="text-button"
           onClick={() => {
-            const next = availableVariants[(index + 1) % availableVariants.length];
+            const next = variants[(index + 1) % variants.length];
             setSelected(next);
             onContextChange?.(next === 'context');
           }}
@@ -66,7 +63,7 @@ export default function IllustrationGallery({
           <RefreshCw size={15} aria-hidden="true" />
           Посмотреть другую картинку
         </button>
-      </div>}
+      </div>
     </div>
   );
 }

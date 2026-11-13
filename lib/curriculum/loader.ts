@@ -1,6 +1,5 @@
 import type { Supply, Curriculum, EntryRegistry } from './types.js';
 import { applyEditorial } from './editorial.js';
-import { applyProgramPilot } from './program-pilot.js';
 export const CURRICULUM_SHA = '03c8a7b0d4af5c42d63ff7cb732c1489a04d89a5197f78b2c4c58c72d6440745';
 export const ENTRY_SHA = '1aec61f84242a14c74131b9dcbfea7cecc039fb57a12b670fcee6adc0573c368';
 export function object(value: unknown): value is Record<string, unknown> {
@@ -50,5 +49,5 @@ export async function loadSupply(curriculumRaw: string, registryRaw: string): Pr
     demand(g.orderedItemIds.every(itemId => own(curriculum.items, itemId)), 'entry item');
     demand(g.successNextGroup === null || own(registry.groups, g.successNextGroup), 'entry next');
   }
-  return applyProgramPilot(await applyEditorial({ curriculum, registry }, sha256), sha256);
+  return applyEditorial({ curriculum, registry }, sha256);
 }

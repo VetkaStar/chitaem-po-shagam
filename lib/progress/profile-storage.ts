@@ -51,7 +51,7 @@ function parse(raw: string | null, id: string): LocalProfile | null {
     typeof p.name !== 'string' ||
     !p.name.trim() ||
     p.name.length > 30 ||
-    !['3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13+', '12+'].includes(p.age) ||
+    !['3', '4', '5', '6', '7', '8', '9', '10', '11', '12+'].includes(p.age) ||
     ![
       'letters',
       'syllables',

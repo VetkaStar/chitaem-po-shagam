@@ -26,23 +26,7 @@ const newAudit = JSON.parse(
 const nextAudit = JSON.parse(
   fs.readFileSync('docs/NEXT-ILLUSTRATIONS-IMPORT.json', 'utf8'),
 );
-const pilotAudit = JSON.parse(fs.readFileSync('docs/PILOT-ILLUSTRATIONS-IMPORT.json', 'utf8'));
-const { pilotIllustrations } = load('content/illustrations-pilot.ts');
-assert.equal(Object.keys(pilotIllustrations).length, 5);
-assert.equal(pilotAudit.sources.length, 9);
-assert.equal(pilotAudit.images.length, 21);
-for (const image of pilotAudit.images) {
-  const bytes = fs.readFileSync('public/' + image.src);
-  assert.equal(bytes.length, image.bytes);
-  assert.equal(bytes.toString('ascii', 8, 12), 'WEBP');
-  assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), image.sha256);
-}
-for (const source of pilotAudit.sources) {
-  if (fs.existsSync(source.path))
-    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(source.path)).digest('hex'), source.sha256);
-}
-assert.equal(Object.keys(illustrations).length, 122);
-assert.equal(Object.keys(illustrations).filter(id => !Object.hasOwn(pilotIllustrations, id)).length, 117);
+assert.equal(Object.keys(illustrations).length, 117);
 for (const [id, item] of Object.entries(illustrations)) {
   const hashes = new Set();
   for (const variant of ['main', 'alternate', 'context']) {
@@ -57,12 +41,10 @@ for (const [id, item] of Object.entries(illustrations)) {
       hash,
       audit.images.find((x) => x.id === id + '-' + variant)?.webpSha256 ??
         newAudit.images.find((x) => x.src === image.src)?.sha256 ??
-        nextAudit.images.find((x) => x.src === image.src)?.sha256 ??
-        pilotAudit.images.find((x) => x.src === image.src)?.sha256,
+        nextAudit.images.find((x) => x.src === image.src)?.sha256,
     );
   }
-  const singleScene = ['scene-pilot-catfish-v1', 'scene-pilot-sled-v1', 'scene-pilot-bag-v1'].includes(id);
-  assert.equal(hashes.size, singleScene ? 1 : 3, 'Only the three approved pilot scenes have a single variant');
+  assert.equal(hashes.size, 3, 'variants must be distinct');
 }
 for (const word of [
   'ДОМ',
@@ -81,10 +63,10 @@ for (const word of [
   assert(illustrations[wordIllustrations[word]], word);
 for (const id of Object.values(textIllustrations))
   assert(id.startsWith('scene-') && illustrations[id]);
-assert.equal(Object.keys(textIllustrations).length, 9);
+assert.equal(Object.keys(textIllustrations).length, 6);
 assert(wordIllustrations['МАМА'] && wordIllustrations['ПАПА']);
 console.log(
-  'PASS catalog: 117 original + 5 pilot groups, unchanged original checksums, 21 pilot WebP, 9 text mappings and exact variant counts',
+  'PASS: 120 WebP assets, checksums, three distinct variants, all picture targets, words and six scenes',
 );
 
 assert.equal(newAudit.images.length, 174);

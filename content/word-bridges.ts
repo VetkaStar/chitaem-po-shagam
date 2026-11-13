@@ -1,4 +1,3 @@
-import { wordFamilies } from './word-families';
 const wordBridges = [
   {
     word: 'МАМА',
@@ -24,14 +23,8 @@ const wordBridges = [
   },
   { word: 'ЛАПА', parts: ['ЛА', 'ПА'], meaning: 'У кота мягкая лапа.' },
 ];
-export function availableBridges(letters: string[], target?: string, familyId?: string) {
-  const family = familyId ? wordFamilies.find(f => f.id === familyId) : undefined;
-  const pool = familyId ? (family ? [family] : []) : [
-    ...wordBridges,
-    ...wordFamilies.filter(f => !wordBridges.some(b => b.word === f.word)),
-  ];
-  return pool.filter((b) =>
-    Array.from(b.word).every((l) => letters.includes(l)) &&
-    (!target || b.parts.includes(target)),
+export function availableBridges(letters: string[]) {
+  return wordBridges.filter((b) =>
+    Array.from(b.word).every((l) => letters.includes(l)),
   );
 }

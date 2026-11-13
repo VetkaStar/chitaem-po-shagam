@@ -64,20 +64,9 @@ export interface RouteReference {
 }
 export interface CustomRoute extends RouteReference {
   source: 'custom';
-  steps: CustomStep[];
+  steps: { id: string; itemId: string; mode: 'read' | 'listen' | 'shared' }[];
   position: number;
   suspendedInstance: TaskInstance | null;
-  activeInfo?: string | null;
-  programPractice?: {
-    branchId: string;
-    returnTo: { studyMode: ProgressState['studyMode']; route: RouteReference | null; programId: string | null };
-  };
-}
-export interface CustomStep {
-  id: string;
-  itemId: string;
-  mode: 'read' | 'listen' | 'shared';
-  information?: { instruction: string; texts: string[]; promptedTexts: string[] };
 }
 export interface Questionnaire {
   presentation?: 'school' | 'neutral' | null;
@@ -158,7 +147,6 @@ export interface SourceEvent {
     | 'demonstration_step';
 }
 export interface ProgressState {
-  programPracticeDismissed?: string[];
   schemaVersion: 2;
   storageRevision: number;
   supply: {

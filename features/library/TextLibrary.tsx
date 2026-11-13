@@ -1,6 +1,6 @@
 'use client';
 import { useFreeExposure } from '@/features/free-practice/use-free-exposure';
-import { useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useRef, useState, type ReactNode } from 'react';
 import CompletionCelebration from '@/components/completion-celebration';
 import { Star, SlidersHorizontal } from 'lucide-react';
 import TopicBar from '@/components/topic-bar';
@@ -19,11 +19,7 @@ export default function TextLibrary({
   kind: TextKind;
   model: LessonModel;
 }) {
-  // Continue between texts of one session, never carry listening into another topic.
-  const micSession = useMemo(
-    () => ({ current: false, topic: `${kind}:${model.settings.unit}` }),
-    [kind, model.settings.unit],
-  );
+  const micSession = useRef(false);
   return (
     <section className="lesson library">
       <div className="lesson-top">
@@ -124,7 +120,6 @@ function TopicTextSession({
                 {deck.map((t, i) => (
                   <button
                     key={t.id}
-                    data-text-id={t.id}
                     onClick={() => {
                       model.stop();
                       setIndex(i);
@@ -167,7 +162,6 @@ function TextPickerMenu({
   return (
     <details
       className="practice-menu"
-      name="text-library-material-menu"
       open={open}
       onToggle={(event) => setOpen(event.currentTarget.open)}
     >

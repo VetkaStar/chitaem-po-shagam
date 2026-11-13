@@ -10,10 +10,7 @@
     "dev": "vite --config vite.pages.config.ts",
     "lint": "oxlint",
     "format": "oxfmt",
-    "test": "node tests/syllable-parts.mjs && node tests/answers.mjs && node tests/regression.mjs && node tests/practice-flow.mjs && node tests/text-practice-flow.mjs && node tests/illustrations.mjs && node tests/auto-advance.mjs && node tests/curriculum.mjs && node tests/curriculum-presentation.mjs && node tests/curriculum-execution.mjs && node tests/curriculum-demonstrations.mjs && node tests/curriculum-onboarding.mjs && node tests/curriculum-roadmap.mjs && node tests/curriculum-free-practice.mjs && node tests/free-audio-flow.mjs && node tests/curriculum-completeness.mjs && node tests/curriculum-media.mjs && node tools/verify-curriculum.mjs && node tests/entry08-integration.mjs && node tests/entry08-media.mjs && node tests/entry08-personal.mjs && node tests/c01-migration.mjs && node tests/content-pilot.mjs && node tests/pilot-texts.mjs && node tests/program-pilot.mjs && node tests/entry08-progression-age.mjs && node tests/pilot-illustrations.mjs && node tests/pilot-media-safety.mjs",
-    "test:content-pilot": "node tests/content-pilot.mjs && node tests/pilot-texts.mjs",
-    "test:content-pilot:browser": "node tests/content-pilot-browser.mjs --freeze && node tests/family-pilot.mjs && node tests/word-bridge-enter-browser.mjs",
-    "test:content-pilot:production": "node tests/content-pilot-production-browser.mjs",
+    "test": "node tests/syllable-parts.mjs && node tests/answers.mjs && node tests/regression.mjs && node tests/practice-flow.mjs && node tests/text-practice-flow.mjs && node tests/illustrations.mjs && node tests/auto-advance.mjs && node tests/curriculum.mjs && node tests/curriculum-presentation.mjs && node tests/curriculum-execution.mjs && node tests/curriculum-demonstrations.mjs && node tests/curriculum-onboarding.mjs && node tests/curriculum-roadmap.mjs && node tests/curriculum-free-practice.mjs && node tests/free-audio-flow.mjs && node tests/curriculum-completeness.mjs && node tests/curriculum-media.mjs && node tools/verify-curriculum.mjs && node tests/entry08-integration.mjs && node tests/entry08-media.mjs && node tests/entry08-personal.mjs && node tests/c01-migration.mjs",
     "typecheck": "tsc --noEmit",
     "test:styles": "node tools/audit-styles.mjs",
     "test:browser": "node tools/check-browsers.mjs",
@@ -36,8 +33,7 @@
     "test:c01": "node tools/create-c01-patch.mjs --check && node tests/c01-browser.mjs",
     "test:production": "npm run build && node tests/production-browser.mjs && node tests/text-reading-production-browser.mjs",
     "test:text-reading": "node tests/text-reading-viewport-browser.mjs && node tests/text-reading-layout-browser.mjs",
-    "test:layout": "node tests/task-card-layout-browser.mjs && node tests/home-actions-browser.mjs && node tests/task-card-text-browser.mjs && node tests/task-card-scale-browser.mjs && node tests/task-card-audio-layout-browser.mjs && node tests/task-card-letters-browser.mjs && node tests/task-card-modes-browser.mjs && node tests/task-card-short-controls-browser.mjs && npm run test:text-reading",
-    "test:program-pilot": "node tests/content-pilot.mjs && node tests/pilot-texts.mjs && node tests/program-pilot.mjs && node tests/entry08-progression-age.mjs && node tests/pilot-illustrations.mjs && node tests/pilot-media-safety.mjs"
+    "test:layout": "node tests/task-card-layout-browser.mjs && node tests/home-actions-browser.mjs && node tests/task-card-text-browser.mjs && node tests/task-card-scale-browser.mjs && node tests/task-card-audio-layout-browser.mjs && node tests/task-card-letters-browser.mjs && node tests/task-card-modes-browser.mjs && node tests/task-card-short-controls-browser.mjs && npm run test:text-reading"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",

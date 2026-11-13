@@ -13,7 +13,6 @@ const launchable = new Set([
   'application',
   'review',
   'custom_task',
-  'custom_info',
   'demonstration_task',
   'demonstration_info',
 ]);

@@ -24,8 +24,6 @@ export default function ExerciseActions({
   feedback,
   nextButton,
   next,
-  nextLabel,
-  nextDisabled = false,
   mode,
   hint,
   canSubmit,
@@ -55,8 +53,6 @@ export default function ExerciseActions({
   feedback: ExerciseModel['feedback'];
   nextButton: RefObject<HTMLButtonElement | null>;
   next: ExerciseModel['next'];
-  nextLabel?: string;
-  nextDisabled?: boolean;
   mode: ExerciseModel['mode'];
   hint: ExerciseModel['hint'];
   canSubmit: boolean;
@@ -153,8 +149,6 @@ export default function ExerciseActions({
       <NextExerciseButton
         buttonRef={nextButton}
         onNext={() => next()}
-        label={nextLabel}
-        disabled={nextDisabled}
         countdown={countdown}
       />
     );

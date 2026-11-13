@@ -32,7 +32,7 @@ export const customSource: ActionSource = {
       profile: structuredClone(state.profile),
       action: step
         ? {
-            kind: route.activeInfo ? 'active_info' : step.information ? 'custom_info' : 'custom_task',
+            kind: 'custom_task',
             itemId: step.itemId,
             mode: step.mode,
             stepId: step.id,

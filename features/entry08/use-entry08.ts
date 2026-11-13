@@ -1,4 +1,3 @@
-import { ageVisitBudget, syncProfileAge } from '../../lib/entry08/profile-age';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import type { CurriculumController } from '../curriculum/controller';
 import type { Supply } from '../../lib/curriculum/types';
@@ -243,7 +242,7 @@ export function useEntry08(
     const p = personal();
     if (!p) return;
     if (!p.active || p.paused) {
-      await simpleAudio(P.personalView(p, supply.curriculum, snapshot().profile).instruction);
+      await simpleAudio(P.personalView(p, supply.curriculum).instruction);
       return;
     }
     const request = P.requestPersonalAudio(p, supply.curriculum, {
@@ -307,16 +306,15 @@ export function useEntry08(
           return save({ personal: P.pausePersonal(p) });
         if (action === 'personal_resume')
           return save({
-            personal: P.nextPersonal(p, supply.curriculum, { newVisit: true, profile: snapshot().profile, visitBudget: ageVisitBudget(current()!.config.age) }),
+            personal: P.nextPersonal(p, supply.curriculum, { newVisit: true }),
           });
         if (action === 'personal_next')
-          return save({ personal: P.nextPersonal(p, supply.curriculum, { profile: snapshot().profile }) });
-        if (action === 'personal_continue' || action === 'personal_advance')
+          return save({ personal: P.nextPersonal(p, supply.curriculum) });
+        if (action === 'personal_continue')
           return save({
             personal: P.nextPersonal(p, supply.curriculum, {
               continueEpisode: true,
-              acceptProposed: action === 'personal_advance',
-              profile: snapshot().profile,
+              acceptProposed: !!p.proposedNodeId,
             }),
           });
         if (action === 'personal_answer')
@@ -420,11 +418,7 @@ export function useEntry08(
       if (!e) return;
       if (action === 'pause')
         return save({ entry: E.pause(e), ui: { ...u, page: 'pause' } });
-      if (action === 'resume') {
-        const resumed = E.resume(e);
-        if (resumed.visit.number !== e.visit.number) resumed.visit.budget = ageVisitBudget(resumed.config.age);
-        return advance(resumed);
-      }
+      if (action === 'resume') return advance(E.resume(e));
       if (action === 'finish') {
         if (e.active && e.active.phase !== 'feedback') e = E.skip(e, bank);
         return save({ entry: E.finishNow(e), ui: { ...u, page: 'report' } });
@@ -493,13 +487,10 @@ export function useEntry08(
                   : 'probe',
         };
       }
-      const synced = syncProfileAge(parseProfile(browserStorage.getItem(profileKey))?.age, savedUi, e, p?.version === '0.8.1' ? p : undefined);
-      savedUi = synced.ui;
-      e = synced.entry;
       const recovered =
         p && e
           ? p.version === '0.8.1' && p.cursor
-            ? P.cancelPersonalMedia(synced.personal ?? p)
+            ? P.cancelPersonalMedia(p)
             : P.startPersonal(
                 e,
                 bank,
@@ -555,7 +546,7 @@ export function useEntry08(
     ui: u,
     entry: e,
     personal: p,
-    view: p ? P.personalView(p, supply.curriculum, snapshot().profile) : null,
+    view: p ? P.personalView(p, supply.curriculum) : null,
     learner: e ? E.learnerView(e, bank) : null,
     report: e ? E.report(e, bank) : null,
     question: u ? E.questionnaireFor(u.answers)[0] : null,

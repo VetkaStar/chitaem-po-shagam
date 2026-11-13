@@ -1,6 +1,5 @@
 import { illustrations } from '../../content/illustrations';
 import { nextStoryFrames } from '../../content/next-illustrations';
-import { pilotStoryFrames } from '../../content/illustrations-pilot';
 import { illustrationSources } from '../../content/illustration-sources';
 import type { TaskPresentation } from './presentation.js';
 
@@ -16,8 +15,7 @@ export function CurriculumIllustration({ asset, busy, onVariant }: Props) {
       : null;
   const frames = word
     ? [word.variants[asset.variant]]
-    : (pilotStoryFrames[asset.id as keyof typeof pilotStoryFrames] ??
-      nextStoryFrames[asset.id as keyof typeof nextStoryFrames] ?? []);
+    : (nextStoryFrames[asset.id as keyof typeof nextStoryFrames] ?? []);
   return (
     <section
       className="curriculum-illustration"

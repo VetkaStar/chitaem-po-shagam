@@ -99,7 +99,7 @@ export default function PersonalLesson({
         {visitUsed !== undefined && <p className="storage-note">Экраны этого подхода: {visitUsed} из {visitBudget}. После него можно отдохнуть.</p>}
         {!voiceEnabled && (
           <div className="personal08-input-note">
-            <p>Ответы нажатием помогают тренироваться. Для продвижения нужны самостоятельное чтение с проверкой голосом или подтверждение взрослого в разных занятиях.</p>
+            <p>Ответы нажатием помогают тренироваться. Для продвижения по чтению нужны самостоятельные ответы голосом в разных занятиях.</p>
             <button disabled={busy} onClick={() => dispatch('personal_enable_voice')}>Включить ответы голосом</button>
           </div>
         )}
@@ -150,22 +150,15 @@ export default function PersonalLesson({
           </div>
         ) : v.kind === 'complete' ? (
           <div className="entry08-actions">
-            {v.nextBlockedReason && <p role="status">{v.nextBlockedReason}</p>}
-            {v.nextTitle && <>
-              <p>Можно попробовать следующий шаг: {v.nextTitle}. Можно и ещё потренироваться здесь.</p>
-              <button className="primary" disabled={busy} onClick={() => dispatch('personal_advance')}>
-                Попробовать следующий шаг
-              </button>
-            </>}
             <button
               className="primary"
               disabled={busy}
               onClick={() => dispatch('personal_continue')}
             >
-              Продолжить на этом уровне
+              Продолжить дорожку
             </button>
             <button onClick={() => dispatch('personal_finish')}>
-              {v.nextBlockedReason ? 'К тренажёрам для подготовки' : 'К тренажёрам'}
+              К тренажёрам
             </button>
           </div>
         ) : (
@@ -199,16 +192,6 @@ export default function PersonalLesson({
             )}
             {v.kind === 'task' && v.phase === 'read' && (
               <div className="entry08-actions">
-                <details className="adult-check">
-                  <summary>Подтверждение взрослого</summary>
-                  <p>Отмечайте результат только если вы сами слышали, как ребёнок прочитал всё задание. Выбор ответа на экране не подтверждает чтение.</p>
-                  <button disabled={busy || !!capturing} onClick={() => answer('companion', { actor: 'adult', correct: true })}>
-                    {v.assisted ? 'Прочитал с помощью' : 'Прочитал самостоятельно'}
-                  </button>
-                  <button disabled={busy || !!capturing} onClick={() => answer('companion', { actor: 'adult', correct: false })}>
-                    Пока не получилось
-                  </button>
-                </details>
                 {voiceEnabled && (
                   <button
                     className="primary"

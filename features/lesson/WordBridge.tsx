@@ -13,7 +13,6 @@ export default function WordBridge({
   sound,
   onInteract,
   onComplete,
-  familyId,
 }: {
   unit: number;
   target: string;
@@ -21,11 +20,14 @@ export default function WordBridge({
   sound: boolean;
   onInteract?: () => void;
   onComplete?: () => void;
-  familyId?: string;
 }) {
   // Picked once: ExerciseCard mounts a new bridge for every task and topic.
   const [item] = useState(() => {
-    return availableBridges(levels[unit].letters, target, familyId)[0];
+    const all = availableBridges(levels[unit].letters);
+    return (
+      all.find((b) => b.parts.includes(target)) ||
+      all[Math.floor(Math.random() * all.length)]
+    );
   });
   const cards = useMemo(
     () => (item ? shuffled(item.parts.map((text, id) => ({ text, id }))) : []),
@@ -62,7 +64,6 @@ export default function WordBridge({
           <>
             <h3 className="bridge-word">{item.word}</h3>
             <p role="status">{item.meaning}</p>
-            <p className="muted">Собрано по образцу. Теперь прочитай слово.</p>
             {sound && (
               <button className="text-button" onClick={() => speak(item.word)}>
                 <Volume2 size={18} /> Послушать слово

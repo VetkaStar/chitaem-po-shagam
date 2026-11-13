@@ -13,10 +13,7 @@ const { engine } = await mod('lib/curriculum/core.js');
 const { grade } = await mod('lib/curriculum/vendor/source/grading.mjs');
 const rawEngine = await mod('lib/curriculum/vendor/source/engine.mjs');
 const rawRoute = await mod('lib/curriculum/vendor/source/route.mjs');
-// Keep this regression scoped to the exact C01 transition; the pilot suite covers the full chain.
-const current = await loadSupply(...supplyText());
-const supply = current.previous, old = supply.previous;
-assert.equal(supply.registry.curriculumSha256, patch.curriculumSha256);
+const supply = await loadSupply(...supplyText()), old = supply.previous;
 const original = old.curriculum.items[patch.itemId], corrected = supply.curriculum.items[patch.itemId];
 const legacy = { getItem: () => null };
 assert.equal(await sha256(canonicalJson(supply.curriculum)),patch.curriculumSha256);

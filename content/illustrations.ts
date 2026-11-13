@@ -1,9 +1,7 @@
 // Imported from the user-reviewed archive. Paths are relative for GitHub Pages.
 import { nextIllustrations, nextWordIllustrations } from './next-illustrations';
-import { pilotIllustrations, pilotWordIllustrations, pilotTextIllustrations } from './illustrations-pilot';
 export const illustrations = {
   ...nextIllustrations,
-  ...pilotIllustrations,
   'picture-01': {
     target: 'дом',
     variants: {
@@ -1482,7 +1480,6 @@ export type IllustrationId = keyof typeof illustrations;
 export type IllustrationVariant = 'main' | 'alternate' | 'context';
 export const wordIllustrations: Record<string, IllustrationId> = {
   ...nextWordIllustrations,
-  ...pilotWordIllustrations,
   ВОДА: 'word-23',
   СОМ: 'word-24',
   ШАР: 'word-25',
@@ -1545,7 +1542,6 @@ export const wordIllustrations: Record<string, IllustrationId> = {
   КОШКА: 'picture-02',
 };
 export const textIllustrations: Record<string, IllustrationId> = {
-  ...pilotTextIllustrations,
   'story-cat': 'scene-01',
   'story-boat': 'scene-02',
   'story-seed': 'scene-03',

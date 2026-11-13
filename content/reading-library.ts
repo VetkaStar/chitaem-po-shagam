@@ -8,14 +8,6 @@ export type ReadingText = {
   options: string[];
   answer: string;
   hint: string;
-  /** Free-library availability only; selecting a topic does not confirm mastery. */
-  minimumUnit?: number;
-  keepForReview?: boolean;
-  questionDelivery?: 'adult-or-audio';
-  preparation?: {
-    words: { word: string; parts: string[] }[];
-    note: string;
-  };
   lineIllustrations?: { src: string; alt: string }[];
 };
 // Original starter texts. Questions check meaning, not pronunciation.

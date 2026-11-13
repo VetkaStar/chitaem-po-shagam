@@ -8,7 +8,7 @@ export function parseProfile(raw: string | null): Profile | null {
       p.name.trim().length > 0 &&
       p.name.length <= 30 &&
       typeof p.age === 'string' &&
-      ['3', '4', '5', '6', '7', '8', '9', '10', '11', '12+'].includes(p.age) &&
+      ['3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13+', '12+'].includes(p.age) &&
       [
         'letters',
         'syllables',

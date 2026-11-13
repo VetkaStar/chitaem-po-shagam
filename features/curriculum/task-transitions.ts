@@ -55,11 +55,15 @@ export function applyAnswer(
     )
       throw new Error('TRANSFORM_READING_REQUIRED');
   }
+  const program = s.profile.currentProgramId;
+  const practice = s.studyMode === 'custom' && s.route && s.customRoutes[s.route.routeId]?.programPractice;
+  if (practice) s.profile.currentProgramId = null;
   s.profile = routeEngine.answerAction(
     s.profile,
     supply.curriculum,
     submission,
   );
+  if (practice) s.profile.currentProgramId = program;
   if (
     s.studyMode === 'custom' &&
     s.route &&

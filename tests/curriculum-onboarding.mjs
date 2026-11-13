@@ -156,7 +156,16 @@ await test('one success is pending; two CVC proofs confirm only decode.cvc and r
   const reloaded = await CurriculumController.open(supply, store, legacy);
   assert.deepEqual(reloaded.snapshot(), placed);
   await reloaded.acceptPlacement();
-  await reloaded.launch(await reloaded.planNext());
+  let next = await reloaded.planNext();
+  while (next.kind === 'program_practice_offer') {
+    const positions = reloaded.snapshot().profile.programs;
+    const offer = reloaded.programPracticeOffer();
+    assert.ok(offer, 'an optional practice offer must be available to dismiss');
+    await reloaded.dismissProgramPractice(offer.id);
+    assert.deepEqual(reloaded.snapshot().profile.programs, positions, 'declining practice preserves placement');
+    next = await reloaded.planNext();
+  }
+  await reloaded.launch(next);
   assert.equal(reloaded.visible().kind, 'info');
 });
 

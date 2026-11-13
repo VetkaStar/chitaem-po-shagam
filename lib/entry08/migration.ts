@@ -1,20 +1,20 @@
 import type { ProgressState } from '../curriculum/types';
 import type { Answers, EntryUi } from './types';
 import { entry } from './api';
+import { profileAgeBand } from './profile-age';
 export function migrateAnswers(state: ProgressState, age?: string): Answers {
   const q = state.onboarding.questionnaire,
     a: Answers = {};
   if (q.respondent)
     a.respondent = q.respondent === 'learner' ? 'self' : 'parent';
-  if (q.ageBand)
+  const currentAge = profileAgeBand(age);
+  if (currentAge) a.age = currentAge;
+  else if (q.ageBand)
     a.age = ['under_6', '6_7'].includes(q.ageBand)
       ? 'under8'
       : q.ageBand === '8_12'
         ? '8to12'
         : '13plus';
-  else if (age && /^\d+$/.test(age))
-    a.age = Number(age) < 8 ? 'under8' : Number(age) <= 12 ? '8to12' : '13plus';
-  else if (age === '12+') a.age = 'unknown'; // The saved range crosses the new boundary; do not invent an exact age or ask again.
   if (q.reads?.length) a.reads = q.reads;
   if (q.blendingDifficulty === 'often' || q.blendingDifficulty === 'sometimes')
     a.difficulty = 'blending';

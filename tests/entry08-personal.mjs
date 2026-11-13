@@ -337,12 +337,14 @@ test('Two distinct unassisted tasks/visits offer provisional next node only', ()
   assert.ok(curriculum.nodes[node.defaultNext]);
   run.active = null;
   run.cursor.stepIndex = curriculum.episodes[run.cursor.episodeId].steps.length;
-  run.observations = ['А', 'Б'].map((target, i) => ({
+  const authored = [...new Set(node.episodeIds.flatMap(id => curriculum.episodes[id].steps.flatMap(step => step.itemId ? [step.itemId] : [])))].map(id => curriculum.items[id]);
+  const pair = [authored[0], authored.find(task => task.learnerText !== authored[0].learnerText)];
+  run.observations = pair.map((task, i) => ({
     instanceId: `i${i}`,
-    taskId: `task${i}`,
+    taskId: task.id,
     nodeId: node.id,
     visitId: `v${i}`,
-    target,
+    target: task.learnerText,
     result: 'correct',
     assisted: false,
     reading: 'observed',
@@ -547,6 +549,110 @@ test('Invalid legacy preview episode is archived but cannot substitute authored 
   assert.deepEqual(run.legacyPreview, preview);
   assert.deepEqual(run.observations, []);
 });
+
+test('Adult reading is explicit, phase-bound, durable and cannot turn help into independent proof', () => {
+  const { run, c } = atTask('read');
+  const input = { kind: 'companion', instanceId: run.active.instanceId, correct: true };
+  assert.deepEqual(P.answerPersonal(run, c, input), run);
+  const adult = P.answerPersonal(run, c, { ...input, actor: 'adult' });
+  assert.equal(adult.observations[0].verifier, 'companion');
+  assert.equal(adult.observations[0].reading, 'observed');
+  assert.equal(adult.observations[0].assisted, false);
+  assert.deepEqual(P.answerPersonal(adult, c, { ...input, actor: 'adult' }), adult);
+  const helped = P.answerPersonal(run, c, { kind: 'help', instanceId: run.active.instanceId });
+  const result = P.answerPersonal(helped, c, { ...input, actor: 'adult' });
+  assert.equal(result.observations[0].reading, 'assisted');
+  assert.equal(result.observations[0].assisted, true);
+  assert.equal(P.answerPersonal(run, c, { ...input, actor: 'adult', correct: false }).observations[0].result, 'incorrect');
+  assert.equal(P.answerPersonal(run, c, { ...input, actor: 'adult', instanceId: 'old' }), run);
+});
+test('Adult reading verifier survives questions and a reserved question visit', () => {
+  const { run, c, task } = atTask('read_meaning');
+  run.visit.used = run.visit.budget;
+  let next = P.answerPersonal(run, c, { kind: 'companion', actor: 'adult', correct: true, instanceId: run.active.instanceId });
+  assert.equal(next.paused, true);
+  next = P.nextPersonal(JSON.parse(JSON.stringify(next)), c, { newVisit: true });
+  next = P.answerPersonal(next, c, { kind: 'choice', instanceId: next.active.instanceId, optionIds: task.answer.correctOptionIds });
+  assert.equal(next.observations[0].verifier, 'companion');
+  assert.equal(next.observations[0].meaning, 'correct');
+});
+function advancementFixture() {
+  const run = begin();
+  const node = curriculum.nodes['p1.A01'];
+  run.cursor.nodeId = node.id;
+  run.cursor.episodeId = node.episodeIds[0];
+  run.cursor.stepIndex = curriculum.episodes[run.cursor.episodeId].steps.length;
+  run.active = null;
+  run.visit.used = 0;
+  const tasks = [...new Set(node.episodeIds.flatMap(id => curriculum.episodes[id].steps.flatMap(step => step.itemId ? [step.itemId] : [])))].map(id => curriculum.items[id]);
+  const first = tasks[0], second = tasks.find(t => t.learnerText !== first.learnerText);
+  run.observations = [first, second].map((task, i) => ({
+    instanceId: `adult-${i}`, taskId: task.id, nodeId: node.id,
+    visitId: `adult-visit-${i}`, target: task.learnerText,
+    result: 'correct', reading: 'observed', assisted: false, verifier: 'companion',
+  }));
+  const profile = { knownLetters: [], availableCapabilities: [], confirmedSkills: [], skillBasis: {} };
+  const episode = curriculum.episodes[curriculum.nodes[node.defaultNext].episodeIds[0]];
+  for (const step of episode.steps) {
+    const task = step.itemId ? curriculum.items[step.itemId] : null;
+    profile.knownLetters.push(...Array.from(task?.requiredLetters ?? (step.visibleText ?? '').toUpperCase().match(/[А-ЯЁ]/g) ?? []));
+    profile.availableCapabilities.push(...(task?.requiredCapabilities ?? []));
+  }
+  profile.knownLetters = [...new Set(profile.knownLetters)];
+  profile.availableCapabilities = [...new Set(profile.availableCapabilities)];
+  return { run: P.nextPersonal(run, curriculum, { profile }), profile, node };
+}
+test('Ordinary new profile can try guided next step without fabricated formal readiness', () => {
+  const { run } = advancementFixture();
+  const profile = { knownLetters: [], availableCapabilities: [], confirmedSkills: [], skillBasis: {} };
+  const before = structuredClone(profile), view = P.personalView(run, curriculum, profile);
+  assert.ok(view.nextTitle);
+  assert.equal(view.nextBlockedReason, null);
+  const blocked = P.nextPersonal(run, curriculum, { acceptProposed: true, profile });
+  assert.notEqual(blocked.cursor.nodeId, run.cursor.nodeId);
+  assert.equal(blocked.cursor.provisional, true);
+  assert.deepEqual(profile, before);
+});
+test('Two adult visits allow a provisional step with real prerequisites and explicit choice, without mastery', () => {
+  const { run, profile, node } = advancementFixture();
+  const before = structuredClone(profile);
+  assert.equal(profile.confirmedSkills.length, 0);
+  assert.deepEqual(profile.skillBasis, {});
+  assert.ok(P.personalView(run, curriculum, profile).nextTitle);
+  const stay = P.nextPersonal(run, curriculum, { continueEpisode: true, profile });
+  assert.equal(stay.cursor.nodeId, node.id);
+  const advance = P.nextPersonal(run, curriculum, { acceptProposed: true, profile });
+  assert.equal(advance.cursor.nodeId, node.defaultNext);
+  assert.equal(advance.cursor.provisional, true);
+  assert.deepEqual(profile, before);
+  assert.equal('confirmedSkills' in advance, false);
+});
+test('Acceptance rechecks letters, functions and preparation instead of trusting the saved offer', () => {
+  const { run, profile, node } = advancementFixture();
+  const withoutLetters = { ...profile, entry08: { history: { unavailableLetters: Array.from('АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ') } } };
+  assert.equal(P.nextPersonal(run, curriculum, { acceptProposed: true, profile: withoutLetters }).cursor.nodeId, node.id);
+  const c = structuredClone(curriculum);
+  for (const id of c.nodes[node.defaultNext].episodeIds)
+    for (const step of c.episodes[id].steps)
+      if (step.itemId) c.items[step.itemId].requiredCapabilities.push('test.required.function');
+  const blockedFunction = { ...profile, entry08: { history: { unavailableCapabilities: ['test.required.function'] } } };
+  assert.equal(P.availablePersonalNext(run, c, blockedFunction), null);
+  assert.match(P.personalView(run, c, blockedFunction).nextBlockedReason, /проверить/);
+  run.observations[1].taskId = 'invented.task';
+  assert.equal(P.availablePersonalNext(run, curriculum, profile), null, 'preparation requires real authored tasks');
+});
+test('Clicks, assistance, same target or same visit cannot offer progression', () => {
+  for (const change of [
+    o => o.verifier = 'deterministic', o => o.assisted = true,
+    (o, first) => o.visitId = first.visitId, (o, first) => o.target = first.target,
+    o => o.reading = 'unassessed',
+  ]) {
+    const { run, profile } = advancementFixture();
+    change(run.observations[1], run.observations[0]);
+    assert.equal(P.availablePersonalNext(run, curriculum, profile), null);
+  }
+});
+
 console.log(
   JSON.stringify(
     { suite: 'entry08-personal', passed: tests.length, failed: 0, tests },

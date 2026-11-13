@@ -4,6 +4,8 @@ export type IllustrationMatch = { kind: 'word' | 'story'; id: string };
 
 // Exact catalogue targets only. No inflection, substring search, or answer-key lookup.
 const words: Record<string, string> = {
+  ЛАМПА: 'word-pilot-lamp-v1',
+  КРУПА: 'word-pilot-grain-v1',
   ДОМ: 'picture-01',
   КОТ: 'picture-02',
   ЛУНА: 'picture-03',
@@ -112,6 +114,9 @@ const words: Record<string, string> = {
 };
 
 const stories: Record<string, string> = {
+  'У нас сом. У сома усы.': 'scene-pilot-catfish-v1',
+  'У Иры сани. Ира катит сани.': 'scene-pilot-sled-v1',
+  'У мамы сумка. Там крупа.': 'scene-pilot-bag-v1',
   'Диск был на столе. Мила убрала диск в коробку.': 'story-disc-box',
   'Лупа была в сумке. Рома положил лупу на стол.': 'story-loupe-table',
   'Карта была на полке. Папа положил карту в папку.': 'story-map-folder',

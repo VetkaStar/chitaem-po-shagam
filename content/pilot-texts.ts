@@ -1,0 +1,78 @@
+import type { ReadingText } from './reading-library';
+
+/** Teaching material for free practice, never an independent curriculum probe. */
+export const pilotTexts: ReadingText[] = [
+  {
+    id: 'pilot-story-catfish-v1',
+    kind: 'stories',
+    title: 'Сом',
+    minimumUnit: 5,
+    keepForReview: true,
+    lines: ['У нас сом.', 'У сома усы.'],
+    question: 'У кого усы?',
+    questionDelivery: 'adult-or-audio',
+    options: ['У сома', 'У осы'],
+    answer: 'У сома',
+    hint: 'Перечитай вторую строку: у кого усы?',
+    preparation: {
+      words: [
+        { word: 'У', parts: ['У'] },
+        { word: 'НАС', parts: ['НАС'] },
+        { word: 'СОМ', parts: ['СОМ'] },
+        { word: 'СОМА', parts: ['СО', 'МА'] },
+        { word: 'УСЫ', parts: ['У', 'СЫ'] },
+        { word: 'ОСЫ', parts: ['О', 'СЫ'] },
+      ],
+      note: 'Взрослому: подготовьте закрытые слоги НАС и СОМ. Прочитайте отдельно СОМА: чтение слова СОМ ещё не подтверждает чтение этой формы. ОСЫ понадобится в варианте ответа.',
+    },
+  },
+  {
+    id: 'pilot-story-sled-v1',
+    kind: 'stories',
+    title: 'Сани',
+    minimumUnit: 10,
+    keepForReview: true,
+    lines: ['У Иры сани.', 'Ира катит сани.'],
+    question: 'Что катит Ира?',
+    questionDelivery: 'adult-or-audio',
+    options: ['Сани', 'Сумку'],
+    answer: 'Сани',
+    hint: 'Перечитай вторую строку. Найди, что катит Ира.',
+    preparation: {
+      words: [
+        { word: 'У', parts: ['У'] },
+        { word: 'ИРА', parts: ['И', 'РА'] },
+        { word: 'ИРЫ', parts: ['И', 'РЫ'] },
+        { word: 'САНИ', parts: ['СА', 'НИ'] },
+        { word: 'КАТИТ', parts: ['КА', 'ТИТ'] },
+        { word: 'СУМКУ', parts: ['СУМ', 'КУ'] },
+      ],
+      note: 'Взрослому: подготовьте НИ, ТИ и закрытые слоги ТИТ и СУМ. Прочитайте ИРА и ИРЫ как разные формы. СУМКУ понадобится в варианте ответа; её тоже нужно подготовить.',
+    },
+  },
+  {
+    id: 'pilot-story-bag-v1',
+    kind: 'stories',
+    title: 'Сумка',
+    minimumUnit: 11,
+    keepForReview: true,
+    lines: ['У мамы сумка.', 'Там крупа.'],
+    question: 'Что в сумке?',
+    questionDelivery: 'adult-or-audio',
+    options: ['Крупа', 'Лампа'],
+    answer: 'Крупа',
+    hint: 'Во второй строке сказано, что находится в сумке.',
+    preparation: {
+      words: [
+        { word: 'У', parts: ['У'] },
+        { word: 'МАМА', parts: ['МА', 'МА'] },
+        { word: 'МАМЫ', parts: ['МА', 'МЫ'] },
+        { word: 'СУМКА', parts: ['СУМ', 'КА'] },
+        { word: 'ТАМ', parts: ['ТАМ'] },
+        { word: 'КРУПА', parts: ['КРУ', 'ПА'] },
+        { word: 'ЛАМПА', parts: ['ЛАМ', 'ПА'] },
+      ],
+      note: 'Взрослому: подготовьте СУМ, ЛАМ и ТАМ, затем КРУ с двумя согласными в начале. Сравните МАМА и МАМЫ: знакомое слово не подтверждает чтение новой формы. Прочитайте оба варианта ответа.',
+    },
+  },
+];

@@ -5,6 +5,7 @@ import { useCurriculumSession } from './use-curriculum-session.js';
 import { CurriculumStep } from './CurriculumStep.js';
 import { DemoControls } from './DemoControls.js';
 import { useInstructionAudio } from './use-instruction-audio.js';
+import { ProgramPracticeList } from './ProgramPracticeList.js';
 export interface CurriculumSessionProps {
   autoInstruction?: boolean;
   allowProgramSelection?: boolean;
@@ -56,6 +57,8 @@ export default function CurriculumSession({
     ? (state.demonstrationRuns?.[demoMethod]?.comfort ?? null)
     : null;
   const demoComplete = controller.demonstrationComplete();
+  const practice = controller.currentProgramPractice();
+  const offer = status === 'program_practice_offer' ? controller.programPracticeOffer() : undefined;
   return (
     <section
       className="curriculum-session"
@@ -114,6 +117,16 @@ export default function CurriculumSession({
           </label>
         )}
       </header>
+      {!practice && <ProgramPracticeList controller={controller} busy={busy} onSelect={id => act(async () => {
+        await controller.selectProgramPractice(id); setFeedback(''); setStatus('');
+      })} />}
+      {practice && <div className="curriculum-session-progress">
+        <p>{practice.blockId.startsWith('story-') ? 'Практика: короткий текст' : practice.method === 'p1' ? 'Практика: от частей к слову' : 'Практика: от слова к частям'}</p>
+        <p>Если буквы или части пока незнакомы, взрослый сначала читает их и помогает соединить. Это учебная попытка.</p>
+        <button type="button" disabled={busy} onClick={() => act(async () => {
+          await controller.returnToProgram(); setFeedback(''); setStatus('');
+        })}>Вернуться к прежнему заданию</button>
+      </div>}
       <div className="curriculum-session-progress" role="status">
         {visit
           ? 'Экраны занятия: ' + visit.actions + ' из ' + visit.budget
@@ -198,7 +211,17 @@ export default function CurriculumSession({
       {!view && visit && (
         <div className="curriculum-session-transition">
           {feedback && <p role="status">{feedback}</p>}
-          {demoComplete ? (
+          {offer ? (
+            <div>
+              <p>{offer.blockId.startsWith('story-') ? 'Здесь можно потренироваться читать короткий текст.' : 'Здесь можно потренироваться читать слово по выбранному методу.'}</p>
+              <button type="button" disabled={busy} onClick={() => act(async () => {
+                await controller.selectProgramPractice(offer.id); setFeedback(''); setStatus(''); await next();
+              })}>Попробовать практику</button>
+              <button type="button" disabled={busy} onClick={() => act(async () => {
+                await controller.dismissProgramPractice(offer.id); setStatus(''); await next();
+              })}>Продолжить обычный маршрут</button>
+            </div>
+          ) : demoComplete ? (
             <p role="status">
               Демонстрация завершена. Можно попробовать другой способ или
               выбрать программу.

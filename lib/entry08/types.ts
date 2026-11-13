@@ -52,6 +52,8 @@ export interface EntryState {
   [key: string]: unknown;
 }
 export interface EntryUi {
+  /** Last main-profile age applied; an unchanged profile must not erase an Entry08 clarification. */
+  profileAge?: string;
   version: '0.8.1';
   answers: Answers;
   page: EntryPage | 'lesson';

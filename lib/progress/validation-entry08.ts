@@ -164,11 +164,16 @@ export function validateEntry08(p: Profile, c: Curriculum) {
             Object.hasOwn(c.items, run.active.taskId)),
         'personal active',
       );
+    if (run.active?.readingVerifier !== undefined)
+      demand(['asr', 'companion'].includes(run.active.readingVerifier), 'personal reading verifier');
     for (const o of run.observations)
       demand(
         object(o) &&
           Object.hasOwn(c.items, o.taskId) &&
           typeof o.visitId === 'string' &&
+          ['asr', 'companion', 'deterministic', 'none'].includes(o.verifier) &&
+          ['correct', 'incorrect', 'unassessed', 'skipped'].includes(o.result) &&
+          typeof o.assisted === 'boolean' &&
           !Object.hasOwn(o, 'transcript'),
         'personal observation',
       );

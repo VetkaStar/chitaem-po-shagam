@@ -22,11 +22,11 @@ try {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   await page.addInitScript(() => localStorage.setItem('reading-steps-v3', JSON.stringify({
-    settings: { unit: 12, curriculumVersion: 2, sound: false, autoSpeech: false, autoAdvance: true, autoAdvanceSeconds: 120, motion: false, breakEvery: 0, breakMinutes: 0, length: 7 },
+    settings: { unit: 0, curriculumVersion: 2, sound: false, autoSpeech: false, autoAdvance: true, autoAdvanceSeconds: 120, motion: false, breakEvery: 0, breakMinutes: 0, length: 7 },
     stars: 0, history: [], recentWords: {},
   })));
   await page.route('**/__bridge.html*', route => route.fulfill({ contentType: 'text/html', body: html }));
-  await page.goto(base + '/__bridge.html');
+  await page.goto(base + '/__bridge.html?keyboard');
   await page.waitForFunction(() => window.bridgeLesson?.ready);
   await page.evaluate(() => window.bridgeLesson.navigate('syllables', 'type'));
   await page.getByRole('textbox', { name: 'Твой ответ' }).waitFor();
@@ -65,7 +65,7 @@ try {
     await page.keyboard.down('Enter');
     await page.keyboard.up('Enter');
     assert.deepEqual(await state(), afterEnter, 'held Enter must not skip or reward the next task');
-    await page.goto(base + '/__bridge.html?hold');
+    await page.goto(base + '/__bridge.html?hold&keyboard');
     await page.waitForFunction(() => window.bridgeLesson?.ready);
     await page.evaluate(() => window.bridgeLesson.navigate('syllables', 'type'));
     await answer();

@@ -23,7 +23,7 @@ import {
   useState,
   useSyncExternalStore,
 } from 'react';
-import { Mic, MessageCircle, Keyboard, Volume2, RotateCcw } from 'lucide-react';
+import { BookOpen, Mic, MessageCircle, Keyboard, Volume2, RotateCcw } from 'lucide-react';
 import type { ReadingText } from '@/content/reading-library';
 import type { LessonModel } from '../lesson/use-lesson';
 import { shuffled } from '@/lib/session';
@@ -87,6 +87,17 @@ export default function TextExercise({
   const [mode, setMode] = useState<Mode>('read'),
     [ask, setAsk] = useState(false),
     [loaded, setLoaded] = useState(false);
+  const [preparationOpen, setPreparationOpen] = useState(false);
+  const preparationTexts = preparationOpen && item.preparation
+    ? [
+        ...item.preparation.words.flatMap(({ word, parts }) => [word, ...parts]),
+        item.preparation.note,
+      ]
+    : [];
+  const preparationExposure = useFreeExposure({
+    texts: preparationTexts,
+    promptedTexts: preparationTexts,
+  });
   const additional = useAdditionalQuestions(item.kind, model.settings.unit);
   const showingAdditional =
     mode === 'questions' && additional.available && additional.selected;
@@ -200,6 +211,7 @@ export default function TextExercise({
     authorizedTarget === targetKey &&
       loaded &&
       mic &&
+      !preparationOpen &&
       mode === 'read' &&
       !accepted &&
       !question &&
@@ -211,7 +223,7 @@ export default function TextExercise({
       model.settings.micConsent,
     model.settings.micDevice,
     () => {
-      if (!freeMaterialReady() || authorizedTarget !== targetKey) return;
+      if (preparationOpen || !freeMaterialReady() || authorizedTarget !== targetKey) return;
       const start = letterOffset(item.lines[line], readStart);
       for (let i = start; i < readingLetters(item.lines[line]).length; i++)
         covered.current.add(i);
@@ -231,7 +243,7 @@ export default function TextExercise({
       model.setPaused(true);
     },
     model.settings,
-    () => freeMaterialReady() && authorizedTarget === targetKey,
+    () => !preparationOpen && freeMaterialReady() && authorizedTarget === targetKey,
   );
   const helpExposure = useFreeExposure(
     showingAdditional
@@ -259,7 +271,7 @@ export default function TextExercise({
     else if (mode === 'write') input.current?.focus({ preventScroll: true });
   }, [ready, accepted, mode, line]);
   useEffect(() => {
-    if (!ready || !allMaterialReady || authorizedTarget !== targetKey) return;
+    if (preparationOpen || !ready || !allMaterialReady || authorizedTarget !== targetKey) return;
     const start = letterOffset(item.lines[line], readStart);
     for (let i = start; i < start + speech.progress; i++)
       covered.current.add(i);
@@ -276,6 +288,7 @@ export default function TextExercise({
     ready,
     allMaterialReady,
     authorizedTarget,
+    preparationOpen,
     targetKey,
     speech.progress,
     line,
@@ -292,6 +305,7 @@ export default function TextExercise({
       !accepted ||
       done ||
       question ||
+      preparationOpen ||
       model.parent ||
       model.paused ||
       model.rest ||
@@ -317,6 +331,7 @@ export default function TextExercise({
     accepted,
     done,
     question,
+    preparationOpen,
     line,
     mode,
     model.settings.textFlow,
@@ -343,6 +358,7 @@ export default function TextExercise({
     if (value === mode) return;
     model.stop();
     setMic(false);
+    setPreparationOpen(false);
     additional.setSelected(false);
     setMode(value);
     setLine(0);
@@ -373,7 +389,7 @@ export default function TextExercise({
     setMessage('Попробуем это задание ещё раз.');
   }
   function next() {
-    if (!accepted || !freeMaterialReady()) return;
+    if (preparationOpen || !accepted || !freeMaterialReady()) return;
     const unreadLine =
       mode === 'read'
         ? item.lines.findIndex((_, i) => !readLines.includes(i))
@@ -450,6 +466,50 @@ export default function TextExercise({
             ))}
           </div>
           {!showingAdditional && textPicker}
+          {!showingAdditional && item.preparation && (
+            <details
+              className="practice-menu"
+              name="text-library-material-menu"
+              data-text-preparation={item.id}
+              open={preparationOpen}
+              onToggle={(event) => {
+                const open = event.currentTarget.open;
+                if (open === preparationOpen) return;
+                model.stop();
+                setMic(false);
+                setPreparationOpen(open);
+              }}
+            >
+              <summary>
+                <BookOpen size={17} />
+                <span>Подготовка к тексту</span>
+              </summary>
+              <div className="practice-menu-panel">
+                {preparationOpen &&
+                  (preparationExposure.ready ? (
+                    <>
+                      <p>
+                        Взрослому: выбор темы не подтверждает освоение букв и
+                        слогов. Подготовьте слова и варианты ответа, затем
+                        закройте меню и перейдите к тексту.
+                      </p>
+                      <p>{item.preparation.note}</p>
+                      <ul>
+                        {item.preparation.words.map(({ word, parts }) => (
+                          <li key={word}>
+                            {parts.join(' + ')} = {word}
+                          </li>
+                        ))}
+                      </ul>
+                      <p>
+                        Вопрос читает взрослый или диктор. Это вопрос по смыслу,
+                        а не проверка самостоятельного чтения вопроса.
+                      </p>
+                    </>
+                  ) : preparationExposure.blocker)}
+              </div>
+            </details>
+          )}
           {showingAdditional ? (
             <AnswerSettings model={model} />
           ) : (
@@ -750,6 +810,7 @@ export default function TextExercise({
                 <div
                   className="text-task-controls"
                   inert={
+                    preparationOpen ||
                     !allMaterialReady ||
                     !ready ||
                     (!showQuestion && authorizedTarget !== targetKey)
@@ -766,7 +827,11 @@ export default function TextExercise({
                             <Volume2 size={18} />
                           </button>
                         )}
-                        <span>{item.question}</span>
+                        <span>
+                          {item.questionDelivery === 'adult-or-audio' &&
+                            'Взрослый/диктор: '}
+                          {item.question}
+                        </span>
                       </h3>
                       <div className="text-options">
                         {options.map((option) => (
@@ -942,6 +1007,7 @@ export default function TextExercise({
                               }
                               seconds={model.settings.autoAdvanceSeconds}
                               blocked={
+                                preparationOpen ||
                                 model.parent ||
                                 model.paused ||
                                 model.rest ||

@@ -18,6 +18,7 @@ import { pictureRetry } from '@/lib/picture-retry';
 
 import { useRestSchedule } from './use-rest-schedule';
 import { freshWordDeck, wordParts } from '@/content/word-bank';
+import { availableFamilies, familyForTopic } from '@/content/word-families';
 import { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react';
 import { levels, pictures, breaks } from '@/lib/learning';
 import { wordPool, makeDeck } from '@/lib/session';
@@ -49,6 +50,13 @@ export function useLesson() {
     [ready, setReady] = useState(false),
     [storageWarning, setStorageWarning] = useState('');
   const trainerRewards = useRef(new Set<string>());
+  const [familySelection, setFamilySelection] = useState<{
+    id: string; unit: number; phase: 'syllables' | 'words';
+  } | null>(null);
+  const [familyAssembled, setFamilyAssembled] = useState(false);
+  const family = familySelection?.unit === settings.unit &&
+    familySelection.phase === stage && mode === 'read'
+    ? familyForTopic(familySelection.id, settings.unit) : undefined;
   const [lessonActive, setLessonActive] = useState(false);
   const [externalActivity, setExternalActivity] = useState(false);
   const [recentWords, setRecentWords] = useState<string[]>([]);
@@ -129,22 +137,23 @@ export function useLesson() {
   );
   const wantsParts =
     stage === 'words' &&
+    !family &&
     mode === 'read' &&
     !wholeAgain &&
     (settings.wordMode === 'parts' || settings.partsThenWhole || partsHelp);
   const pool = useMemo(() =>
-    stage === 'pictures'
+    family ? (stage === 'words' ? [family.word] : family.parts) : stage === 'pictures'
       ? pictures.map((x) => x.word)
       : stage === 'words'
         ? wordPool(settings.unit)
-        : levels[settings.unit][stage], [stage, settings.unit]);
-  const target = deck[index % Math.max(1, deck.length)] || pool[0],
+        : levels[settings.unit][stage], [stage, settings.unit, family]);
+  const target = (family ? pool[index % pool.length] : deck[index % Math.max(1, deck.length)]) || pool[0],
     picture =
       stage === 'pictures'
         ? (pictures.find((p) => p.word === target) ?? null)
         : null;
   const lessonLength =
-    stage === 'words' && mode !== 'fly'
+    family ? pool.length : stage === 'words' && mode !== 'fly'
       ? Math.min(settings.length, new Set(pool).size)
       : settings.length;
   const showParts = wantsParts && wordParts(target).length > 1;
@@ -209,6 +218,7 @@ export function useLesson() {
     setSpeaking(false);
   }
   function resetCard() {
+    setFamilyAssembled(false);
     setReadingPart(null);
     partPractice.current.reset();
     unclearAttempts.current = 0;
@@ -234,6 +244,8 @@ export function useLesson() {
     setLessonMic(keepMic);
   }
   function navigate(s: Stage, m: Mode = mode) {
+    setFamilySelection(null);
+    setFamilyAssembled(false);
     setSession((n) => n + 1);
     setFlyInputStatus('');
     repeatReward.current = false;
@@ -246,6 +258,23 @@ export function useLesson() {
     setDone(false);
     setRest(false);
     setPaused(false);
+  }
+  function selectFamily(id: string) {
+    const selected = familyForTopic(id, settings.unit);
+    navigate('syllables', 'read');
+    setDeck([]);
+    if (selected) setFamilySelection({ id, unit: settings.unit, phase: 'syllables' });
+  }
+  function readFamilyWord() {
+    if (!family || stage !== 'syllables' || !familyAssembled || !freeMaterialReady()) return;
+    const id = family.id;
+    navigate('words', 'read');
+    setDeck([]);
+    setFamilySelection({ id, unit: settings.unit, phase: 'words' });
+  }
+  function completeFamilyAssembly() {
+    if (family && stage === 'syllables' && count === family.parts.length - 1 && freeMaterialReady())
+      setFamilyAssembled(true);
   }
   const releaseMedia = useEffectEvent(() => {
     mounted.current = false;
@@ -805,6 +834,15 @@ export function useLesson() {
   }
   function next(skip = false) {
     if (!skip && !awarded.current) return;
+    if (skip && family && stage === 'syllables' && !awarded.current) {
+      record('skipped', 'manual');
+      selectFamily('');
+      return;
+    }
+    if (family && stage === 'syllables' && count === family.parts.length - 1 && !skip) {
+      readFamilyWord();
+      return;
+    }
     if (skip && !awarded.current) record('skipped', 'manual');
     const nextCount = count + 1;
     repeatReward.current = false;
@@ -831,6 +869,8 @@ export function useLesson() {
       if (!awarded.current) resetCard();
     }
     if (key === 'unit' || key === 'length') {
+      setFamilySelection(null);
+      setFamilyAssembled(false);
       repeatReward.current = false;
       setSession((n) => n + 1);
       resetCard();
@@ -917,6 +957,7 @@ export function useLesson() {
     );
   }
   function continueLesson() {
+    if (family) { selectFamily(family.id); return; }
     if (
       stage === 'words' &&
       pool.length <= settings.length &&
@@ -943,6 +984,12 @@ export function useLesson() {
     recognition.current?.setEnabled?.(freeMaterialReady());
   }
   return {
+    family,
+    familyAssembled,
+    availableFamilies: availableFamilies(settings.unit),
+    selectFamily,
+    readFamilyWord,
+    completeFamilyAssembly,
     ready,
     repeatExercise,
     repeatEpoch,
@@ -951,7 +998,10 @@ export function useLesson() {
     speechPreview,
     readingPart,
     selectReadingPart,
-    setLessonActive,
+    setLessonActive: (active: boolean) => {
+      setLessonActive(active);
+      if (!active) { setFamilySelection(null); setFamilyAssembled(false); }
+    },
     setExternalActivity,
     schedule,
     showParts,

@@ -7140,15 +7140,3 @@ meter::-webkit-meter-optimum-value {
 @media (min-width: 1100px) {
   :root[data-layout='focus'] .app-layout:has(.text-exercise) { margin-top: 0; height: calc(100dvh / var(--zoom) - 76px); }
 }
-
-/* The requested picture uses the existing card's material area, without pushing the word below it. */
-.task-card[data-word-picture='true'] .task-card-body { justify-content: start; align-content: start; }
-.task-card[data-word-picture='true'] .family-selector,
-.task-card[data-word-picture='true'] .task-card-material > :is(.task-line, .task-instruction) { display: none; }
-.task-card[data-word-picture='true'][data-stage='words'] .task-card-material { display: grid; grid-template-columns: minmax(0, 1fr) 144px; gap: 4px 12px; align-items: center; }
-:root .lesson .task-card[data-word-picture='true'][data-stage='words']:not([data-mode='fly']) .task-card-material > .reading { grid-column: 1; grid-row: 1; --size: 36px; line-height: 1.2; min-width: 0; }
-.task-card[data-word-picture='true'][data-stage='words'] .task-card-material > .material-tools { grid-column: 1; grid-row: 2; }
-.task-card[data-word-picture='true'] .material-tools button { min-width: 0; max-width: 100%; height: auto; white-space: normal; overflow-wrap: anywhere; }
-:root .lesson .task-card[data-word-picture='true'] .task-card-material > .illustration-gallery { grid-column: 2; grid-row: 1 / 3; display: flex; flex-direction: column; width: 144px; gap: 4px; }
-.task-card[data-word-picture='true'] .illustration-gallery .reviewed-illustration { width: 112px; height: 112px; }
-.task-card[data-word-picture='true'] .illustration-navigation { gap: 2px; }

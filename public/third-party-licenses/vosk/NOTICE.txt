@@ -1,0 +1,5 @@
+Vosk-Browser 0.0.8 — Ciaran O'Reilly and contributors. Apache-2.0.
+https://github.com/ccoreilly/vosk-browser
+Vosk Russian model small-ru-0.22 — Alpha Cephei. Apache-2.0.
+https://alphacephei.com/vosk/models
+The official ZIP model has been repackaged as a tar.gz and split into six verified chunks for delivery. Model weights are unmodified. Audio is processed in a Web Worker on the user's device.

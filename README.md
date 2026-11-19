@@ -4,6 +4,10 @@
 
 Рабочая версия исходников: **reading-app-v4**. [Приложение](https://vetkastar.github.io/chitaem-po-shagam/).
 
+## Лицензии
+
+Код и материалы Vetka_Star доступны для некоммерческого использования на условиях [LICENSING.md](LICENSING.md). У сторонних компонентов действуют [собственные условия](THIRD-PARTY-NOTICES.md). Состав компонентов проверен для ветки опубликованного приложения `new-design`.
+
 ## Разработка
 
 Node.js >=22.13.0. В отдельной установке: `pnpm install --frozen-lockfile`, затем `pnpm dev`.
